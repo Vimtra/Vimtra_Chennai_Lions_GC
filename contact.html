@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact · Vimtra Chennai Lions GC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="assets/lions.css">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#F4F0E8;font-family:Manrope,sans-serif;color:#1A1513;overflow-x:hidden;}
+  ::selection{background:#C4202A;color:#fff;}
+  .nav-link{font-family:Manrope;font-weight:600;font-size:14px;color:rgba(255,255,255,0.92);text-decoration:none;}
+  .nav-link:hover{color:#E9CB8E;}
+  .cta-gold{font-family:Manrope;font-weight:700;font-size:13.5px;color:#3A1A06;text-decoration:none;background:linear-gradient(180deg,#E6C57E,#C39A52);padding:11px 20px;border-radius:30px;display:inline-block;border:none;cursor:pointer;}
+  .icon-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;cursor:pointer;}
+  .overlay{position:fixed;inset:0;background:rgba(20,8,10,0.96);backdrop-filter:blur(20px);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
+  .overlay.open{display:flex;}
+  .overlay a{font-family:Sora;font-weight:700;font-size:34px;color:#fff;text-decoration:none;padding:10px 24px;}
+  .overlay a:hover{color:#E9CB8E;}
+  .overlay-close{position:absolute;top:24px;right:32px;width:46px;height:46px;border-radius:50%;background:#C4202A;color:#fff;border:none;font-size:22px;cursor:pointer;}
+  .field{display:flex !important;flex-direction:column !important;gap:8px !important;}
+  label{display:block;font-family:Manrope;font-weight:700;font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;color:#6B635C;margin:0 0 8px !important;line-height:1.2 !important;}
+  input,textarea,select{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(26,21,19,0.12);background:#fff;font-family:Manrope;font-size:15px;color:#1A1513;outline:none;transition:.2s;}
+  input:focus,textarea:focus,select:focus{border-color:#C4202A;box-shadow:0 0 0 4px rgba(196,32,42,0.10);}
+  textarea{resize:vertical;min-height:130px;}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:20px;background:#fff;border:1px solid rgba(26,21,19,0.08);font-family:Manrope;font-weight:600;font-size:12.5px;color:#6B635C;cursor:pointer;transition:.25s cubic-bezier(.2,.7,.2,1);}
+  .chip:hover{background:rgba(196,32,42,0.06);color:#C4202A;border-color:rgba(196,32,42,0.25);transform:translateY(-1px);}
+  .chip.on{background:#C4202A;color:#fff;border-color:#C4202A;}
+  @media (max-width:900px){.contact-grid{grid-template-columns:1fr !important;}}
+</style>
+</head>
+<body>
+
+<!-- navbar + overlay injected by lions.js -->
+
+<section style="position:relative;background:radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%);overflow:hidden;padding:88px 32px 70px;">
+  <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%);pointer-events:none;"></div>
+  <div style="position:relative;max-width:1200px;margin:0 auto;">
+    <div data-aos="fade-up" style="font-family:Manrope;font-weight:700;font-size:12px;letter-spacing:0.32em;color:#E9CB8E;text-transform:uppercase;">Let's Talk</div>
+    <h1 data-ae="words" data-aos="fade-up" data-aos-easing="ae" style="margin:14px 0 0;font-family:Sora;font-weight:800;font-size:clamp(56px,9.4vw,142px);line-height:0.9;letter-spacing:-0.035em;color:#fff;">CONTACT</h1>
+  </div>
+</section>
+
+<section style="background:#F4F0E8;padding:96px 32px 120px;">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.35fr 1fr;gap:32px;align-items:start;" class="contact-grid">
+
+    <div data-aos="fade-up" style="background:#FBF9F4;border:1px solid rgba(26,21,19,0.07);border-radius:24px;padding:44px;">
+      <div style="font-family:Manrope;font-weight:700;letter-spacing:0.22em;font-size:11.5px;color:#C4202A;text-transform:uppercase;">What's on your mind?</div>
+      <h2 style="margin:10px 0 22px;font-family:Sora;font-weight:800;font-size:34px;letter-spacing:-0.02em;">Drop us a line.</h2>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;">
+        <div class="chip on" onclick="pick(this)">Membership</div>
+        <div class="chip" onclick="pick(this)">Partnership</div>
+        <div class="chip" onclick="pick(this)">Press</div>
+        <div class="chip" onclick="pick(this)">Academy</div>
+        <div class="chip" onclick="pick(this)">Tickets</div>
+        <div class="chip" onclick="pick(this)">Other</div>
+      </div>
+
+      <form onsubmit="event.preventDefault();sub();" style="display:grid;gap:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="field"><label>Full Name</label><input type="text" required placeholder="Your name"></div>
+          <div class="field"><label>Email</label><input type="email" required placeholder="you@example.com"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="field"><label>Phone</label><input type="tel" placeholder="+91"></div>
+          <div class="field"><label>City</label><input type="text" placeholder="Chennai"></div>
+        </div>
+        <div class="field"><label>Message</label><textarea required placeholder="Tell us what you're thinking about..."></textarea></div>
+        <button type="submit" class="cta-gold" style="padding:14px;font-size:14px;letter-spacing:0.06em;justify-self:start;">SEND TO THE DEN</button>
+      </form>
+      <div id="ok" style="margin-top:20px;display:none;padding:14px;border-radius:14px;background:rgba(14,138,79,0.10);color:#0E8A4F;font-family:Manrope;font-weight:600;font-size:14px;">Roger. We'll be back to you within two working days.</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div data-aos="fade-up" style="background:linear-gradient(160deg,#C9242E,#871119);color:#fff;border-radius:24px;padding:32px;">
+        <div style="font-family:Manrope;font-weight:700;letter-spacing:0.22em;font-size:11px;color:#E9CB8E;text-transform:uppercase;">Head Office</div>
+        <h3 style="margin:10px 0 12px;font-family:Sora;font-weight:800;font-size:22px;">Vimtra Chennai Lions GC</h3>
+        <p style="margin:0;font-family:Manrope;font-size:14px;line-height:1.6;opacity:0.85;">Anna Salai, Teynampet<br>Chennai · Tamil Nadu 600018</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="80" style="background:#FBF9F4;border:1px solid rgba(26,21,19,0.07);border-radius:24px;padding:32px;">
+        <div style="font-family:Manrope;font-weight:700;letter-spacing:0.18em;font-size:11px;color:#C4202A;text-transform:uppercase;">Direct Lines</div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:14px;">
+          <div>
+            <div style="font-family:Sora;font-weight:700;font-size:14px;">Membership · The Pride</div>
+            <a href="mailto:pride@vimtrachennailions.gc" style="font-family:Manrope;font-size:13.5px;color:#C4202A;text-decoration:none;">pride@vimtrachennailions.gc</a>
+          </div>
+          <div>
+            <div style="font-family:Sora;font-weight:700;font-size:14px;">Partnerships</div>
+            <a href="mailto:partners@vimtrachennailions.gc" style="font-family:Manrope;font-size:13.5px;color:#C4202A;text-decoration:none;">partners@vimtrachennailions.gc</a>
+          </div>
+          <div>
+            <div style="font-family:Sora;font-weight:700;font-size:14px;">Press & Media</div>
+            <a href="mailto:press@vimtrachennailions.gc" style="font-family:Manrope;font-size:13.5px;color:#C4202A;text-decoration:none;">press@vimtrachennailions.gc</a>
+          </div>
+          <div>
+            <div style="font-family:Sora;font-weight:700;font-size:14px;">Academy</div>
+            <a href="mailto:academy@vimtrachennailions.gc" style="font-family:Manrope;font-size:13.5px;color:#C4202A;text-decoration:none;">academy@vimtrachennailions.gc</a>
+          </div>
+        </div>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="160" style="background:#FBF9F4;border:1px solid rgba(26,21,19,0.07);border-radius:24px;padding:32px;">
+        <div style="font-family:Manrope;font-weight:700;letter-spacing:0.18em;font-size:11px;color:#C4202A;text-transform:uppercase;">Find us elsewhere</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+          <a href="#" style="padding:9px 16px;border-radius:20px;background:#1A1513;color:#fff;font-family:Sora;font-weight:700;font-size:12px;text-decoration:none;letter-spacing:0.06em;">INSTAGRAM</a>
+          <a href="#" style="padding:9px 16px;border-radius:20px;background:#1A1513;color:#fff;font-family:Sora;font-weight:700;font-size:12px;text-decoration:none;letter-spacing:0.06em;">X (TWITTER)</a>
+          <a href="#" style="padding:9px 16px;border-radius:20px;background:#1A1513;color:#fff;font-family:Sora;font-weight:700;font-size:12px;text-decoration:none;letter-spacing:0.06em;">YOUTUBE</a>
+          <a href="#" style="padding:9px 16px;border-radius:20px;background:#1A1513;color:#fff;font-family:Sora;font-weight:700;font-size:12px;text-decoration:none;letter-spacing:0.06em;">LINKEDIN</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- footer injected by lions.js -->
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({duration:700,once:true,offset:60});
+function pick(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+function sub(){document.getElementById('ok').style.display='block';window.scrollTo({top:document.getElementById('ok').getBoundingClientRect().top+window.scrollY-100,behavior:'smooth'});}
+</script>
+<script src="assets/lions.js"></script>
+</body>
+</html>
+

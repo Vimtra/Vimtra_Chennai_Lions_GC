@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gallery · Vimtra Chennai Lions GC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="assets/lions.css">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#F4F0E8;font-family:Manrope,sans-serif;color:#1A1513;overflow-x:hidden;}
+  ::selection{background:#C4202A;color:#fff;}
+  .nav-link{font-family:Manrope;font-weight:600;font-size:14px;color:rgba(255,255,255,0.92);text-decoration:none;}
+  .nav-link:hover{color:#E9CB8E;}
+  .cta-gold{font-family:Manrope;font-weight:700;font-size:13.5px;color:#3A1A06;text-decoration:none;background:linear-gradient(180deg,#E6C57E,#C39A52);padding:11px 20px;border-radius:30px;display:inline-block;}
+  .icon-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;cursor:pointer;}
+  .overlay{position:fixed;inset:0;background:rgba(20,8,10,0.96);backdrop-filter:blur(20px);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
+  .overlay.open{display:flex;}
+  .overlay a{font-family:Sora;font-weight:700;font-size:34px;color:#fff;text-decoration:none;padding:10px 24px;}
+  .overlay a:hover{color:#E9CB8E;}
+  .overlay-close{position:absolute;top:24px;right:32px;width:46px;height:46px;border-radius:50%;background:#C4202A;color:#fff;border:none;font-size:22px;cursor:pointer;}
+  .filt{padding:10px 18px;border-radius:24px;font-family:Sora;font-weight:700;font-size:12px;cursor:pointer;background:#fff;border:1px solid rgba(26,21,19,0.08);color:#6B635C;letter-spacing:0.04em;}
+  .filt.active{background:#C4202A;color:#fff;border-color:#C4202A;}
+  .tile{position:relative;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#C9242E,#871119);display:flex;align-items:flex-end;padding:18px;color:#fff;}
+  .tile::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(20,8,8,0.6) 100%);pointer-events:none;}
+  .tile .label{position:relative;z-index:2;font-family:Sora;font-weight:700;font-size:14px;letter-spacing:0.02em;}
+  .tile .tag{position:absolute;top:14px;left:14px;z-index:2;font-family:Manrope;font-weight:700;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;background:rgba(20,8,8,0.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.22);padding:5px 10px;border-radius:14px;color:#E9CB8E;}
+  .tile .init{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:Sora;font-weight:800;font-size:78px;color:rgba(255,255,255,0.18);letter-spacing:-0.04em;}
+</style>
+</head>
+<body>
+
+<!-- navbar + overlay injected by lions.js -->
+
+<section style="position:relative;background:radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%);overflow:hidden;padding:88px 32px 70px;">
+  <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%);pointer-events:none;"></div>
+  <div style="position:relative;max-width:1200px;margin:0 auto;">
+    <div data-aos="fade-up" style="font-family:Manrope;font-weight:700;font-size:12px;letter-spacing:0.32em;color:#E9CB8E;text-transform:uppercase;">Tour Frames</div>
+    <h1 data-ae="words" data-aos="fade-up" data-aos-easing="ae" style="margin:14px 0 0;font-family:Sora;font-weight:800;font-size:clamp(56px,9.4vw,142px);line-height:0.9;letter-spacing:-0.035em;color:#fff;">GALLERY</h1>
+  </div>
+</section>
+
+<section style="background:#F4F0E8;padding:48px 32px 96px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;">
+      <div class="filt active" onclick="filt(this,'all')">ALL</div>
+      <div class="filt" onclick="filt(this,'tour')">TOUR</div>
+      <div class="filt" onclick="filt(this,'practice')">PRACTICE</div>
+      <div class="filt" onclick="filt(this,'fan')">PRIDE</div>
+      <div class="filt" onclick="filt(this,'academy')">ACADEMY</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));grid-auto-rows:220px;gap:14px;">
+      <div data-aos="fade-up" class="tile" data-cat="tour" style="grid-row:span 2;"><div class="init">GB</div><span class="tag">TOUR</span><span class="label">Bhullar tee shot · Chennai Open R1</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="practice"><div class="init">HS</div><span class="tag">PRACTICE</span><span class="label">Sethie · range work</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="fan"><div class="init">🦁</div><span class="tag">PRIDE</span><span class="label">Travelling gallery</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="tour" style="grid-column:span 2;"><div class="init">SD</div><span class="tag">TOUR</span><span class="label">Dwivedi's drive on 12 · Hyderabad</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="academy"><div class="init">A1</div><span class="tag">ACADEMY</span><span class="label">Junior clinic · Chennai</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="tour"><div class="init">YC</div><span class="tag">TOUR</span><span class="label">Yashas · putting line read</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="practice" style="grid-row:span 2;"><div class="init">PR</div><span class="tag">PRACTICE</span><span class="label">Pre-round walk · Madras Gymkhana</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="fan"><div class="init">FZ</div><span class="tag">PRIDE</span><span class="label">Lions Fan Zone</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="tour"><div class="init">T2</div><span class="tag">TOUR</span><span class="label">Bhullar T2 trophy lift</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="academy" style="grid-column:span 2;"><div class="init">JR</div><span class="tag">ACADEMY</span><span class="label">School visit · Coimbatore</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="fan"><div class="init">WP</div><span class="tag">PRIDE</span><span class="label">Watch party · Anna Nagar</span></div>
+      <div data-aos="fade-up" class="tile" data-cat="practice"><div class="init">ST</div><span class="tag">PRACTICE</span><span class="label">Short-game session</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- footer injected by lions.js -->
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({duration:600,once:true,offset:40});
+function filt(el,cat){
+  document.querySelectorAll('.filt').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tile').forEach(t=>{
+    t.style.display=(cat==='all'||t.dataset.cat===cat)?'flex':'none';
+  });
+}
+</script>
+<script src="assets/lions.js"></script>
+</body>
+</html>
+

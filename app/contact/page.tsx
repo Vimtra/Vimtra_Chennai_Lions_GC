@@ -1,0 +1,129 @@
+import type { Metadata } from "next";
+import Reveal from "@/components/Reveal";
+import AeText from "@/components/AeText";
+import ContactForm from "@/components/contact/ContactForm";
+
+export const metadata: Metadata = {
+  title: "Contact · Vimtra Chennai Lions GC",
+  description:
+    "Talk to the franchise — membership, partnerships, press, and academy enquiries for the Vimtra Chennai Lions.",
+};
+
+const DIRECT_LINES = [
+  { label: "Membership · The Pride", email: "pride@vimtrachennailions.gc" },
+  { label: "Partnerships", email: "partners@vimtrachennailions.gc" },
+  { label: "Press & Media", email: "press@vimtrachennailions.gc" },
+  { label: "Academy", email: "academy@vimtrachennailions.gc" },
+];
+
+const SOCIALS = ["INSTAGRAM", "X (TWITTER)", "YOUTUBE", "LINKEDIN"];
+
+export default function ContactPage() {
+  return (
+    <div className="contact-page">
+      <section
+        className="relative overflow-hidden px-8 pt-[88px] pb-[70px]"
+        style={{
+          background:
+            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
+        }}
+      >
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%)",
+          }}
+        />
+        <div className="relative max-w-[1200px] mx-auto">
+          <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
+            Let&apos;s Talk
+          </div>
+          <AeText
+            text="CONTACT"
+            mode="words"
+            as="h1"
+            className="mt-[14px] font-sora font-extrabold text-white"
+            style={{
+              fontSize: "clamp(56px,9.4vw,142px)",
+              lineHeight: 0.9,
+              letterSpacing: "-0.035em",
+            }}
+          />
+        </div>
+      </section>
+
+      <section className="bg-cream-100 px-8 pt-24 pb-[120px]">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-8 items-start">
+          <Reveal variant="fade-up">
+            <ContactForm />
+          </Reveal>
+
+          <div className="flex flex-col gap-5">
+            <Reveal
+              variant="fade-up"
+              className="text-white rounded-[24px] p-8"
+              style={{ background: "linear-gradient(160deg,#C9242E,#871119)" }}
+            >
+              <div className="font-manrope font-bold tracking-[0.22em] text-[11px] text-[#E9CB8E] uppercase">
+                Head Office
+              </div>
+              <h3 className="mt-[10px] mb-3 font-sora font-extrabold text-[22px]">
+                Vimtra Chennai Lions GC
+              </h3>
+              <p className="m-0 font-manrope text-[14px] leading-[1.6] opacity-85">
+                Anna Salai, Teynampet
+                <br />
+                Chennai · Tamil Nadu 600018
+              </p>
+            </Reveal>
+
+            <Reveal
+              variant="fade-up"
+              delay={80}
+              className="bg-cream-50 border border-black/[0.07] rounded-[24px] p-8"
+            >
+              <div className="font-manrope font-bold tracking-[0.18em] text-[11px] text-crimson-600 uppercase">
+                Direct Lines
+              </div>
+              <div className="flex flex-col gap-[14px] mt-[14px]">
+                {DIRECT_LINES.map((d) => (
+                  <div key={d.email}>
+                    <div className="font-sora font-bold text-[14px]">{d.label}</div>
+                    <a
+                      href={`mailto:${d.email}`}
+                      className="font-manrope text-[13.5px] text-crimson-600 no-underline"
+                    >
+                      {d.email}
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+
+            <Reveal
+              variant="fade-up"
+              delay={160}
+              className="bg-cream-50 border border-black/[0.07] rounded-[24px] p-8"
+            >
+              <div className="font-manrope font-bold tracking-[0.18em] text-[11px] text-crimson-600 uppercase">
+                Find us elsewhere
+              </div>
+              <div className="flex gap-[10px] flex-wrap mt-[14px]">
+                {SOCIALS.map((s) => (
+                  <a
+                    key={s}
+                    href="#"
+                    className="px-4 py-[9px] rounded-[20px] bg-ink text-white font-sora font-bold text-[12px] no-underline tracking-[0.06em]"
+                  >
+                    {s}
+                  </a>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

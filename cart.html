@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart · Vimtra Chennai Lions GC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="assets/lions.css">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#F4F0E8;font-family:Manrope,sans-serif;color:#1A1513;overflow-x:hidden;}
+  ::selection{background:#C4202A;color:#fff;}
+  .nav-link{font-family:Manrope;font-weight:600;font-size:14px;color:rgba(255,255,255,0.92);text-decoration:none;}
+  .nav-link:hover{color:#E9CB8E;}
+  .cta-gold{font-family:Manrope;font-weight:700;font-size:13.5px;color:#3A1A06;text-decoration:none;background:linear-gradient(180deg,#E6C57E,#C39A52);padding:11px 20px;border-radius:30px;display:inline-block;border:none;cursor:pointer;}
+  .icon-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;cursor:pointer;position:relative;}
+  .cart-badge{position:absolute;top:-4px;right:-4px;background:#E9CB8E;color:#3A1A06;border-radius:50%;font-family:Sora;font-weight:800;font-size:10px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+  .overlay{position:fixed;inset:0;background:rgba(20,8,10,0.96);backdrop-filter:blur(20px);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
+  .overlay.open{display:flex;}
+  .overlay a{font-family:Sora;font-weight:700;font-size:34px;color:#fff;text-decoration:none;padding:10px 24px;}
+  .overlay a:hover{color:#E9CB8E;}
+  .overlay-close{position:absolute;top:24px;right:32px;width:46px;height:46px;border-radius:50%;background:#C4202A;color:#fff;border:none;font-size:22px;cursor:pointer;}
+  .row{background:#FBF9F4;border:1px solid rgba(26,21,19,0.07);border-radius:18px;padding:18px;display:grid;grid-template-columns:80px 1fr 130px 110px 40px;gap:18px;align-items:center;margin-bottom:12px;}
+  .row .thumb{width:80px;height:80px;border-radius:14px;background:linear-gradient(160deg,#C9242E,#871119);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-family:Sora;font-weight:800;font-size:22px;}
+  .qty{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid rgba(26,21,19,0.08);border-radius:24px;padding:4px;}
+  .qty button{width:28px;height:28px;border-radius:50%;border:none;background:transparent;cursor:pointer;font-size:16px;color:#1A1513;}
+  .qty button:hover{background:rgba(196,32,42,0.1);color:#C4202A;}
+  .qty span{font-family:Sora;font-weight:700;min-width:22px;text-align:center;}
+  .remove{width:34px;height:34px;border-radius:50%;border:1px solid rgba(26,21,19,0.12);background:#fff;cursor:pointer;color:#6B635C;}
+  .remove:hover{background:#C4202A;color:#fff;border-color:#C4202A;}
+  .summary{background:#1A1513;color:#fff;border-radius:22px;padding:30px;position:sticky;top:90px;}
+  .summary h3{margin:0 0 18px;font-family:Sora;font-weight:800;font-size:22px;}
+  .summary .line{display:flex;justify-content:space-between;padding:10px 0;font-family:Manrope;font-size:14px;color:rgba(255,255,255,0.78);}
+  .summary .total{display:flex;justify-content:space-between;padding:18px 0 6px;border-top:1px solid rgba(255,255,255,0.14);margin-top:8px;font-family:Sora;font-weight:800;font-size:24px;color:#E9CB8E;}
+  @media(max-width:760px){.row{grid-template-columns:64px 1fr;gap:14px;}.row>div:nth-child(n+3){grid-column:1/-1;}}
+</style>
+</head>
+<body>
+
+<!-- navbar + overlay injected by lions.js -->
+
+<section style="position:relative;background:radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%);overflow:hidden;padding:64px 32px 56px;">
+  <div style="position:relative;max-width:1200px;margin:0 auto;">
+    <div style="font-family:Manrope;font-weight:700;font-size:12px;letter-spacing:0.32em;color:#E9CB8E;text-transform:uppercase;">Checkout</div>
+    <h1 style="margin:14px 0 0;font-family:Sora;font-weight:800;font-size:clamp(48px,7vw,98px);line-height:0.92;letter-spacing:-0.035em;color:#fff;">YOUR CART</h1>
+  </div>
+</section>
+
+<section style="background:#F4F0E8;padding:56px 32px 96px;">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr;gap:30px;align-items:start;">
+
+    <div id="cartList"></div>
+
+    <div class="summary">
+      <h3>Order Summary</h3>
+      <div class="line"><span>Subtotal</span><span id="sumSub">₹0</span></div>
+      <div class="line"><span>Shipping</span><span id="sumShip">Free over ₹2,000</span></div>
+      <div class="line"><span>GST (18%)</span><span id="sumTax">₹0</span></div>
+      <div class="total"><span>Total</span><span id="sumTot">₹0</span></div>
+      <button class="cta-gold" id="checkoutBtn" style="width:100%;margin-top:22px;padding:14px;font-size:13.5px;letter-spacing:0.06em;">PROCEED TO CHECKOUT</button>
+      <div style="margin-top:16px;font-family:Manrope;font-size:12px;color:rgba(255,255,255,0.55);line-height:1.55;">Members of the Pride get an automatic 10% off — sign in on your <a href="profile.html" style="color:#E9CB8E;">profile</a>.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- footer injected by lions.js -->
+
+<script>
+function getCart(){try{return JSON.parse(localStorage.getItem('lions_cart')||'[]');}catch{return [];}}
+function setCart(c){localStorage.setItem('lions_cart',JSON.stringify(c));render();}
+function updateBadge(){
+  const c=getCart();const n=c.reduce((s,i)=>s+i.qty,0);
+  const b=document.getElementById('cartBadge');
+  if(n>0){b.style.display='flex';b.textContent=n;}else{b.style.display='none';}
+}
+const inr = n=>'₹'+n.toLocaleString('en-IN');
+function render(){
+  updateBadge();
+  const c=getCart();
+  const list=document.getElementById('cartList');
+  if(!c.length){
+    list.innerHTML='<div style="background:#FBF9F4;border:1px solid rgba(26,21,19,0.07);border-radius:22px;padding:60px;text-align:center;"><div style="font-family:Sora;font-weight:800;font-size:32px;color:#1A1513;letter-spacing:-0.02em;">Your cart is empty</div><p style="font-family:Manrope;font-size:14px;color:#6B635C;margin:10px 0 22px;">Pick up Lions match kit, performance polos, and tour accessories at the shop.</p><a href="shop.html" class="cta-gold">GO TO SHOP</a></div>';
+    document.getElementById('sumSub').textContent=inr(0);
+    document.getElementById('sumTax').textContent=inr(0);
+    document.getElementById('sumTot').textContent=inr(0);
+    return;
+  }
+  list.innerHTML=c.map(it=>`
+    <div class="row">
+      <div class="thumb" style="overflow:hidden; padding:6px; display:flex; align-items:center; justify-content:center;">
+        <img src="${it.img || 'assets/logo-lion.png'}" alt="${it.name}" style="width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15));">
+      </div>
+      <div>
+        <div style="font-family:Sora;font-weight:700;font-size:16px;">${it.name}</div>
+        <div style="font-family:Manrope;font-size:13px;color:#6B635C;margin-top:4px;">${inr(it.price)} each</div>
+      </div>
+      <div class="qty">
+        <button onclick="dec('${it.id}')">−</button>
+        <span>${it.qty}</span>
+        <button onclick="inc('${it.id}')">+</button>
+      </div>
+      <div style="font-family:Sora;font-weight:800;font-size:18px;color:#C4202A;">${inr(it.price*it.qty)}</div>
+      <button class="remove" onclick="rm('${it.id}')" aria-label="Remove">✕</button>
+    </div>`).join('');
+  const sub=c.reduce((s,i)=>s+i.price*i.qty,0);
+  const ship=sub>=2000||sub===0?0:149;
+  const tax=Math.round(sub*0.18);
+  document.getElementById('sumSub').textContent=inr(sub);
+  document.getElementById('sumShip').textContent=ship===0?'Free':inr(ship);
+  document.getElementById('sumTax').textContent=inr(tax);
+  document.getElementById('sumTot').textContent=inr(sub+ship+tax);
+}
+function inc(id){const c=getCart();const it=c.find(x=>x.id===id);if(it)it.qty++;setCart(c);}
+function dec(id){const c=getCart();const i=c.findIndex(x=>x.id===id);if(i>-1){c[i].qty--;if(c[i].qty<1)c.splice(i,1);}setCart(c);}
+function rm(id){setCart(getCart().filter(x=>x.id!==id));}
+document.getElementById('checkoutBtn').addEventListener('click',()=>{
+  const c=getCart();
+  if(!c.length){alert('Your cart is empty.');return;}
+  alert('Checkout flow placeholder — order confirmed!\\nThank you for backing the Lions.');
+  localStorage.removeItem('lions_cart');
+  render();
+});
+render();
+</script>
+<script src="assets/lions.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixtures · Vimtra Chennai Lions GC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="assets/lions.css">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#F4F0E8;font-family:Manrope,sans-serif;color:#1A1513;overflow-x:hidden;}
+  ::selection{background:#C4202A;color:#fff;}
+  a{-webkit-tap-highlight-color:transparent;}
+  .nav-link{font-family:Manrope;font-weight:600;font-size:14px;color:rgba(255,255,255,0.92);text-decoration:none;letter-spacing:0.01em;}
+  .nav-link:hover{color:#E9CB8E;}
+  .cta-gold{font-family:Manrope;font-weight:700;font-size:13.5px;letter-spacing:0.04em;color:#3A1A06;text-decoration:none;background:linear-gradient(180deg,#E6C57E,#C39A52);padding:11px 20px;border-radius:30px;box-shadow:0 10px 22px -12px rgba(58,26,6,0.7);display:inline-block;}
+  .icon-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;text-decoration:none;}
+  .overlay{position:fixed;inset:0;background:rgba(20,8,10,0.96);backdrop-filter:blur(20px);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
+  .overlay.open{display:flex;}
+  .overlay a{font-family:Sora;font-weight:700;font-size:34px;color:#fff;text-decoration:none;padding:10px 24px;}
+  .overlay a:hover{color:#E9CB8E;}
+  .overlay-close{position:absolute;top:24px;right:32px;width:46px;height:46px;border-radius:50%;background:#C4202A;color:#fff;border:none;font-size:22px;cursor:pointer;}
+  .tab{padding:12px 22px;border-radius:24px;font-family:Sora;font-weight:700;font-size:13px;cursor:pointer;background:#fff;border:1px solid rgba(26,21,19,0.08);color:#6B635C;letter-spacing:0.04em;}
+  .tab.active{background:#C4202A;color:#fff;border-color:#C4202A;}
+  .fixture{background:#FBF9F4;border:1px solid rgba(26,21,19,0.07);border-radius:20px;padding:24px;display:grid;grid-template-columns:120px 1fr 200px 140px;gap:24px;align-items:center;margin-bottom:14px;transition:transform .2s;}
+  .fixture:hover{transform:translateY(-2px);}
+  .fixture.live{background:linear-gradient(160deg,#C9242E,#871119);color:#fff;border-color:transparent;}
+  .pill{display:inline-block;padding:5px 12px;border-radius:20px;font-family:Manrope;font-weight:700;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;}
+  @media(max-width:760px){.fixture{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- navbar + overlay injected by lions.js -->
+
+<section style="position:relative;background:radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%);overflow:hidden;padding:90px 32px 70px;">
+  <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%);pointer-events:none;"></div>
+  <div style="position:relative;max-width:1200px;margin:0 auto;">
+    <div data-aos="fade-up" style="font-family:Manrope;font-weight:700;font-size:12px;letter-spacing:0.32em;color:#E9CB8E;text-transform:uppercase;">2026 IGPL Season</div>
+    <h1 data-ae="words" data-aos="fade-up" data-aos-easing="ae" style="margin:14px 0 0;font-family:Sora;font-weight:800;font-size:clamp(56px,9.4vw,142px);line-height:0.9;letter-spacing:-0.035em;color:#fff;">FIXTURES</h1>
+  </div>
+</section>
+
+<section style="background:#F4F0E8;padding:48px 32px 96px;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;">
+      <div class="tab active" onclick="filt(this,'all')">ALL</div>
+      <div class="tab" onclick="filt(this,'upcoming')">UPCOMING</div>
+      <div class="tab" onclick="filt(this,'live')">LIVE</div>
+      <div class="tab" onclick="filt(this,'past')">RESULTS</div>
+    </div>
+
+    <div id="list">
+
+      <div class="fixture live" data-cat="live" data-aos="fade-up">
+        <div>
+          <div class="pill" style="background:#E9CB8E;color:#3A1A06;">LIVE · R2</div>
+          <div style="font-family:Sora;font-weight:800;font-size:30px;letter-spacing:-0.02em;margin-top:10px;">26<span style="font-size:18px;opacity:0.7;">JUN</span></div>
+        </div>
+        <div>
+          <div style="font-family:Sora;font-weight:700;font-size:22px;letter-spacing:-0.01em;">IGPL Chennai Open</div>
+          <div style="font-family:Manrope;font-size:13.5px;color:rgba(255,255,255,0.78);margin-top:4px;">Round 2 of 4 · Madras Gymkhana</div>
+        </div>
+        <div style="font-family:Manrope;font-size:13.5px;color:rgba(255,255,255,0.85);">Lions positioned 2nd · Bhullar -6, Sethie -4</div>
+        <a href="scores.html" style="text-decoration:none;text-align:center;background:#fff;color:#C4202A;font-family:Sora;font-weight:700;font-size:13px;padding:12px 18px;border-radius:24px;letter-spacing:0.04em;">LIVE SCORES →</a>
+      </div>
+
+      <div class="fixture" data-cat="upcoming" data-aos="fade-up">
+        <div>
+          <div class="pill" style="background:rgba(196,32,42,0.10);color:#C4202A;">UPCOMING</div>
+          <div style="font-family:Sora;font-weight:800;font-size:30px;letter-spacing:-0.02em;color:#1A1513;margin-top:10px;">10<span style="font-size:18px;color:#6B635C;">JUL</span></div>
+        </div>
+        <div>
+          <div style="font-family:Sora;font-weight:700;font-size:22px;color:#1A1513;letter-spacing:-0.01em;">IGPL Bharath Classic</div>
+          <div style="font-family:Manrope;font-size:13.5px;color:#6B635C;margin-top:4px;">Bangalore Golf Club · 72 holes</div>
+        </div>
+        <div style="font-family:Manrope;font-size:13.5px;color:#6B635C;">Full squad confirmed</div>
+        <a href="contact.html" class="cta-gold" style="text-align:center;">RSVP</a>
+      </div>
+
+      <div class="fixture" data-cat="upcoming" data-aos="fade-up">
+        <div>
+          <div class="pill" style="background:rgba(196,32,42,0.10);color:#C4202A;">UPCOMING</div>
+          <div style="font-family:Sora;font-weight:800;font-size:30px;letter-spacing:-0.02em;color:#1A1513;margin-top:10px;">24<span style="font-size:18px;color:#6B635C;">JUL</span></div>
+        </div>
+        <div>
+          <div style="font-family:Sora;font-weight:700;font-size:22px;color:#1A1513;letter-spacing:-0.01em;">IGPL Chandigarh Leg</div>
+          <div style="font-family:Manrope;font-size:13.5px;color:#6B635C;margin-top:4px;">Chandigarh GC · Stroke play</div>
+        </div>
+        <div style="font-family:Manrope;font-size:13.5px;color:#6B635C;">Yashas + Dwivedi confirmed</div>
+        <a href="contact.html" class="cta-gold" style="text-align:center;">RSVP</a>
+      </div>
+
+      <div class="fixture" data-cat="upcoming" data-aos="fade-up">
+        <div>
+          <div class="pill" style="background:rgba(196,32,42,0.10);color:#C4202A;">UPCOMING</div>
+          <div style="font-family:Sora;font-weight:800;font-size:30px;letter-spacing:-0.02em;color:#1A1513;margin-top:10px;">14<span style="font-size:18px;color:#6B635C;">AUG</span></div>
+        </div>
+        <div>
+          <div style="font-family:Sora;font-weight:700;font-size:22px;color:#1A1513;letter-spacing:-0.01em;">IGPL Coimbatore Open</div>
+          <div style="font-family:Manrope;font-size:13.5px;color:#6B635C;margin-top:4px;">CCGA Course · Defending champion field</div>
+        </div>
+        <div style="font-family:Manrope;font-size:13.5px;color:#6B635C;">Sethie returns to scene of '23 maiden win</div>
+        <a href="contact.html" class="cta-gold" style="text-align:center;">RSVP</a>
+      </div>
+
+      <div class="fixture" data-cat="past" data-aos="fade-up">
+        <div>
+          <div class="pill" style="background:rgba(26,21,19,0.08);color:#1A1513;">RESULT</div>
+          <div style="font-family:Sora;font-weight:800;font-size:30px;letter-spacing:-0.02em;color:#1A1513;margin-top:10px;">05<span style="font-size:18px;color:#6B635C;">JUN</span></div>
+        </div>
+        <div>
+          <div style="font-family:Sora;font-weight:700;font-size:22px;color:#1A1513;letter-spacing:-0.01em;">IGPL Hyderabad Invitational</div>
+          <div style="font-family:Manrope;font-size:13.5px;color:#6B635C;margin-top:4px;">Hyderabad GC · 72 holes</div>
+        </div>
+        <div style="font-family:Manrope;font-size:13.5px;color:#1A1513;font-weight:700;">Lions finished T3 · Bhullar T2 individual</div>
+        <a href="scores.html" style="text-decoration:none;text-align:center;background:#1A1513;color:#fff;font-family:Sora;font-weight:700;font-size:13px;padding:12px 18px;border-radius:24px;letter-spacing:0.04em;">SCORECARD →</a>
+      </div>
+
+      <div class="fixture" data-cat="past" data-aos="fade-up">
+        <div>
+          <div class="pill" style="background:rgba(26,21,19,0.08);color:#1A1513;">RESULT</div>
+          <div style="font-family:Sora;font-weight:800;font-size:30px;letter-spacing:-0.02em;color:#1A1513;margin-top:10px;">22<span style="font-size:18px;color:#6B635C;">MAY</span></div>
+        </div>
+        <div>
+          <div style="font-family:Sora;font-weight:700;font-size:22px;color:#1A1513;letter-spacing:-0.01em;">IGPL Mumbai Cup</div>
+          <div style="font-family:Manrope;font-size:13.5px;color:#6B635C;margin-top:4px;">Bombay Presidency · Stroke play</div>
+        </div>
+        <div style="font-family:Manrope;font-size:13.5px;color:#1A1513;font-weight:700;">Lions finished 4th · Dwivedi T4 individual</div>
+        <a href="scores.html" style="text-decoration:none;text-align:center;background:#1A1513;color:#fff;font-family:Sora;font-weight:700;font-size:13px;padding:12px 18px;border-radius:24px;letter-spacing:0.04em;">SCORECARD →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- footer injected by lions.js -->
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({duration:700,once:true,offset:60});
+function filt(el,cat){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.fixture').forEach(f=>{
+    f.style.display = (cat==='all'||f.dataset.cat===cat)?'grid':'none';
+  });
+}
+</script>
+<script src="assets/lions.js"></script>
+</body>
+</html>
+
