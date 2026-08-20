@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Players · Vimtra Chennai Lions GC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="assets/lions.css">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#F4F0E8;font-family:Manrope,sans-serif;color:#1A1513;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  ::selection{background:#C4202A;color:#fff;}
+  a{-webkit-tap-highlight-color:transparent;}
+  .nav-link{font-family:Manrope;font-weight:600;font-size:14px;color:rgba(255,255,255,0.92);text-decoration:none;letter-spacing:0.01em;transition:color .2s;}
+  .nav-link:hover{color:#E9CB8E;}
+  .cta-gold{font-family:Manrope;font-weight:700;font-size:13.5px;letter-spacing:0.04em;color:#3A1A06;text-decoration:none;background:linear-gradient(180deg,#E6C57E,#C39A52);padding:11px 20px;border-radius:30px;box-shadow:0 10px 22px -12px rgba(58,26,6,0.7);display:inline-block;}
+  .icon-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;text-decoration:none;}
+  .overlay{position:fixed;inset:0;background:rgba(20,8,10,0.96);backdrop-filter:blur(20px);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
+  .overlay.open{display:flex;}
+  .overlay a{font-family:Sora;font-weight:700;font-size:34px;color:#fff;text-decoration:none;padding:10px 24px;letter-spacing:-0.01em;}
+  .overlay a:hover{color:#E9CB8E;}
+  .overlay-close{position:absolute;top:24px;right:32px;width:46px;height:46px;border-radius:50%;background:#C4202A;color:#fff;border:none;font-size:22px;cursor:pointer;}
+  .stat{background:#fff;border:1px solid rgba(26,21,19,0.06);border-radius:16px;padding:18px;}
+  .stat .v{font-family:Sora;font-weight:800;font-size:30px;color:#C4202A;letter-spacing:-0.025em;line-height:1;}
+  .stat .l{font-family:Manrope;font-size:12px;color:#6B635C;margin-top:6px;letter-spacing:0.04em;text-transform:uppercase;}
+  .player-portrait{aspect-ratio:3/4;border-radius:22px;background:linear-gradient(160deg,#C9242E,#871119);position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding:24px;}
+  .player-portrait::after{content:'';position:absolute;top:0;right:0;width:90px;height:90px;background:linear-gradient(135deg,#E6C57E,#C39A52);clip-path:polygon(100% 0,0 0,100% 100%);opacity:0.9;}
+  .player-portrait .badge{background:rgba(20,8,8,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.18);border-radius:13px;padding:10px 14px;color:#fff;z-index:2;}
+  .player-portrait .init{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:Sora;font-weight:800;font-size:96px;color:rgba(255,255,255,0.22);letter-spacing:-0.04em;}
+</style>
+</head>
+<body>
+
+<!-- navbar + overlay injected by lions.js -->
+
+<section style="position:relative;background:radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%);overflow:hidden;padding:90px 32px 84px;">
+  <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%),radial-gradient(circle at 12% 88%,rgba(233,203,142,0.10),transparent 45%);pointer-events:none;"></div>
+  <div style="position:relative;max-width:1200px;margin:0 auto;">
+    <div data-aos="fade-up" style="font-family:Manrope;font-weight:700;font-size:12px;letter-spacing:0.32em;color:#E9CB8E;text-transform:uppercase;">The Roster · 2026</div>
+    <h1 data-ae="words" data-aos="fade-up" data-aos-easing="ae" style="margin:14px 0 0;font-family:Sora;font-weight:800;font-size:clamp(56px,9.4vw,142px);line-height:0.9;letter-spacing:-0.035em;color:#fff;">THE PLAYERS</h1>
+    <p data-aos="fade-up" data-aos-delay="120" style="max-width:620px;margin:22px 0 0;font-family:Manrope;font-size:17px;line-height:1.6;color:rgba(255,255,255,0.85);">Four professionals carrying the Lions across the IGPL season — a marquee marshal, a six-foot-seven rising star, a Tour-tested grinder, and a young Bengaluru contender.</p>
+  </div>
+</section>
+
+<section style="background:#F4F0E8;padding:88px 32px;">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;">
+
+    <a data-aos="fade-up" href="#bhullar" style="text-decoration:none;color:inherit;">
+      <div class="player-portrait">
+        <div class="init">GB</div>
+        <div class="badge">
+          <div style="font-family:Sora;font-weight:700;font-size:14px;">Gaganjeet Bhullar</div>
+          <div style="font-family:Manrope;font-weight:500;font-size:11px;color:#E9CB8E;margin-top:2px;">Marquee · #1</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-family:Sora;font-weight:700;font-size:18px;color:#1A1513;">Gaganjeet Bhullar</div>
+      <div style="font-family:Manrope;font-size:13px;color:#6B635C;margin-top:4px;">25 pro wins · 11 Asian Tour titles · Arjuna Awardee</div>
+    </a>
+
+    <a data-aos="fade-up" data-aos-delay="80" href="#sethie" style="text-decoration:none;color:inherit;">
+      <div class="player-portrait">
+        <div class="init">HS</div>
+        <div class="badge">
+          <div style="font-family:Sora;font-weight:700;font-size:14px;">Harshjeet Sethie</div>
+          <div style="font-family:Manrope;font-weight:500;font-size:11px;color:#E9CB8E;margin-top:2px;">Rising Star · 6'7"</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-family:Sora;font-weight:700;font-size:18px;color:#1A1513;">Harshjeet Singh Sethie</div>
+      <div style="font-family:Manrope;font-size:13px;color:#6B635C;margin-top:4px;">Coimbatore Open 2023 winner · Delhi GC</div>
+    </a>
+
+    <a data-aos="fade-up" data-aos-delay="160" href="#dwivedi" style="text-decoration:none;color:inherit;">
+      <div class="player-portrait">
+        <div class="init">SD</div>
+        <div class="badge">
+          <div style="font-family:Sora;font-weight:700;font-size:14px;">Samarth Dwivedi</div>
+          <div style="font-family:Manrope;font-weight:500;font-size:11px;color:#E9CB8E;margin-top:2px;">PGTI Pro</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-family:Sora;font-weight:700;font-size:18px;color:#1A1513;">Samarth Dwivedi</div>
+      <div style="font-family:Manrope;font-size:13px;color:#6B635C;margin-top:4px;">OWGR ranked · IGPL 2025 T4 finish</div>
+    </a>
+
+    <a data-aos="fade-up" data-aos-delay="240" href="#yashas" style="text-decoration:none;color:inherit;">
+      <div class="player-portrait">
+        <div class="init">YC</div>
+        <div class="badge">
+          <div style="font-family:Sora;font-weight:700;font-size:14px;">Yashas Chandra</div>
+          <div style="font-family:Manrope;font-weight:500;font-size:11px;color:#E9CB8E;margin-top:2px;">Rising Talent</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-family:Sora;font-weight:700;font-size:18px;color:#1A1513;">Yashas Chandra M S</div>
+      <div style="font-family:Manrope;font-size:13px;color:#6B635C;margin-top:4px;">Active IGPL competitor · 2025/26 roster</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- BHULLAR -->
+<section id="bhullar" style="background:#FBF9F4;padding:104px 32px;border-top:1px solid rgba(26,21,19,0.06);">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:54px;align-items:start;">
+    <div data-aos="fade-up">
+      <div class="player-portrait" style="aspect-ratio:3/4;">
+        <div class="init">GB</div>
+        <div class="badge">
+          <div style="font-family:Sora;font-weight:700;font-size:14px;">Gaganjeet Bhullar</div>
+          <div style="font-family:Manrope;font-weight:500;font-size:11px;color:#E9CB8E;margin-top:2px;">Marquee · Asian Tour</div>
+        </div>
+      </div>
+      <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="stat"><div class="v">25</div><div class="l">Pro Wins</div></div>
+        <div class="stat"><div class="v">11</div><div class="l">Asian Tour Titles</div></div>
+        <div class="stat"><div class="v">85</div><div class="l">Career-High OWGR</div></div>
+        <div class="stat"><div class="v">'13</div><div class="l">Arjuna Award</div></div>
+      </div>
+    </div>
+    <div data-aos="fade-up" data-aos-delay="120">
+      <div style="font-family:Manrope;font-weight:700;letter-spacing:0.22em;font-size:11.5px;color:#C4202A;text-transform:uppercase;">Marquee Player · #01</div>
+      <h2 style="margin:14px 0 8px;font-family:Sora;font-weight:800;font-size:54px;line-height:1.0;letter-spacing:-0.03em;color:#1A1513;">Gaganjeet Singh Bhullar</h2>
+      <div style="font-family:Manrope;font-size:14px;color:#6B635C;">Born 27 April 1988 · Amritsar, Punjab · 6 ft 1 in · Resides in Kapurthala</div>
+      <p style="margin:22px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">India's most decorated active golfer joins the Lions as our marquee — a 25-time professional winner and one of the most successful Indians in Asian Tour history. Bhullar turned pro in 2006, peaked at world No. 85 in March 2013, and was honoured with the <strong>Arjuna Award</strong>, India's second-highest sporting honour, the same year.</p>
+      <p style="margin:14px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">His eleven Asian Tour titles make him a fixture of that circuit's modern era. His lone <strong>DP World Tour</strong> win came at the <strong>2018 Fiji International</strong>, and he made his single major-championship appearance at <strong>The Open at Turnberry in 2009</strong>. He was India's number-one amateur in <strong>2004 and 2006</strong>, contributed to India's team silver at the <strong>2006 Asian Games</strong>, and represented India at the <strong>2024 Paris Olympics</strong>.</p>
+      <p style="margin:14px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">Introduced to golf at age four by his father, H.S. Bhullar, his career is a long, patient, ledger-style story — exactly the kind the Lions are built around.</p>
+
+      <div style="margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+        <div style="background:#fff;border:1px solid rgba(26,21,19,0.06);border-radius:18px;padding:18px;">
+          <div style="font-family:Manrope;font-size:11.5px;color:#C4202A;letter-spacing:0.12em;text-transform:uppercase;">Signature Win</div>
+          <div style="font-family:Sora;font-weight:700;font-size:18px;color:#1A1513;margin-top:6px;">Fiji International, 2018</div>
+          <div style="font-family:Manrope;font-size:13px;color:#6B635C;margin-top:6px;">Sole DP World Tour victory.</div>
+        </div>
+        <div style="background:#fff;border:1px solid rgba(26,21,19,0.06);border-radius:18px;padding:18px;">
+          <div style="font-family:Manrope;font-size:11.5px;color:#C4202A;letter-spacing:0.12em;text-transform:uppercase;">Major Appearance</div>
+          <div style="font-family:Sora;font-weight:700;font-size:18px;color:#1A1513;margin-top:6px;">The Open · Turnberry 2009</div>
+          <div style="font-family:Manrope;font-size:13px;color:#6B635C;margin-top:6px;">Career major debut.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SETHIE -->
+<section id="sethie" style="background:#F4F0E8;padding:104px 32px;">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr;gap:54px;align-items:start;">
+    <div data-aos="fade-up">
+      <div style="font-family:Manrope;font-weight:700;letter-spacing:0.22em;font-size:11.5px;color:#C4202A;text-transform:uppercase;">Rising Star · #02</div>
+      <h2 style="margin:14px 0 8px;font-family:Sora;font-weight:800;font-size:54px;line-height:1.0;letter-spacing:-0.03em;color:#1A1513;">Harshjeet Singh Sethie</h2>
+      <div style="font-family:Manrope;font-size:14px;color:#6B635C;">Delhi · Standing 6 ft 7 in · Product of the Delhi Golf Club</div>
+      <p style="margin:22px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">A genuinely unusual presence on the Indian tour — at <strong>six feet seven inches</strong>, Sethie cuts a silhouette the gallery learns to find on the practice tee before he ever reaches the first box. The height is a hook; the resume backs it up.</p>
+      <p style="margin:14px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">At 21, he claimed his maiden professional title at the <strong>Rs 1 crore Coimbatore Open 2023</strong>, beating the experienced Om Prakash Chouhan in a playoff. The win lifted him from <strong>81st to 11th on the PGTI rankings</strong> in a single week and announced a young player who could close in big moments.</p>
+      <p style="margin:14px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">Sethie is the kind of signing a long-horizon franchise should be making — early-career, high-ceiling, with a story Chennai's fans can grow up watching.</p>
+    </div>
+    <div data-aos="fade-up" data-aos-delay="120">
+      <div class="player-portrait">
+        <div class="init">HS</div>
+        <div class="badge">
+          <div style="font-family:Sora;font-weight:700;font-size:14px;">Harshjeet Sethie</div>
+          <div style="font-family:Manrope;font-weight:500;font-size:11px;color:#E9CB8E;margin-top:2px;">Rising Star</div>
+        </div>
+      </div>
+      <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="stat"><div class="v">6'7"</div><div class="l">Height</div></div>
+        <div class="stat"><div class="v">'23</div><div class="l">Coimbatore Open</div></div>
+        <div class="stat"><div class="v">11</div><div class="l">PGTI Rank Post-Win</div></div>
+        <div class="stat"><div class="v">DGC</div><div class="l">Home Club</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DWIVEDI -->
+<section id="dwivedi" style="background:#FBF9F4;padding:104px 32px;border-top:1px solid rgba(26,21,19,0.06);">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:54px;align-items:start;">
+    <div data-aos="fade-up">
+      <div class="player-portrait">
+        <div class="init">SD</div>
+        <div class="badge">
+          <div style="font-family:Sora;font-weight:700;font-size:14px;">Samarth Dwivedi</div>
+          <div style="font-family:Manrope;font-weight:500;font-size:11px;color:#E9CB8E;margin-top:2px;">Tour Pro</div>
+        </div>
+      </div>
+      <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="stat"><div class="v">PGTI</div><div class="l">Active Circuit</div></div>
+        <div class="stat"><div class="v">T4</div><div class="l">IGPL '25 Best Finish</div></div>
+        <div class="stat"><div class="v">-7</div><div class="l">Round-to-Par</div></div>
+        <div class="stat"><div class="v">OWGR</div><div class="l">Ranked</div></div>
+      </div>
+    </div>
+    <div data-aos="fade-up" data-aos-delay="120">
+      <div style="font-family:Manrope;font-weight:700;letter-spacing:0.22em;font-size:11.5px;color:#C4202A;text-transform:uppercase;">Tour Pro · #03</div>
+      <h2 style="margin:14px 0 8px;font-family:Sora;font-weight:800;font-size:54px;line-height:1.0;letter-spacing:-0.03em;color:#1A1513;">Samarth Dwivedi</h2>
+      <p style="margin:22px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">A confirmed touring professional with an <strong>Official World Golf Ranking profile</strong> and an active presence on the PGTI. The signature line on his current resume is a <strong>fourth-place finish at 7-under in an IGPL event during the 2025 season</strong> — proof that on the right week his number can lead a leaderboard.</p>
+      <p style="margin:14px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">Dwivedi rounds out the Lions roster with the kind of repeatable, tournament-tested professional who keeps a team in the conversation across a full season rather than a single hot week.</p>
+    </div>
+  </div>
+</section>
+
+<!-- YASHAS -->
+<section id="yashas" style="background:#F4F0E8;padding:104px 32px;">
+  <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:54px;align-items:center;">
+    <div data-aos="fade-up">
+      <div class="player-portrait">
+        <div class="init">YC</div>
+        <div class="badge">
+          <div style="font-family:Sora;font-weight:700;font-size:14px;">Yashas Chandra M S</div>
+          <div style="font-family:Manrope;font-weight:500;font-size:11px;color:#E9CB8E;margin-top:2px;">Rising Talent</div>
+        </div>
+      </div>
+    </div>
+    <div data-aos="fade-up" data-aos-delay="120">
+      <div style="font-family:Manrope;font-weight:700;letter-spacing:0.22em;font-size:11.5px;color:#C4202A;text-transform:uppercase;">Rising Talent · #04</div>
+      <h2 style="margin:14px 0 8px;font-family:Sora;font-weight:800;font-size:54px;line-height:1.0;letter-spacing:-0.03em;color:#1A1513;">Yashas Chandra M S</h2>
+      <p style="margin:22px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">An active IGPL competitor in the current season — rounds of <strong>75-68</strong> to sit at one-under at the <strong>IGPL Bharath Classic</strong>, and contention at the <strong>IGPL Chandigarh</strong> leg.</p>
+      <p style="margin:14px 0 0;font-family:Manrope;font-size:15.5px;line-height:1.7;color:#3a322d;">A young player still writing his ledger — and exactly the kind the Lions are happy to invest patience in. Full profile to follow as the season progresses.</p>
+    </div>
+  </div>
+</section>
+
+<!-- footer injected by lions.js -->
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init({duration:800,easing:'ease-out-cubic',once:true,offset:70});</script>
+<script src="assets/lions.js"></script>
+</body>
+</html>
+
