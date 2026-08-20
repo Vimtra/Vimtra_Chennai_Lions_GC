@@ -16,9 +16,8 @@ interface AeTextProps {
 }
 
 /**
- * After-Effects-style staggered text reveals, ported from the [data-ae="…"]
- * splitter in assets/lions.js. Splits text up front (so SSR markup matches)
- * and toggles `.is-in` when scrolled into view.
+ * After-Effects-style staggered text reveals. Splits text up front (so
+ * SSR markup matches) and toggles `.is-in` when scrolled into view.
  */
 export default function AeText({
   text,

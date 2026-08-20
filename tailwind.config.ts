@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Brand tokens ported verbatim from the static site's tailwind config
- * (assets/lions.js) so existing arbitrary-value markup keeps working.
+ * Brand tokens for the Vimtra Chennai Lions GC site.
+ * Arbitrary-value markup elsewhere in the codebase resolves against these.
  */
 const config: Config = {
   content: [
@@ -20,8 +20,11 @@ const config: Config = {
         muted: "#6B635C",
       },
       fontFamily: {
-        sora: ["Sora", "sans-serif"],
-        manrope: ["Manrope", "sans-serif"],
+        // Resolves to the CSS variable set by next/font/google in app/layout.tsx.
+        // The literal family names remain as fallbacks so any residual raw
+        // reference still lands on the correct face during the swap window.
+        sora: ["var(--font-sora)", "Sora", "sans-serif"],
+        manrope: ["var(--font-manrope)", "Manrope", "sans-serif"],
       },
       maxWidth: {
         "screen-content": "1280px",

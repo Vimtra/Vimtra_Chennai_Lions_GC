@@ -25,6 +25,12 @@ yarn-error.log*
 .env*.local
 
 # prisma
+# Local SQLite dev database + journal / write-ahead files must NEVER
+# be committed. Migration files under prisma/migrations/ are tracked.
+/prisma/*.db
+/prisma/*.db-journal
+/prisma/*.db-wal
+/prisma/*.db-shm
 /prisma/migrations/dev.db*
 
 # typescript

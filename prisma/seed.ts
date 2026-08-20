@@ -44,13 +44,23 @@ async function main() {
   }
   console.log(`✔ Seeded ${products.length} products`);
 
-  // Admin user
-  const email = (process.env.ADMIN_EMAIL || "admin@vimtrachennailions.gc").toLowerCase();
-  const password = process.env.ADMIN_PASSWORD || "lions2026";
+  // Admin user — both credentials must be provided via env. No defaults are
+  // baked in; a leaked "lions2026"-style default would compromise every
+  // deployment that ever ran the seed.
+  const email = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+  const password = process.env.ADMIN_PASSWORD || "";
+  if (!email || !password) {
+    throw new Error(
+      "Refusing to seed: set ADMIN_EMAIL and ADMIN_PASSWORD in the environment before running `npm run db:seed`."
+    );
+  }
+  if (password.length < 12) {
+    throw new Error("Refusing to seed: ADMIN_PASSWORD must be at least 12 characters.");
+  }
   const passwordHash = await bcrypt.hash(password, 10);
   await prisma.user.upsert({
     where: { email },
-    update: { role: "ADMIN" },
+    update: { role: "ADMIN", passwordHash },
     create: { email, name: "Lions Admin", passwordHash, role: "ADMIN" },
   });
   console.log(`✔ Admin ready: ${email}`);

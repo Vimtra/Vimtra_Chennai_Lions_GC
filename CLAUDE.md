@@ -2,7 +2,7 @@
 
 This file provides comprehensive guidelines for development, styling, and the in-progress migration to **Next.js & Tailwind CSS** for the **Vimtra Chennai Lions GC** website.
 
-> **Status (migration started):** The site now runs as a **Next.js 15 (App Router) + React 18 + Tailwind CSS v3** application, in-place inside the `Vimtra Chennai Lions Golf` folder. The original static `*.html` files plus `assets/lions.js` / `assets/lions.css` are kept as **reference only** during the page-by-page port — they are not served by Next.js.
+> **Status:** The site runs as a **Next.js 15 (App Router) + React 18 + Tailwind CSS v3** application. The migration from the pre-existing static HTML/JS design harness is complete; the legacy `*.html` files, `assets/lions.{js,css}`, and the `dc-runtime` (`support.js`, `image-slot.js`) have been removed. Player photography now lives under `public/players/`. See the M0 change log at the bottom of this file for detail.
 
 ---
 
@@ -19,15 +19,13 @@ This file provides comprehensive guidelines for development, styling, and the in
 ### Stack & Conventions
 *   **Next.js 15 App Router**, React 18, TypeScript (`strict`), import alias `@/*` → project root.
 *   **Tailwind CSS v3** via `tailwind.config.ts` (brand tokens under `theme.extend`). Existing arbitrary-value markup (e.g. `text-[#E9CB8E]`) keeps working.
-*   **Fonts**: Sora + Manrope loaded via a Google Fonts `<link>` in `app/layout.tsx`, so the literal `'Sora'`/`'Manrope'` family names used throughout the design system resolve everywhere.
+*   **Fonts**: Sora + Manrope loaded via `next/font/google` in `app/layout.tsx`. They expose CSS variables `--font-sora` and `--font-manrope`; both `tailwind.config.ts` (via `fontFamily`) and `app/globals.css` resolve against these variables.
 *   **Icons**: `lucide-react` (replaces the Lucide CDN).
 *   **Animations**: AOS / AE-style behavior is reimplemented in React — `components/Reveal.tsx` (scroll reveals) and `components/AeText.tsx` (word/mask/char text reveals), driven by CSS in `app/globals.css`.
 *   **Cart state**: `zustand` store in `store/cart.ts`, persisted to `localStorage` under key **`lions_cart`**. Read it only after `useCartHydrated()` to avoid hydration mismatches.
 *   **Images**: use `next/image` against files in `public/assets/`. Stored product paths like `assets/x.png` are normalized to `/assets/x.png` in `lib/products.ts`.
-*   **Global design system** (loader, navbar, footer, AE animations, store/cart styles) lives in `app/globals.css`, ported from `assets/lions.css`.
-
-### Legacy Static Setup (reference only)
-The original static pages can still be served with any static server (`python -m http.server 8000`); they depend on the Tailwind Play CDN, Lucide CDN, and AOS CDN. Do **not** add features here — port to the App Router instead.
+*   **Global design system** (loader, navbar, footer, AE animations, store/cart styles) lives in `app/globals.css`.
+*   **Security headers**: baseline HTTP headers (X-Content-Type-Options, X-Frame-Options: DENY, Referrer-Policy, Permissions-Policy, HSTS in prod) applied to every route via `next.config.mjs`. A full Content-Security-Policy with nonces is scheduled alongside the design-system consolidation milestone.
 
 ---
 
@@ -147,20 +145,22 @@ Vimtra Chennai Lions Golf/
 *   **User Management** (`/admin/users`): list accounts, grant/revoke ADMIN, delete (with self-lockout guards).
 *   **News** (`/admin/news`): scaffold for a rich-text editor (TipTap/Quill) — pending.
 
-### Setup (Postgres required)
+### Setup (SQLite in dev, Postgres for prod)
 ```bash
-cp .env.example .env           # set DATABASE_URL (+ ADMIN_EMAIL/PASSWORD, CRON_SECRET)
-npx prisma migrate dev --name init   # create tables
+cp .env.example .env           # set DATABASE_URL (+ ADMIN_EMAIL/PASSWORD, CRON_SECRET, NEXT_PUBLIC_SITE_URL)
+npx prisma migrate deploy      # apply prisma/migrations/<timestamp>_init
 npm run db:seed                # seed products + admin user
 npm run dev
 ```
-Scripts: `db:migrate`, `db:deploy` (prod), `db:seed`, `db:studio`. `build` runs `prisma generate` first (Vercel-ready).
+The datasource in `prisma/schema.prisma` is `sqlite`; the initial baseline migration is checked in under `prisma/migrations/`. Switching to Postgres for prod: change `provider` in `schema.prisma` to `postgresql`, drop the SQLite migration folder, run `npx prisma migrate dev --name init` against the Postgres URL, then re-seed. The seed refuses to run unless `ADMIN_EMAIL` and `ADMIN_PASSWORD` (≥ 12 chars) are set — there are no baked-in defaults.
 
-### Remaining Work
+Scripts: `db:migrate` (dev), `db:deploy` (prod), `db:seed`, `db:studio`. `build` runs `prisma generate` first (Vercel-ready).
+
+### Remaining Work (post-M0)
 *   **News editor**: add the rich-text UI + a `Post` model (draft/publish/archive) feeding `/news`.
-*   **IGPL scraper**: `app/api/sync/igpl/route.ts` is a cron-scheduled scaffold — implement the real `cheerio` scrape + DB write + revalidate.
-*   **Contact + email**: `submitContact` validates + logs only — wire to email/DB; could persist as a `Message` model.
-*   **Optional**: password reset / email verification; move fonts to `next/font`.
+*   **IGPL scraper**: `app/api/sync/igpl/route.ts` is currently a scaffold and is gated behind the `IGPL_SYNC_ENABLED` env flag (default `false`). Implement the real `cheerio` scrape + DB write + `revalidatePath` before enabling the cron.
+*   **Contact + email**: `submitContact` validates + logs only — wire to email/DB; will persist as `ContactMessage`.
+*   **Optional**: password reset / email verification; session rotation on password change.
 
 ### Component Guidelines
 1.  **State Management**: Use `Zustand` or React Context for managing the shopping cart globally across page navigations.

@@ -5,7 +5,13 @@ import type { PlayerFeature as PF } from "@/data/players";
 export default function PlayerFeature({ f }: { f: PF }) {
   const portrait = (
     <Reveal variant="fade-up">
-      <PlayerPortrait init={f.init} badgeName={f.badgeName} badgeSub={f.badgeSub} />
+      <PlayerPortrait
+        init={f.init}
+        image={f.image}
+        badgeName={f.badgeName}
+        badgeSub={f.badgeSub}
+        alt={`${f.name} — Vimtra Chennai Lions GC`}
+      />
       {f.stats && (
         <div className="mt-[18px] grid grid-cols-2 gap-[10px]">
           {f.stats.map((s, i) => (

@@ -8,7 +8,7 @@ import { ROSTER, FEATURES } from "@/data/players";
 export const metadata: Metadata = {
   title: "Players · Vimtra Chennai Lions GC",
   description:
-    "The 2026 Lions roster — a marquee Asian Tour winner, a six-foot-seven rising star, a Tour-tested grinder, and a young contender.",
+    "Season 2026 roster — Gaganjeet Bhullar (marquee), Harshjeet Singh Sethie, Samarth Dwivedi, and Yashas Chandra M S.",
 };
 
 export default function PlayersPage() {
@@ -49,9 +49,9 @@ export default function PlayersPage() {
             as="p"
             className="max-w-[620px] mt-[22px] font-manrope text-[17px] leading-[1.6] text-white/85"
           >
-            Four professionals carrying the Lions across the IGPL season — a
-            marquee marshal, a six-foot-seven rising star, a Tour-tested grinder,
-            and a young Bengaluru contender.
+            A marquee, a proven domestic winner, an internationally ranked pro,
+            and an active IGPL competitor — balanced by design to compete week
+            after week across the season.
           </Reveal>
         </div>
       </section>
@@ -62,7 +62,13 @@ export default function PlayersPage() {
           {ROSTER.map((p, i) => (
             <Reveal key={p.anchor} variant="fade-up" delay={i * 80}>
               <a href={`#${p.anchor}`} className="no-underline text-inherit block">
-                <PlayerPortrait init={p.init} badgeName={p.badgeName} badgeSub={p.badgeSub} />
+                <PlayerPortrait
+                  init={p.init}
+                  image={p.image}
+                  badgeName={p.badgeName}
+                  badgeSub={p.badgeSub}
+                  alt={`${p.fullName} — Vimtra Chennai Lions GC`}
+                />
                 <div className="mt-[14px] font-sora font-bold text-[18px] text-ink">
                   {p.fullName}
                 </div>

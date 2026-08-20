@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Send, ShoppingBag, UserRound, Menu, X, LogOut, ShieldCheck, LogIn } from "lucide-react";
-import { NAV_ITEMS, PRIMARY_NAV } from "@/lib/nav";
+import { NAV_ITEMS, PRIMARY_NAV, NAV_CLUSTERS } from "@/lib/nav";
 import { useCart, cartCount, useCartHydrated } from "@/store/cart";
 import { signOut } from "@/app/(auth)/actions";
 import type { SafeUser } from "@/lib/auth";
@@ -52,7 +52,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
                 VIMTRA CHENNAI LIONS
               </span>
               <span className="font-manrope font-semibold text-[9.5px] tracking-[0.46em] text-[#E9CB8E]">
-                GOLF&nbsp;CLUB&nbsp;·&nbsp;GC
+                A&nbsp;FRANCHISE&nbsp;BY&nbsp;VIMTRA&nbsp;VENTURES
               </span>
             </span>
           </Link>
@@ -121,7 +121,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
                   VIMTRA CHENNAI LIONS
                 </span>
                 <span className="font-manrope font-semibold text-[9px] tracking-[0.46em] text-[#E9CB8E]">
-                  GOLF CLUB · GC
+                  A FRANCHISE BY VIMTRA VENTURES
                 </span>
               </span>
             </Link>
@@ -216,112 +216,55 @@ export default function Nav({ user }: { user: SafeUser | null }) {
             {/* Column 2: Links Columns (8 cols) */}
             <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-8">
               
-              {/* Club & Franchise */}
-              <div className="flex flex-col gap-4">
-                <h4 className="font-sora font-extrabold text-[12px] text-[#E9CB8E] uppercase tracking-[0.2em] border-l-2 border-[#E9CB8E] pl-3">
-                  The Club
-                </h4>
-                <div className="flex flex-col gap-1.5">
-                  {NAV_ITEMS.filter((item) =>
-                    ["/", "/the-club", "/the-pride", "/partners", "/gallery"].includes(item.href)
-                  ).map((n) => {
-                    const Icon = n.icon;
-                    return (
-                      <Link
-                        key={n.href}
-                        href={n.href}
-                        className={`group flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 no-underline ${
-                          isActive(n.href)
-                            ? "bg-white/[0.06] border border-white/[0.1] text-[#E9CB8E]"
-                            : "border border-transparent text-white/70 hover:text-white hover:bg-white/[0.03]"
-                        }`}
-                        onClick={() => setOpen(false)}
-                      >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                          isActive(n.href) ? "bg-[#E9CB8E]/10 text-[#E9CB8E]" : "bg-white/[0.04] text-white/50 group-hover:text-white group-hover:bg-[#E9CB8E]/10"
-                        }`}>
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <span className="font-manrope font-semibold text-[14px]">{n.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Tournament Center */}
-              <div className="flex flex-col gap-4">
-                <h4 className="font-sora font-extrabold text-[12px] text-[#E9CB8E] uppercase tracking-[0.2em] border-l-2 border-[#E9CB8E] pl-3">
-                  Tournament
-                </h4>
-                <div className="flex flex-col gap-1.5">
-                  {NAV_ITEMS.filter((item) =>
-                    ["/players", "/fixtures", "/scores", "/leaderboards", "/news"].includes(item.href)
-                  ).map((n) => {
-                    const Icon = n.icon;
-                    return (
-                      <Link
-                        key={n.href}
-                        href={n.href}
-                        className={`group flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 no-underline ${
-                          isActive(n.href)
-                            ? "bg-white/[0.06] border border-white/[0.1] text-[#E9CB8E]"
-                            : "border border-transparent text-white/70 hover:text-white hover:bg-white/[0.03]"
-                        }`}
-                        onClick={() => setOpen(false)}
-                      >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                          isActive(n.href) ? "bg-[#E9CB8E]/10 text-[#E9CB8E]" : "bg-white/[0.04] text-white/50 group-hover:text-white group-hover:bg-[#E9CB8E]/10"
-                        }`}>
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <span className="font-manrope font-semibold text-[14px]">{n.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Fan Shop & Contact */}
-              <div className="flex flex-col gap-4">
-                <h4 className="font-sora font-extrabold text-[12px] text-[#E9CB8E] uppercase tracking-[0.2em] border-l-2 border-[#E9CB8E] pl-3">
-                  Shop &amp; Support
-                </h4>
-                <div className="flex flex-col gap-1.5">
-                  {NAV_ITEMS.filter((item) =>
-                    ["/shop", "/cart", "/contact"].includes(item.href)
-                  ).map((n) => {
-                    const Icon = n.icon;
-                    return (
-                      <Link
-                        key={n.href}
-                        href={n.href}
-                        className={`group flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 no-underline ${
-                          isActive(n.href)
-                            ? "bg-white/[0.06] border border-white/[0.1] text-[#E9CB8E]"
-                            : "border border-transparent text-white/70 hover:text-white hover:bg-white/[0.03]"
-                        }`}
-                        onClick={() => setOpen(false)}
-                      >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                          isActive(n.href) ? "bg-[#E9CB8E]/10 text-[#E9CB8E]" : "bg-white/[0.04] text-white/50 group-hover:text-white group-hover:bg-[#E9CB8E]/10"
-                        }`}>
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <span className="font-manrope font-semibold text-[14px]">{n.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-
+              {NAV_CLUSTERS.map((cluster) => {
+                const items = cluster.hrefs
+                  .map((h) => NAV_ITEMS.find((n) => n.href === h))
+                  .filter((n): n is (typeof NAV_ITEMS)[number] => Boolean(n));
+                return (
+                  <div key={cluster.key} className="flex flex-col gap-4">
+                    <h4 className="font-sora font-extrabold text-[12px] text-[#E9CB8E] uppercase tracking-[0.2em] border-l-2 border-[#E9CB8E] pl-3">
+                      {cluster.title}
+                    </h4>
+                    <div className="flex flex-col gap-1.5">
+                      {items.map((n) => {
+                        const Icon = n.icon;
+                        return (
+                          <Link
+                            key={n.href}
+                            href={n.href}
+                            className={`group flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 no-underline ${
+                              isActive(n.href)
+                                ? "bg-white/[0.06] border border-white/[0.1] text-[#E9CB8E]"
+                                : "border border-transparent text-white/70 hover:text-white hover:bg-white/[0.03]"
+                            }`}
+                            onClick={() => setOpen(false)}
+                          >
+                            <div
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                                isActive(n.href)
+                                  ? "bg-[#E9CB8E]/10 text-[#E9CB8E]"
+                                  : "bg-white/[0.04] text-white/50 group-hover:text-white group-hover:bg-[#E9CB8E]/10"
+                              }`}
+                            >
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <span className="font-manrope font-semibold text-[14px]">
+                              {n.label}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           {/* Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-white/[0.08] gap-4">
             <div className="font-manrope text-[11px] text-white/40 tracking-[0.2em] uppercase">
-              © 2026 · VIMTRA CHENNAI LIONS · GC
+              © 2026 · VIMTRA CHENNAI LIONS GC
             </div>
             <div className="flex gap-6 text-[12px] font-manrope text-white/60">
               <Link href="/privacy" className="hover:text-white transition-colors no-underline" onClick={() => setOpen(false)}>Privacy Policy</Link>

@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 const WORD = "VIMTRA CHENNAI LIONS".split(" ");
 
 /**
- * Brand loading screen, ported from the loader injected by assets/lions.js.
- * Shows on first mount, then plays the exit transition and unmounts.
+ * Brand loading screen. Shows on first mount, then plays the exit
+ * transition and unmounts.
  */
 export default function Loader() {
   const [leaving, setLeaving] = useState(false);
