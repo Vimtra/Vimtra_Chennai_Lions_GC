@@ -1,124 +1,120 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import type { StandingBoard } from "@prisma/client";
+import type { StandingRow } from "@/lib/standings";
 
 type Board = "team" | "player" | "order";
 
-const TABS: { key: Board; label: string }[] = [
-  { key: "team", label: "TEAM STANDINGS" },
-  { key: "player", label: "PLAYER OF THE SEASON" },
-  { key: "order", label: "ORDER OF MERIT" },
+const TABS: { key: Board; label: string; boardCode: StandingBoard }[] = [
+  { key: "team", label: "TEAM STANDINGS", boardCode: "TEAM" },
+  { key: "player", label: "PLAYER OF THE SEASON", boardCode: "PLAYER" },
+  { key: "order", label: "ORDER OF MERIT", boardCode: "ORDER" },
 ];
 
-const TEAM = [
-  ["1", "Bengaluru Tuskers GC", "5", "1,842", "1st (×2)", "69.4", false],
-  ["2", "Vimtra Chennai Lions GC", "5", "1,694", "2nd (×2)", "70.1", true],
-  ["3", "Mumbai Mavericks", "5", "1,562", "1st (×1)", "70.6", false],
-  ["4", "Delhi Royals GC", "5", "1,498", "2nd (×1)", "70.9", false],
-  ["5", "Hyderabad Hawks", "5", "1,402", "3rd (×1)", "71.3", false],
-  ["6", "Kolkata Tigers GC", "5", "1,288", "4th", "71.8", false],
-  ["7", "Pune Panthers", "5", "1,124", "5th", "72.4", false],
-  ["8", "Jaipur Jaguars GC", "5", "998", "6th", "73.0", false],
-] as const;
+// Column header sets per board. Kept out of the JSX so the shape of the
+// three tables stays parallel; extra columns come from row.extra (a JSON
+// blob managed by the admin surface).
+const HEADERS: Record<Board, string[]> = {
+  team: ["Pos", "Franchise", "Events", "Points", "Best Finish", "Avg Score"],
+  player: ["Pos", "Player", "Franchise", "Top 10s", "Wins", "Points"],
+  order: ["Pos", "Player", "Events", "Earnings (₹)", "Avg / Event", ""],
+};
 
-const PLAYER = [
-  ["1", "Aman Raj", "Bengaluru Tuskers", "5", "2", "612", false],
-  ["2", "Gaganjeet Bhullar", "Vimtra Chennai Lions", "4", "1", "568", true],
-  ["3", "Shubhankar Sharma", "Mumbai Mavericks", "4", "1", "522", false],
-  ["4", "Karandeep Kochhar", "Delhi Royals", "3", "1", "478", false],
-  ["5", "Harshjeet Sethie", "Vimtra Chennai Lions", "3", "0", "442", true],
-  ["6", "Veer Ahlawat", "Hyderabad Hawks", "2", "0", "396", false],
-  ["11", "Samarth Dwivedi", "Vimtra Chennai Lions", "1", "0", "312", true],
-  ["28", "Yashas Chandra M S", "Vimtra Chennai Lions", "0", "0", "164", true],
-] as const;
+const EXTRA_KEYS: Record<Board, string[]> = {
+  team: ["events", "bestFinish", "avgScore"],
+  player: ["teamName", "top10", "wins"],
+  order: ["events", "earnings", "avgPerEvent"],
+};
 
-const ORDER = [
-  ["1", "Aman Raj", "5", "1,82,40,000", "4.8", false],
-  ["2", "Gaganjeet Bhullar", "5", "1,64,80,000", "6.2", true],
-  ["3", "Shubhankar Sharma", "5", "1,42,20,000", "7.0", false],
-  ["7", "Harshjeet Sethie", "5", "78,40,000", "11.4", true],
-  ["14", "Samarth Dwivedi", "5", "52,10,000", "18.6", true],
-] as const;
+const LIONS_TEAM_NAMES = new Set([
+  "vimtra chennai lions gc",
+  "vimtra chennai lions",
+  "chennai lions gc",
+  "chennai lions",
+]);
 
-function Pos({ value, lions }: { value: string; lions: boolean }) {
-  return <td className={`pos ${lions ? "red" : ""}`}>{value}</td>;
+function isLions(row: StandingRow): boolean {
+  const team = (row.teamName ?? row.name).toLowerCase();
+  return LIONS_TEAM_NAMES.has(team);
 }
 
-export default function LeaderboardTabs() {
-  const [board, setBoard] = useState<Board>("team");
+export default function LeaderboardTabs({
+  seasonYear,
+  boards,
+}: {
+  seasonYear: number;
+  boards: { team: StandingRow[]; player: StandingRow[]; order: StandingRow[] };
+}) {
+  const [board, setBoard] = useState<Board>(
+    boards.team.length ? "team" : boards.player.length ? "player" : "order"
+  );
+
+  const activeRows = useMemo(
+    () => (board === "team" ? boards.team : board === "player" ? boards.player : boards.order),
+    [board, boards]
+  );
 
   return (
-    <div className="max-w-[1100px] mx-auto">
+    <div>
       <div className="flex gap-[10px] flex-wrap mb-[30px]">
         {TABS.map((t) => (
-          <button key={t.key} className={`tab ${board === t.key ? "active" : ""}`} onClick={() => setBoard(t.key)}>
+          <button
+            key={t.key}
+            className={`tab ${board === t.key ? "active" : ""}`}
+            onClick={() => setBoard(t.key)}
+          >
             {t.label}
           </button>
         ))}
       </div>
 
-      {board === "team" && (
-        <div className="bg-cream-50 border border-black/[0.07] rounded-[22px] p-6 overflow-x-auto">
-          <h2 className="m-0 mb-[18px] font-sora font-extrabold text-[24px] tracking-[-0.02em]">
-            IGPL 2026 · Franchise Standings
-          </h2>
-          <table className="stats-table">
-            <thead>
-              <tr><th>Pos</th><th>Franchise</th><th>Events</th><th>Points</th><th>Best Finish</th><th>Avg Score</th></tr>
-            </thead>
-            <tbody>
-              {TEAM.map((r) => (
-                <tr key={r[1]} className={r[6] ? "lions" : ""}>
-                  <Pos value={r[0]} lions={r[6]} />
-                  <td>{r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <div className="bg-cream-50 border border-black/[0.07] rounded-[22px] p-6 overflow-x-auto">
+        <h2 className="m-0 mb-[18px] font-sora font-extrabold text-[24px] tracking-[-0.02em]">
+          {board === "team"
+            ? `IGPL ${seasonYear} · Franchise Standings`
+            : board === "player"
+            ? `Player of the Season · ${seasonYear}`
+            : `Order of Merit · ${seasonYear}`}
+        </h2>
 
-      {board === "player" && (
-        <div className="bg-cream-50 border border-black/[0.07] rounded-[22px] p-6 overflow-x-auto">
-          <h2 className="m-0 mb-[18px] font-sora font-extrabold text-[24px] tracking-[-0.02em]">
-            Player of the Season Race
-          </h2>
+        {activeRows.length === 0 ? (
+          <div className="font-manrope text-[14px] leading-[1.65] text-muted py-6">
+            No rows recorded for this board yet. Standings publish here once
+            season scoring produces verifiable results.
+          </div>
+        ) : (
           <table className="stats-table">
             <thead>
-              <tr><th>Pos</th><th>Player</th><th>Franchise</th><th>Top 10s</th><th>Wins</th><th>Points</th></tr>
+              <tr>
+                {HEADERS[board].map((h, i) => (
+                  <th key={`${h}-${i}`}>{h}</th>
+                ))}
+              </tr>
             </thead>
             <tbody>
-              {PLAYER.map((r) => (
-                <tr key={r[1]} className={r[6] ? "lions" : ""}>
-                  <Pos value={r[0]} lions={r[6]} />
-                  <td>{r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td>
+              {activeRows.map((r) => (
+                <tr key={r.id} className={isLions(r) ? "lions" : ""}>
+                  <td className="pos">{r.rank}</td>
+                  <td>{r.name}</td>
+                  {EXTRA_KEYS[board].map((k, i) => (
+                    <td key={`${k}-${i}`}>
+                      {formatCell(k === "teamName" ? r.teamName : r.extra[k]) ??
+                        ""}
+                    </td>
+                  ))}
+                  <td>{r.points ?? ""}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {board === "order" && (
-        <div className="bg-cream-50 border border-black/[0.07] rounded-[22px] p-6 overflow-x-auto">
-          <h2 className="m-0 mb-[18px] font-sora font-extrabold text-[24px] tracking-[-0.02em]">
-            Order of Merit · Prize Money
-          </h2>
-          <table className="stats-table">
-            <thead>
-              <tr><th>Pos</th><th>Player</th><th>Events</th><th>Earnings (₹)</th><th>Avg Finish</th></tr>
-            </thead>
-            <tbody>
-              {ORDER.map((r) => (
-                <tr key={r[1]} className={r[5] ? "lions" : ""}>
-                  <Pos value={r[0]} lions={r[5]} />
-                  <td>{r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
+}
+
+function formatCell(v: string | number | null | undefined): string | null {
+  if (v === null || v === undefined || v === "") return null;
+  return String(v);
 }

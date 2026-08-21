@@ -49,3 +49,144 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// ---------------------------------------------------------------
+// IGPL — fixtures, scores, and season standings.
+//
+// Fixtures are the tournament calendar; Scores are player rounds inside a
+// fixture; Standings are per-season, per-board leaderboards (team table,
+// player of the season, order of merit). Admins hand-key each of these
+// today; a future scrape (gated by IGPL_SYNC_ENABLED) will upsert into the
+// same tables.
+// ---------------------------------------------------------------
+
+enum FixtureStatus {
+  UPCOMING
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Fixture {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  leg         String? // e.g. "African Swing", "Season Opener"
+  presentedBy String? // e.g. "Vimtra Chennai Lions GC"
+  dateStart   DateTime
+  dateEnd     DateTime?
+  city        String
+  country     String
+  courseName  String?
+  status      FixtureStatus @default(UPCOMING)
+  note        String? // small line under the fixture ("Hosted by …")
+  sortOrder   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  scores      Score[]
+}
+
+model Score {
+  id         String   @id @default(cuid())
+  fixtureId  String
+  fixture    Fixture  @relation(fields: [fixtureId], references: [id], onDelete: Cascade)
+  playerName String
+  round      Int      @default(1)
+  position   String?
+  r1         String?
+  r2         String?
+  r3         String?
+  r4         String?
+  thru       String?
+  today      String?
+  total      String?
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@index([fixtureId])
+}
+
+enum StandingBoard {
+  TEAM
+  PLAYER
+  ORDER
+}
+
+model Standing {
+  id         String        @id @default(cuid())
+  seasonYear Int
+  board      StandingBoard
+  rank       Int
+  name       String // team name / player name
+  teamName   String? // for PLAYER / ORDER boards, the player's franchise
+  points     Int?
+  extra      String? // JSON-encoded auxiliary columns; SQLite has no Json type
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([seasonYear, board, rank])
+}
+
+// ---------------------------------------------------------------
+// News — franchise editorial (see M4 report).
+//
+// Draft/Published/Archived workflow. Public /news and /news/[slug] only
+// ever surface PUBLISHED rows; Draft and Archived remain admin-only.
+// bodyJson round-trips the TipTap editor state; bodyHtml is pre-rendered
+// so the public page never loads editor libraries.
+// ---------------------------------------------------------------
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Post {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  title       String
+  excerpt     String?
+  coverImage  String? // /public path today; signed URL later
+  bodyHtml    String // pre-rendered HTML for /news/[slug]
+  bodyJson    String? // TipTap JSON document, for round-trip editing
+  category    String? // free-text label ("Feature", "Player News", etc.)
+  authorName  String // typed byline; not a User FK
+  status      PostStatus @default(DRAFT)
+  publishedAt DateTime? // set on Draft → Published transition
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([slug])
+}
+
+// ---------------------------------------------------------------
+// Media Coverage — third-party press mentions of the franchise.
+//
+// Distinct from Post on purpose: we never host the source article, we
+// only link out. Row = curated attribution + short original summary +
+// deep link to the external publisher.
+// ---------------------------------------------------------------
+
+enum MediaKind {
+  ARTICLE
+  SOCIAL
+}
+
+model MediaCoverage {
+  id          String    @id @default(cuid())
+  kind        MediaKind @default(ARTICLE) // press article vs social-platform post
+  sourceName  String // "The Hindu", "Times of India", "Instagram", ...
+  sourceUrl   String // full external URL
+  title       String // headline as published by the source
+  summary     String // our short original summary (1–3 sentences)
+  publishedAt DateTime? // source publish date, when verified
+  coverImage  String? // /public path to the cover image, optional
+  active      Boolean   @default(true) // hide without deleting
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([active, kind, sortOrder])
+}

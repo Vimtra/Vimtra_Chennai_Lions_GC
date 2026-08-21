@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import AeText from "@/components/AeText";
@@ -61,25 +62,32 @@ const VERTICALS = [
   },
 ];
 
-// Brochure p. 14 — verbatim leadership bios.
+// Brochure p. 14 — verbatim leadership bios. Photographs are supplied by
+// the franchise (public/assets/subash-yammada.png and
+// public/assets/thimmaji-rao-yammada.jpg). `objectPosition` on each entry
+// keeps the face inside the crop at every card size.
 const FOUNDERS = [
   {
     init: "SY",
     name: "Subash Yammada",
     role: "Founder & CEO",
+    image: "/assets/subash-yammada.png",
+    imagePosition: "50% 12%",
+    imageAlt: "Subash Yammada — Founder & CEO, Vimtra Ventures",
     body:
       "Serial entrepreneur and CEO of Vimtra Ventures — a San Francisco-based diversified global enterprise. Three decades of leadership cultivating an expansive portfolio across sports franchises, private equity, venture capital, real estate (with a focus on AI infrastructure), golf communities and academies, technology, healthcare, and hospitality.",
-    bg: "linear-gradient(160deg,#C9242E,#871119)",
-    color: "#fff",
+    accent: "#C4202A",
   },
   {
     init: "TY",
     name: "Thimmaji Rao Yammada",
     role: "Founder & Managing Director",
+    image: "/assets/thimmaji-rao-yammada.jpg",
+    imagePosition: "50% 30%",
+    imageAlt: "Thimmaji Rao Yammada — Founder & Managing Director, Vimtra Ventures",
     body:
       "Managing Director of Vimtra Ventures with 31 years of leadership across private equity, sports franchises, infrastructure, real estate, and industrial development in North America and India. Full-cycle real-estate expertise spanning commercial, residential, retail, and mixed-use assets, with a track record in mid- to large-scale project execution and asset restructuring.",
-    bg: "linear-gradient(160deg,#E6C57E,#C39A52)",
-    color: "#3A1A06",
+    accent: "#C39A52",
   },
 ];
 
@@ -321,27 +329,49 @@ export default function VimtraVenturesPage() {
               <Reveal
                 key={p.init}
                 variant="fade-up"
-                className="bg-white border border-black/[0.07] rounded-[22px] p-8"
+                className="bg-white border border-black/[0.07] rounded-[22px] overflow-hidden flex flex-col"
+                style={{ boxShadow: "0 26px 60px -38px rgba(26,21,19,0.45)" }}
               >
-                <div className="flex items-center gap-5">
+                {/* Founder portrait — aspect fixed so the layout is stable
+                    before the image loads; `object-cover` + tuned
+                    `object-position` keep the face inside the crop at
+                    every viewport width. Warm bronze/red backdrops are
+                    part of the supplied photography and read against the
+                    cream card surface. */}
+                <div
+                  className="relative w-full"
+                  style={{ aspectRatio: "4 / 5", background: "#1a1513" }}
+                >
+                  <Image
+                    src={p.image}
+                    alt={p.imageAlt}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px"
+                    className="object-cover"
+                    style={{ objectPosition: p.imagePosition }}
+                    priority={false}
+                  />
+                  {/* Accent hairline anchors the photo to the card and
+                      echoes the franchise's crimson/gold palette without
+                      touching the global CSS. */}
                   <div
-                    className="w-[78px] h-[78px] rounded-full font-sora font-extrabold text-[26px] flex items-center justify-center shrink-0"
-                    style={{ background: p.bg, color: p.color }}
-                  >
-                    {p.init}
-                  </div>
-                  <div>
-                    <div className="font-sora font-bold text-[22px] text-ink tracking-[-0.005em] leading-[1.15]">
-                      {p.name}
-                    </div>
-                    <div className="font-manrope text-[12.5px] text-crimson-600 mt-1 tracking-[0.06em] uppercase">
-                      {p.role}
-                    </div>
-                  </div>
+                    aria-hidden
+                    className="absolute inset-x-0 bottom-0 h-[3px]"
+                    style={{ background: p.accent }}
+                  />
                 </div>
-                <p className="mt-5 m-0 font-manrope text-[14.5px] leading-[1.68] text-muted">
-                  {p.body}
-                </p>
+
+                <div className="p-8 flex-1 flex flex-col">
+                  <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
+                    {p.role}
+                  </div>
+                  <h3 className="mt-3 mb-4 font-sora font-extrabold text-[26px] text-ink tracking-[-0.015em] leading-[1.15]">
+                    {p.name}
+                  </h3>
+                  <p className="m-0 font-manrope text-[14.5px] leading-[1.68] text-muted">
+                    {p.body}
+                  </p>
+                </div>
               </Reveal>
             ))}
           </div>

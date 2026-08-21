@@ -1,146 +1,255 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import AeText from "@/components/AeText";
+import { listFixtures, formatFixtureDate } from "@/lib/fixtures";
 
 export const metadata: Metadata = {
   title: "Scores · Vimtra Chennai Lions GC",
-  description: "Live IGPL Chennai Open scoring — Lions squad leaderboard, hole-by-hole, and shot updates.",
+  description:
+    "Live tournament scoring for the Vimtra Chennai Lions across the AM Green IGPL Season 2026 — unlocks as each round begins.",
 };
 
-const LEADER = [
-  { pos: "T2", name: "Gaganjeet Bhullar", r1: "67", thru: "14", today: "-3", todayCls: "red", total: "-6", totalCls: "red" },
-  { pos: "T9", name: "Harshjeet Sethie", r1: "69", thru: "13", today: "-2", todayCls: "red", total: "-4", totalCls: "red" },
-  { pos: "T18", name: "Samarth Dwivedi", r1: "71", thru: "12", today: "-1", todayCls: "red", total: "-2", totalCls: "red" },
-  { pos: "T34", name: "Yashas Chandra M S", r1: "74", thru: "11", today: "E", todayCls: "", total: "+2", totalCls: "green" },
-];
+// Live rounds change every few minutes during a tournament week; always
+// resolve against the current DB row set.
+export const dynamic = "force-dynamic";
 
-const PAR = ["4", "4", "5", "3", "4", "4", "4", "3", "5", "4", "4", "3", "5", "4", "4", "3", "4", "5"];
-const SCORE = ["4", "3", "4", "3", "4", "4", "4", "3", "5", "4", "3", "3", "4", "4", "·", "·", "·", "·"];
+// The page reads the current Fixture set from the database and shows one
+// of three honest states, in priority order:
+//
+//   1. If any fixture is LIVE  → summary of that fixture + placeholder
+//      leaderboard slot (real rows land here once an admin keys them in,
+//      or once the IGPL sync writes to the Score table).
+//   2. If a fixture is UPCOMING → count-down card pointing at it.
+//   3. If everything is COMPLETED → results-only state.
+//
+// Nothing on this page is fabricated. Player leaderboards, hole-by-hole
+// scorecards, and shot updates only appear once real Score rows exist.
 
-const UPDATES = [
-  { init: "GB", bg: "linear-gradient(160deg,#C9242E,#871119)", color: "#fff", title: "Bhullar · Birdie on 11", d: "Stuck wedge to 4 ft. Eighth birdie of the tournament.", t: "2 min ago" },
-  { init: "HS", bg: "linear-gradient(160deg,#E6C57E,#C39A52)", color: "#3A1A06", title: "Sethie · Par save on 13", d: "12 ft right-to-left curler from the fringe. Big momentum hold.", t: "9 min ago" },
-  { init: "SD", bg: "#1A1513", color: "#E9CB8E", title: "Dwivedi · Eagle look on 12", d: "Drove the par-4 12th to 18 ft. Settled for two-putt birdie.", t: "18 min ago" },
-];
+export default async function ScoresPage() {
+  const fixtures = await listFixtures();
+  const live = fixtures.find((f) => f.status === "LIVE") ?? null;
+  const nextUp = fixtures.find((f) => f.status === "UPCOMING") ?? null;
+  const lastResult =
+    [...fixtures]
+      .reverse()
+      .find((f) => f.status === "COMPLETED") ?? null;
 
-export default function ScoresPage() {
   return (
     <>
       <section
         className="relative overflow-hidden px-8 pt-[78px] pb-16"
-        style={{ background: "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)" }}
+        style={{
+          background:
+            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
+        }}
       >
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%)" }} />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%)",
+          }}
+        />
         <div className="relative max-w-[1200px] mx-auto">
-          <div className="flex items-center gap-[14px]">
-            <span className="badge-live">LIVE</span>
+          <div className="flex items-center gap-[14px] flex-wrap">
+            {live ? (
+              <span className="badge-live">LIVE</span>
+            ) : (
+              <span className="tier-badge" style={{ background: "rgba(255,255,255,0.14)", color: "#E9CB8E" }}>
+                OFFLINE
+              </span>
+            )}
             <span className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-              IGPL Chennai Open · Round 2 of 4
+              AM Green IGPL · Season 2026
             </span>
           </div>
-          <h1 className="mt-[18px] font-sora font-extrabold text-white" style={{ fontSize: "clamp(48px,7.4vw,108px)", lineHeight: 0.92, letterSpacing: "-0.035em" }}>
-            SCORES
-          </h1>
-          <div className="mt-[18px] flex gap-6 flex-wrap text-white font-manrope">
-            {[
-              ["COURSE", "Madras Gymkhana · Par 72"],
-              ["WEATHER", "29°C · Wind 11 km/h SE"],
-              ["TEAM POSITION", "T2 · -9"],
-            ].map(([k, v]) => (
-              <div key={k}>
-                <span className="text-[#E9CB8E] font-bold tracking-[0.08em] text-[11px]">{k}</span>
-                <div className="font-sora font-bold mt-1">{v}</div>
-              </div>
-            ))}
-          </div>
+          <AeText
+            text="SCORES"
+            mode="words"
+            as="h1"
+            className="mt-[18px] font-sora font-extrabold text-white"
+            style={{
+              fontSize: "clamp(48px,7.4vw,108px)",
+              lineHeight: 0.92,
+              letterSpacing: "-0.035em",
+            }}
+          />
+          <Reveal
+            variant="fade-up"
+            delay={120}
+            as="p"
+            className="max-w-[640px] mt-[18px] font-manrope text-[16px] leading-[1.6] text-white/85"
+          >
+            {live
+              ? `Round updates from ${live.name}. New rows populate here as the round moves.`
+              : nextUp
+              ? `Live scoring unlocks at the ${nextUp.name} — ${formatFixtureDate(nextUp)}.`
+              : lastResult
+              ? `No live round today. See the last completed event below.`
+              : `Live scoring unlocks with the first Season 2026 tournament week.`}
+          </Reveal>
         </div>
       </section>
 
       <section className="bg-cream-100 px-8 pt-16 pb-24">
         <div className="max-w-[1100px] mx-auto">
-          <Reveal variant="fade-up" className="scorecard mb-6">
-            <h2 className="m-0 mb-[18px] font-sora font-extrabold text-[26px] tracking-[-0.02em]">
-              Live Leaderboard · Lions Squad
-            </h2>
-            <div className="overflow-x-auto">
-              <table className="stats-table">
-                <thead>
-                  <tr>
-                    <th>Pos</th><th>Player</th><th>R1</th><th>R2 (Thru)</th><th>Today</th><th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {LEADER.map((r) => (
-                    <tr key={r.name}>
-                      <td className="font-bold">{r.pos}</td>
-                      <td className="font-bold">{r.name}</td>
-                      <td>{r.r1}</td>
-                      <td>{r.thru}</td>
-                      <td className={r.todayCls}>{r.today}</td>
-                      <td className={r.totalCls}>{r.total}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
-
-          <Reveal variant="fade-up" className="scorecard mb-6">
-            <h2 className="m-0 mb-[6px] font-sora font-extrabold text-[22px] tracking-[-0.02em]">
-              Bhullar · Round 2 hole-by-hole
-            </h2>
-            <div className="font-manrope text-[13px] text-muted mb-[18px]">Thru 14 · -3 today, -6 tournament</div>
-            <div className="overflow-x-auto">
-              <table className="stats-table">
-                <thead>
-                  <tr>
-                    <th>Hole</th>
-                    {PAR.map((_, i) => (
-                      <th key={i}>{i + 1}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="font-bold text-muted">Par</td>
-                    {PAR.map((p, i) => (
-                      <td key={i}>{p}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="font-bold">Score</td>
-                    {SCORE.map((s, i) => (
-                      <td key={i} style={s === "·" ? { color: "#9b8f85" } : undefined}>{s}</td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
-
-          <Reveal variant="fade-up" className="scorecard">
-            <h2 className="m-0 mb-[18px] font-sora font-extrabold text-[22px] tracking-[-0.02em]">
-              Recent shot updates
-            </h2>
-            <div className="flex flex-col gap-[14px]">
-              {UPDATES.map((u) => (
-                <div key={u.title} className="flex gap-[14px] p-[14px] bg-white border border-black/[0.06] rounded-[14px]">
-                  <div
-                    className="w-[54px] h-[54px] rounded-full font-sora font-extrabold text-[18px] flex items-center justify-center shrink-0"
-                    style={{ background: u.bg, color: u.color }}
-                  >
-                    {u.init}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-sora font-bold text-[14px]">{u.title}</div>
-                    <div className="font-manrope text-[13px] text-muted mt-[3px]">{u.d}</div>
-                  </div>
-                  <div className="font-manrope text-[12px] text-[#9b8f85]">{u.t}</div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
+          {live ? (
+            <LiveEmptyState
+              name={live.name}
+              context={`${live.courseName ? `${live.courseName} · ` : ""}${live.city}${
+                live.city !== live.country ? `, ${live.country}` : ""
+              } · ${formatFixtureDate(live)}`}
+            />
+          ) : nextUp ? (
+            <NextUpState
+              name={nextUp.name}
+              date={formatFixtureDate(nextUp)}
+              venue={`${nextUp.courseName ?? "Venue TBA"} · ${nextUp.city}, ${nextUp.country}`}
+              presentedBy={nextUp.presentedBy ?? null}
+            />
+          ) : lastResult ? (
+            <LastResultState
+              name={lastResult.name}
+              date={formatFixtureDate(lastResult)}
+              venue={`${lastResult.courseName ?? ""}${lastResult.courseName ? " · " : ""}${lastResult.city}, ${lastResult.country}`}
+            />
+          ) : (
+            <SeasonNotStartedState />
+          )}
         </div>
       </section>
     </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+
+function EmptyCard({
+  eyebrow,
+  title,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Reveal
+      variant="fade-up"
+      className="rounded-[22px] border border-dashed border-black/[0.18] bg-cream-50 p-10 md:p-12"
+    >
+      <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
+        {eyebrow}
+      </div>
+      <h2 className="mt-3 mb-4 font-sora font-extrabold text-[clamp(26px,3.4vw,36px)] leading-[1.15] tracking-[-0.02em] text-ink">
+        {title}
+      </h2>
+      <div className="font-manrope text-[15px] leading-[1.68] text-muted max-w-[640px]">
+        {children}
+      </div>
+      <div className="mt-7 flex flex-wrap gap-3">
+        <Link
+          href="/fixtures"
+          className="cta-gold press"
+          style={{ padding: "12px 22px", fontSize: 13 }}
+        >
+          SEE THE CALENDAR
+        </Link>
+        <Link
+          href="/leaderboards"
+          className="press inline-flex items-center gap-2 px-5 py-[11px] rounded-[30px] border border-ink/25 text-ink font-manrope font-bold text-[13px] no-underline"
+        >
+          LEADERBOARDS →
+        </Link>
+      </div>
+    </Reveal>
+  );
+}
+
+function LiveEmptyState({ name, context }: { name: string; context: string }) {
+  return (
+    <EmptyCard eyebrow="Live · Round in Progress" title={name}>
+      <p className="mb-2">
+        <strong>{context}</strong>
+      </p>
+      <p>
+        Player rows will populate this page as the round moves. Nothing is
+        published here before it is verified — the live leaderboard, per-round
+        splits, and shot updates unlock once the official round data starts
+        flowing.
+      </p>
+    </EmptyCard>
+  );
+}
+
+function NextUpState({
+  name,
+  date,
+  venue,
+  presentedBy,
+}: {
+  name: string;
+  date: string;
+  venue: string;
+  presentedBy: string | null;
+}) {
+  return (
+    <EmptyCard
+      eyebrow={`Next Up · ${date}`}
+      title={name}
+    >
+      <p className="mb-2">
+        <strong>{venue}</strong>
+      </p>
+      <p>
+        Live scoring for this tournament unlocks the moment the first round
+        tees off.
+        {presentedBy ? ` Presented by ${presentedBy}.` : ""} No provisional
+        leaderboards or forecast data are published on this page — only
+        verified round scores as they land.
+      </p>
+    </EmptyCard>
+  );
+}
+
+function LastResultState({
+  name,
+  date,
+  venue,
+}: {
+  name: string;
+  date: string;
+  venue: string;
+}) {
+  return (
+    <EmptyCard eyebrow={`Last Completed · ${date}`} title={name}>
+      <p className="mb-2">
+        <strong>{venue}</strong>
+      </p>
+      <p>
+        No live round is currently in play. Detailed scorecards will appear
+        here for the next tournament week; the finalised round result for the
+        event above will be published on the Chennai Lions social channels
+        and on{" "}
+        <Link href="/news" className="text-crimson-600 no-underline">
+          /news
+        </Link>{" "}
+        as it is confirmed.
+      </p>
+    </EmptyCard>
+  );
+}
+
+function SeasonNotStartedState() {
+  return (
+    <EmptyCard eyebrow="Season 2026 · Not Yet Underway" title="Live scoring is offline.">
+      <p>
+        The Chennai Lions Season 2026 opener is the AM Green IGPL Invitational
+        at Al Hamra Golf Club, Ras Al Khaimah — 23–25 September 2026. This
+        page unlocks the moment the first round tees off. Until then, see
+        the calendar for the full published list of Season 2026 events.
+      </p>
+    </EmptyCard>
   );
 }

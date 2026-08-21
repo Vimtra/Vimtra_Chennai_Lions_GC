@@ -31,8 +31,14 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    // Local assets live in /public. Remote patterns will be added
-    // alongside the uploads pipeline in a later milestone.
+    // Local assets live in /public. Google thumbnail URLs are accepted for
+    // product images entered through the admin catalog.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+      },
+    ],
     formats: ["image/avif", "image/webp"],
   },
   async headers() {

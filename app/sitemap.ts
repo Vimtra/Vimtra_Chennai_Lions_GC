@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "./robots";
 import { listProducts } from "@/lib/db";
+import { listPublishedPosts } from "@/lib/posts";
 
 // Public routes only. Authenticated / API / commerce-flow routes are
 // intentionally excluded and also disallowed in robots.ts. Product detail
@@ -54,5 +55,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     productEntries = [];
   }
 
-  return [...staticEntries, ...productEntries];
+  // Published news articles only. Drafts and Archived posts must never
+  // enter the sitemap (or any public surface).
+  let postEntries: MetadataRoute.Sitemap = [];
+  try {
+    const posts = await listPublishedPosts();
+    postEntries = posts.map((p) => ({
+      url: `${SITE_URL}/news/${p.slug}`,
+      lastModified: p.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
+  } catch {
+    postEntries = [];
+  }
+
+  return [...staticEntries, ...productEntries, ...postEntries];
 }

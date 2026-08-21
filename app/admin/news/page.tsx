@@ -1,34 +1,208 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
+import { Pencil, Trash2, ExternalLink, Plus, Send, Archive, Undo2 } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import AdminShell from "@/components/admin/AdminShell";
-import { Newspaper } from "lucide-react";
+import { listPosts, formatPublishedDate } from "@/lib/posts";
+import type { Post, PostStatus } from "@prisma/client";
+import { newDraftAction, setStatusAction, deletePostAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "News · Lions Admin",
   robots: { index: false, follow: false },
 };
 
-export default async function AdminNewsPage() {
+type Filter = "all" | "DRAFT" | "PUBLISHED" | "ARCHIVED";
+
+const FILTER_TABS: { key: Filter; label: string }[] = [
+  { key: "all", label: "ALL" },
+  { key: "DRAFT", label: "DRAFT" },
+  { key: "PUBLISHED", label: "PUBLISHED" },
+  { key: "ARCHIVED", label: "ARCHIVED" },
+];
+
+const STATUS_STYLE: Record<PostStatus, React.CSSProperties> = {
+  DRAFT: { background: "rgba(107,99,92,0.10)", color: "#6B635C" },
+  PUBLISHED: { background: "rgba(14,138,79,0.10)", color: "#0E8A4F" },
+  ARCHIVED: { background: "rgba(26,21,19,0.08)", color: "#1A1513" },
+};
+
+export default async function AdminNewsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>;
+}) {
   const user = await requireAdmin();
+  const { filter: rawFilter } = await searchParams;
+  const filter: Filter =
+    rawFilter === "DRAFT" || rawFilter === "PUBLISHED" || rawFilter === "ARCHIVED"
+      ? rawFilter
+      : "all";
+  const posts = await listPosts();
+  const shown = filter === "all" ? posts : posts.filter((p) => p.status === filter);
+
+  const counts = {
+    all: posts.length,
+    DRAFT: posts.filter((p) => p.status === "DRAFT").length,
+    PUBLISHED: posts.filter((p) => p.status === "PUBLISHED").length,
+    ARCHIVED: posts.filter((p) => p.status === "ARCHIVED").length,
+  };
 
   return (
     <AdminShell email={user.email} active="news">
-      <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">News &amp; Notebook</h1>
-      <p className="font-manrope text-[15px] text-muted mt-2 max-w-[640px]">
-        The rich-text editor (TipTap/Quill) with draft / publish / archive states and
-        inline image uploads is the next admin milestone. It needs the database layer
-        (see <code>lib/db.ts</code> → Postgres) so posts persist and sort
-        chronologically on the public <code>/news</code> feed.
-      </p>
+      <div className="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
+            News &amp; Notebook
+          </h1>
+          <p className="font-manrope text-[14px] text-muted mt-1">
+            Franchise editorial. Draft freely, publish deliberately, archive
+            when a piece is out of date. Only <strong>Published</strong> posts
+            appear on the public /news feed.
+          </p>
+        </div>
+        <form action={newDraftAction}>
+          <button type="submit" className="btn-dark press">
+            <Plus className="w-[13px] h-[13px]" /> New post
+          </button>
+        </form>
+      </div>
 
-      <div className="mt-8 bg-cream-50 border border-dashed border-black/[0.2] rounded-[20px] p-12 text-center">
-        <Newspaper className="w-10 h-10 text-crimson-600 opacity-60 mx-auto mb-4" />
-        <div className="font-sora font-bold text-[18px] text-ink">Editor coming next</div>
-        <p className="font-manrope text-[14px] text-muted mt-2 max-w-[460px] mx-auto">
-          Scaffolded and routed. Wire it once a database is connected so drafts and
-          published posts survive across deploys.
-        </p>
+      <div className="mt-6 flex flex-wrap gap-2">
+        {FILTER_TABS.map((t) => (
+          <Link
+            key={t.key}
+            href={t.key === "all" ? "/admin/news" : `/admin/news?filter=${t.key}`}
+            className={`px-3 py-[7px] rounded-full font-manrope font-semibold text-[12.5px] transition-colors border ${
+              filter === t.key
+                ? "bg-ink text-white border-ink"
+                : "bg-cream-50 text-ink border-black/[0.08] hover:border-crimson-600 hover:text-crimson-600"
+            }`}
+          >
+            {t.label}{" "}
+            <span className="opacity-60">({counts[t.key]})</span>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Post</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Author</th>
+              <th>Published</th>
+              <th className="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shown.map((p) => (
+              <PostRow key={p.id} post={p} />
+            ))}
+            {shown.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-center font-manrope text-muted py-10">
+                  {filter === "all"
+                    ? "No posts yet. Create your first draft to get started."
+                    : `No ${filter.toLowerCase()} posts.`}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-8 font-manrope text-[13px] text-muted flex items-center gap-2">
+        <ExternalLink className="w-3.5 h-3.5" />
+        <Link href="/news" className="text-crimson-600 no-underline">
+          Preview the public /news feed →
+        </Link>
       </div>
     </AdminShell>
+  );
+}
+
+function PostRow({ post }: { post: Post }) {
+  return (
+    <tr>
+      <td>
+        <div className="flex items-center gap-3">
+          {post.coverImage ? (
+            <div className="relative w-[52px] h-[36px] rounded-[8px] overflow-hidden bg-cream-100 shrink-0">
+              <Image
+                src={post.coverImage}
+                alt=""
+                fill
+                sizes="52px"
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-[52px] h-[36px] rounded-[8px] bg-gradient-to-br from-[#C9242E] to-[#871119] shrink-0" />
+          )}
+          <div>
+            <div className="font-sora font-bold text-[14px] text-ink">
+              {post.title}
+            </div>
+            <div className="font-manrope text-[12px] text-muted">
+              /{post.slug}
+            </div>
+          </div>
+        </div>
+      </td>
+      <td className="font-manrope text-muted">{post.category ?? "—"}</td>
+      <td>
+        <span className="tier-badge" style={STATUS_STYLE[post.status]}>
+          {post.status}
+        </span>
+      </td>
+      <td className="font-manrope text-muted">{post.authorName}</td>
+      <td className="font-manrope text-[12.5px] text-muted">
+        {post.publishedAt ? formatPublishedDate(post.publishedAt) : "—"}
+      </td>
+      <td>
+        <div className="flex items-center gap-2 justify-end">
+          <Link href={`/admin/news/${post.id}/edit`} className="btn-ghost">
+            <Pencil className="w-[13px] h-[13px]" /> Edit
+          </Link>
+          {post.status === "DRAFT" && (
+            <form action={setStatusAction}>
+              <input type="hidden" name="id" value={post.id} />
+              <input type="hidden" name="status" value="PUBLISHED" />
+              <button type="submit" className="btn-ghost" title="Publish">
+                <Send className="w-[13px] h-[13px]" /> Publish
+              </button>
+            </form>
+          )}
+          {post.status === "PUBLISHED" && (
+            <form action={setStatusAction}>
+              <input type="hidden" name="id" value={post.id} />
+              <input type="hidden" name="status" value="ARCHIVED" />
+              <button type="submit" className="btn-ghost" title="Archive">
+                <Archive className="w-[13px] h-[13px]" /> Archive
+              </button>
+            </form>
+          )}
+          {post.status === "ARCHIVED" && (
+            <form action={setStatusAction}>
+              <input type="hidden" name="id" value={post.id} />
+              <input type="hidden" name="status" value="DRAFT" />
+              <button type="submit" className="btn-ghost" title="Restore to draft">
+                <Undo2 className="w-[13px] h-[13px]" /> Restore
+              </button>
+            </form>
+          )}
+          <form action={deletePostAction}>
+            <input type="hidden" name="id" value={post.id} />
+            <button type="submit" className="btn-ghost btn-danger">
+              <Trash2 className="w-[13px] h-[13px]" /> Delete
+            </button>
+          </form>
+        </div>
+      </td>
+    </tr>
   );
 }
