@@ -145,16 +145,58 @@ Vimtra Chennai Lions Golf/
 *   **User Management** (`/admin/users`): list accounts, grant/revoke ADMIN, delete (with self-lockout guards).
 *   **News** (`/admin/news`): scaffold for a rich-text editor (TipTap/Quill) — pending.
 
-### Setup (SQLite in dev, Postgres for prod)
+### Database architecture — PostgreSQL for prod/staging, SQLite escape hatch for local
+
+The project ships **two Prisma schemas that share identical model definitions** and differ only in the datasource `provider`. Pick whichever you want to run against and use the matching script set — you never edit `provider` by hand.
+
+```text
+prisma/
+├── schema.prisma                        provider = "postgresql"   ← default / prod / staging / Vercel
+├── schema.sqlite.prisma                 provider = "sqlite"       ← preserved local escape hatch
+├── migrations/                          Postgres migration history
+│   ├── migration_lock.toml              provider = "postgresql"
+│   └── 20260821220000_postgresql_baseline/
+│       └── migration.sql                single consolidated baseline capturing M0–M4
+├── migrations_sqlite/                   preserved M0–M4 SQLite history
+│   ├── migration_lock.toml              provider = "sqlite"
+│   ├── 20260821002521_init/             (M0)
+│   ├── 20260821031831_m3_igpl/          (M3)
+│   ├── 20260821192521_m4_news/          (M4)
+│   ├── 20260821195216_m4b_media_coverage/   (M4+)
+│   └── 20260821204609_m4c_media_kind/       (M4++)
+├── dev.db                               local SQLite dev database (git-ignored)
+├── dev.db.backup-YYYYMMDD-…             transient backups (git-ignored, see .gitignore)
+└── seed.ts                              same seed runs against either provider
+```
+
+Both schemas have the **same 8 models** (`User`, `Session`, `Product`, `Fixture`, `Score`, `Standing`, `Post`, `MediaCoverage`) and the **same 5 enums** (`Role`, `FixtureStatus`, `StandingBoard`, `PostStatus`, `MediaKind`). The Postgres baseline is a single migration that captures the final M4 shape rather than five sequential migrations — the historical SQLite migrations live under `migrations_sqlite/` for reference and for anyone continuing local SQLite work.
+
+**Default (Postgres) — production, staging, Vercel builds**
 ```bash
-cp .env.example .env           # set DATABASE_URL (+ ADMIN_EMAIL/PASSWORD, CRON_SECRET, NEXT_PUBLIC_SITE_URL)
-npx prisma migrate deploy      # apply prisma/migrations/<timestamp>_init
-npm run db:seed                # seed products + admin user
+cp .env.example .env           # set DATABASE_URL (Postgres) + ADMIN_EMAIL / ADMIN_PASSWORD (≥ 12 chars)
+                               # + CRON_SECRET + NEXT_PUBLIC_SITE_URL
+npx prisma migrate deploy      # applies prisma/migrations/20260821220000_postgresql_baseline
+npm run db:seed                # seeds 21 products, 4 fixtures, 5 media coverage, 1 admin user
 npm run dev
 ```
-The datasource in `prisma/schema.prisma` is `sqlite`; the initial baseline migration is checked in under `prisma/migrations/`. Switching to Postgres for prod: change `provider` in `schema.prisma` to `postgresql`, drop the SQLite migration folder, run `npx prisma migrate dev --name init` against the Postgres URL, then re-seed. The seed refuses to run unless `ADMIN_EMAIL` and `ADMIN_PASSWORD` (≥ 12 chars) are set — there are no baked-in defaults.
 
-Scripts: `db:migrate` (dev), `db:deploy` (prod), `db:seed`, `db:studio`. `build` runs `prisma generate` first (Vercel-ready).
+Scripts targeting the Postgres schema (`prisma/schema.prisma`) are the unprefixed set: `db:migrate` (dev), `db:deploy` (prod), `db:seed`, `db:studio`. `npm run build` runs `prisma generate` first (Vercel-ready).
+
+**Local SQLite escape hatch**
+```bash
+# .env
+DATABASE_URL="file:./dev.db"
+```
+```bash
+npm run db:sqlite:generate     # prisma generate against schema.sqlite.prisma
+npm run db:sqlite:migrate      # migrate history under prisma/migrations_sqlite
+npm run db:sqlite:seed         # same seed script, SQLite target
+```
+Use this path only when you deliberately want to work offline against `prisma/dev.db`. Any admin-created row (e.g. a product added via `/admin/products`) will exist only in your local SQLite; if it should live in production too, backfill it into `data/products.json` or recreate it through the admin UI after the production migration.
+
+**Seed refuses to run** unless `ADMIN_EMAIL` and `ADMIN_PASSWORD` (≥ 12 chars) are both present — there are no baked-in defaults. Rotate the seed password immediately after the first login.
+
+**Transient backups** (`prisma/dev.db.backup-*`) are excluded from git via `.gitignore` — they may sit next to `dev.db` on disk but never enter version control.
 
 ### Remaining Work (post-M0)
 *   **News editor**: add the rich-text UI + a `Post` model (draft/publish/archive) feeding `/news`.

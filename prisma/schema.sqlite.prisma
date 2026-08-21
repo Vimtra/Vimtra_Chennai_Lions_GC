@@ -1,0 +1,165 @@
+// Vimtra Chennai Lions GC - SQLite development data model
+// Preserved for local SQLite access while production uses prisma/schema.prisma.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         Role      @default(USER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Product {
+  id        String   @id
+  name      String
+  cat       String
+  price     Int
+  glyph     String
+  img       String?
+  range     String
+  desc      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FixtureStatus {
+  UPCOMING
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Fixture {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  leg         String?
+  presentedBy String?
+  dateStart   DateTime
+  dateEnd     DateTime?
+  city        String
+  country     String
+  courseName  String?
+  status      FixtureStatus @default(UPCOMING)
+  note        String?
+  sortOrder   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  scores      Score[]
+}
+
+model Score {
+  id         String   @id @default(cuid())
+  fixtureId  String
+  fixture    Fixture  @relation(fields: [fixtureId], references: [id], onDelete: Cascade)
+  playerName String
+  round      Int      @default(1)
+  position   String?
+  r1         String?
+  r2         String?
+  r3         String?
+  r4         String?
+  thru       String?
+  today      String?
+  total      String?
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@index([fixtureId])
+}
+
+enum StandingBoard {
+  TEAM
+  PLAYER
+  ORDER
+}
+
+model Standing {
+  id         String        @id @default(cuid())
+  seasonYear Int
+  board      StandingBoard
+  rank       Int
+  name       String
+  teamName   String?
+  points     Int?
+  extra      String?
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([seasonYear, board, rank])
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Post {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  title       String
+  excerpt     String?
+  coverImage  String?
+  bodyHtml    String
+  bodyJson    String?
+  category    String?
+  authorName  String
+  status      PostStatus @default(DRAFT)
+  publishedAt DateTime?
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([slug])
+}
+
+enum MediaKind {
+  ARTICLE
+  SOCIAL
+}
+
+model MediaCoverage {
+  id          String    @id @default(cuid())
+  kind        MediaKind @default(ARTICLE)
+  sourceName  String
+  sourceUrl   String
+  title       String
+  summary     String
+  publishedAt DateTime?
+  coverImage  String?
+  active      Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([active, kind, sortOrder])
+}

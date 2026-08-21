@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -120,7 +121,7 @@ model Standing {
   name       String // team name / player name
   teamName   String? // for PLAYER / ORDER boards, the player's franchise
   points     Int?
-  extra      String? // JSON-encoded auxiliary columns; SQLite has no Json type
+  extra      String? // JSON-encoded auxiliary columns kept as String for M0-M4 compatibility
   updatedAt  DateTime      @updatedAt
 
   @@unique([seasonYear, board, rank])

@@ -7,9 +7,13 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
+    "db:sqlite:generate": "prisma generate --schema prisma/schema.sqlite.prisma",
+    "db:sqlite:migrate": "prisma migrate dev --schema prisma/schema.sqlite.prisma",
+    "db:sqlite:seed": "prisma db seed --schema prisma/schema.sqlite.prisma",
     "db:studio": "prisma studio"
   },
   "prisma": {

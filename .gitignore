@@ -32,6 +32,10 @@ yarn-error.log*
 /prisma/*.db-wal
 /prisma/*.db-shm
 /prisma/migrations/dev.db*
+# Transient SQLite backups (e.g. taken before the Postgres migration)
+# stay on disk locally but never enter version control.
+/prisma/*.db.backup-*
+/prisma/dev.db.backup-*
 
 # typescript
 *.tsbuildinfo
