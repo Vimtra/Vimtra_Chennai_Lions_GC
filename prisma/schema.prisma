@@ -25,6 +25,9 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   sessions     Session[]
+  // M5 commerce back-relations (see Address, Order below).
+  addresses    Address[]
+  orders       Order[]
 }
 
 model Session {
@@ -39,16 +42,25 @@ model Session {
 }
 
 model Product {
-  id        String   @id // URL-friendly slug
-  name      String
-  cat       String
-  price     Int
-  glyph     String
-  img       String?
-  range     String
-  desc      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id // URL-friendly slug
+  name        String
+  cat         String
+  price       Int // integer rupees (INR) — consistent with existing rows
+  glyph       String
+  img         String? // legacy single-image field kept for M0-M4 compatibility;
+  //                     new code should populate `images` and treat `img` as fallback
+  range       String
+  desc        String
+  // ------- M5 additions -------
+  stock       Int      @default(0) // available inventory; 0 = out of stock
+  active      Boolean  @default(true) // hide without deleting
+  images      String[] @default([]) // ordered image URLs; first = primary
+  weightGrams Int? // shipping weight (grams); optional
+  sku         String? // optional stock-keeping unit / barcode
+  // ------- end M5 additions -------
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orderItems  OrderItem[]
 }
 
 // ---------------------------------------------------------------
@@ -190,4 +202,116 @@ model MediaCoverage {
   updatedAt   DateTime  @updatedAt
 
   @@index([active, kind, sortOrder])
+}
+
+// ---------------------------------------------------------------
+// M5 — Commerce (Address, Order, OrderItem).
+//
+// Buyer flow: /shop -> /product/[id] -> /cart -> /checkout -> Order.
+// Order.shippingSnapshot freezes the delivery address at order time so
+// later edits to the source Address row don't retro-change history. The
+// snapshot lives in a Json (Postgres jsonb) column. Product line-items
+// are also snapshotted (name, image, unit price) on OrderItem for the
+// same reason.
+//
+// Payment is deliberately un-live for M5 — PaymentMethod.ONLINE_TBD is
+// a scaffolded slot so a future Razorpay/Stripe hook is a swap not a
+// rewrite. Today the buyer picks COD or OFFLINE_INVOICE only.
+// ---------------------------------------------------------------
+
+enum OrderStatus {
+  PENDING // just placed, awaiting admin action
+  PAYMENT_PENDING // offline invoice sent, waiting on customer payment
+  PAID // marked paid by admin (or by future gateway callback)
+  PROCESSING // being prepared for dispatch
+  SHIPPED // handed to logistics
+  DELIVERED // received by customer
+  CANCELLED // cancelled by user or admin
+  REFUNDED // fully refunded
+}
+
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  COD // cash on delivery
+  OFFLINE_INVOICE // bank transfer / offline reconciliation
+  ONLINE_TBD // scaffolded slot for a future online-payment integration
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label      String? // "Home", "Office" — optional short label
+  fullName   String
+  phone      String
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  postalCode String
+  country    String   @default("India")
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  orders     Order[]  @relation("OrderShipping")
+
+  @@index([userId])
+}
+
+model Order {
+  id                String        @id @default(cuid())
+  orderNumber       String        @unique // human-friendly, e.g. "VCL-260822-A1B2C"
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  // Soft FK to the source Address (SET NULL on delete so orders survive
+  // address deletion). The frozen `shippingSnapshot` is the authoritative
+  // "what did we actually ship to?" for display + fulfilment.
+  shippingAddressId String?
+  shippingAddress   Address?      @relation("OrderShipping", fields: [shippingAddressId], references: [id], onDelete: SetNull)
+  shippingSnapshot  Json // frozen full address at time of order
+  contactEmail      String
+  contactPhone      String
+  subtotal          Int // sum of item lineTotals, in whole INR
+  shipping          Int           @default(0) // shipping fee, whole INR
+  tax               Int           @default(0) // GST, whole INR
+  total             Int // subtotal + shipping + tax
+  status            OrderStatus   @default(PENDING)
+  paymentStatus     PaymentStatus @default(UNPAID)
+  paymentMethod     PaymentMethod
+  paymentRef        String? // future: gateway reference / bank txn id
+  notes             String? // free-text admin/customer notes
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  items             OrderItem[]
+
+  @@index([userId, createdAt])
+  @@index([status, paymentStatus])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  // Restrict on product deletion so we never lose the historical link to
+  // a fulfilled item; if a product must be deleted, refund/close orders first.
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  // Frozen snapshots — never re-derived from Product later.
+  productName  String
+  productImage String?
+  unitPrice    Int // frozen at time of order
+  qty          Int
+  lineTotal    Int // unitPrice * qty, denormalised for quick reads
+  createdAt    DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
 }

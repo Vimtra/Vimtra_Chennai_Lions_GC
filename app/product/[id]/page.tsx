@@ -5,7 +5,7 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/shop/ProductCard";
 import QtyAddToCart from "@/components/shop/QtyAddToCart";
-import { FALLBACK_LOGO, inr } from "@/lib/products";
+import { FALLBACK_LOGO, inr, productImage } from "@/lib/products";
 import { getProductById, listProducts } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -32,16 +32,35 @@ export default async function ProductPage({
   const { id } = await params;
   const product = await getProductById(id);
   if (!product) notFound();
+  // Inactive products are hidden from the public store — treat as 404.
+  if (!product.active) notFound();
 
+  // Related products come from the (active-only) public catalog; drop
+  // the current product from the pool.
   const related = (await listProducts())
     .filter((p) => p.id !== product.id)
     .slice(0, 4);
+
+  // Resolve the gallery: prefer the M5 `images[]` array, then fall back
+  // to the legacy `img` (single). If neither is set, we render the
+  // franchise fallback — no phantom empty tiles.
+  const gallery: string[] =
+    product.images && product.images.length > 0
+      ? product.images
+      : product.img
+        ? [product.img]
+        : [];
+  const hero = gallery[0] ?? FALLBACK_LOGO;
+  const hasHeroImage = gallery.length > 0;
+
+  const outOfStock = product.stock <= 0;
+  const lowStock = !outOfStock && product.stock <= 5;
 
   return (
     <section className="bg-cream-100 px-8 pt-[60px] pb-24">
       <div className="max-w-[1200px] mx-auto">
         {/* Breadcrumbs */}
-        <div className="mb-7 font-manrope text-[13px] text-muted font-semibold flex items-center gap-2">
+        <div className="mb-7 font-manrope text-[13px] text-muted font-semibold flex items-center gap-2 flex-wrap">
           <Link href="/shop" className="text-inherit no-underline hover:text-crimson-600">
             Shop
           </Link>
@@ -54,29 +73,66 @@ export default async function ProductPage({
         </div>
 
         <div className="product-detail-grid">
-          {/* Image */}
-          <Reveal variant="fade-up" className="img-card">
-            {product.img ? (
-              <Image
-                src={product.img}
-                alt={product.name}
-                fill
-                sizes="(max-width:900px) 100vw, 480px"
-                className="object-cover"
-              />
-            ) : (
-              <Image
-                src={FALLBACK_LOGO}
-                alt="Vimtra Chennai Lions"
-                width={300}
-                height={300}
-                className="w-1/2 h-1/2 object-contain opacity-85"
-                style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.2))" }}
-              />
+          {/* Image side — hero + optional thumbnail strip */}
+          <Reveal variant="fade-up" className="grid gap-3">
+            <div className="img-card relative">
+              {hasHeroImage ? (
+                <Image
+                  src={hero}
+                  alt={product.name}
+                  fill
+                  sizes="(max-width:900px) 100vw, 480px"
+                  className="object-cover"
+                />
+              ) : (
+                <Image
+                  src={FALLBACK_LOGO}
+                  alt="Vimtra Chennai Lions"
+                  width={300}
+                  height={300}
+                  className="w-1/2 h-1/2 object-contain opacity-85"
+                  style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.2))" }}
+                />
+              )}
+              {outOfStock && (
+                <div
+                  className="absolute top-4 right-4 rounded-[999px] px-3 py-[6px] font-sora font-extrabold text-[10.5px] tracking-[0.16em] uppercase"
+                  style={{ background: "rgba(26,21,19,0.92)", color: "#fff" }}
+                >
+                  Out of stock
+                </div>
+              )}
+              {lowStock && (
+                <div
+                  className="absolute top-4 right-4 rounded-[999px] px-3 py-[6px] font-sora font-extrabold text-[10.5px] tracking-[0.16em] uppercase"
+                  style={{ background: "#C4202A", color: "#fff" }}
+                >
+                  Only {product.stock} left
+                </div>
+              )}
+            </div>
+
+            {gallery.length > 1 && (
+              <div className="flex gap-2 flex-wrap">
+                {gallery.slice(0, 6).map((src, i) => (
+                  <div
+                    key={i}
+                    className="relative w-[74px] h-[74px] rounded-[12px] overflow-hidden border border-black/[0.08] bg-cream-50"
+                  >
+                    <Image
+                      src={src}
+                      alt={`${product.name} — image ${i + 1}`}
+                      fill
+                      sizes="74px"
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
             )}
           </Reveal>
 
-          {/* Meta */}
+          {/* Meta side */}
           <Reveal variant="fade-up" delay={100} className="flex flex-col">
             <span className="font-manrope font-bold text-[11px] tracking-[0.2em] text-crimson-600 uppercase">
               {product.cat}
@@ -95,18 +151,33 @@ export default async function ProductPage({
               {product.desc}
             </p>
 
-            {/* Order spec */}
+            {/* Retail spec panel — replaces the old "bulk / corporate
+                gifting" copy with fan-retail-relevant details. Only
+                shows rows that are actually populated. */}
             <div className="mt-5 p-4 bg-cream-50 border border-black/[0.06] rounded-[16px] flex flex-col gap-2">
-              <div className="flex justify-between font-manrope text-[13px] text-muted">
-                <span>Order Range:</span>
-                <strong className="text-ink">{product.range}</strong>
-              </div>
-              <div className="flex justify-between font-manrope text-[13px] text-muted">
-                <span>Bulk Suitability:</span>
-                <strong className="text-ink">
-                  Corporate Gifting &amp; Fan Merchandise
-                </strong>
-              </div>
+              <SpecRow
+                label="Availability"
+                value={
+                  outOfStock
+                    ? "Out of stock"
+                    : lowStock
+                      ? `In stock · only ${product.stock} left`
+                      : "In stock"
+                }
+                emphasise
+                accent={outOfStock ? "#6B635C" : "#0E8A4F"}
+              />
+              {product.sku && <SpecRow label="SKU" value={product.sku} />}
+              {product.weightGrams ? (
+                <SpecRow
+                  label="Shipping weight"
+                  value={`${product.weightGrams} g`}
+                />
+              ) : null}
+              <SpecRow
+                label="Ships from"
+                value="Chennai · Delivered across India"
+              />
             </div>
 
             <QtyAddToCart product={product} />
@@ -114,17 +185,43 @@ export default async function ProductPage({
         </div>
 
         {/* Related */}
-        <div className="mt-[84px]">
-          <h2 className="font-sora font-extrabold text-[26px] tracking-[-0.02em] mb-7 text-ink">
-            You May Also Like
-          </h2>
-          <div className="related-grid">
-            {related.map((p, i) => (
-              <ProductCard key={p.id} product={p} delay={i * 60} />
-            ))}
+        {related.length > 0 && (
+          <div className="mt-[84px]">
+            <h2 className="font-sora font-extrabold text-[26px] tracking-[-0.02em] mb-7 text-ink">
+              You May Also Like
+            </h2>
+            <div className="related-grid">
+              {related.map((p, i) => (
+                <ProductCard key={p.id} product={p} delay={i * 60} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
+  );
+}
+
+function SpecRow({
+  label,
+  value,
+  emphasise,
+  accent,
+}: {
+  label: string;
+  value: string;
+  emphasise?: boolean;
+  accent?: string;
+}) {
+  return (
+    <div className="flex justify-between font-manrope text-[13px] text-muted">
+      <span>{label}</span>
+      <strong
+        className="text-ink"
+        style={emphasise && accent ? { color: accent } : undefined}
+      >
+        {value}
+      </strong>
+    </div>
   );
 }

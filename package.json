@@ -14,7 +14,10 @@
     "db:sqlite:generate": "prisma generate --schema prisma/schema.sqlite.prisma",
     "db:sqlite:migrate": "prisma migrate dev --schema prisma/schema.sqlite.prisma",
     "db:sqlite:seed": "prisma db seed --schema prisma/schema.sqlite.prisma",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "test:checkout": "tsx --import ./scripts/harness-server-only-preload.mjs scripts/test-checkout-phase-5-3.ts",
+    "stage:t6:snapshot": "tsx scripts/stage-t6-stock.ts snapshot",
+    "stage:t6:restore": "tsx scripts/stage-t6-stock.ts restore"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

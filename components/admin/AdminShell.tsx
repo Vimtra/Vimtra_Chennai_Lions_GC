@@ -10,6 +10,7 @@ import { logout } from "@/app/admin/actions";
 export type AdminSection =
   | "dashboard"
   | "products"
+  | "inventory"
   | "users"
   | "news"
   | "media"
@@ -48,6 +49,7 @@ export default function AdminShell({
           <nav className="flex items-center gap-1 ml-2 flex-wrap">
             {link("/admin", "dashboard", "Dashboard")}
             {link("/admin/products", "products", "Products")}
+            {link("/admin/inventory", "inventory", "Inventory")}
             {link("/admin/fixtures", "fixtures", "Fixtures")}
             {link("/admin/scores", "scores", "Scores")}
             {link("/admin/leaderboards", "leaderboards", "Standings")}

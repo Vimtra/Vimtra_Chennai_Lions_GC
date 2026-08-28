@@ -1,31 +1,25 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
-import { useCart, cartSubtotal, useCartHydrated } from "@/store/cart";
+import { useCart, cartCount, useCartHydrated } from "@/store/cart";
 import { FALLBACK_LOGO, inr } from "@/lib/products";
+import { computeTotals, shippingExplainer } from "@/lib/orders-totals";
 
 export default function CartPage() {
   const items = useCart((s) => s.items);
   const inc = useCart((s) => s.inc);
   const dec = useCart((s) => s.dec);
   const remove = useCart((s) => s.remove);
-  const clear = useCart((s) => s.clear);
   const hydrated = useCartHydrated();
-  const [placed, setPlaced] = useState(false);
 
-  const subtotal = cartSubtotal(items);
-  const shipping = subtotal >= 2000 || subtotal === 0 ? 0 : 149;
-  const tax = Math.round(subtotal * 0.18);
-  const total = subtotal + shipping + tax;
-
-  const checkout = () => {
-    if (!items.length) return;
-    clear();
-    setPlaced(true);
-  };
+  // Totals delegated to the shared calculator so /cart, /checkout, and the
+  // server-side placeOrderAction always compute the same numbers.
+  const { subtotal, shipping, tax, total } = computeTotals(
+    items.map((i) => ({ price: i.price, qty: i.qty }))
+  );
+  const count = hydrated ? cartCount(items) : 0;
 
   return (
     <>
@@ -38,7 +32,7 @@ export default function CartPage() {
       >
         <div className="relative max-w-[1200px] mx-auto">
           <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-            Checkout
+            Your Bag
           </div>
           <h1
             className="mt-[14px] font-sora font-extrabold text-white"
@@ -50,22 +44,19 @@ export default function CartPage() {
           >
             YOUR CART
           </h1>
+          {hydrated && count > 0 && (
+            <div className="mt-3 font-manrope text-[13.5px] text-white/80">
+              {count} item{count === 1 ? "" : "s"} · review and check out below.
+            </div>
+          )}
         </div>
       </section>
 
       <section className="bg-cream-100 px-8 pt-14 pb-24">
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-[30px] items-start">
           <div>
-            {!hydrated ? null : placed ? (
-              <EmptyOrPlaced
-                title="Order confirmed!"
-                body="Thank you for backing the Lions. A confirmation has been sent to your email."
-              />
-            ) : items.length === 0 ? (
-              <EmptyOrPlaced
-                title="Your cart is empty"
-                body="Pick up Lions match kit, performance polos, and tour accessories at the shop."
-              />
+            {!hydrated ? null : items.length === 0 ? (
+              <EmptyCart />
             ) : (
               items.map((it) => (
                 <div className="cart-row" key={it.id}>
@@ -117,9 +108,7 @@ export default function CartPage() {
             </div>
             <div className="line">
               <span>Shipping</span>
-              <span>
-                {subtotal === 0 ? "Free over ₹2,000" : shipping === 0 ? "Free" : inr(shipping)}
-              </span>
+              <span>{shippingExplainer(subtotal)}</span>
             </div>
             <div className="line">
               <span>GST (18%)</span>
@@ -129,18 +118,27 @@ export default function CartPage() {
               <span>Total</span>
               <span>{inr(total)}</span>
             </div>
-            <button
-              className="cta-gold press w-full mt-[22px] py-[14px] text-[13.5px] tracking-[0.06em] justify-center"
-              onClick={checkout}
-            >
-              PROCEED TO CHECKOUT
-            </button>
-            <div className="mt-4 font-manrope text-[12px] text-white/55 leading-[1.55]">
-              Members of the Pride get an automatic 10% off — sign in on your{" "}
-              <Link href="/profile" className="text-[#E9CB8E]">
-                profile
+            {hydrated && items.length > 0 ? (
+              <Link
+                href="/checkout"
+                className="cta-gold press w-full mt-[22px] py-[14px] text-[13.5px] tracking-[0.06em] justify-center inline-flex"
+                style={{ textDecoration: "none" }}
+              >
+                PROCEED TO CHECKOUT
               </Link>
-              .
+            ) : (
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="cta-gold press w-full mt-[22px] py-[14px] text-[13.5px] tracking-[0.06em] justify-center opacity-60 cursor-not-allowed"
+              >
+                CART IS EMPTY
+              </button>
+            )}
+            <div className="mt-4 font-manrope text-[12px] text-white/55 leading-[1.55]">
+              You&apos;ll sign in on the next screen (or create an account) to
+              confirm delivery details.
             </div>
           </div>
         </div>
@@ -149,14 +147,17 @@ export default function CartPage() {
   );
 }
 
-function EmptyOrPlaced({ title, body }: { title: string; body: string }) {
+function EmptyCart() {
   return (
     <div className="bg-cream-50 border border-black/[0.07] rounded-[22px] p-[60px] text-center">
       <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-crimson-600 opacity-70" />
       <div className="font-sora font-extrabold text-[32px] text-ink tracking-[-0.02em]">
-        {title}
+        Your cart is empty
       </div>
-      <p className="font-manrope text-[14px] text-muted my-[10px] mb-[22px]">{body}</p>
+      <p className="font-manrope text-[14px] text-muted my-[10px] mb-[22px]">
+        Pick up Lions match kit, performance polos, and tour accessories at the
+        shop.
+      </p>
       <Link href="/shop" className="cta-gold">
         GO TO SHOP
       </Link>

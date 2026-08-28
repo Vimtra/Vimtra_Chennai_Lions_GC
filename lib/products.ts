@@ -11,9 +11,20 @@ export interface Product {
   cat: string; // category, e.g. "Apparel"
   price: number; // integer INR
   glyph: string; // 3-letter abbreviation
-  img?: string; // optional mockup; falls back to team logo
-  range: string; // corporate bulk quantities
+  img?: string; // legacy single-image field kept for M0-M4 compatibility
+  range: string; // corporate bulk quantities (legacy, retained for display)
   desc: string;
+  // ------- M5 additions -------
+  /** Available inventory. 0 = out of stock, hides Add-to-Cart on the buyer side. */
+  stock: number;
+  /** false hides the product from the public /shop and /product/[id] pages. */
+  active: boolean;
+  /** Ordered image URLs; first entry is the primary/hero image. Falls back to `img`. */
+  images: string[];
+  /** Shipping weight in grams. Optional. */
+  weightGrams?: number;
+  /** Optional stock-keeping unit / barcode. */
+  sku?: string;
 }
 
 /** Centered fallback logo used when a product has no custom image. */
@@ -29,15 +40,32 @@ export function normalizeImg(img?: string): string | undefined {
   return "/" + img.replace(/^\.?\/?/, "");
 }
 
-/** Immutable seed catalog, normalized from data/products.json. */
+/** Immutable seed catalog, normalized from data/products.json.
+ *  M5 fields default to safe values so the type stays consistent even
+ *  though `products.json` was written pre-M5. Backfill in the DB uses
+ *  the same defaults + a stock preset of 25 (approved by operator). */
 export const SEED_PRODUCTS: Product[] = (rawProducts as Product[]).map((p) => ({
   ...p,
   img: normalizeImg(p.img),
+  stock: p.stock ?? 25,
+  active: p.active ?? true,
+  images: p.images ?? [],
+  weightGrams: p.weightGrams,
+  sku: p.sku,
 }));
 
-/** Resolve the image to render for a product (custom mockup or fallback logo). */
-export function productImage(p: Product): string {
+/** Resolve the image to render for a product. Priority:
+ *  1. First entry in `images[]` (M5 preferred),
+ *  2. Legacy `img` (M0-M4),
+ *  3. Franchise fallback logo. */
+export function productImage(p: Pick<Product, "images" | "img">): string {
+  if (p.images && p.images.length > 0) return p.images[0];
   return p.img || FALLBACK_LOGO;
+}
+
+/** Convenience: is this product buyable right now? */
+export function isBuyable(p: Pick<Product, "active" | "stock">): boolean {
+  return p.active && p.stock > 0;
 }
 
 /** Format an integer rupee amount the Indian way, e.g. 6000 → "₹6,000". */

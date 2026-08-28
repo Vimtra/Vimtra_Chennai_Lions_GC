@@ -24,7 +24,12 @@ export default async function AdminProductsPage() {
           <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">Products</h1>
           <p className="font-manrope text-[14px] text-muted mt-1">{products.length} items in the catalog</p>
         </div>
-        <Link href="#new" className="btn-dark">+ Add product</Link>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/inventory" className="btn-ghost">
+            Manage stock →
+          </Link>
+          <Link href="#new" className="btn-dark">+ Add product</Link>
+        </div>
       </div>
 
       <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
