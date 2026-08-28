@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Sora, Manrope } from "next/font/google";
+import { Sora, Manrope, Fraunces } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -23,6 +23,18 @@ const manrope = Manrope({
   display: "swap",
 });
 
+// Grandstand foundation (P0) — editorial serif used for long-form leads,
+// pull quotes, and single hero moments on migrated pages. Loaded here so
+// its CSS variable exists globally, but no legacy page renders it: only
+// components that opt into `font-fraunces` / `.gs-h-serif-lead` use it.
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Vimtra Chennai Lions GC · AM Green IGPL · Season 2026",
   description:
@@ -37,11 +49,23 @@ export default async function RootLayout({
 }) {
   const user = await getCurrentUser();
   return (
-    <html lang="en" className={`${sora.variable} ${manrope.variable}`}>
+    <html
+      lang="en"
+      className={`${sora.variable} ${manrope.variable} ${fraunces.variable}`}
+    >
       <body>
+        {/* Accessibility — keyboard-only skip link.
+            Hidden until it receives focus (see .gs-skip-link in globals.css).
+            Targets the <main> wrapper below, which is tabIndex={-1} so the
+            keyboard user's focus actually moves there on activation. */}
+        <a href="#main-content" className="gs-skip-link">
+          Skip to main content
+        </a>
         <Loader />
         <Nav user={user} />
-        {children}
+        <main id="main-content" tabIndex={-1}>
+          {children}
+        </main>
         <Footer />
         <ToastHost />
       </body>

@@ -218,7 +218,9 @@ body {
   background: linear-gradient(90deg, var(--gold-400), var(--gold-500));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Grandstand P1 — tokenized motion. */
+  transition: transform var(--gs-dur-base, 300ms)
+    var(--gs-ease, cubic-bezier(0.2, 0.7, 0.2, 1));
 }
 .lions-header .nav-link:hover,
 .lions-header .nav-link.is-active {
@@ -256,8 +258,8 @@ body {
   transition: transform 0.1s;
 }
 .icon-btn {
-  width: 42px;
-  height: 42px;
+  width: 44px; /* Grandstand P1 — touch-target minimum */
+  height: 44px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.32);
   background: rgba(255, 255, 255, 0.08);
@@ -268,7 +270,13 @@ body {
   text-decoration: none;
   cursor: pointer;
   position: relative;
-  transition: background 0.25s, transform 0.25s, border-color 0.25s;
+  /* Grandstand P1 — snappier tokenized micro-interaction. */
+  transition: background var(--gs-dur-fast, 150ms)
+      var(--gs-ease-swift, cubic-bezier(0.4, 0, 0.2, 1)),
+    transform var(--gs-dur-fast, 150ms)
+      var(--gs-ease-swift, cubic-bezier(0.4, 0, 0.2, 1)),
+    border-color var(--gs-dur-fast, 150ms)
+      var(--gs-ease-swift, cubic-bezier(0.4, 0, 0.2, 1));
 }
 .icon-btn:hover {
   background: rgba(255, 255, 255, 0.18);
@@ -318,7 +326,10 @@ body {
   z-index: 200;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+  /* Grandstand P1 — tokenized overlay animation. */
+  transition: opacity var(--gs-dur-base, 300ms)
+      var(--gs-ease-out, cubic-bezier(0.16, 0.84, 0.24, 1)),
+    visibility var(--gs-dur-base, 300ms);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -405,14 +416,16 @@ body {
 ===================================================== */
 .lions-footer {
   background: linear-gradient(180deg, #a8181f, #5a0b11);
-  padding: 80px 32px 28px;
+  /* Horizontal padding matches the Grandstand container gutters
+     (20 / 32) so footer content aligns with page content edges. */
+  padding: 80px 20px 28px;
   color: #fff;
   position: relative;
   overflow: hidden;
 }
 @media (min-width: 768px) {
   .lions-footer {
-    padding: 96px 48px 36px;
+    padding: 96px 32px 36px;
   }
 }
 .lions-footer::before {
@@ -427,7 +440,9 @@ body {
   pointer-events: none;
 }
 .lions-footer .ft-grid {
-  max-width: 1280px;
+  /* Aligns with .gs-container (1200) so footer columns share the same
+     left/right edges as page content above the footer. */
+  max-width: 1200px;
   margin: 0 auto;
   display: grid;
   gap: 48px;
@@ -523,7 +538,9 @@ body {
   margin: 0;
 }
 .lions-footer .ft-bottom {
-  max-width: 1280px;
+  /* Same 1200 boundary as .ft-grid — copyright + legal links align with
+     the columns above and with page content. */
+  max-width: 1200px;
   margin: 48px auto 0;
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -1715,3 +1732,749 @@ label {
   height: 14px !important;
   display: inline-block !important;
 }
+
+/* =====================================================
+   ============ GRANDSTAND FOUNDATION (P0) =============
+   2026 visual redesign, additive layer.
+   -----------------------------------------------------
+   Every token / class below is namespaced `--gs-*` or
+   `.gs-*` so it coexists with the pre-existing design
+   system above without collisions. Pages migrated in
+   Phases P1-P9 opt in explicitly; unmigrated pages
+   render exactly as they did before this section landed.
+   The one universal change is `prefers-reduced-motion`
+   support — that intentionally affects every animation
+   on the site (WCAG 2.3.3).
+===================================================== */
+
+:root {
+  /* --------- Semantic surfaces (light) --------- */
+  --gs-ground: var(--cream-100); /* body ground on public pages */
+  --gs-surface: var(--cream-50); /* default card surface */
+  --gs-surface-elevated: #ffffff; /* raised tiles, product cards */
+  --gs-paper: #fdfbf7; /* editorial article body */
+
+  /* --------- Semantic surfaces (dark / admin) --------- */
+  --gs-charcoal: #24201d; /* admin ground */
+  --gs-slate: #2e2926; /* admin surface */
+  --gs-slate-2: #3a3532; /* admin surface, one step brighter */
+
+  /* --------- Borders --------- */
+  --gs-border-hairline: rgba(26, 21, 19, 0.08);
+  --gs-border-strong: rgba(26, 21, 19, 0.16);
+  --gs-border-hairline-dark: rgba(255, 255, 255, 0.08);
+  --gs-border-strong-dark: rgba(255, 255, 255, 0.16);
+
+  /* --------- Text (semantic — parallel to legacy --muted) --------- */
+  --gs-text-primary: var(--ink);
+  --gs-text-secondary: #5f574f; /* WCAG AA normal on cream */
+  --gs-text-inverse: #f4f0e8;
+  --gs-text-inverse-secondary: rgba(244, 240, 232, 0.66);
+
+  /* --------- Accent (gold used sparingly) --------- */
+  --gs-accent-line: var(--gold-500);
+  --gs-accent-fill: var(--gold-400);
+
+  /* --------- Radius scale --------- */
+  --gs-radius-xs: 4px;
+  --gs-radius-sm: 8px;
+  --gs-radius-md: 12px;
+  --gs-radius-lg: 20px;
+  --gs-radius-xl: 28px;
+  --gs-radius-pill: 999px;
+
+  /* --------- Elevation (light surfaces) --------- */
+  --gs-elev-0: none;
+  --gs-elev-1: 0 1px 2px rgba(26, 21, 19, 0.06),
+    0 8px 24px -12px rgba(26, 21, 19, 0.16);
+  --gs-elev-2: 0 2px 4px rgba(26, 21, 19, 0.08),
+    0 24px 48px -20px rgba(26, 21, 19, 0.32);
+  --gs-elev-3: 0 8px 16px rgba(26, 21, 19, 0.1),
+    0 40px 80px -30px rgba(26, 21, 19, 0.44);
+
+  /* --------- Elevation (dark / admin surfaces) --------- */
+  --gs-elev-1-dark: 0 1px 2px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --gs-elev-2-dark: 0 2px 6px rgba(0, 0, 0, 0.3),
+    0 12px 28px -14px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* --------- Motion --------- */
+  --gs-dur-fast: 150ms; /* hover / focus */
+  --gs-dur-base: 300ms; /* button, chip, card interaction */
+  --gs-dur-slow: 700ms; /* section reveal */
+  --gs-dur-hero: 1200ms; /* AeText mask reveal */
+  --gs-ease: cubic-bezier(0.2, 0.7, 0.2, 1); /* default hover / press */
+  --gs-ease-out: cubic-bezier(0.16, 0.84, 0.24, 1); /* reveal in */
+  --gs-ease-swift: cubic-bezier(0.4, 0, 0.2, 1); /* focus snap */
+
+  /* --------- Spacing rhythm (opt-in tokens) --------- */
+  --gs-space-hair: 2px;
+  --gs-space-xs: 6px;
+  --gs-space-sm: 12px;
+  --gs-space-md: 20px;
+  --gs-space-lg: 32px;
+  --gs-space-xl: 56px;
+  --gs-space-2xl: 96px;
+  --gs-space-3xl: 128px;
+}
+
+/* =====================================================
+   Reduced-motion — global a11y foundation.
+   Universal on purpose: legacy animations included.
+===================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =====================================================
+   Container system
+   -----------------------------------------------------
+   Three widths — prose (720), default (1200), wide (1400).
+   Uniform gutters: 20px mobile, 32px tablet+ desktop.
+   Every migrated section uses one of these; nothing else.
+===================================================== */
+.gs-container-prose,
+.gs-container,
+.gs-container-wide {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.gs-container-prose {
+  max-width: 720px;
+}
+.gs-container {
+  max-width: 1200px;
+}
+.gs-container-wide {
+  max-width: 1400px;
+}
+@media (min-width: 768px) {
+  .gs-container-prose,
+  .gs-container,
+  .gs-container-wide {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/* =====================================================
+   Section rhythm
+   -----------------------------------------------------
+   Three vertical densities. Migrated sections pick one
+   instead of ad-hoc py-[NNpx]. Mobile drops one step.
+===================================================== */
+.gs-section-tight {
+  padding-top: var(--gs-space-xl);
+  padding-bottom: var(--gs-space-xl);
+}
+.gs-section {
+  padding-top: var(--gs-space-2xl);
+  padding-bottom: var(--gs-space-2xl);
+}
+.gs-section-loose {
+  padding-top: var(--gs-space-3xl);
+  padding-bottom: var(--gs-space-3xl);
+}
+@media (max-width: 767px) {
+  .gs-section-tight {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  .gs-section {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+  .gs-section-loose {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+}
+
+/* =====================================================
+   Background surfaces (page-level)
+===================================================== */
+.gs-bg-editorial {
+  background: var(--gs-ground);
+  position: relative;
+  isolation: isolate;
+}
+.gs-bg-editorial::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    1200px 600px at 90% 20%,
+    rgba(233, 203, 142, 0.06),
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+.gs-bg-paper {
+  background: var(--gs-paper);
+}
+.gs-bg-admin {
+  background: var(--gs-charcoal);
+  color: var(--gs-text-inverse);
+}
+.gs-bg-immersive {
+  background: radial-gradient(
+      1200px 700px at 50% 0%,
+      #2a0a0e 0%,
+      transparent 60%
+    ),
+    linear-gradient(180deg, #16090b 0%, #0b0507 100%);
+  color: var(--gs-text-inverse);
+}
+
+/* =====================================================
+   Cards — four variants, one shape system.
+   Retires the ad-hoc `bg-cream-50 border rounded-[NN]`
+   pattern that recurs 40+ times in the current code.
+===================================================== */
+.gs-card {
+  background: var(--gs-surface);
+  border: 1px solid var(--gs-border-hairline);
+  border-radius: var(--gs-radius-lg);
+  padding: 28px;
+  box-shadow: var(--gs-elev-1);
+}
+.gs-card-tile {
+  background: var(--gs-surface-elevated);
+  border: 1px solid var(--gs-border-hairline);
+  border-radius: var(--gs-radius-md);
+  padding: 20px;
+  box-shadow: var(--gs-elev-1);
+  transition: box-shadow var(--gs-dur-base) var(--gs-ease),
+    transform var(--gs-dur-base) var(--gs-ease);
+}
+.gs-card-tile:hover {
+  box-shadow: var(--gs-elev-2);
+  transform: translateY(-2px);
+}
+.gs-card-ghost {
+  background: transparent;
+  border: 1px solid var(--gs-border-hairline);
+  border-radius: var(--gs-radius-lg);
+  padding: 24px;
+}
+.gs-card-dark {
+  background: var(--gs-slate);
+  color: var(--gs-text-inverse);
+  border: 1px solid var(--gs-border-hairline-dark);
+  border-radius: var(--gs-radius-md);
+  padding: 24px;
+  box-shadow: var(--gs-elev-1-dark);
+}
+@media (max-width: 640px) {
+  .gs-card,
+  .gs-card-tile,
+  .gs-card-ghost,
+  .gs-card-dark {
+    padding: 20px;
+  }
+}
+
+/* =====================================================
+   Buttons — three tiers, one shape system.
+   -----------------------------------------------------
+   Legacy .cta-gold / .btn-dark / .btn-ghost / .btn-danger
+   remain until pages migrate — no collision because names
+   are namespaced under `.gs-btn-*`.
+===================================================== */
+.gs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: var(--gs-radius-pill);
+  padding: 13px 22px;
+  min-height: 44px; /* touch target minimum */
+  transition: transform var(--gs-dur-fast) var(--gs-ease-swift),
+    box-shadow var(--gs-dur-fast) var(--gs-ease-swift),
+    background var(--gs-dur-fast) var(--gs-ease-swift),
+    color var(--gs-dur-fast) var(--gs-ease-swift),
+    border-color var(--gs-dur-fast) var(--gs-ease-swift),
+    filter var(--gs-dur-fast) var(--gs-ease-swift);
+}
+.gs-btn:disabled,
+.gs-btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.gs-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Primary — gold gradient. One instance per screen. */
+.gs-btn-primary {
+  color: var(--gold-deep);
+  background: linear-gradient(180deg, var(--gold-400), var(--gold-500));
+  box-shadow: 0 10px 22px -12px rgba(58, 26, 6, 0.7);
+}
+.gs-btn-primary:hover:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -14px rgba(58, 26, 6, 0.85);
+  filter: brightness(1.04);
+}
+
+/* Secondary — ink outline pill. Repeat/adjacent actions. */
+.gs-btn-secondary {
+  color: var(--ink);
+  background: transparent;
+  border-color: rgba(26, 21, 19, 0.28);
+  border-radius: var(--gs-radius-md);
+}
+.gs-btn-secondary:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--gs-surface);
+  border-color: var(--ink);
+}
+
+/* Secondary · danger tone — same shape, crimson tint. */
+.gs-btn-secondary[data-tone="danger"] {
+  color: var(--crimson-600);
+  border-color: rgba(196, 32, 42, 0.3);
+}
+.gs-btn-secondary[data-tone="danger"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--crimson-600);
+  color: #fff;
+  border-color: var(--crimson-600);
+}
+
+/* Tertiary — link-style with animated underline. */
+.gs-btn-tertiary {
+  color: var(--ink);
+  background: transparent;
+  padding: 6px 0;
+  border-radius: 0;
+  position: relative;
+  min-height: 0;
+  border: 0;
+}
+.gs-btn-tertiary::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--gs-dur-base) var(--gs-ease);
+}
+.gs-btn-tertiary:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Dark-surface variant — swaps text colour so buttons read on charcoal. */
+.gs-on-dark .gs-btn-secondary {
+  color: var(--gs-text-inverse);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.gs-on-dark .gs-btn-secondary:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--gs-slate-2);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.gs-on-dark .gs-btn-tertiary {
+  color: var(--gs-text-inverse);
+}
+
+/* Size modifiers. */
+.gs-btn-sm {
+  padding: 9px 16px;
+  font-size: 12.5px;
+  min-height: 38px;
+}
+.gs-btn-lg {
+  padding: 16px 28px;
+  font-size: 14px;
+  min-height: 52px;
+}
+
+/* =====================================================
+   Inputs (foundation — pages opt in on their `<input>`s)
+   Retains the existing 4px crimson focus halo so migrated
+   forms feel the same as unmigrated ones during rollout.
+===================================================== */
+.gs-input,
+.gs-textarea,
+.gs-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 14px;
+  border: 1px solid var(--gs-border-strong);
+  border-radius: var(--gs-radius-md);
+  background: #fff;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14.5px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color var(--gs-dur-fast) var(--gs-ease-swift),
+    box-shadow var(--gs-dur-fast) var(--gs-ease-swift);
+}
+.gs-input:hover,
+.gs-textarea:hover,
+.gs-select:hover {
+  border-color: rgba(26, 21, 19, 0.35);
+}
+.gs-input:focus,
+.gs-textarea:focus,
+.gs-select:focus {
+  border-color: var(--crimson-600);
+  box-shadow: 0 0 0 4px rgba(196, 32, 42, 0.1);
+}
+.gs-textarea {
+  resize: vertical;
+  min-height: 108px;
+}
+.gs-input[aria-invalid="true"],
+.gs-textarea[aria-invalid="true"] {
+  border-color: var(--crimson-600);
+  background: rgba(196, 32, 42, 0.04);
+}
+.gs-label {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gs-text-secondary);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.gs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.gs-help {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12.5px;
+  color: var(--gs-text-secondary);
+  line-height: 1.5;
+}
+.gs-error {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--crimson-600);
+  line-height: 1.5;
+}
+
+/* =====================================================
+   Typography utilities (opt-in — pages migrate to these)
+   -----------------------------------------------------
+   The scale collapses the current 10+ ad-hoc clamp()
+   sizes into a controlled hierarchy. Each utility sets
+   family + size + line height + tracking; colour stays
+   context-driven.
+===================================================== */
+.gs-eyebrow {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--crimson-600);
+  line-height: 1;
+}
+.gs-h-display-1 {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(56px, 9.4vw, 148px);
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+.gs-h-display-2 {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(44px, 6.4vw, 96px);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.gs-h-display-3 {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(32px, 4.6vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+.gs-h-1 {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.gs-h-2 {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.gs-h-3 {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+.gs-serif-lead {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(20px, 2.2vw, 28px);
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+}
+.gs-body-lg {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.62;
+  color: var(--gs-text-secondary);
+}
+.gs-body {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--gs-text-secondary);
+}
+.gs-caption {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gs-text-secondary);
+}
+.gs-mono-tab {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+/* Reads-in-context: keeps display headings ink on light and inverse on dark. */
+.gs-on-dark .gs-h-display-1,
+.gs-on-dark .gs-h-display-2,
+.gs-on-dark .gs-h-display-3,
+.gs-on-dark .gs-h-1,
+.gs-on-dark .gs-h-2,
+.gs-on-dark .gs-h-3 {
+  color: var(--gs-text-inverse);
+}
+.gs-on-dark .gs-body-lg,
+.gs-on-dark .gs-body,
+.gs-on-dark .gs-caption {
+  color: var(--gs-text-inverse-secondary);
+}
+.gs-on-dark .gs-eyebrow {
+  color: var(--gs-accent-fill);
+}
+
+/* =====================================================
+   Signature devices
+===================================================== */
+/* Hairline gold rule — sits below section eyebrows. */
+.gs-rule {
+  display: inline-block;
+  width: 60px;
+  height: 1px;
+  background: var(--gs-accent-line);
+  margin-top: 12px;
+  margin-bottom: 20px;
+  border: 0;
+}
+.gs-rule-full {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--gs-border-hairline);
+  border: 0;
+  margin: 0;
+}
+
+/* =====================================================
+   Focus — two-ring pattern.
+   Reads on any surface (light OR gold OR charcoal).
+   Migrated interactive controls opt in with `.gs-focusable`
+   or by being a `.gs-btn`.
+===================================================== */
+.gs-focusable:focus-visible,
+.gs-btn:focus-visible {
+  outline: 2px solid var(--gs-accent-fill);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
+}
+.gs-on-dark .gs-focusable:focus-visible,
+.gs-on-dark .gs-btn:focus-visible {
+  outline-color: var(--gs-accent-fill);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.75);
+}
+
+/* =====================================================
+   Skip link — keyboard-only shortcut to <main>.
+   Hidden off-screen until it receives focus; then it
+   slides into the top-left of the viewport. Targets
+   #main-content in app/layout.tsx.
+===================================================== */
+.gs-skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 9999;
+  padding: 12px 18px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--gs-radius-md);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: var(--gs-elev-2);
+  transform: translateY(calc(-100% - 24px));
+  transition: transform var(--gs-dur-fast) var(--gs-ease-swift);
+}
+.gs-skip-link:focus,
+.gs-skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--gs-accent-fill);
+  outline-offset: 3px;
+}
+/* When focus lands on <main> via the skip link, don't paint the
+   usual focus ring on the whole page area — it's noisy. */
+#main-content:focus {
+  outline: none;
+}
+
+/* =====================================================
+   Grandstand reveal — lighter than the legacy [data-reveal].
+   Shorter duration + no rotate. Opt in with data-gs-reveal.
+===================================================== */
+[data-gs-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--gs-dur-slow) var(--gs-ease-out),
+    transform var(--gs-dur-slow) var(--gs-ease-out);
+  will-change: transform, opacity;
+}
+[data-gs-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* =====================================================
+   P2 · HOME hero additions
+   -----------------------------------------------------
+   Signature crimson vignette background + gold-glow overlay
+   (the Lions hero identity), one wipe-in reveal keyframe,
+   and the dark glassy hero-info-card variant. All scoped
+   under `.gs-*` so they don't collide with legacy classes.
+===================================================== */
+
+/* Crimson vignette + atmospheric gold glow — reserved for
+   the home hero. Other dark surfaces use .gs-bg-immersive. */
+.gs-bg-crimson-vignette {
+  background: radial-gradient(
+    125% 105% at 50% -5%,
+    #c9242e 0%,
+    #a8181f 58%,
+    #871119 100%
+  );
+  color: var(--gs-text-inverse);
+  position: relative;
+  isolation: isolate;
+}
+.gs-bg-crimson-vignette::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+      circle at 84% 16%,
+      rgba(233, 203, 142, 0.16),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 12% 88%,
+      rgba(233, 203, 142, 0.1),
+      transparent 45%
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Hero image reveal — clip-path wipe, left to right, once on mount.
+   Respects prefers-reduced-motion via the P0 global block: transition/
+   animation durations collapse to 0.01ms, so the image lands instantly
+   with animation-fill-mode: forwards keeping it fully visible. */
+@keyframes gs-hero-wipe-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.gs-hero-wipe-in {
+  clip-path: inset(0 100% 0 0);
+  animation: gs-hero-wipe-in 900ms var(--gs-ease-out) 200ms forwards;
+  will-change: clip-path;
+}
+
+/* Dark glassy tile floating on the immersive hero. */
+.gs-hero-info-card {
+  display: block;
+  padding: 18px 20px;
+  border-radius: var(--gs-radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(24, 12, 12, 0.5);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  text-decoration: none;
+  transition: transform var(--gs-dur-base) var(--gs-ease),
+    background var(--gs-dur-base) var(--gs-ease),
+    border-color var(--gs-dur-base) var(--gs-ease),
+    box-shadow var(--gs-dur-base) var(--gs-ease);
+}
+.gs-hero-info-card:hover {
+  transform: translateY(-3px);
+  background: rgba(24, 12, 12, 0.65);
+  border-color: rgba(233, 203, 142, 0.35);
+  box-shadow: var(--gs-elev-2-dark);
+}
+
+/* =====================================================
+   End of Grandstand foundation.
+===================================================== */
+

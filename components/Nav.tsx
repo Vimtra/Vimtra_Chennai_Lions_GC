@@ -38,7 +38,10 @@ export default function Nav({ user }: { user: SafeUser | null }) {
   return (
     <>
       <header className="lions-header">
-        <nav className="max-w-[1280px] mx-auto px-5 md:px-8 py-3 flex items-center gap-3 md:gap-5">
+        <nav
+          aria-label="Primary"
+          className="gs-container py-3 flex items-center gap-3 md:gap-5"
+        >
           <Link href="/" className="flex items-center gap-3 no-underline group">
             <Image
               src="/assets/logo-lion.png"
@@ -105,7 +108,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
           if (e.target === e.currentTarget) setOpen(false);
         }}
       >
-        <div className="w-full max-w-[1200px] mx-auto px-6 py-10 md:py-16 min-h-screen flex flex-col justify-between">
+        <div className="gs-container py-10 md:py-16 min-h-screen flex flex-col justify-between">
           {/* Header */}
           <div className="flex items-center justify-between pb-6 border-b border-white/[0.08]">
             <Link href="/" className="flex items-center gap-3 no-underline group" onClick={() => setOpen(false)}>
