@@ -277,7 +277,16 @@ export default function Nav({ user }: { user: SafeUser | null }) {
             onMouseLeave={closeMega}
           >
             <div className="nv-mega-in hp-wrap">
-              <p className="nv-mega-label">{active.label}</p>
+              <div className="nv-mega-side">
+                <p className="nv-mega-label">{active.label}</p>
+                {/* Foot of the label column — the mark's chevron plus a
+                    count taken from the data, so the column resolves
+                    instead of trailing off into empty panel. */}
+                <p className="nv-mega-count">
+                  <i className="v-chev v-chev-lg" aria-hidden />
+                  {String(active.items.length).padStart(2, "0")} sections
+                </p>
+              </div>
               <ul className="nv-mega-list">
                 {active.items.map((it, i) => (
                   <li key={it.href}>
