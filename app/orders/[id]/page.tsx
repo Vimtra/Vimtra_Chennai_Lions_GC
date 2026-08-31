@@ -62,6 +62,7 @@ export default async function OrderConfirmationPage({
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow={isFresh ? "Thank you · Order Placed" : "Order Details"}
         title={[order.orderNumber]}
         lead={`Placed on ${formatOrderDate(order.createdAt)}`}

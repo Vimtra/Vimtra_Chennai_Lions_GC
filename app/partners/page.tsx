@@ -112,6 +112,7 @@ export default function PartnersPage() {
   return (
     <>
       <PageHero
+        variant="immersive"
         eyebrow="Partner With the Lions"
         title={["PARTNERS"]}
         lead={

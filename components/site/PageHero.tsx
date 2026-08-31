@@ -23,12 +23,22 @@ export default function PageHero({
   align = "left",
   wrap = false,
   above,
+  variant = "editorial",
 }: {
   eyebrow: ReactNode;
   title: string[];
   lead?: ReactNode;
   children?: ReactNode;
   align?: "left" | "center";
+  /**
+   * Three levels, chosen by page family rather than applied uniformly:
+   *   immersive — story pages (The Club, The Pride, Ventures, Invest…)
+   *   editorial — media and roster pages (News, Gallery, Players)
+   *   compact   — data and utility pages (Fixtures, Scores, Cart, Terms…)
+   * The immersive level earns its presence from display scale, not from
+   * a taller empty band.
+   */
+  variant?: "immersive" | "editorial" | "compact";
   /** Long titles (article headlines) must wrap rather than run off the
    *  edge, so they opt out of the masked single-line treatment. */
   wrap?: boolean;
@@ -56,7 +66,9 @@ export default function PageHero({
   return (
     <section
       ref={root}
-      className={`hp-pagehero ${align === "center" ? "is-center" : ""}`}
+      className={`hp-pagehero is-${variant} ${
+        align === "center" ? "is-center" : ""
+      }`.trim()}
     >
       <div className="hp-pagehero-atmos" aria-hidden />
       <div className="hp-wrap hp-pagehero-inner">

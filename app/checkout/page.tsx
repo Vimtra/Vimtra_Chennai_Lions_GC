@@ -28,6 +28,7 @@ export default async function CheckoutPage() {
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow={`Checkout · Signed in as ${user.name}`}
         title={["SECURE", "CHECKOUT"]}
       />

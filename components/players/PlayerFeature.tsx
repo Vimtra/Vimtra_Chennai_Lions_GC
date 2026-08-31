@@ -67,13 +67,16 @@ export default function PlayerFeature({ f }: { f: PF }) {
   return (
     <section
       id={f.anchor}
-      className="px-8 py-[104px] scroll-mt-24"
+      className="hp-sec hp-sec-default scroll-mt-24"
       style={{
         background: f.bg,
         borderTop: f.topBorder ? "1px solid rgba(26,21,19,0.06)" : undefined,
       }}
     >
-      <div className={`max-w-[1200px] mx-auto grid grid-cols-1 ${cols} gap-[54px] items-start`}>
+      {/* hp-wrap so the roster shares the header/footer left edge.
+          items-center is an explicit choice: the prose sits on the
+          portrait’s optical centre rather than floating at its top. */}
+      <div className={`hp-wrap grid grid-cols-1 ${cols} gap-[54px] lg:items-center`}>
         {f.reverse ? (
           <>
             {prose}

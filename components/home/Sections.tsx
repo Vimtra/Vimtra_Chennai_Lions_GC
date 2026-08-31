@@ -210,7 +210,8 @@ export function Development() {
           src="/assets/fac-range-web.jpg"
           alt="A floodlit practice facility with launch-monitor bays at dusk"
           fill
-          sizes="100vw"
+          // fac-range-web.jpg is a 1024px source — see Hero.
+          sizes="(max-width: 1080px) 100vw, 1080px"
           className="dev-img"
         />
         <span className="dev-scrim" aria-hidden />
@@ -314,34 +315,38 @@ export function Media({ stories }: { stories: StoryRow[] }) {
             <span className="story-sum">{lead.summary}</span>
           </a>
 
-          <div className="story-rest">
-            {rest.slice(0, 3).map((s) => (
-              <a
-                key={s.id}
-                className="story story-row"
-                href={s.href}
-                target="_blank"
-                rel="noreferrer"
-                data-rise
-              >
-                {s.cover && (
-                  <span className="story-fig story-fig-sm">
-                    <Image
-                      src={s.cover}
-                      alt=""
-                      fill
-                      sizes="160px"
-                      className="story-img"
-                    />
+          {/* Secondary coverage is typographic, not thumbnailed.
+              Several of these stories share one subject, so repeating the
+              same portrait four times would read as a template error. A
+              numbered masthead list is how a newsroom actually sets
+              "more coverage" — and it keeps every cover honest. */}
+          <ol className="story-rest">
+            {rest.slice(0, 3).map((s, i) => (
+              <li key={s.id}>
+                <a
+                  className="story story-row"
+                  href={s.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-rise
+                >
+                  <span className="story-n">
+                    {String(i + 2).padStart(2, "0")}
                   </span>
-                )}
-                <span className="story-col">
-                  <span className="story-src">{s.source}</span>
-                  <span className="story-title">{s.title}</span>
-                </span>
-              </a>
+                  <span className="story-col">
+                    <span className="story-meta">
+                      <span className="story-src">{s.source}</span>
+                      {s.date && <span className="story-date">{s.date}</span>}
+                    </span>
+                    <span className="story-title">{s.title}</span>
+                  </span>
+                  <span className="story-go" aria-hidden>
+                    &#8599;
+                  </span>
+                </a>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </div>
     </section>

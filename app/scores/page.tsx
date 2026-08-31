@@ -39,6 +39,7 @@ export default async function ScoresPage() {
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow="Live Scoring · Season 2026"
         title={["SCORES"]}
         lead={

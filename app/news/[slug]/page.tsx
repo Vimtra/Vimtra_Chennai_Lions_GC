@@ -54,6 +54,7 @@ export default async function NewsArticlePage({
   return (
     <>
       <PageHero
+        variant="editorial"
         above={
           <Link href="/news" className="hp-pagehero-back">
             ← From the Den

@@ -25,6 +25,7 @@ export default async function LeaderboardsPage() {
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow={`AM Green IGPL · Season ${SEASON} Standings`}
         title={["LEADER", "BOARDS"]}
         lead={

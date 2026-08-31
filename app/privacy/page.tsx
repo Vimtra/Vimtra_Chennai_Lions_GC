@@ -108,6 +108,7 @@ export default function PrivacyPage() {
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow="Legal"
         title={["PRIVACY"]}
       />

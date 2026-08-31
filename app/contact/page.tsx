@@ -68,6 +68,7 @@ export default async function ContactPage({
   return (
     <div className="contact-page">
       <PageHero
+        variant="compact"
         eyebrow="To Discuss"
         title={["CONTACT"]}
         lead={

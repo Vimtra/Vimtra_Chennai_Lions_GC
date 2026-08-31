@@ -1,562 +1,575 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useState, useTransition, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Pencil, RotateCcw, Search } from "lucide-react";
-import type { Product } from "@/lib/products";
-import { inr } from "@/lib/products";
-import { useToast } from "@/store/toast";
 import {
-  bulkUpdateStockAction,
-  type BulkStockResult,
-  type StockUpdate,
-} from "@/app/admin/inventory/actions";
+  Search,
+  X,
+  Pencil,
+  Trash2,
+  Save,
+  RotateCcw,
+  CheckCircle2,
+  AlertCircle,
+  Package,
+  Layers,
+} from "lucide-react";
+import { inr, type Product } from "@/lib/products";
+import { bulkUpdateStockAction, deleteProductAction } from "@/app/admin/products/actions";
 
-/**
- * Inventory manager — one screen to edit stock (and active flag) across
- * the whole catalog. Reuses the existing `admin-table` + `btn-*` styles
- * and the shared `useToast` store; introduces no new global styles.
- *
- * State model:
- *   • `drafts[id]` holds the buyer-visible edit state per product row —
- *     stock is kept as a STRING so we can distinguish "" (currently
- *     typing) from "0" (deliberate zero) and still validate cleanly.
- *   • A row is `dirty` when its draft differs from its originally-loaded
- *     Product row. A row is `invalid` when its stock string is not a
- *     non-negative integer within the server-side cap. Only DIRTY + VALID
- *     rows are sent to the server on Save; invalid rows block Save.
- *
- * Filters + search operate on the visible list only — they DO NOT drop
- * pending edits. If you edit a row's stock then filter it out of view,
- * the change remains staged and will still be saved.
- */
-
-const MAX_STOCK = 1_000_000;
-
-type Draft = { stock: string; active: boolean };
-
-type StockFilter = "all" | "in-stock" | "out-of-stock" | "active" | "inactive";
-
-interface Props {
+interface InventoryTableProps {
   products: Product[];
 }
 
-export default function InventoryTable({ products }: Props) {
-  const showToast = useToast((s) => s.show);
-  const [pending, startTransition] = useTransition();
-  const [drafts, setDrafts] = useState<Record<string, Draft>>(() =>
-    Object.fromEntries(
-      products.map((p) => [
-        p.id,
-        { stock: String(p.stock), active: p.active },
-      ])
-    )
-  );
-  const [query, setQuery] = useState("");
-  const [stockFilter, setStockFilter] = useState<StockFilter>("all");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [serverInvalidIds, setServerInvalidIds] = useState<Set<string>>(
-    new Set()
-  );
+export default function InventoryTable({ products }: InventoryTableProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  // --- Derived --------------------------------------------------------------
-  const originalById = useMemo(
-    () => new Map(products.map((p) => [p.id, p] as const)),
-    [products]
-  );
-  const categories = useMemo(
-    () => Array.from(new Set(products.map((p) => p.cat))).sort(),
-    [products]
-  );
+  // Search & Filter State
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("ALL");
+  const [stockFilter, setStockFilter] = useState<"ALL" | "IN_STOCK" | "OUT_OF_STOCK" | "LOW_STOCK">("ALL");
+  const [activeFilter, setActiveFilter] = useState<"ALL" | "ACTIVE" | "INACTIVE">("ALL");
 
-  const validation = useMemo(() => {
-    const out = new Map<string, { dirty: boolean; invalid: boolean }>();
-    for (const p of products) {
-      const d = drafts[p.id];
-      if (!d) {
-        out.set(p.id, { dirty: false, invalid: false });
-        continue;
+  // Draft stock edits: maps productId -> draft stock string
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  // Distinct categories available in current product list
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => {
+      if (p.cat) set.add(p.cat);
+    });
+    return Array.from(set).sort();
+  }, [products]);
+
+  // Determine dirty items and validity
+  const { dirtyMap, hasErrors, dirtyCount } = useMemo(() => {
+    const dirty: Record<string, { original: number; draft: number; isValid: boolean; error?: string }> = {};
+    let errors = false;
+    let count = 0;
+
+    for (const [id, valStr] of Object.entries(drafts)) {
+      const prod = products.find((p) => p.id === id);
+      if (!prod) continue;
+
+      const trimmed = valStr.trim();
+      const isDifferent = trimmed !== "" && Number(trimmed) !== prod.stock;
+
+      if (isDifferent) {
+        count++;
+        // Validation: must be non-empty, whole positive integer or 0
+        const isInt = /^\d+$/.test(trimmed);
+        const num = Number(trimmed);
+        const valid = isInt && num >= 0 && Number.isSafeInteger(num);
+
+        if (!valid) {
+          errors = true;
+          dirty[id] = {
+            original: prod.stock,
+            draft: isNaN(num) ? -1 : num,
+            isValid: false,
+            error: "Must be a non-negative integer",
+          };
+        } else {
+          dirty[id] = {
+            original: prod.stock,
+            draft: num,
+            isValid: true,
+          };
+        }
       }
-      const dirty =
-        d.stock !== String(p.stock) || d.active !== p.active;
-      const invalid = !isValidStockString(d.stock);
-      out.set(p.id, { dirty, invalid });
     }
-    return out;
+
+    return { dirtyMap: dirty, hasErrors: errors, dirtyCount: count };
   }, [drafts, products]);
 
-  const dirtyCount = useMemo(
-    () => Array.from(validation.values()).filter((v) => v.dirty).length,
-    [validation]
-  );
-  const invalidCount = useMemo(
-    () => Array.from(validation.values()).filter((v) => v.invalid).length,
-    [validation]
-  );
+  // Filtered products list
+  const filteredProducts = useMemo(() => {
+    const q = search.trim().toLowerCase();
 
-  const visibleProducts = useMemo(() => {
-    const q = query.trim().toLowerCase();
     return products.filter((p) => {
-      if (categoryFilter !== "all" && p.cat !== categoryFilter) return false;
-      if (stockFilter === "in-stock" && !(p.active && p.stock > 0)) return false;
-      if (stockFilter === "out-of-stock" && p.stock > 0) return false;
-      if (stockFilter === "active" && !p.active) return false;
-      if (stockFilter === "inactive" && p.active) return false;
+      // Search by name, SKU, or ID
       if (q) {
-        const hay = `${p.name} ${p.id} ${p.sku ?? ""} ${p.cat}`.toLowerCase();
-        if (!hay.includes(q)) return false;
+        const matchName = p.name.toLowerCase().includes(q);
+        const matchSku = p.sku ? p.sku.toLowerCase().includes(q) : false;
+        const matchId = p.id.toLowerCase().includes(q);
+        if (!matchName && !matchSku && !matchId) return false;
       }
+
+      // Category filter
+      if (categoryFilter !== "ALL" && p.cat !== categoryFilter) {
+        return false;
+      }
+
+      // Stock filter (evaluates against current draft if edited, else actual stock)
+      const currentStock = drafts[p.id] !== undefined && /^\d+$/.test(drafts[p.id].trim())
+        ? Number(drafts[p.id].trim())
+        : p.stock;
+
+      if (stockFilter === "IN_STOCK" && currentStock <= 0) return false;
+      if (stockFilter === "OUT_OF_STOCK" && currentStock > 0) return false;
+      if (stockFilter === "LOW_STOCK" && (currentStock <= 0 || currentStock > 5)) return false;
+
+      // Active filter
+      if (activeFilter === "ACTIVE" && !p.active) return false;
+      if (activeFilter === "INACTIVE" && p.active) return false;
+
       return true;
     });
-  }, [products, query, categoryFilter, stockFilter]);
+  }, [products, search, categoryFilter, stockFilter, activeFilter, drafts]);
 
-  // --- Handlers -------------------------------------------------------------
-  function setStock(id: string, value: string) {
+  // Handle inline stock input change
+  const handleStockChange = (id: string, value: string) => {
+    setFeedback(null);
     setDrafts((prev) => ({
       ...prev,
-      [id]: { ...prev[id]!, stock: value },
+      [id]: value,
     }));
-    if (serverInvalidIds.has(id)) {
-      const next = new Set(serverInvalidIds);
-      next.delete(id);
-      setServerInvalidIds(next);
-    }
-    if (serverError) setServerError(null);
-  }
-  function setActive(id: string, value: boolean) {
-    setDrafts((prev) => ({
-      ...prev,
-      [id]: { ...prev[id]!, active: value },
-    }));
-    if (serverError) setServerError(null);
-  }
-  function resetOne(id: string) {
-    const original = originalById.get(id);
-    if (!original) return;
-    setDrafts((prev) => ({
-      ...prev,
-      [id]: { stock: String(original.stock), active: original.active },
-    }));
-    if (serverInvalidIds.has(id)) {
-      const next = new Set(serverInvalidIds);
-      next.delete(id);
-      setServerInvalidIds(next);
-    }
-  }
-  function resetAll() {
-    setDrafts(
-      Object.fromEntries(
-        products.map((p) => [
-          p.id,
-          { stock: String(p.stock), active: p.active },
-        ])
-      )
-    );
-    setServerInvalidIds(new Set());
-    setServerError(null);
-  }
+  };
 
-  function onSave() {
-    if (pending) return;
-    if (invalidCount > 0) {
-      setServerError(
-        `${invalidCount} row${
-          invalidCount === 1 ? " has" : "s have"
-        } an invalid stock value. Fix them before saving.`
-      );
-      return;
-    }
-    // Only send DIRTY + VALID rows.
-    const payload: StockUpdate[] = [];
-    for (const p of products) {
-      const v = validation.get(p.id);
-      const d = drafts[p.id];
-      if (!v || !d || !v.dirty || v.invalid) continue;
-      payload.push({ id: p.id, stock: Number(d.stock), active: d.active });
-    }
-    if (payload.length === 0) {
-      setServerError("Nothing to save.");
-      return;
-    }
-    setServerError(null);
-    setServerInvalidIds(new Set());
+  // Discard all changes
+  const handleDiscardAll = () => {
+    setDrafts({});
+    setFeedback(null);
+  };
+
+  // Reset all filters
+  const handleResetFilters = () => {
+    setSearch("");
+    setCategoryFilter("ALL");
+    setStockFilter("ALL");
+    setActiveFilter("ALL");
+  };
+
+  const hasActiveFilters =
+    search.trim() !== "" ||
+    categoryFilter !== "ALL" ||
+    stockFilter !== "ALL" ||
+    activeFilter !== "ALL";
+
+  // Bulk save changes
+  const handleSave = () => {
+    if (dirtyCount === 0 || hasErrors || isPending) return;
+
+    setFeedback(null);
+
+    const updates = Object.entries(dirtyMap)
+      .filter(([, v]) => v.isValid)
+      .map(([id, v]) => ({
+        id,
+        stock: v.draft,
+      }));
+
+    if (updates.length === 0) return;
+
     startTransition(async () => {
-      const res: BulkStockResult = await bulkUpdateStockAction(payload);
-      if (res.ok) {
-        showToast(
-          `Saved <span class="gold">${res.updated}</span> inventory change${
-            res.updated === 1 ? "" : "s"
-          }`
-        );
-        // Payload just became the new "original" — reflect that so
-        // dirty rows go clean (until the Next.js revalidation delivers
-        // fresh props on next render, which will also line up).
-        // We update our local originals mirror by mutating the map.
-        for (const u of payload) {
-          const p = originalById.get(u.id);
-          if (p) {
-            p.stock = u.stock;
-            p.active = u.active;
-          }
+      try {
+        const result = await bulkUpdateStockAction(updates);
+        if (result.ok) {
+          setFeedback({
+            type: "success",
+            message: `Successfully saved stock updates for ${result.updatedCount} product${
+              result.updatedCount === 1 ? "" : "s"
+            }.`,
+          });
+          // Clear saved drafts
+          setDrafts({});
+          router.refresh();
+        } else {
+          setFeedback({
+            type: "error",
+            message: result.error || "Failed to update stock.",
+          });
         }
-        // Re-sync drafts from the mutated map so validation clears.
-        setDrafts((prev) => {
-          const next = { ...prev };
-          for (const u of payload) {
-            next[u.id] = { stock: String(u.stock), active: u.active };
-          }
-          return next;
+      } catch {
+        setFeedback({
+          type: "error",
+          message: "An unexpected error occurred while saving stock changes.",
         });
-      } else {
-        setServerError(res.error);
-        if ("invalidIds" in res && res.invalidIds) {
-          setServerInvalidIds(new Set(res.invalidIds));
-        }
       }
     });
-  }
+  };
 
-  // --- Render ---------------------------------------------------------------
   return (
-    <div>
-      {/* Filter + search toolbar */}
-      <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 md:p-5 flex flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 max-w-[420px]">
-            <Search className="w-[15px] h-[15px] absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+    <div className="space-y-6">
+      {/* Top Action & Summary Bar */}
+      <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-5 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Package className="w-5 h-5 text-crimson-600" />
+              <span className="font-sora font-extrabold text-[18px] text-ink">
+                Inventory Overview
+              </span>
+            </div>
+            <span className="text-muted text-[13.5px] font-manrope">
+              ({products.length} total products · {products.filter((p) => p.stock > 0).length} in stock ·{" "}
+              {products.filter((p) => p.stock === 0).length} out of stock)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 flex-wrap">
+            {dirtyCount > 0 && (
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-sora font-bold text-[12px] ${
+                    hasErrors
+                      ? "bg-crimson-600/10 text-crimson-600 border border-crimson-600/20"
+                      : "bg-gold-500/15 text-gold-deep border border-gold-500/30"
+                  }`}
+                >
+                  ⚡ {dirtyCount} unsaved change{dirtyCount === 1 ? "" : "s"}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={handleDiscardAll}
+                  disabled={isPending}
+                  className="btn-ghost text-[12.5px] py-1.5 px-3"
+                  title="Discard all pending changes"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Discard
+                </button>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={dirtyCount === 0 || hasErrors || isPending}
+              className={`btn-dark text-[13px] py-2 px-5 ${
+                dirtyCount === 0 || hasErrors
+                  ? "opacity-50 cursor-not-allowed"
+                  : "press"
+              }`}
+            >
+              <Save className="w-4 h-4" />
+              {isPending ? "Saving changes…" : "Save stock changes"}
+            </button>
+          </div>
+        </div>
+
+        {/* Feedback Messages */}
+        {feedback && (
+          <div
+            className={`mt-4 p-4 rounded-[12px] flex items-center justify-between gap-3 text-[14px] font-manrope ${
+              feedback.type === "success"
+                ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-800"
+                : "bg-crimson-600/10 border border-crimson-600/25 text-crimson-700"
+            }`}
+          >
+            <div className="flex items-center gap-2.5 font-medium">
+              {feedback.type === "success" ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              ) : (
+                <AlertCircle className="w-5 h-5 text-crimson-600 flex-shrink-0" />
+              )}
+              <span>{feedback.message}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFeedback(null)}
+              className="text-inherit opacity-70 hover:opacity-100"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Search & Filter Controls */}
+        <div className="mt-5 pt-5 border-t border-black/[0.06] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Search Box */}
+          <div className="relative">
+            <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, SKU, category, or id…"
-              aria-label="Search products"
-              className="w-full pl-9 pr-3"
-              style={{ margin: 0 }}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search name, SKU, slug…"
+              className="pl-9.5 pr-8 py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-ink"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
-          <div className="font-manrope text-[12.5px] text-muted whitespace-nowrap">
-            Showing {visibleProducts.length} of {products.length}
+
+          {/* Category Filter */}
+          <div>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
+            >
+              <option value="ALL">All Categories</option>
+              {categories.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Stock Status Filter */}
+          <div>
+            <select
+              value={stockFilter}
+              onChange={(e) => setStockFilter(e.target.value as any)}
+              className="py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
+            >
+              <option value="ALL">All Stock Statuses</option>
+              <option value="IN_STOCK">In Stock (&gt; 0)</option>
+              <option value="LOW_STOCK">Low Stock (1–5)</option>
+              <option value="OUT_OF_STOCK">Out of Stock (0)</option>
+            </select>
+          </div>
+
+          {/* Active Status Filter */}
+          <div>
+            <select
+              value={activeFilter}
+              onChange={(e) => setActiveFilter(e.target.value as any)}
+              className="py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
+            >
+              <option value="ALL">All Visibility (Active &amp; Inactive)</option>
+              <option value="ACTIVE">Active Only</option>
+              <option value="INACTIVE">Inactive / Hidden Only</option>
+            </select>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <FilterChip
-            label="All"
-            active={stockFilter === "all"}
-            onClick={() => setStockFilter("all")}
-          />
-          <FilterChip
-            label="In stock"
-            active={stockFilter === "in-stock"}
-            onClick={() => setStockFilter("in-stock")}
-          />
-          <FilterChip
-            label="Out of stock"
-            active={stockFilter === "out-of-stock"}
-            onClick={() => setStockFilter("out-of-stock")}
-          />
-          <FilterChip
-            label="Active"
-            active={stockFilter === "active"}
-            onClick={() => setStockFilter("active")}
-          />
-          <FilterChip
-            label="Inactive"
-            active={stockFilter === "inactive"}
-            onClick={() => setStockFilter("inactive")}
-          />
-        </div>
-        {categories.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            <FilterChip
-              label="All categories"
-              active={categoryFilter === "all"}
-              onClick={() => setCategoryFilter("all")}
-              tone="cat"
-            />
-            {categories.map((c) => (
-              <FilterChip
-                key={c}
-                label={c}
-                active={categoryFilter === c}
-                onClick={() => setCategoryFilter(c)}
-                tone="cat"
-              />
-            ))}
+
+        {hasActiveFilters && (
+          <div className="mt-3 flex items-center justify-between text-[12.5px] text-muted font-manrope">
+            <span>
+              Showing <strong>{filteredProducts.length}</strong> of <strong>{products.length}</strong> products
+            </span>
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="text-crimson-600 hover:underline font-semibold"
+            >
+              Reset all filters
+            </button>
           </div>
         )}
       </div>
 
-      {/* Server error banner */}
-      {serverError && (
-        <div
-          role="alert"
-          className="mt-4 p-4 rounded-[14px] font-manrope text-[13.5px] font-semibold border"
-          style={{
-            background: "rgba(196,32,42,0.08)",
-            color: "#C4202A",
-            borderColor: "rgba(196,32,42,0.35)",
-          }}
-        >
-          {serverError}
-        </div>
-      )}
-
-      {/* Table */}
-      <div className="mt-4 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
-        {visibleProducts.length === 0 ? (
-          <div className="p-8 text-center font-manrope text-[13.5px] text-muted">
-            No products match those filters.
-          </div>
-        ) : (
-          <table className="admin-table">
-            <thead>
+      {/* Inventory Table */}
+      <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto shadow-sm">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th className="min-w-[220px]">Product</th>
+              <th className="min-w-[100px]">SKU</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th className="min-w-[140px]">Stock Level</th>
+              <th>Stock Status</th>
+              <th>Visibility</th>
+              <th className="text-right min-w-[130px]">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredProducts.length === 0 ? (
               <tr>
-                <th>Product</th>
-                <th>SKU</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th style={{ width: 130 }}>Stock</th>
-                <th>Status</th>
-                <th className="text-right">Actions</th>
+                <td colSpan={8} className="text-center py-10">
+                  <div className="flex flex-col items-center justify-center gap-2 text-muted">
+                    <Layers className="w-8 h-8 opacity-40" />
+                    <p className="font-manrope text-[14px] font-semibold">No products match your filters</p>
+                    {hasActiveFilters && (
+                      <button
+                        type="button"
+                        onClick={handleResetFilters}
+                        className="btn-ghost text-[12px] py-1 px-3 mt-1"
+                      >
+                        Clear filters
+                      </button>
+                    )}
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {visibleProducts.map((p) => {
-                const draft = drafts[p.id]!;
-                const v = validation.get(p.id) ?? {
-                  dirty: false,
-                  invalid: false,
-                };
-                const currentStockN = Number(draft.stock);
-                const stockStatus = statusFor({
-                  active: draft.active,
-                  stock: v.invalid ? p.stock : currentStockN,
-                });
-                const rowInvalid = v.invalid || serverInvalidIds.has(p.id);
+            ) : (
+              filteredProducts.map((p) => {
+                const currentDraftVal = drafts[p.id];
+                const displayVal = currentDraftVal !== undefined ? currentDraftVal : String(p.stock);
+                const dirtyInfo = dirtyMap[p.id];
+                const isDirty = !!dirtyInfo;
+                const isInvalid = dirtyInfo && !dirtyInfo.isValid;
+
+                const currentStockNum = isNaN(Number(displayVal)) ? p.stock : Number(displayVal);
+                const isOutOfStock = currentStockNum <= 0;
+                const isLowStock = currentStockNum > 0 && currentStockNum <= 5;
+
                 return (
                   <tr
                     key={p.id}
-                    style={
-                      v.dirty
-                        ? { background: "rgba(233,203,142,0.12)" }
-                        : undefined
-                    }
+                    className={`transition-colors ${
+                      isDirty ? "bg-amber-500/[0.04]" : "hover:bg-black/[0.01]"
+                    }`}
                   >
+                    {/* Product Name + Glyph + ID */}
                     <td>
                       <div className="flex items-center gap-3">
-                        <span className="w-9 h-9 rounded-[9px] bg-gradient-to-br from-[#C9242E] to-[#871119] text-white/80 font-sora font-extrabold text-[11px] flex items-center justify-center">
+                        <span className="w-9 h-9 rounded-[9px] bg-gradient-to-br from-[#C9242E] to-[#871119] text-white/85 font-sora font-extrabold text-[11px] flex items-center justify-center flex-shrink-0">
                           {p.glyph}
                         </span>
-                        <div>
-                          <div className="font-sora font-bold text-[14px] text-ink">
+                        <div className="min-w-0">
+                          <div className="font-sora font-bold text-[14px] text-ink truncate">
                             {p.name}
                           </div>
-                          <div className="font-manrope text-[12px] text-muted">
+                          <div className="font-manrope text-[11.5px] text-muted truncate">
                             {p.id}
                           </div>
                         </div>
                       </div>
                     </td>
+
+                    {/* SKU */}
                     <td className="font-manrope text-[13px] text-muted">
-                      {p.sku ?? "—"}
-                    </td>
-                    <td className="font-manrope text-muted">{p.cat}</td>
-                    <td className="font-sora font-bold">{inr(p.price)}</td>
-                    <td>
-                      <input
-                        type="number"
-                        inputMode="numeric"
-                        min={0}
-                        max={MAX_STOCK}
-                        step={1}
-                        value={draft.stock}
-                        onChange={(e) => setStock(p.id, e.target.value)}
-                        aria-invalid={rowInvalid}
-                        aria-label={`Stock for ${p.name}`}
-                        disabled={pending}
-                        className="w-[100px]"
-                        style={{
-                          margin: 0,
-                          padding: "7px 10px",
-                          borderColor: rowInvalid ? "#C4202A" : undefined,
-                          background: rowInvalid
-                            ? "rgba(196,32,42,0.05)"
-                            : undefined,
-                        }}
-                      />
-                      {v.invalid && (
-                        <div className="mt-1 font-manrope text-[11.5px] text-crimson-600 font-semibold">
-                          Whole number 0–{MAX_STOCK.toLocaleString("en-IN")}
-                        </div>
+                      {p.sku ? (
+                        <span className="font-mono bg-black/[0.04] px-1.5 py-0.5 rounded text-[12px] text-ink">
+                          {p.sku}
+                        </span>
+                      ) : (
+                        <span className="text-muted/60">—</span>
                       )}
                     </td>
+
+                    {/* Category */}
+                    <td className="font-manrope text-[13px] text-muted whitespace-nowrap">
+                      {p.cat}
+                    </td>
+
+                    {/* Price */}
+                    <td className="font-sora font-bold text-[13.5px] text-ink whitespace-nowrap">
+                      {inr(p.price)}
+                    </td>
+
+                    {/* Inline Stock Input */}
                     <td>
-                      <div className="flex flex-col gap-1.5 items-start">
-                        <StatusBadge status={stockStatus} />
-                        <label className="inline-flex items-center gap-1.5 font-manrope text-[12px] text-muted cursor-pointer">
+                      <div className="flex flex-col gap-1 max-w-[120px]">
+                        <div className="flex items-center gap-1.5">
                           <input
-                            type="checkbox"
-                            checked={draft.active}
-                            onChange={(e) =>
-                              setActive(p.id, e.target.checked)
-                            }
-                            disabled={pending}
-                            style={{ margin: 0 }}
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={displayVal}
+                            onChange={(e) => handleStockChange(p.id, e.target.value)}
+                            disabled={isPending}
+                            className={`!w-24 !py-1.5 !px-2.5 font-sora font-bold text-[13.5px] rounded-[8px] text-center ${
+                              isInvalid
+                                ? "!border-crimson-600 !bg-crimson-600/5 focus:!border-crimson-600"
+                                : isDirty
+                                  ? "!border-gold-500 !bg-gold-500/10 focus:!border-gold-500"
+                                  : "!border-black/[0.14]"
+                            }`}
                           />
-                          <span>Active</span>
-                        </label>
+                          {isDirty && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setDrafts((prev) => {
+                                  const next = { ...prev };
+                                  delete next[p.id];
+                                  return next;
+                                });
+                              }}
+                              title={`Reset to original (${p.stock})`}
+                              className="text-muted hover:text-ink p-1"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                        {isDirty && (
+                          <span className="font-manrope text-[10.5px] text-muted">
+                            was: <strong>{p.stock}</strong>
+                          </span>
+                        )}
+                        {isInvalid && (
+                          <span className="font-manrope text-[10.5px] text-crimson-600 font-semibold">
+                            {dirtyInfo.error}
+                          </span>
+                        )}
                       </div>
                     </td>
+
+                    {/* Stock Status Badge */}
+                    <td>
+                      {isOutOfStock ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-black/80 text-white">
+                          Out of stock
+                        </span>
+                      ) : isLowStock ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-crimson-600/15 text-crimson-700 border border-crimson-600/25">
+                          Low ({currentStockNum})
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-emerald-500/15 text-emerald-800 border border-emerald-500/25">
+                          In stock ({currentStockNum})
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Active Visibility Badge */}
+                    <td>
+                      {p.active ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-bold text-[10.5px] tracking-[0.04em] uppercase bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
+                          Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-bold text-[10.5px] tracking-[0.04em] uppercase bg-black/[0.06] text-muted border border-black/[0.1]">
+                          Hidden
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Actions */}
                     <td>
                       <div className="flex items-center gap-2 justify-end">
-                        {v.dirty && (
-                          <button
-                            type="button"
-                            onClick={() => resetOne(p.id)}
-                            disabled={pending}
-                            className="btn-ghost"
-                            title="Reset this row to its saved value"
-                          >
-                            <RotateCcw className="w-[13px] h-[13px]" />
-                            Reset
-                          </button>
-                        )}
                         <Link
                           href={`/admin/products/${p.id}/edit`}
-                          className="btn-ghost"
-                          title="Edit product details"
+                          className="btn-ghost text-[12px] py-1 px-2.5"
+                          title="Edit full product details"
                         >
-                          <Pencil className="w-[13px] h-[13px]" />
-                          Edit
+                          <Pencil className="w-[12px] h-[12px]" /> Edit
                         </Link>
+                        <form action={deleteProductAction}>
+                          <input type="hidden" name="id" value={p.id} />
+                          <button
+                            type="submit"
+                            onClick={(e) => {
+                              if (!confirm(`Are you sure you want to delete "${p.name}"?`)) {
+                                e.preventDefault();
+                              }
+                            }}
+                            className="btn-ghost btn-danger text-[12px] py-1 px-2.5"
+                            title="Delete product"
+                          >
+                            <Trash2 className="w-[12px] h-[12px]" /> Delete
+                          </button>
+                        </form>
                       </div>
                     </td>
                   </tr>
                 );
-              })}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {/* Sticky save bar — only appears when there are unsaved changes. */}
-      {(dirtyCount > 0 || pending) && (
-        <div
-          className="sticky bottom-4 mt-6 z-20 flex flex-wrap items-center gap-3 justify-between rounded-[16px] border border-black/[0.12] bg-white shadow-[0_20px_40px_-20px_rgba(0,0,0,0.35)] p-4"
-        >
-          <div className="font-manrope text-[13.5px] text-ink flex items-center gap-3 flex-wrap">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream-100 font-bold text-[12px] tracking-[0.06em] uppercase">
-              {dirtyCount} unsaved change{dirtyCount === 1 ? "" : "s"}
-            </span>
-            {invalidCount > 0 && (
-              <span className="text-crimson-600 font-semibold">
-                {invalidCount} invalid — fix before saving
-              </span>
+              })
             )}
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={resetAll}
-              disabled={pending}
-              className="btn-ghost"
-            >
-              <RotateCcw className="w-[13px] h-[13px]" />
-              Reset all
-            </button>
-            <button
-              type="button"
-              onClick={onSave}
-              disabled={pending || invalidCount > 0 || dirtyCount === 0}
-              className="btn-dark press"
-            >
-              {pending ? "Saving…" : "Save stock changes"}
-            </button>
-          </div>
-        </div>
-      )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Presentational helpers
-
-function FilterChip({
-  label,
-  active,
-  onClick,
-  tone = "primary",
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-  tone?: "primary" | "cat";
-}) {
-  const base =
-    "font-manrope font-semibold text-[12.5px] px-3 py-[6px] rounded-full border transition-colors";
-  const cls = active
-    ? tone === "cat"
-      ? `${base} bg-ink text-white border-ink`
-      : `${base} bg-crimson-600 text-white border-crimson-600`
-    : `${base} bg-white text-muted border-black/[0.14] hover:border-ink hover:text-ink`;
-  return (
-    <button type="button" onClick={onClick} className={cls}>
-      {label}
-    </button>
-  );
-}
-
-type StatusKey = "in-stock" | "low-stock" | "out-of-stock" | "inactive";
-
-function statusFor({
-  active,
-  stock,
-}: {
-  active: boolean;
-  stock: number;
-}): StatusKey {
-  if (!active) return "inactive";
-  if (stock <= 0) return "out-of-stock";
-  if (stock <= 5) return "low-stock";
-  return "in-stock";
-}
-
-function StatusBadge({ status }: { status: StatusKey }) {
-  const label =
-    status === "in-stock"
-      ? "In stock"
-      : status === "low-stock"
-        ? "Low stock"
-        : status === "out-of-stock"
-          ? "Out of stock"
-          : "Inactive";
-  const style: React.CSSProperties =
-    status === "in-stock"
-      ? { background: "rgba(46,125,50,0.12)", color: "#256b2a" }
-      : status === "low-stock"
-        ? { background: "rgba(196,32,42,0.10)", color: "#C4202A" }
-        : status === "out-of-stock"
-          ? { background: "rgba(26,21,19,0.90)", color: "#fff" }
-          : { background: "rgba(107,99,92,0.14)", color: "#6b635c" };
-  return (
-    <span
-      className="inline-flex items-center rounded-full px-2.5 py-[3px] font-sora font-extrabold text-[10.5px] tracking-[0.14em] uppercase"
-      style={style}
-    >
-      {label}
-    </span>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Client-side validation mirror of the server rule.
-
-function isValidStockString(s: string): boolean {
-  if (s === "" || s === undefined) return false;
-  // Accept only non-negative integers, no leading + / -.
-  if (!/^\d+$/.test(s)) return false;
-  const n = Number(s);
-  return Number.isFinite(n) && n >= 0 && n <= MAX_STOCK;
-}

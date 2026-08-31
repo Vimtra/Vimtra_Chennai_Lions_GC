@@ -12,6 +12,7 @@ export default function GalleryPage() {
   return (
     <>
       <PageHero
+        variant="editorial"
         eyebrow="Tour Frames"
         title={["GALLERY"]}
       />

@@ -113,6 +113,7 @@ export default function TermsPage() {
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow="Legal"
         title={["TERMS"]}
       />

@@ -83,6 +83,7 @@ export default function GolfDevelopmentPage() {
   return (
     <>
       <PageHero
+        variant="immersive"
         eyebrow="The Platform"
         title={["GOLF", "DEVELOPMENT"]}
         lead={
@@ -95,9 +96,9 @@ export default function GolfDevelopmentPage() {
       />
 
       <Section surface="ivory">
-        <IndexLabel n="01">The Framework</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="01">The Framework</IndexLabel>
             <SectionTitle lines={["A PLATFORM,", "NOT A", "PORTFOLIO BET."]} />
           </div>
           <NumberedList items={FRAMEWORK.map((f) => ({ k: f.tag, t: f.name, d: f.body }))} />
@@ -105,9 +106,9 @@ export default function GolfDevelopmentPage() {
       </Section>
 
       <Section surface="ink">
-        <IndexLabel n="02" tone="dark">Signature Thesis</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="02" tone="dark">Signature Thesis</IndexLabel>
             <SectionTitle lines={["GOLF-LED HNI", "COMMUNITIES."]} />
             <p className="hp-body" data-rise style={{ marginTop: 26 }}>
               Premium golf facilities integrated with luxury residential
@@ -120,9 +121,9 @@ export default function GolfDevelopmentPage() {
       </Section>
 
       <Section surface="paper">
-        <IndexLabel n="03">High Performance</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="03">High Performance</IndexLabel>
             <SectionTitle lines={["TALENT,", "PATHWAYS,", "ECOSYSTEM."]} />
           </div>
           <NumberedList items={HIGH_PERFORMANCE.map((h) => ({ t: h.label, d: h.body }))} />

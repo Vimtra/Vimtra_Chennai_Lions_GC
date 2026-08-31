@@ -21,6 +21,7 @@ export default async function FixturesPage() {
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow="AM Green IGPL · Season 2026"
         title={["FIXTURES"]}
         lead={

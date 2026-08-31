@@ -140,6 +140,7 @@ export default function VimtraVenturesPage() {
   return (
     <>
       <PageHero
+        variant="immersive"
         eyebrow="Ownership · The Firm"
         title={["VIMTRA", "VENTURES"]}
         lead={

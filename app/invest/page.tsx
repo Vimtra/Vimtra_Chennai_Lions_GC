@@ -117,6 +117,7 @@ export default function InvestPage() {
   return (
     <>
       <PageHero
+        variant="immersive"
         eyebrow="Invest & Partner"
         title={["INVEST"]}
         lead={

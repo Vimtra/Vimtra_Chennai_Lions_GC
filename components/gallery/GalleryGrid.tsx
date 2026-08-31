@@ -39,7 +39,7 @@ export default function GalleryGrid() {
   const [active, setActive] = useState<Cat | "all">("all");
 
   return (
-    <div className="max-w-[1200px] mx-auto">
+    <div>
       <div className="flex gap-2 flex-wrap mb-7">
         {FILTERS.map((f) => (
           <button key={f.key} className={`filt ${active === f.key ? "active" : ""}`} onClick={() => setActive(f.key)}>

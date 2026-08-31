@@ -189,47 +189,8 @@ body {
 /* =====================================================
    NAVBAR
 ===================================================== */
-.lions-header {
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  background: linear-gradient(180deg, #c4202a 0%, #b11c25 100%);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 14px 30px -22px rgba(120, 10, 16, 0.9);
-  backdrop-filter: blur(10px);
-}
-.lions-header .nav-link {
-  position: relative;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.92);
-  text-decoration: none;
-  letter-spacing: 0.01em;
-  padding: 6px 2px;
-  transition: color 0.25s;
-}
-.lions-header .nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -4px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--gold-400), var(--gold-500));
-  transform: scaleX(0);
-  transform-origin: left;
-  /* Grandstand P1 — tokenized motion. */
-  transition: transform var(--gs-dur-base, 300ms)
-    var(--gs-ease, cubic-bezier(0.2, 0.7, 0.2, 1));
-}
-.lions-header .nav-link:hover,
-.lions-header .nav-link.is-active {
-  color: var(--gold-400);
-}
-.lions-header .nav-link:hover::after,
-.lions-header .nav-link.is-active::after {
-  transform: scaleX(1);
-}
+
+
 .cta-gold {
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
@@ -257,57 +218,6 @@ body {
   transform: translateY(0) scale(0.98);
   transition: transform 0.1s;
 }
-.icon-btn {
-  width: 44px; /* Grandstand P1 — touch-target minimum */
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  background: rgba(255, 255, 255, 0.08);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  text-decoration: none;
-  cursor: pointer;
-  position: relative;
-  /* Grandstand P1 — snappier tokenized micro-interaction. */
-  transition: background var(--gs-dur-fast, 150ms)
-      var(--gs-ease-swift, cubic-bezier(0.4, 0, 0.2, 1)),
-    transform var(--gs-dur-fast, 150ms)
-      var(--gs-ease-swift, cubic-bezier(0.4, 0, 0.2, 1)),
-    border-color var(--gs-dur-fast, 150ms)
-      var(--gs-ease-swift, cubic-bezier(0.4, 0, 0.2, 1));
-}
-.icon-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: translateY(-2px);
-  border-color: var(--gold-400);
-}
-.icon-btn:active {
-  transform: translateY(0) scale(0.94);
-}
-.icon-btn svg {
-  width: 18px;
-  height: 18px;
-}
-.cart-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 50%;
-  background: var(--gold-400);
-  color: var(--gold-deep);
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: badge-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
-}
 @keyframes badge-pop {
   from {
     transform: scale(0);
@@ -318,241 +228,20 @@ body {
 }
 
 /* MENU OVERLAY */
-.lions-overlay {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(20, 8, 10, 0.985) 0%, rgba(10, 4, 5, 0.995) 100%);
-  backdrop-filter: blur(28px);
-  z-index: 200;
-  opacity: 0;
-  visibility: hidden;
-  /* Grandstand P1 — tokenized overlay animation. */
-  transition: opacity var(--gs-dur-base, 300ms)
-      var(--gs-ease-out, cubic-bezier(0.16, 0.84, 0.24, 1)),
-    visibility var(--gs-dur-base, 300ms);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.lions-overlay.is-open {
-  opacity: 1;
-  visibility: visible;
-}
-.lions-overlay .menu-list-legacy {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-align: center;
-}
-.lions-overlay .menu-list-legacy a {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(28px, 4vw, 40px);
-  color: #fff;
-  text-decoration: none;
-  padding: 8px 24px;
-  letter-spacing: -0.01em;
-  position: relative;
-  opacity: 0;
-  transform: translateY(40px);
-  transition: color 0.25s;
-}
-.lions-overlay.is-open .menu-list-legacy a {
-  animation: overlay-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
-}
-.lions-overlay .menu-list-legacy a:hover {
-  color: var(--gold-400);
-}
-.lions-overlay .menu-list-legacy a::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 0;
-  height: 2px;
-  background: var(--gold-400);
-  transition: width 0.35s, left 0.35s;
-}
-.lions-overlay .menu-list-legacy a:hover::after {
-  width: 60%;
-  left: 20%;
-}
+
+
 @keyframes overlay-in {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-.overlay-close {
-  position: absolute;
-  top: 24px;
-  right: 32px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--crimson-600);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.25s, background 0.25s;
-}
-.overlay-close:hover {
-  transform: rotate(90deg);
-  background: var(--gold-500);
-  color: var(--gold-deep);
-}
-.overlay-meta {
-  text-align: center;
-  font-family: var(--font-manrope), sans-serif;
-  color: rgba(233, 203, 142, 0.5);
-  font-size: 11px;
-  letter-spacing: 0.4em;
-}
 
 /* =====================================================
    FOOTER
 ===================================================== */
-.lions-footer {
-  background: linear-gradient(180deg, #a8181f, #5a0b11);
-  /* Horizontal padding matches the Grandstand container gutters
-     (20 / 32) so footer content aligns with page content edges. */
-  padding: 80px 20px 28px;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-}
-@media (min-width: 768px) {
-  .lions-footer {
-    padding: 96px 32px 36px;
-  }
-}
-.lions-footer::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(233, 203, 142, 0.1), transparent 60%);
-  pointer-events: none;
-}
-.lions-footer .ft-grid {
-  /* Aligns with .gs-container (1200) so footer columns share the same
-     left/right edges as page content above the footer. */
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  gap: 48px;
-  position: relative;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 640px) {
-  .lions-footer .ft-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-  }
-}
-@media (min-width: 1024px) {
-  .lions-footer .ft-grid {
-    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
-    gap: 48px;
-  }
-}
-.lions-footer .ft-col {
-  display: flex;
-  flex-direction: column;
-}
-.lions-footer .ft-col h4 {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.22em;
-  color: var(--gold-400);
-  text-transform: uppercase;
-  margin: 0 0 22px;
-}
-.lions-footer .ft-col a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 13.5px;
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  padding: 7px 0;
-  transition: color 0.25s, transform 0.25s;
-  line-height: 1.4;
-}
-.lions-footer .ft-col a:hover {
-  color: var(--gold-400);
-  transform: translateX(4px);
-}
-.lions-footer .ft-col a svg {
-  width: 13px;
-  height: 13px;
-  opacity: 0;
-  margin-right: -13px;
-  transition: 0.25s;
-  flex-shrink: 0;
-}
-.lions-footer .ft-col a:hover svg {
-  opacity: 1;
-  margin-right: 0;
-}
-.lions-footer .ft-col .ft-cta {
-  margin-top: 16px;
-  align-self: flex-start;
-}
-.ft-socials {
-  display: flex;
-  gap: 10px;
-  margin-top: 24px;
-}
-.ft-socials a {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  text-decoration: none;
-  padding: 0;
-  transition: 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-.ft-socials a:hover {
-  background: var(--gold-400);
-  color: var(--gold-deep);
-  border-color: var(--gold-400);
-  transform: translateY(-3px) rotate(-6deg);
-}
-.ft-socials a svg {
-  width: 16px;
-  height: 16px;
-  opacity: 1;
-  margin: 0;
-}
-.lions-footer .ft-bottom {
-  /* Same 1200 boundary as .ft-grid — copyright + legal links align with
-     the columns above and with page content. */
-  max-width: 1200px;
-  margin: 48px auto 0;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  justify-content: space-between;
-  align-items: center;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
-}
+
+
 
 /* =====================================================
    AE-STYLE TEXT ANIMATIONS
@@ -1215,25 +904,60 @@ a {
   color: #fff;
   border-color: #c4202a;
 }
+/* Editorial calendar rows. A rounded card per fixture read as a UI
+   component; a hairline row set reads as a season. Columns are fixed so
+   DATE / EVENT / VENUE / STATUS stay in vertical alignment down the
+   whole list, and a long event name wraps inside its own column instead
+   of pushing the grid out of true. */
 .fixture {
-  background: #fbf9f4;
-  border: 1px solid rgba(26, 21, 19, 0.07);
-  border-radius: 20px;
-  padding: 24px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--hp-hair);
+  border-radius: 0;
+  padding: 26px 0;
   display: grid;
-  grid-template-columns: 120px 1fr 200px 140px;
-  gap: 24px;
-  align-items: center;
-  margin-bottom: 14px;
-  transition: transform 0.2s;
+  grid-template-columns: minmax(120px, 0.72fr) minmax(0, 2fr) minmax(0, 1.15fr) auto;
+  gap: 32px;
+  align-items: baseline;
+  margin-bottom: 0;
+  transition: padding-left 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.fixture:first-child { border-top: 1px solid var(--hp-hair); }
+.fixture > * { min-width: 0; }
 .fixture:hover {
-  transform: translateY(-2px);
+  padding-left: 12px;
+  background-color: rgba(14, 11, 10, 0.025);
 }
+/* Live is marked by a crimson edge and the pill, not by inverting the
+   whole row — the list must stay readable as one column of type. */
 .fixture.live {
-  background: linear-gradient(160deg, #c9242e, #871119);
-  color: #fff;
-  border-color: transparent;
+  background: transparent;
+  color: inherit;
+  box-shadow: inset 3px 0 0 var(--hp-red);
+  padding-left: 18px;
+}
+.fixture.live:hover { padding-left: 26px; }
+
+/* Tablet: drop to two columns rather than squeezing four. */
+@media (max-width: 1023px) {
+  .fixture {
+    grid-template-columns: minmax(110px, 0.8fr) minmax(0, 1.6fr);
+    gap: 12px 28px;
+    row-gap: 14px;
+  }
+  .fixture > *:nth-child(3) { grid-column: 2; }
+  .fixture > *:nth-child(4) { grid-column: 2; justify-self: start; }
+}
+/* Mobile: a deliberate stack, not four collapsed columns. */
+@media (max-width: 639px) {
+  .fixture {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 22px 0;
+  }
+  .fixture > *:nth-child(3),
+  .fixture > *:nth-child(4) { grid-column: 1; }
 }
 .pill {
   display: inline-block;
@@ -1697,41 +1421,7 @@ label {
 }
 
 /* Footer .cta-gold overrides to prevent squeeze + color override */
-.lions-footer .ft-col a.cta-gold {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 11px 20px !important;
-  color: var(--gold-deep) !important;
-  background: linear-gradient(180deg, var(--gold-400), var(--gold-500)) !important;
-  border-radius: 30px !important;
-  box-shadow: 0 10px 22px -12px rgba(58, 26, 6, 0.7) !important;
-  font-family: var(--font-manrope), sans-serif !important;
-  font-size: 13.5px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.04em !important;
-  line-height: 1 !important;
-  text-decoration: none !important;
-  transform: none !important;
-  align-self: flex-start !important;
-  margin-top: 16px !important;
-  width: auto !important;
-  height: auto !important;
-}
-.lions-footer .ft-col a.cta-gold:hover {
-  color: var(--gold-deep) !important;
-  background: linear-gradient(180deg, var(--gold-400), var(--gold-500)) !important;
-  transform: translateY(-2px) scale(1.02) !important;
-  box-shadow: 0 16px 30px -14px rgba(58, 26, 6, 0.9) !important;
-  filter: brightness(1.06) !important;
-}
-.lions-footer .ft-col a.cta-gold svg {
-  opacity: 1 !important;
-  margin-right: 0 !important;
-  width: 14px !important;
-  height: 14px !important;
-  display: inline-block !important;
-}
+
 
 /* =====================================================
    ============ GRANDSTAND FOUNDATION (P0) =============
@@ -1841,32 +1531,8 @@ label {
    Uniform gutters: 20px mobile, 32px tablet+ desktop.
    Every migrated section uses one of these; nothing else.
 ===================================================== */
-.gs-container-prose,
-.gs-container,
-.gs-container-wide {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-.gs-container-prose {
-  max-width: 720px;
-}
-.gs-container {
-  max-width: 1200px;
-}
-.gs-container-wide {
-  max-width: 1400px;
-}
-@media (min-width: 768px) {
-  .gs-container-prose,
-  .gs-container,
-  .gs-container-wide {
-    padding-left: 32px;
-    padding-right: 32px;
-  }
-}
+
+
 
 /* =====================================================
    Section rhythm
@@ -1874,117 +1540,21 @@ label {
    Three vertical densities. Migrated sections pick one
    instead of ad-hoc py-[NNpx]. Mobile drops one step.
 ===================================================== */
-.gs-section-tight {
-  padding-top: var(--gs-space-xl);
-  padding-bottom: var(--gs-space-xl);
-}
-.gs-section {
-  padding-top: var(--gs-space-2xl);
-  padding-bottom: var(--gs-space-2xl);
-}
-.gs-section-loose {
-  padding-top: var(--gs-space-3xl);
-  padding-bottom: var(--gs-space-3xl);
-}
-@media (max-width: 767px) {
-  .gs-section-tight {
-    padding-top: 40px;
-    padding-bottom: 40px;
-  }
-  .gs-section {
-    padding-top: 64px;
-    padding-bottom: 64px;
-  }
-  .gs-section-loose {
-    padding-top: 80px;
-    padding-bottom: 80px;
-  }
-}
+
+
 
 /* =====================================================
    Background surfaces (page-level)
 ===================================================== */
-.gs-bg-editorial {
-  background: var(--gs-ground);
-  position: relative;
-  isolation: isolate;
-}
-.gs-bg-editorial::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    1200px 600px at 90% 20%,
-    rgba(233, 203, 142, 0.06),
-    transparent 60%
-  );
-  pointer-events: none;
-  z-index: -1;
-}
-.gs-bg-paper {
-  background: var(--gs-paper);
-}
-.gs-bg-admin {
-  background: var(--gs-charcoal);
-  color: var(--gs-text-inverse);
-}
-.gs-bg-immersive {
-  background: radial-gradient(
-      1200px 700px at 50% 0%,
-      #2a0a0e 0%,
-      transparent 60%
-    ),
-    linear-gradient(180deg, #16090b 0%, #0b0507 100%);
-  color: var(--gs-text-inverse);
-}
+
 
 /* =====================================================
    Cards — four variants, one shape system.
    Retires the ad-hoc `bg-cream-50 border rounded-[NN]`
    pattern that recurs 40+ times in the current code.
 ===================================================== */
-.gs-card {
-  background: var(--gs-surface);
-  border: 1px solid var(--gs-border-hairline);
-  border-radius: var(--gs-radius-lg);
-  padding: 28px;
-  box-shadow: var(--gs-elev-1);
-}
-.gs-card-tile {
-  background: var(--gs-surface-elevated);
-  border: 1px solid var(--gs-border-hairline);
-  border-radius: var(--gs-radius-md);
-  padding: 20px;
-  box-shadow: var(--gs-elev-1);
-  transition: box-shadow var(--gs-dur-base) var(--gs-ease),
-    transform var(--gs-dur-base) var(--gs-ease);
-}
-.gs-card-tile:hover {
-  box-shadow: var(--gs-elev-2);
-  transform: translateY(-2px);
-}
-.gs-card-ghost {
-  background: transparent;
-  border: 1px solid var(--gs-border-hairline);
-  border-radius: var(--gs-radius-lg);
-  padding: 24px;
-}
-.gs-card-dark {
-  background: var(--gs-slate);
-  color: var(--gs-text-inverse);
-  border: 1px solid var(--gs-border-hairline-dark);
-  border-radius: var(--gs-radius-md);
-  padding: 24px;
-  box-shadow: var(--gs-elev-1-dark);
-}
-@media (max-width: 640px) {
-  .gs-card,
-  .gs-card-tile,
-  .gs-card-ghost,
-  .gs-card-dark {
-    padding: 20px;
-  }
-}
+
+
 
 /* =====================================================
    Buttons — three tiers, one shape system.
@@ -1993,196 +1563,32 @@ label {
    remain until pages migrate — no collision because names
    are namespaced under `.gs-btn-*`.
 ===================================================== */
-.gs-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: 13.5px;
-  letter-spacing: 0.04em;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-  border: 1px solid transparent;
-  border-radius: var(--gs-radius-pill);
-  padding: 13px 22px;
-  min-height: 44px; /* touch target minimum */
-  transition: transform var(--gs-dur-fast) var(--gs-ease-swift),
-    box-shadow var(--gs-dur-fast) var(--gs-ease-swift),
-    background var(--gs-dur-fast) var(--gs-ease-swift),
-    color var(--gs-dur-fast) var(--gs-ease-swift),
-    border-color var(--gs-dur-fast) var(--gs-ease-swift),
-    filter var(--gs-dur-fast) var(--gs-ease-swift);
-}
-.gs-btn:disabled,
-.gs-btn[aria-disabled="true"] {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-.gs-btn:active:not(:disabled):not([aria-disabled="true"]) {
-  transform: translateY(0) scale(0.98);
-}
+
 
 /* Primary — gold gradient. One instance per screen. */
-.gs-btn-primary {
-  color: var(--gold-deep);
-  background: linear-gradient(180deg, var(--gold-400), var(--gold-500));
-  box-shadow: 0 10px 22px -12px rgba(58, 26, 6, 0.7);
-}
-.gs-btn-primary:hover:not(:disabled):not([aria-disabled="true"]) {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 30px -14px rgba(58, 26, 6, 0.85);
-  filter: brightness(1.04);
-}
+
 
 /* Secondary — ink outline pill. Repeat/adjacent actions. */
-.gs-btn-secondary {
-  color: var(--ink);
-  background: transparent;
-  border-color: rgba(26, 21, 19, 0.28);
-  border-radius: var(--gs-radius-md);
-}
-.gs-btn-secondary:hover:not(:disabled):not([aria-disabled="true"]) {
-  background: var(--gs-surface);
-  border-color: var(--ink);
-}
+
 
 /* Secondary · danger tone — same shape, crimson tint. */
-.gs-btn-secondary[data-tone="danger"] {
-  color: var(--crimson-600);
-  border-color: rgba(196, 32, 42, 0.3);
-}
-.gs-btn-secondary[data-tone="danger"]:hover:not(:disabled):not([aria-disabled="true"]) {
-  background: var(--crimson-600);
-  color: #fff;
-  border-color: var(--crimson-600);
-}
+
 
 /* Tertiary — link-style with animated underline. */
-.gs-btn-tertiary {
-  color: var(--ink);
-  background: transparent;
-  padding: 6px 0;
-  border-radius: 0;
-  position: relative;
-  min-height: 0;
-  border: 0;
-}
-.gs-btn-tertiary::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform var(--gs-dur-base) var(--gs-ease);
-}
-.gs-btn-tertiary:hover::after {
-  transform: scaleX(1);
-  transform-origin: left;
-}
+
 
 /* Dark-surface variant — swaps text colour so buttons read on charcoal. */
-.gs-on-dark .gs-btn-secondary {
-  color: var(--gs-text-inverse);
-  border-color: rgba(255, 255, 255, 0.28);
-}
-.gs-on-dark .gs-btn-secondary:hover:not(:disabled):not([aria-disabled="true"]) {
-  background: var(--gs-slate-2);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-.gs-on-dark .gs-btn-tertiary {
-  color: var(--gs-text-inverse);
-}
+
 
 /* Size modifiers. */
-.gs-btn-sm {
-  padding: 9px 16px;
-  font-size: 12.5px;
-  min-height: 38px;
-}
-.gs-btn-lg {
-  padding: 16px 28px;
-  font-size: 14px;
-  min-height: 52px;
-}
+
 
 /* =====================================================
    Inputs (foundation — pages opt in on their `<input>`s)
    Retains the existing 4px crimson focus halo so migrated
    forms feel the same as unmigrated ones during rollout.
 ===================================================== */
-.gs-input,
-.gs-textarea,
-.gs-select {
-  width: 100%;
-  min-height: 44px;
-  padding: 12px 14px;
-  border: 1px solid var(--gs-border-strong);
-  border-radius: var(--gs-radius-md);
-  background: #fff;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 14.5px;
-  color: var(--ink);
-  outline: none;
-  transition: border-color var(--gs-dur-fast) var(--gs-ease-swift),
-    box-shadow var(--gs-dur-fast) var(--gs-ease-swift);
-}
-.gs-input:hover,
-.gs-textarea:hover,
-.gs-select:hover {
-  border-color: rgba(26, 21, 19, 0.35);
-}
-.gs-input:focus,
-.gs-textarea:focus,
-.gs-select:focus {
-  border-color: var(--crimson-600);
-  box-shadow: 0 0 0 4px rgba(196, 32, 42, 0.1);
-}
-.gs-textarea {
-  resize: vertical;
-  min-height: 108px;
-}
-.gs-input[aria-invalid="true"],
-.gs-textarea[aria-invalid="true"] {
-  border-color: var(--crimson-600);
-  background: rgba(196, 32, 42, 0.04);
-}
-.gs-label {
-  display: block;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 11.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--gs-text-secondary);
-  margin-bottom: 8px;
-  line-height: 1.2;
-}
-.gs-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-.gs-help {
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 12.5px;
-  color: var(--gs-text-secondary);
-  line-height: 1.5;
-}
-.gs-error {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 12.5px;
-  color: var(--crimson-600);
-  line-height: 1.5;
-}
+
 
 /* =====================================================
    Typography utilities (opt-in — pages migrate to these)
@@ -2192,136 +1598,15 @@ label {
    family + size + line height + tracking; colour stays
    context-driven.
 ===================================================== */
-.gs-eyebrow {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--crimson-600);
-  line-height: 1;
-}
-.gs-h-display-1 {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(56px, 9.4vw, 148px);
-  line-height: 0.88;
-  letter-spacing: -0.035em;
-  margin: 0;
-}
-.gs-h-display-2 {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(44px, 6.4vw, 96px);
-  line-height: 0.92;
-  letter-spacing: -0.03em;
-  margin: 0;
-}
-.gs-h-display-3 {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(32px, 4.6vw, 56px);
-  line-height: 1;
-  letter-spacing: -0.025em;
-  margin: 0;
-}
-.gs-h-1 {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: 28px;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-.gs-h-2 {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-.gs-h-3 {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1.25;
-  letter-spacing: -0.005em;
-  margin: 0;
-}
-.gs-serif-lead {
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-weight: 400;
-  font-size: clamp(20px, 2.2vw, 28px);
-  line-height: 1.55;
-  letter-spacing: -0.005em;
-}
-.gs-body-lg {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 400;
-  font-size: 17px;
-  line-height: 1.62;
-  color: var(--gs-text-secondary);
-}
-.gs-body {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--gs-text-secondary);
-}
-.gs-caption {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--gs-text-secondary);
-}
-.gs-mono-tab {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
-}
+
 /* Reads-in-context: keeps display headings ink on light and inverse on dark. */
-.gs-on-dark .gs-h-display-1,
-.gs-on-dark .gs-h-display-2,
-.gs-on-dark .gs-h-display-3,
-.gs-on-dark .gs-h-1,
-.gs-on-dark .gs-h-2,
-.gs-on-dark .gs-h-3 {
-  color: var(--gs-text-inverse);
-}
-.gs-on-dark .gs-body-lg,
-.gs-on-dark .gs-body,
-.gs-on-dark .gs-caption {
-  color: var(--gs-text-inverse-secondary);
-}
-.gs-on-dark .gs-eyebrow {
-  color: var(--gs-accent-fill);
-}
+
 
 /* =====================================================
    Signature devices
 ===================================================== */
 /* Hairline gold rule — sits below section eyebrows. */
-.gs-rule {
-  display: inline-block;
-  width: 60px;
-  height: 1px;
-  background: var(--gs-accent-line);
-  margin-top: 12px;
-  margin-bottom: 20px;
-  border: 0;
-}
-.gs-rule-full {
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: var(--gs-border-hairline);
-  border: 0;
-  margin: 0;
-}
+
 
 /* =====================================================
    Focus — two-ring pattern.
@@ -2329,17 +1614,7 @@ label {
    Migrated interactive controls opt in with `.gs-focusable`
    or by being a `.gs-btn`.
 ===================================================== */
-.gs-focusable:focus-visible,
-.gs-btn:focus-visible {
-  outline: 2px solid var(--gs-accent-fill);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
-}
-.gs-on-dark .gs-focusable:focus-visible,
-.gs-on-dark .gs-btn:focus-visible {
-  outline-color: var(--gs-accent-fill);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.75);
-}
+
 
 /* =====================================================
    Skip link — keyboard-only shortcut to <main>.
@@ -2405,34 +1680,7 @@ label {
 
 /* Crimson vignette + atmospheric gold glow — reserved for
    the home hero. Other dark surfaces use .gs-bg-immersive. */
-.gs-bg-crimson-vignette {
-  background: radial-gradient(
-    125% 105% at 50% -5%,
-    #c9242e 0%,
-    #a8181f 58%,
-    #871119 100%
-  );
-  color: var(--gs-text-inverse);
-  position: relative;
-  isolation: isolate;
-}
-.gs-bg-crimson-vignette::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-      circle at 84% 16%,
-      rgba(233, 203, 142, 0.16),
-      transparent 42%
-    ),
-    radial-gradient(
-      circle at 12% 88%,
-      rgba(233, 203, 142, 0.1),
-      transparent 45%
-    );
-  pointer-events: none;
-  z-index: -1;
-}
+
 
 /* Hero image reveal — clip-path wipe, left to right, once on mount.
    Respects prefers-reduced-motion via the P0 global block: transition/
@@ -2446,33 +1694,9 @@ label {
     clip-path: inset(0 0 0 0);
   }
 }
-.gs-hero-wipe-in {
-  clip-path: inset(0 100% 0 0);
-  animation: gs-hero-wipe-in 900ms var(--gs-ease-out) 200ms forwards;
-  will-change: clip-path;
-}
 
 /* Dark glassy tile floating on the immersive hero. */
-.gs-hero-info-card {
-  display: block;
-  padding: 18px 20px;
-  border-radius: var(--gs-radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(24, 12, 12, 0.5);
-  backdrop-filter: blur(12px);
-  color: #fff;
-  text-decoration: none;
-  transition: transform var(--gs-dur-base) var(--gs-ease),
-    background var(--gs-dur-base) var(--gs-ease),
-    border-color var(--gs-dur-base) var(--gs-ease),
-    box-shadow var(--gs-dur-base) var(--gs-ease);
-}
-.gs-hero-info-card:hover {
-  transform: translateY(-3px);
-  background: rgba(24, 12, 12, 0.65);
-  border-color: rgba(233, 203, 142, 0.35);
-  box-shadow: var(--gs-elev-2-dark);
-}
+
 
 /* =====================================================
    End of Grandstand foundation.
@@ -2715,17 +1939,48 @@ a:hover .hp-arrow {
   overflow: hidden;
   background: var(--hp-ink);
   color: var(--hp-ivory);
-  padding: 72px 0 76px;
+  /* Default = editorial. Variants below. */
+  padding: 72px 0 64px;
 }
 @media (min-width: 768px) {
-  .hp-pagehero {
-    padding: 104px 0 104px;
-  }
+  .hp-pagehero { padding: 96px 0 80px; }
 }
 @media (min-width: 1280px) {
-  .hp-pagehero {
-    padding: 120px 0 120px;
-  }
+  .hp-pagehero { padding: 104px 0 88px; }
+}
+
+/* LEVEL 1 — IMMERSIVE. Story pages. The extra presence comes from the
+   display scale, not from a taller empty band. */
+.hp-pagehero.is-immersive { padding: 88px 0 80px; }
+@media (min-width: 768px) {
+  .hp-pagehero.is-immersive { padding: 116px 0 100px; }
+}
+@media (min-width: 1280px) {
+  .hp-pagehero.is-immersive { padding: 128px 0 112px; }
+}
+.hp-pagehero.is-immersive .hp-pagehero-title {
+  font-size: clamp(48px, 8.8vw, 136px);
+  letter-spacing: -0.05em;
+  line-height: 0.86;
+}
+
+/* LEVEL 3 — COMPACT. Data and utility pages: the table is the subject,
+   so the header introduces it and gets out of the way. */
+.hp-pagehero.is-compact { padding: 60px 0 52px; }
+@media (min-width: 768px) {
+  .hp-pagehero.is-compact { padding: 76px 0 60px; }
+}
+@media (min-width: 1280px) {
+  .hp-pagehero.is-compact { padding: 84px 0 64px; }
+}
+.hp-pagehero.is-compact .hp-pagehero-title {
+  font-size: clamp(32px, 4.6vw, 62px);
+  letter-spacing: -0.032em;
+}
+.hp-pagehero.is-compact .hp-pagehero-lead {
+  margin-top: 20px;
+  font-size: clamp(15px, 1.2vw, 16.5px);
+  max-width: 56ch;
 }
 .hp-pagehero.is-center {
   text-align: center;
@@ -2801,33 +2056,37 @@ a:hover .hp-arrow {
   color: var(--hp-ivory);
 }
 .hp-sec-tight {
-  padding: 56px 0;
+  padding: 48px 0;
 }
 .hp-sec-default {
-  padding: 76px 0;
+  padding: 64px 0;
 }
 .hp-sec-loose {
-  padding: 96px 0;
+  padding: 80px 0;
 }
 @media (min-width: 768px) {
-  .hp-sec-tight {
-    padding: 76px 0;
-  }
-  .hp-sec-default {
-    padding: 104px 0;
-  }
-  .hp-sec-loose {
-    padding: 132px 0;
-  }
+  .hp-sec-tight { padding: 64px 0; }
+  .hp-sec-default { padding: 88px 0; }
+  .hp-sec-loose { padding: 112px 0; }
 }
 @media (min-width: 1280px) {
-  .hp-sec-default {
-    padding: 120px 0;
-  }
-  .hp-sec-loose {
-    padding: 152px 0;
-  }
+  .hp-sec-tight { padding: 72px 0; }
+  .hp-sec-default { padding: 96px 0; }
+  .hp-sec-loose { padding: 128px 0; }
 }
+
+/* Section families (requirement 24). A data table and a story chapter
+   should not breathe identically. */
+.hp-sec-data { padding-top: 48px; padding-bottom: 56px; }
+@media (min-width: 768px) {
+  .hp-sec-data { padding-top: 60px; padding-bottom: 72px; }
+}
+
+/* Consecutive sections on the SAME surface read as one field, so the
+   seam between them collapses instead of stacking two full paddings. */
+.hp-sec-ivory + .hp-sec-ivory,
+.hp-sec-paper + .hp-sec-paper,
+.hp-sec-ink + .hp-sec-ink { padding-top: 0; }
 /* Type colour follows the surface. */
 .hp-sec-ink .hp-section-title,
 .hp-sec-ink .hp-pillar-t {
@@ -2865,14 +2124,35 @@ a:hover .hp-arrow {
 /* Editorial split used by most interior pages. */
 .hp-split {
   display: grid;
-  gap: 56px;
+  gap: 40px;
 }
 @media (min-width: 1024px) {
   .hp-split {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    gap: 88px;
+    /* The statement column is narrower than the evidence column: the
+       headline is an anchor, the list is the substance. */
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    gap: 96px;
     align-items: start;
   }
+}
+
+/* Editorial rail.
+   The index label, the headline and any standfirst travel together as
+   one block and stay with the reader while the supporting list moves
+   past. This is what connects "01 THE FRAMEWORK" to its content — the
+   previous layout left the label stranded above two columns and the
+   statement column empty below its own headline. */
+.hp-rail { display: contents; }
+@media (min-width: 1024px) {
+  .hp-rail {
+    display: block;
+    position: sticky;
+    /* clears the sticky header plus one rhythm step */
+    top: 140px;
+    align-self: start;
+  }
+  .hp-rail .hp-index { margin-bottom: 26px; }
+  .hp-rail > .hp-section-title { font-size: clamp(34px, 4.4vw, 66px); }
 }
 .hp-split-narrow {
   display: grid;
@@ -4294,9 +3574,13 @@ a:hover .hp-arrow {
    Heights are content-driven; padding is a floor, not a filler.
 ============================================================ */
 
-.sec { position: relative; isolation: isolate; padding: 72px 0; }
-@media (min-width: 768px) { .sec { padding: 96px 0; } }
-@media (min-width: 1280px) { .sec { padding: 112px 0; } }
+.sec { position: relative; isolation: isolate; overflow-x: clip; padding: 56px 0; }
+@media (min-width: 768px) { .sec { padding: 76px 0; } }
+@media (min-width: 1280px) { .sec { padding: 88px 0; } }
+/* Consecutive chapters on the same surface read as one field. */
+.sec-ivory + .sec-ivory, .sec-ink + .sec-ink, .sec-paper + .sec-paper {
+  padding-top: 0;
+}
 .sec-ivory { background: var(--hp-ivory); color: var(--hp-ink); }
 .sec-paper { background: var(--hp-ivory-2); color: var(--hp-ink); }
 .sec-ink { background: var(--hp-ink); color: var(--hp-ivory); }
@@ -4394,13 +3678,35 @@ a:hover .hp-arrow {
 /* ── 02 Club ──────────────────────────────────────────────── */
 .club-grid { display: grid; gap: 44px; align-items: center; }
 @media (min-width: 900px) {
-  .club-grid { grid-template-columns: minmax(0,1fr) minmax(0,0.92fr); gap: 72px; }
+  /* No gap and a negative image offset: the photograph slides under the
+     type column and the 2026 numeral crosses onto it. Text column and
+     image column become ONE composed field instead of two lanes sitting
+     beside each other. */
+  .club-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+    gap: 0;
+    align-items: center;
+  }
+  .club-type { position: relative; z-index: 2; padding-right: 6%; }
+  .club-fig { margin-left: -9%; }
 }
 .club-year {
   margin: 0 0 18px;
   font-family: var(--font-sora), sans-serif; font-weight: 800;
   font-size: clamp(64px, 11vw, 148px); line-height: 0.86; letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums; color: var(--hp-gold-lt);
+}
+@media (min-width: 900px) {
+  /* Only the numeral breaks the column — the prose below stays in
+     measure, so the overlap is a deliberate accent rather than a
+     collision. */
+  .club-year {
+    position: relative;
+    z-index: 2;
+    margin-right: -26%;
+    white-space: nowrap;
+    text-shadow: 0 6px 44px rgba(14, 11, 10, 0.55);
+  }
 }
 .club-h {
   margin: 0 0 22px;
@@ -4469,10 +3775,10 @@ a:hover .hp-arrow {
 /* ── 04 Development (full-bleed image chapter) ────────────── */
 .sec-dev {
   position: relative; isolation: isolate; overflow: hidden;
-  color: var(--hp-ivory); padding: 84px 0;
+  color: var(--hp-ivory); padding: 64px 0;
 }
-@media (min-width: 768px) { .sec-dev { padding: 116px 0; } }
-@media (min-width: 1280px) { .sec-dev { padding: 140px 0; } }
+@media (min-width: 768px) { .sec-dev { padding: 88px 0; } }
+@media (min-width: 1280px) { .sec-dev { padding: 104px 0; } }
 .dev-media { position: absolute; inset: -5% 0; z-index: -2; will-change: transform; }
 .dev-img { object-fit: cover; object-position: 50% 46%; }
 .dev-scrim {
@@ -4557,15 +3863,31 @@ a:hover .hp-arrow {
   font-family: var(--font-manrope), sans-serif; font-size: 14px; line-height: 1.66;
   color: var(--hp-muted);
 }
-.story-rest { display: grid; gap: 0; border-top: 1px solid var(--hp-hair); }
+/* Secondary coverage: a numbered masthead list. No thumbnails, so a
+   shared subject never produces four identical tiles. */
+.story-rest {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 0; border-top: 1px solid var(--hp-hair);
+}
 .story-row {
-  display: grid; grid-template-columns: 96px minmax(0,1fr); gap: 18px;
-  align-items: center; padding: 18px 0; border-bottom: 1px solid var(--hp-hair);
-  transition: padding-left 0.3s var(--hp-e);
+  display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 18px;
+  align-items: baseline; padding: 20px 0; border-bottom: 1px solid var(--hp-hair);
+  transition: padding-left 0.4s var(--hp-e);
 }
 .story-row:hover { padding-left: 10px; }
-.story-fig-sm { aspect-ratio: 4 / 3; }
-.story-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.story-n {
+  font-family: var(--font-manrope), sans-serif; font-weight: 700;
+  font-size: 10.5px; letter-spacing: 0.16em; color: var(--hp-gold);
+}
+.story-go {
+  font-size: 14px; color: var(--hp-muted);
+  opacity: 0; transform: translate3d(-5px,3px,0);
+  transition: opacity .3s var(--hp-e), transform .45s var(--hp-e);
+}
+.story-row:hover .story-go { opacity: 1; transform: none; }
+.story-col { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.story-row .story-meta { margin-bottom: 0; }
+.story-row .story-title { font-size: 16.5px; }
 
 /* ── 06 Shop ──────────────────────────────────────────────── */
 .shop-grid { display: grid; gap: 44px; align-items: center; }
@@ -4583,9 +3905,9 @@ a:hover .hp-arrow {
 .sec-close {
   position: relative; isolation: isolate; overflow: hidden;
   background: var(--hp-ink); color: var(--hp-ivory);
-  padding: 96px 0 104px; text-align: center;
+  padding: 72px 0 76px; text-align: center;
 }
-@media (min-width: 768px) { .sec-close { padding: 128px 0 136px; } }
+@media (min-width: 768px) { .sec-close { padding: 96px 0 100px; } }
 .close-atmos {
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background:
@@ -4614,7 +3936,7 @@ a:hover .hp-arrow {
 .ft {
   position: relative; isolation: isolate; overflow: hidden;
   background: var(--hp-ink); color: var(--hp-ivory);
-  padding: 72px 0 0;
+  padding: 56px 0 0;
   border-top: 1px solid rgba(184,144,75,0.2);
 }
 @media (min-width: 768px) { .ft { padding-top: 96px; } }
@@ -4627,8 +3949,8 @@ a:hover .hp-arrow {
 
 /* Brand statement row */
 .ft-top {
-  display: grid; gap: 26px; align-items: end;
-  padding-bottom: 48px; border-bottom: 1px solid rgba(245,239,228,0.12);
+  display: grid; gap: 22px; align-items: end;
+  padding-bottom: 36px; border-bottom: 1px solid rgba(245,239,228,0.12);
 }
 @media (min-width: 900px) {
   .ft-top { grid-template-columns: auto minmax(0,1fr); gap: 64px; padding-bottom: 56px; }
@@ -4658,7 +3980,7 @@ a:hover .hp-arrow {
 
 /* Nav columns */
 .ft-grid {
-  display: grid; gap: 34px 26px; padding: 44px 0 40px;
+  display: grid; gap: 28px 26px; padding: 34px 0 30px;
   grid-template-columns: repeat(2, minmax(0,1fr));
 }
 @media (min-width: 900px) {

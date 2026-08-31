@@ -26,6 +26,7 @@ export default function CartPage() {
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow="Your Bag"
         title={["YOUR CART"]}
         lead={

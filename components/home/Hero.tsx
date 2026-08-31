@@ -65,7 +65,9 @@ export default function Hero() {
           alt="The Chennai Lions' home course at golden hour — clubhouse, lake and hill line"
           fill
           priority
-          sizes="100vw"
+          // fac-main-web.jpg is a 1024px source; asking for 1920 would
+          // upscale it. Cap at the real resolution.
+          sizes="(max-width: 1080px) 100vw, 1080px"
           className="hero-img"
         />
         <div className="hero-veil" data-veil aria-hidden />

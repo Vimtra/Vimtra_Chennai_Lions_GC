@@ -133,6 +133,7 @@ export default function TheClubPage() {
   return (
     <>
       <PageHero
+        variant="immersive"
         eyebrow="The Franchise · Season 2026"
         title={["THE CLUB"]}
         lead={

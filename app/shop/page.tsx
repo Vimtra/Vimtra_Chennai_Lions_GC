@@ -21,6 +21,7 @@ export default async function ShopPage() {
   return (
     <>
       <PageHero
+        variant="compact"
         eyebrow="Official Chennai Lions Store"
         title={["SHOP"]}
         lead={

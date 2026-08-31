@@ -31,7 +31,7 @@ const CARD_ASPECT = { w: 16, h: 10 } as const;
 // The single project-owned fallback we ever use — reserved for future
 // items an admin creates without a cover. Never shown for the currently
 // seeded rows (every seeded row already has a genuinely-relevant cover).
-const FRANCHISE_FALLBACK = "/assets/hero-golfer-web.png";
+const FRANCHISE_FALLBACK = "/assets/car-2-web.jpg";
 
 export default async function NewsPage() {
   const [posts, articles, social] = await Promise.all([
@@ -44,6 +44,7 @@ export default async function NewsPage() {
     <>
       {/* ============================ HERO ============================ */}
       <PageHero
+        variant="editorial"
         eyebrow="From the Den"
         title={["NEWS"]}
         lead={
@@ -79,11 +80,11 @@ export default async function NewsPage() {
           blurb="Third-party coverage of the Vimtra Chennai Lions and IGPL — curated by us, published by others. Click through to read the full article on the source."
           variant="paper"
         >
-          <CardGrid>
-            {articles.map((item) => (
-              <MediaCard key={item.id} item={item} />
-            ))}
-          </CardGrid>
+          {/* One lead story carries the photograph; the rest are a
+              numbered masthead list. Several of these articles share a
+              subject, so a grid of identical thumbnails read as a
+              template error rather than as coverage. */}
+          <PressRun items={articles} />
         </SectionBand>
       )}
 
@@ -125,13 +126,15 @@ function SectionBand({
 }) {
   return (
     <section
-      className={`px-8 py-[72px] md:py-24 ${
+      className={`hp-sec hp-sec-default ${
         variant === "paper"
           ? "bg-cream-50 border-y border-black/[0.06]"
           : "bg-cream-100"
       }`}
     >
-      <div className="max-w-[1200px] mx-auto">
+      {/* hp-wrap: the newsroom shares the same left edge as the header,
+          the page hero above it and the footer below. */}
+      <div className="hp-wrap">
         <Reveal
           variant="fade-up"
           className="mb-10 flex items-end justify-between gap-8 flex-wrap"
@@ -180,7 +183,7 @@ function EditorialCard({ post }: { post: Post }) {
           style={{ aspectRatio: `${CARD_ASPECT.w} / ${CARD_ASPECT.h}` }}
         >
           <Image
-            src={post.coverImage ?? FRANCHISE_FALLBACK}
+            src={webSrc(post.coverImage) ?? FRANCHISE_FALLBACK}
             alt={`${post.title} — Vimtra Chennai Lions GC`}
             fill
             sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 400px"
@@ -241,58 +244,68 @@ function EditorialEmpty() {
 }
 
 // ---------------------------------------------------------------------------
-// Card: Media coverage — third-party press article (Section B)
+// Press run — one lead with a cover, the remainder as an editorial list.
+// Uses the same .story-* language as the homepage Media chapter so the
+// two surfaces read as one design system.
 
-function MediaCard({ item }: { item: MediaCoverage }) {
-  const dateStr = item.publishedAt ? formatCoverageDate(item.publishedAt) : "";
+function PressRun({ items }: { items: MediaCoverage[] }) {
+  const [lead, ...rest] = items;
+  if (!lead) return null;
+  const leadDate = lead.publishedAt ? formatCoverageDate(lead.publishedAt) : "";
   return (
-    <Reveal
-      variant="fade-up"
-      className="lift group flex flex-col h-full no-underline text-inherit bg-white border border-black/[0.08] rounded-[20px] overflow-hidden"
-    >
+    <div className="media-grid">
       <a
-        href={item.sourceUrl}
+        className="story story-lead"
+        href={lead.sourceUrl}
         target="_blank"
         rel="noreferrer noopener"
-        className="flex flex-col h-full no-underline text-inherit"
       >
-        <div
-          className="relative bg-cream-100 border-b border-black/[0.06]"
-          style={{ aspectRatio: `${CARD_ASPECT.w} / ${CARD_ASPECT.h}` }}
-        >
+        <span className="story-fig story-fig-lead">
           <Image
-            src={item.coverImage ?? FRANCHISE_FALLBACK}
-            alt={`${item.sourceName} — ${item.title}`}
+            src={webSrc(lead.coverImage) ?? FRANCHISE_FALLBACK}
+            alt={`${lead.sourceName} — ${lead.title}`}
             fill
-            sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 400px"
-            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 56vw"
+            className="story-img"
           />
-          <div className="absolute top-3 left-3 inline-flex items-center gap-2 rounded-[999px] bg-ink/90 backdrop-blur-[6px] px-3 py-[6px] text-[10.5px] font-sora font-extrabold tracking-[0.16em] text-[#E9CB8E] uppercase">
-            {item.sourceName}
-          </div>
-          <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 flex items-center justify-center text-ink group-hover:bg-crimson-600 group-hover:text-white transition-colors">
-            <ArrowUpRight className="w-4 h-4" />
-          </div>
-        </div>
-        <div className="p-6 flex-1 flex flex-col">
-          <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-            Media Coverage{dateStr ? ` · ${dateStr}` : ""}
-          </div>
-          <h3 className="mt-[10px] mb-2 font-sora font-bold text-[18px] leading-[1.22] tracking-[-0.005em] text-ink">
-            {item.title}
-          </h3>
-          <p className="m-0 font-manrope text-[13.5px] leading-[1.6] text-muted">
-            {item.summary}
-          </p>
-          <div className="mt-auto pt-4 border-t border-black/[0.06] flex items-center justify-between">
-            <span className="font-manrope font-semibold text-[12.5px] text-ink group-hover:text-crimson-600 transition-colors">
-              Read on {item.sourceName}
-            </span>
-            <ArrowUpRight className="w-4 h-4 text-muted group-hover:text-crimson-600 transition-colors" />
-          </div>
-        </div>
+        </span>
+        <span className="story-meta">
+          <span className="story-src">{lead.sourceName}</span>
+          {leadDate && <span className="story-date">{leadDate}</span>}
+        </span>
+        <span className="story-title story-title-lead">{lead.title}</span>
+        <span className="story-sum">{lead.summary}</span>
       </a>
-    </Reveal>
+
+      <ol className="story-rest">
+        {rest.map((item, i) => (
+          <li key={item.id}>
+            <a
+              className="story story-row"
+              href={item.sourceUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <span className="story-n">{String(i + 2).padStart(2, "0")}</span>
+              <span className="story-col">
+                <span className="story-meta">
+                  <span className="story-src">{item.sourceName}</span>
+                  {item.publishedAt && (
+                    <span className="story-date">
+                      {formatCoverageDate(item.publishedAt)}
+                    </span>
+                  )}
+                </span>
+                <span className="story-title">{item.title}</span>
+              </span>
+              <span className="story-go" aria-hidden>
+                &#8599;
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
 
@@ -318,7 +331,7 @@ function SocialCard({ item }: { item: MediaCoverage }) {
           style={{ aspectRatio: `${CARD_ASPECT.w} / ${CARD_ASPECT.h}` }}
         >
           <Image
-            src={item.coverImage ?? FRANCHISE_FALLBACK}
+            src={webSrc(item.coverImage) ?? FRANCHISE_FALLBACK}
             alt={`${item.sourceName} — ${item.title}`}
             fill
             sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 400px"

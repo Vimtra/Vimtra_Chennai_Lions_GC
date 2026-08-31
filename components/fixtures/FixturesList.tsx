@@ -69,7 +69,7 @@ export default function FixturesList({ fixtures }: { fixtures: Fixture[] }) {
   });
 
   return (
-    <div className="max-w-[1100px] mx-auto">
+    <div>
       <div className="flex gap-[10px] flex-wrap mb-8">
         {TABS.map((t) => (
           <button

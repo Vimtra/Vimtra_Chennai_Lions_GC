@@ -34,6 +34,7 @@ export default function ThePridePage() {
   return (
     <>
       <PageHero
+        variant="immersive"
         eyebrow="The Mark · Pride of Chennai"
         title={["THE PRIDE"]}
         lead={

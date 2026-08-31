@@ -15,6 +15,7 @@ export default function PlayersPage() {
   return (
     <>
       <PageHero
+        variant="editorial"
         eyebrow="The Roster · 2026"
         title={["THE", "PLAYERS"]}
         lead={
