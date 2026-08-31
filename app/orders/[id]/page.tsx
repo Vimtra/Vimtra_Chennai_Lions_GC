@@ -6,6 +6,8 @@ import { CheckCircle2 } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import Reveal from "@/components/Reveal";
 import { FALLBACK_LOGO, inr } from "@/lib/products";
+import PageHero from "@/components/site/PageHero";
+import { Section } from "@/components/site/Section";
 import {
   getOrderById,
   readShippingSnapshot,
@@ -59,35 +61,13 @@ export default async function OrderConfirmationPage({
 
   return (
     <>
-      <section
-        className="relative overflow-hidden px-8 pt-16 pb-14"
-        style={{
-          background:
-            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
-        }}
-      >
-        <div className="relative max-w-[1200px] mx-auto">
-          <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-            {isFresh ? "Thank you · Order Placed" : "Order Details"}
-          </div>
-          <h1
-            className="mt-[14px] font-sora font-extrabold text-white"
-            style={{
-              fontSize: "clamp(40px,5.6vw,72px)",
-              lineHeight: 0.92,
-              letterSpacing: "-0.035em",
-            }}
-          >
-            {order.orderNumber}
-          </h1>
-          <div className="mt-4 font-manrope text-[14px] text-white/85">
-            Placed on {formatOrderDate(order.createdAt)}
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow={isFresh ? "Thank you · Order Placed" : "Order Details"}
+        title={[order.orderNumber]}
+        lead={`Placed on ${formatOrderDate(order.createdAt)}`}
+      />
 
-      <section className="bg-cream-100 px-8 pt-14 pb-24">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 items-start">
+      <Section surface="ivory" size="tight">
           <div className="grid gap-6">
             {isFresh && <SuccessBanner order={order} />}
 
@@ -199,8 +179,7 @@ export default async function OrderConfirmationPage({
               </div>
             </div>
           </aside>
-        </div>
-      </section>
+        </Section>
     </>
   );
 }
@@ -241,7 +220,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-cream-50 border border-black/[0.07] rounded-[20px] p-6">
+    <section className="hp-panel">
       <div className="mb-4 font-sora font-extrabold text-[18px] tracking-[-0.005em] text-ink">
         {title}
       </div>

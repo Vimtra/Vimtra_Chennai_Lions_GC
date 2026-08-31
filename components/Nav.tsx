@@ -3,279 +3,435 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Send, ShoppingBag, UserRound, Menu, X, LogOut, ShieldCheck, LogIn } from "lucide-react";
-import { NAV_ITEMS, PRIMARY_NAV, NAV_CLUSTERS } from "@/lib/nav";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  ShoppingBag,
+  UserRound,
+  Menu,
+  X,
+  ChevronDown,
+  LogOut,
+  ShieldCheck,
+  LogIn,
+  ArrowUpRight,
+} from "lucide-react";
 import { useCart, cartCount, useCartHydrated } from "@/store/cart";
 import { signOut } from "@/app/(auth)/actions";
 import type { SafeUser } from "@/lib/auth";
 
+/**
+ * Global header.
+ *
+ * Aligned to the same grid as page content (`.hp-wrap`: 1360 max-width,
+ * 22/40 gutters) so the logo shares a left edge with every page's eyebrow,
+ * heading and footer brand.
+ *
+ * States: transparent over a dark full-bleed hero (home only), deep ink
+ * everywhere else, and deep ink once scrolled past the fold.
+ *
+ * All auth / cart / routing behaviour is preserved verbatim — only the
+ * presentation and information architecture changed. Every destination is
+ * an existing route; nothing is invented.
+ */
+
+interface MegaItem {
+  href: string;
+  label: string;
+  desc: string;
+}
+interface MegaGroup {
+  key: "club" | "season" | "media";
+  label: string;
+  items: MegaItem[];
+  image: string;
+  caption: string;
+}
+
+const MEGA: MegaGroup[] = [
+  {
+    key: "club",
+    label: "The Club",
+    items: [
+      { href: "/the-club", label: "The Club", desc: "Franchise story · Chennai roots" },
+      { href: "/the-pride", label: "The Pride", desc: "The city and the mark" },
+      { href: "/players", label: "Players", desc: "Season 2026 roster" },
+      { href: "/golf-development", label: "Golf Development", desc: "Coaching · academies · course" },
+      { href: "/vimtra-ventures", label: "Vimtra Ventures", desc: "The firm behind the franchise" },
+    ],
+    // A photograph, never a transparent cutout — cover-fit needs a real frame.
+    image: "/assets/fac-main-web.jpg",
+    caption: "TNGF Cosmo · Chennai",
+  },
+  {
+    key: "season",
+    label: "The Season",
+    items: [
+      { href: "/fixtures", label: "Fixtures", desc: "AM Green IGPL · 2026 calendar" },
+      { href: "/scores", label: "Scores", desc: "Round-by-round scorecards" },
+      { href: "/leaderboards", label: "Standings", desc: "Franchise table · Order of Merit" },
+    ],
+    image: "/assets/car-1-web.jpg",
+    caption: "Tournament golf · Season 2026",
+  },
+  {
+    key: "media",
+    label: "Media",
+    items: [
+      { href: "/news", label: "News", desc: "Franchise news & press coverage" },
+      { href: "/gallery", label: "Gallery", desc: "Tour frames" },
+    ],
+    image: "/assets/car-3-web.jpg",
+    caption: "From the den",
+  },
+];
+
+const DIRECT = [{ href: "/shop", label: "Shop" }];
+
+const MOBILE_GROUPS = [
+  ...MEGA,
+  {
+    key: "business" as const,
+    label: "Business",
+    items: [
+      { href: "/partners", label: "Partners", desc: "Commercial partners" },
+      { href: "/invest", label: "Invest", desc: "Investment & sponsorship" },
+      { href: "/shop", label: "Shop", desc: "Official merchandise" },
+      { href: "/contact", label: "Contact", desc: "Talk to the franchise" },
+    ],
+    image: "",
+    caption: "",
+  },
+];
+
+/** Routes whose first section is a dark full-bleed hero. */
+const OVER_HERO = new Set(["/"]);
+
 export default function Nav({ user }: { user: SafeUser | null }) {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const overHero = OVER_HERO.has(pathname);
+
+  const [scrolled, setScrolled] = useState(false);
+  const [openMega, setOpenMega] = useState<MegaGroup["key"] | null>(null);
+  const [overlay, setOverlay] = useState(false);
+
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const items = useCart((s) => s.items);
   const hydrated = useCartHydrated();
   const count = hydrated ? cartCount(items) : 0;
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  // Close the overlay on route change.
-  useEffect(() => setOpen(false), [pathname]);
+  // Body scroll lock while the overlay is open.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    if (overlay) document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [overlay]);
 
-  // Esc closes the overlay.
+  // Focus the close button on open; return focus to the trigger on close.
+  useEffect(() => {
+    if (overlay) {
+      const t = window.setTimeout(() => closeRef.current?.focus(), 80);
+      return () => window.clearTimeout(t);
+    }
+    triggerRef.current?.focus();
+  }, [overlay]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key !== "Escape") return;
+      if (overlay) setOverlay(false);
+      else if (openMega) setOpenMega(null);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, []);
+  }, [overlay, openMega]);
 
-  const primaryLinks = NAV_ITEMS.filter((n) => PRIMARY_NAV.includes(n.href));
+  useEffect(() => {
+    setOverlay(false);
+    setOpenMega(null);
+  }, [pathname]);
+
+  const active = useMemo(
+    () => MEGA.find((g) => g.key === openMega) ?? null,
+    [openMega]
+  );
+  const closeMega = useCallback(() => setOpenMega(null), []);
 
   return (
     <>
-      <header className="lions-header">
-        <nav
-          aria-label="Primary"
-          className="gs-container py-3 flex items-center gap-3 md:gap-5"
-        >
-          <Link href="/" className="flex items-center gap-3 no-underline group">
+      <header
+        className={[
+          "nv",
+          overHero ? "nv-over" : "",
+          scrolled ? "nv-scrolled" : "",
+          openMega ? "nv-open" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        onMouseLeave={closeMega}
+      >
+        <div className="nv-bar hp-wrap">
+          <Link href="/" className="nv-brand" onClick={closeMega} aria-label="Vimtra Chennai Lions — home">
             <Image
               src="/assets/logo-lion.png"
-              alt="Vimtra Chennai Lions GC"
-              width={42}
-              height={42}
-              className="h-[42px] w-[42px] object-contain bg-white rounded-[10px] p-1 shadow-lg transition-transform duration-500 group-hover:rotate-[-6deg] group-hover:scale-105"
+              alt=""
+              width={44}
+              height={44}
+              priority
+              className="nv-mark"
             />
-            <span className="flex flex-col leading-tight">
-              <span className="font-sora font-extrabold text-[14px] tracking-[0.15em] text-white">
-                VIMTRA CHENNAI LIONS
-              </span>
-              <span className="font-manrope font-semibold text-[9.5px] tracking-[0.46em] text-[#E9CB8E]">
-                A&nbsp;FRANCHISE&nbsp;BY&nbsp;VIMTRA&nbsp;VENTURES
-              </span>
+            <span className="nv-word">
+              <span className="nv-word-1">VIMTRA CHENNAI LIONS</span>
+              <span className="nv-word-2">A franchise by Vimtra Ventures</span>
             </span>
           </Link>
 
-          <div className="flex-1" />
-
-          <div className="hidden lg:flex items-center gap-7">
-            {primaryLinks.map((n) => (
+          <nav className="nv-links" aria-label="Primary">
+            {MEGA.map((g) => {
+              const on = g.items.some((i) => pathname.startsWith(i.href));
+              return (
+                <button
+                  key={g.key}
+                  type="button"
+                  className={`nv-link ${openMega === g.key ? "is-open" : ""} ${on ? "is-active" : ""}`}
+                  onMouseEnter={() => setOpenMega(g.key)}
+                  onFocus={() => setOpenMega(g.key)}
+                  onClick={(e) =>
+                    // Pointer clicks arrive after hover has already opened the
+                    // panel; keyboard activation (detail 0) keeps true toggle.
+                    e.detail === 0
+                      ? setOpenMega(openMega === g.key ? null : g.key)
+                      : setOpenMega(g.key)
+                  }
+                  aria-expanded={openMega === g.key}
+                  aria-haspopup="true"
+                >
+                  {g.label}
+                  <ChevronDown className="nv-caret" aria-hidden />
+                </button>
+              );
+            })}
+            {DIRECT.map((l) => (
               <Link
-                key={n.href}
-                href={n.href}
-                className={`nav-link ${isActive(n.href) ? "is-active" : ""}`}
+                key={l.href}
+                href={l.href}
+                className={`nv-link ${pathname.startsWith(l.href) ? "is-active" : ""}`}
+                onMouseEnter={closeMega}
+                onFocus={closeMega}
               >
-                {n.label}
+                {l.label}
               </Link>
             ))}
+          </nav>
+
+          <div className="nv-actions">
+            <Link href="/cart" className="nv-icon" aria-label="Cart" onMouseEnter={closeMega}>
+              <ShoppingBag aria-hidden />
+              {count > 0 && <span className="nv-badge" aria-hidden>{count}</span>}
+              {count > 0 && <span className="nv-sr">{count} items in cart</span>}
+            </Link>
+            <Link
+              href={user ? "/profile" : "/sign-in"}
+              className="nv-icon"
+              aria-label={user ? `Account · ${user.name}` : "Sign in"}
+              onMouseEnter={closeMega}
+            >
+              <UserRound aria-hidden />
+            </Link>
+            <button
+              ref={triggerRef}
+              type="button"
+              className="nv-icon nv-burger"
+              aria-label="Open menu"
+              aria-expanded={overlay}
+              onClick={() => setOverlay(true)}
+              onMouseEnter={closeMega}
+            >
+              <Menu aria-hidden />
+            </button>
           </div>
+        </div>
 
-          <Link className="cta-gold hidden md:inline-flex press" href="/contact">
-            <Send className="w-[14px] h-[14px]" /> LET&apos;S TALK
-          </Link>
-
-          <Link className="icon-btn press" href="/cart" aria-label="Cart">
-            <ShoppingBag />
-            {count > 0 && <span className="cart-badge">{count}</span>}
-          </Link>
-
-          <Link
-            className={`icon-btn press ${isActive("/profile") ? "!bg-[#1A1513]" : ""}`}
-            href={user ? "/profile" : "/sign-in"}
-            aria-label={user ? "Account" : "Sign in"}
-            title={user ? user.name : "Sign in"}
+        {active && (
+          <div
+            className="nv-mega"
+            role="region"
+            aria-label={`${active.label} menu`}
+            onMouseEnter={() => setOpenMega(active.key)}
+            onMouseLeave={closeMega}
           >
-            <UserRound />
-          </Link>
-
-          <button
-            className="icon-btn press"
-            aria-label="Menu"
-            onClick={() => setOpen(true)}
-          >
-            <Menu />
-          </button>
-        </nav>
+            <div className="nv-mega-in hp-wrap">
+              <p className="nv-mega-label">{active.label}</p>
+              <ul className="nv-mega-list">
+                {active.items.map((it, i) => (
+                  <li key={it.href}>
+                    <Link
+                      href={it.href}
+                      className={`nv-mega-item ${pathname === it.href ? "is-active" : ""}`}
+                      onClick={closeMega}
+                    >
+                      <span className="nv-mega-n">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="nv-mega-body">
+                        <span className="nv-mega-t">{it.label}</span>
+                        <span className="nv-mega-d">{it.desc}</span>
+                      </span>
+                      <ArrowUpRight className="nv-mega-arrow" aria-hidden />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={active.items[0].href}
+                className="nv-mega-fig"
+                onClick={closeMega}
+                aria-label={`${active.label} — ${active.caption}`}
+              >
+                <Image src={active.image} alt="" fill sizes="340px" className="nv-mega-img" />
+                <span className="nv-mega-cap">{active.caption}</span>
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
+      {/* Full-screen mobile navigation */}
       <div
-        className={`lions-overlay ${open ? "is-open" : ""}`}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setOpen(false);
-        }}
+        className={`nv-ov ${overlay ? "is-open" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!overlay}
+        aria-label="Site navigation"
+        onClick={(e) => e.target === e.currentTarget && setOverlay(false)}
       >
-        <div className="gs-container py-10 md:py-16 min-h-screen flex flex-col justify-between">
-          {/* Header */}
-          <div className="flex items-center justify-between pb-6 border-b border-white/[0.08]">
-            <Link href="/" className="flex items-center gap-3 no-underline group" onClick={() => setOpen(false)}>
-              <Image
-                src="/assets/logo-lion.png"
-                alt="Vimtra Chennai Lions GC"
-                width={40}
-                height={40}
-                className="h-[40px] w-[40px] object-contain bg-white rounded-[8px] p-1 shadow-lg"
-              />
-              <span className="flex flex-col leading-tight">
-                <span className="font-sora font-extrabold text-[13px] tracking-[0.15em] text-white">
-                  VIMTRA CHENNAI LIONS
-                </span>
-                <span className="font-manrope font-semibold text-[9px] tracking-[0.46em] text-[#E9CB8E]">
-                  A FRANCHISE BY VIMTRA VENTURES
-                </span>
+        <div className="nv-ov-in">
+          <div className="nv-ov-top">
+            <Link href="/" className="nv-brand" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>
+              <Image src="/assets/logo-lion.png" alt="" width={40} height={40} className="nv-mark" />
+              <span className="nv-word">
+                <span className="nv-word-1">VIMTRA CHENNAI LIONS</span>
+                <span className="nv-word-2">A franchise by Vimtra Ventures</span>
               </span>
             </Link>
-
             <button
-              className="w-10 h-10 rounded-full border border-white/20 hover:border-[#E6C57E] text-white hover:text-[#E6C57E] flex items-center justify-center transition-all duration-300 cursor-pointer bg-white/5"
-              aria-label="Close"
-              onClick={() => setOpen(false)}
+              ref={closeRef}
+              type="button"
+              className="nv-ov-close"
+              aria-label="Close menu"
+              onClick={() => setOverlay(false)}
+              tabIndex={overlay ? 0 : -1}
             >
-              <X className="w-5 h-5" />
+              <X aria-hidden />
             </button>
           </div>
 
-          {/* Main Grid */}
-          <div className="my-auto py-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            
-            {/* Column 1: Auth & Profile Panel (4 cols) */}
-            <div className="lg:col-span-4 bg-white/[0.02] border border-white/[0.06] rounded-[24px] p-6 md:p-8 flex flex-col gap-6 backdrop-blur-md">
-              {user ? (
-                <>
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-crimson-600 to-gold-500 flex items-center justify-center font-sora font-bold text-white text-xl shadow-inner">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="font-sora font-bold text-lg text-white">{user.name}</div>
-                      <div className="font-manrope text-[12px] text-[#E9CB8E] uppercase tracking-wider font-semibold">{user.role} Member</div>
-                    </div>
-                  </div>
+          <nav className="nv-ov-nav" aria-label="Sections">
+            {MOBILE_GROUPS.map((g) => (
+              <OvGroup key={g.key} g={g} pathname={pathname} onNav={() => setOverlay(false)} open={overlay} />
+            ))}
+            <Link href="/cart" className="nv-ov-direct" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>
+              <span>Cart</span>
+              <span className="nv-ov-meta">{count > 0 ? `${count} item${count === 1 ? "" : "s"}` : "Empty"}</span>
+            </Link>
+            {user?.role === "ADMIN" && (
+              <Link href="/admin" className="nv-ov-direct is-admin" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>
+                <span><ShieldCheck className="nv-ov-ic" aria-hidden /> Admin</span>
+                <span className="nv-ov-meta">Dashboard</span>
+              </Link>
+            )}
+          </nav>
 
-                  <div className="h-px bg-white/[0.08]" />
-
-                  <div className="flex flex-col gap-3">
-                    <Link
-                      href="/profile"
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white font-manrope font-semibold text-[14px] no-underline transition-colors"
-                      onClick={() => setOpen(false)}
-                    >
-                      <UserRound className="w-4 h-4 text-[#E6C57E]" />
-                      My Profile
-                    </Link>
-                    {user.role === "ADMIN" && (
-                      <Link
-                        href="/admin"
-                        className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-[#E6C57E] to-[#C39A52] text-[#3A1A06] font-manrope font-bold text-[14px] no-underline transition-transform hover:scale-[1.02]"
-                        onClick={() => setOpen(false)}
-                      >
-                        <ShieldCheck className="w-4 h-4" />
-                        Admin Dashboard
-                      </Link>
-                    )}
-                    <form action={signOut}>
-                      <button
-                        type="submit"
-                        className="w-full flex items-center gap-3 p-3 rounded-xl bg-crimson-600/10 hover:bg-crimson-600 text-white font-manrope font-semibold text-[14px] transition-colors cursor-pointer border border-crimson-600/20"
-                      >
-                        <LogOut className="w-4 h-4 text-crimson-500 group-hover:text-white" />
-                        Sign Out
-                      </button>
-                    </form>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex flex-col gap-2">
-                    <h3 className="font-sora font-extrabold text-[20px] text-white tracking-tight">Join the Pride</h3>
-                    <p className="font-manrope text-[13px] text-white/60 leading-relaxed">
-                      Access exclusive member benefits, official merchandise pre-orders, and tournament stats.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-3 mt-2">
-                    <Link
-                      href="/sign-in"
-                      className="flex items-center justify-center gap-2 p-3.5 rounded-xl bg-gradient-to-r from-[#E6C57E] to-[#C39A52] text-[#3A1A06] font-manrope font-bold text-[14px] no-underline hover:scale-[1.02] transition-transform"
-                      onClick={() => setOpen(false)}
-                    >
-                      <LogIn className="w-4 h-4" /> Sign In
-                    </Link>
-                    <Link
-                      href="/sign-up"
-                      className="flex items-center justify-center p-3.5 rounded-xl border border-white/20 hover:border-white/40 text-white font-manrope font-semibold text-[14px] no-underline transition-colors"
-                      onClick={() => setOpen(false)}
-                    >
-                      Create Account
-                    </Link>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Column 2: Links Columns (8 cols) */}
-            <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-              
-              {NAV_CLUSTERS.map((cluster) => {
-                const items = cluster.hrefs
-                  .map((h) => NAV_ITEMS.find((n) => n.href === h))
-                  .filter((n): n is (typeof NAV_ITEMS)[number] => Boolean(n));
-                return (
-                  <div key={cluster.key} className="flex flex-col gap-4">
-                    <h4 className="font-sora font-extrabold text-[12px] text-[#E9CB8E] uppercase tracking-[0.2em] border-l-2 border-[#E9CB8E] pl-3">
-                      {cluster.title}
-                    </h4>
-                    <div className="flex flex-col gap-1.5">
-                      {items.map((n) => {
-                        const Icon = n.icon;
-                        return (
-                          <Link
-                            key={n.href}
-                            href={n.href}
-                            className={`group flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 no-underline ${
-                              isActive(n.href)
-                                ? "bg-white/[0.06] border border-white/[0.1] text-[#E9CB8E]"
-                                : "border border-transparent text-white/70 hover:text-white hover:bg-white/[0.03]"
-                            }`}
-                            onClick={() => setOpen(false)}
-                          >
-                            <div
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                                isActive(n.href)
-                                  ? "bg-[#E9CB8E]/10 text-[#E9CB8E]"
-                                  : "bg-white/[0.04] text-white/50 group-hover:text-white group-hover:bg-[#E9CB8E]/10"
-                              }`}
-                            >
-                              <Icon className="w-4 h-4" />
-                            </div>
-                            <span className="font-manrope font-semibold text-[14px]">
-                              {n.label}
-                            </span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-white/[0.08] gap-4">
-            <div className="font-manrope text-[11px] text-white/40 tracking-[0.2em] uppercase">
-              © 2026 · VIMTRA CHENNAI LIONS GC
-            </div>
-            <div className="flex gap-6 text-[12px] font-manrope text-white/60">
-              <Link href="/privacy" className="hover:text-white transition-colors no-underline" onClick={() => setOpen(false)}>Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-white transition-colors no-underline" onClick={() => setOpen(false)}>Terms of Service</Link>
+          <div className="nv-ov-foot">
+            {user ? (
+              <div className="nv-ov-acct">
+                <div className="nv-ov-avatar" aria-hidden>{(user.name.charAt(0) || "L").toUpperCase()}</div>
+                <div className="nv-ov-acct-b">
+                  <span className="nv-ov-acct-n">{user.name}</span>
+                  <span className="nv-ov-acct-r">{user.role} · Member</span>
+                </div>
+                <form action={signOut}>
+                  <button type="submit" className="nv-ov-btn" tabIndex={overlay ? 0 : -1}>
+                    <LogOut className="nv-ov-ic" aria-hidden /> Sign out
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <div className="nv-ov-guest">
+                <Link href="/sign-in" className="nv-ov-btn is-primary" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>
+                  <LogIn className="nv-ov-ic" aria-hidden /> Sign in
+                </Link>
+                <Link href="/sign-up" className="nv-ov-btn" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>
+                  Create account
+                </Link>
+              </div>
+            )}
+            <div className="nv-ov-legal">
+              <Link href="/privacy" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>Privacy</Link>
+              <Link href="/terms" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>Terms</Link>
             </div>
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+function OvGroup({
+  g,
+  pathname,
+  onNav,
+  open,
+}: {
+  g: (typeof MOBILE_GROUPS)[number];
+  pathname: string;
+  onNav: () => void;
+  open: boolean;
+}) {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    if (!open) setOn(false);
+  }, [open]);
+  return (
+    <div className={`nv-ov-grp ${on ? "is-open" : ""}`}>
+      <button
+        type="button"
+        className="nv-ov-grp-btn"
+        aria-expanded={on}
+        onClick={() => setOn((v) => !v)}
+        tabIndex={open ? 0 : -1}
+      >
+        <span>{g.label}</span>
+        <span className="nv-ov-plus" aria-hidden />
+      </button>
+      <div className="nv-ov-grp-items">
+        {g.items.map((it) => (
+          <Link
+            key={it.href}
+            href={it.href}
+            className={`nv-ov-item ${pathname === it.href ? "is-active" : ""}`}
+            onClick={onNav}
+            tabIndex={open && on ? 0 : -1}
+          >
+            <span>{it.label}</span>
+            <ArrowUpRight className="nv-ov-item-a" aria-hidden />
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }

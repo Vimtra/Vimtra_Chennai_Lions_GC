@@ -26,10 +26,10 @@ export default async function SignInPage({
   if (await getCurrentUser()) redirect(safeNext ?? "/profile");
 
   return (
-    <div className="admin-page min-h-[80vh] flex items-center justify-center px-6 py-16 bg-cream-100">
-      <div className="w-full max-w-[420px] bg-cream-50 border border-black/[0.08] rounded-[24px] p-10">
+    <div className="admin-page hp-auth">
+      <div className="hp-auth-card">
         <div className="flex items-center gap-3 mb-7">
-          <Image src="/assets/logo-lion.png" alt="" width={40} height={40} className="w-10 h-10 object-contain bg-white rounded-[10px] p-1 shadow" />
+          <Image src="/assets/logo-lion.png" alt="" width={40} height={40} className="w-10 h-10 object-contain" />
           <div>
             <div className="font-sora font-extrabold text-[15px] tracking-[0.14em] text-ink">WELCOME BACK</div>
             <div className="font-manrope text-[12px] text-muted">Sign in to your Pride account</div>

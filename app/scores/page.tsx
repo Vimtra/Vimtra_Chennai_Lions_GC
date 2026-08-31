@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import AeText from "@/components/AeText";
 import { listFixtures, formatFixtureDate } from "@/lib/fixtures";
+import PageHero from "@/components/site/PageHero";
+import { Section, IndexLabel } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   title: "Scores · Vimtra Chennai Lions GC",
@@ -37,63 +38,17 @@ export default async function ScoresPage() {
 
   return (
     <>
-      <section
-        className="relative overflow-hidden px-8 pt-[78px] pb-16"
-        style={{
-          background:
-            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
-        }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%)",
-          }}
-        />
-        <div className="relative max-w-[1200px] mx-auto">
-          <div className="flex items-center gap-[14px] flex-wrap">
-            {live ? (
-              <span className="badge-live">LIVE</span>
-            ) : (
-              <span className="tier-badge" style={{ background: "rgba(255,255,255,0.14)", color: "#E9CB8E" }}>
-                OFFLINE
-              </span>
-            )}
-            <span className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-              AM Green IGPL · Season 2026
-            </span>
-          </div>
-          <AeText
-            text="SCORES"
-            mode="words"
-            as="h1"
-            className="mt-[18px] font-sora font-extrabold text-white"
-            style={{
-              fontSize: "clamp(48px,7.4vw,108px)",
-              lineHeight: 0.92,
-              letterSpacing: "-0.035em",
-            }}
-          />
-          <Reveal
-            variant="fade-up"
-            delay={120}
-            as="p"
-            className="max-w-[640px] mt-[18px] font-manrope text-[16px] leading-[1.6] text-white/85"
-          >
-            {live
-              ? `Round updates from ${live.name}. New rows populate here as the round moves.`
-              : nextUp
-              ? `Live scoring unlocks at the ${nextUp.name} — ${formatFixtureDate(nextUp)}.`
-              : lastResult
-              ? `No live round today. See the last completed event below.`
-              : `Live scoring unlocks with the first Season 2026 tournament week.`}
-          </Reveal>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Live Scoring · Season 2026"
+        title={["SCORES"]}
+        lead={
+    <>
+      {live ? `Round updates from ${live.name}. New rows populate here as the round moves.` : nextUp ? `Live scoring unlocks at the ${nextUp.name} — ${formatFixtureDate(nextUp)}.` : lastResult ? `No live round today. See the last completed event below.` : `Live scoring unlocks with the first Season 2026 tournament week.`}
+    </>
+  }
+      />
 
-      <section className="bg-cream-100 px-8 pt-16 pb-24">
-        <div className="max-w-[1100px] mx-auto">
+            <Section surface="ivory" size="tight">
           {live ? (
             <LiveEmptyState
               name={live.name}
@@ -117,8 +72,7 @@ export default async function ScoresPage() {
           ) : (
             <SeasonNotStartedState />
           )}
-        </div>
-      </section>
+        </Section>
     </>
   );
 }
@@ -137,7 +91,7 @@ function EmptyCard({
   return (
     <Reveal
       variant="fade-up"
-      className="rounded-[22px] border border-dashed border-black/[0.18] bg-cream-50 p-10 md:p-12"
+      className="hp-empty"
     >
       <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
         {eyebrow}

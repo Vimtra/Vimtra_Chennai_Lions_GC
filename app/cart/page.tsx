@@ -6,6 +6,8 @@ import { CheckCircle2 } from "lucide-react";
 import { useCart, cartCount, useCartHydrated } from "@/store/cart";
 import { FALLBACK_LOGO, inr } from "@/lib/products";
 import { computeTotals, shippingExplainer } from "@/lib/orders-totals";
+import PageHero from "@/components/site/PageHero";
+import { Section } from "@/components/site/Section";
 
 export default function CartPage() {
   const items = useCart((s) => s.items);
@@ -23,37 +25,17 @@ export default function CartPage() {
 
   return (
     <>
-      <section
-        className="relative overflow-hidden px-8 pt-16 pb-14"
-        style={{
-          background:
-            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
-        }}
-      >
-        <div className="relative max-w-[1200px] mx-auto">
-          <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-            Your Bag
-          </div>
-          <h1
-            className="mt-[14px] font-sora font-extrabold text-white"
-            style={{
-              fontSize: "clamp(48px,7vw,98px)",
-              lineHeight: 0.92,
-              letterSpacing: "-0.035em",
-            }}
-          >
-            YOUR CART
-          </h1>
-          {hydrated && count > 0 && (
-            <div className="mt-3 font-manrope text-[13.5px] text-white/80">
-              {count} item{count === 1 ? "" : "s"} · review and check out below.
-            </div>
-          )}
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Your Bag"
+        title={["YOUR CART"]}
+        lead={
+          hydrated && count > 0
+            ? `${count} item${count === 1 ? "" : "s"} · review and check out below.`
+            : undefined
+        }
+      />
 
-      <section className="bg-cream-100 px-8 pt-14 pb-24">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-[30px] items-start">
+      <Section surface="ivory" size="tight">
           <div>
             {!hydrated ? null : items.length === 0 ? (
               <EmptyCart />
@@ -141,15 +123,14 @@ export default function CartPage() {
               confirm delivery details.
             </div>
           </div>
-        </div>
-      </section>
+        </Section>
     </>
   );
 }
 
 function EmptyCart() {
   return (
-    <div className="bg-cream-50 border border-black/[0.07] rounded-[22px] p-[60px] text-center">
+    <div className="hp-empty">
       <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-crimson-600 opacity-70" />
       <div className="font-sora font-extrabold text-[32px] text-ink tracking-[-0.02em]">
         Your cart is empty

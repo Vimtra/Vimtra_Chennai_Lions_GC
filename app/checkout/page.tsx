@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth";
 import { listAddresses } from "@/lib/addresses";
 import CheckoutFlow from "@/components/shop/CheckoutFlow";
+import PageHero from "@/components/site/PageHero";
+import { Section } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   title: "Checkout · Vimtra Chennai Lions GC",
@@ -25,33 +27,14 @@ export default async function CheckoutPage() {
 
   return (
     <>
-      <section
-        className="relative overflow-hidden px-8 pt-16 pb-14"
-        style={{
-          background:
-            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
-        }}
-      >
-        <div className="relative max-w-[1200px] mx-auto">
-          <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-            Checkout · Signed in as {user.name}
-          </div>
-          <h1
-            className="mt-[14px] font-sora font-extrabold text-white"
-            style={{
-              fontSize: "clamp(44px,6.4vw,86px)",
-              lineHeight: 0.92,
-              letterSpacing: "-0.035em",
-            }}
-          >
-            SECURE CHECKOUT
-          </h1>
-        </div>
-      </section>
+      <PageHero
+        eyebrow={`Checkout · Signed in as ${user.name}`}
+        title={["SECURE", "CHECKOUT"]}
+      />
 
-      <section className="bg-cream-100 px-8 pt-14 pb-24">
+      <Section surface="ivory" size="tight">
         <CheckoutFlow user={user} savedAddresses={savedAddresses} />
-      </section>
+      </Section>
     </>
   );
 }

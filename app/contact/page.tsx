@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/Reveal";
-import AeText from "@/components/AeText";
 import ContactForm from "@/components/contact/ContactForm";
 import { CONTACT_TOPICS } from "@/components/contact/topics";
+import PageHero from "@/components/site/PageHero";
+import { Section, IndexLabel } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   title: "Contact · Vimtra Chennai Lions GC",
@@ -66,49 +67,17 @@ export default async function ContactPage({
 
   return (
     <div className="contact-page">
-      <section
-        className="relative overflow-hidden px-8 pt-[88px] pb-[70px]"
-        style={{
-          background:
-            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
-        }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%)",
-          }}
-        />
-        <div className="relative max-w-[1200px] mx-auto">
-          <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-            To Discuss
-          </div>
-          <AeText
-            text="CONTACT"
-            mode="words"
-            as="h1"
-            className="mt-[14px] font-sora font-extrabold text-white"
-            style={{
-              fontSize: "clamp(56px,9.4vw,142px)",
-              lineHeight: 0.9,
-              letterSpacing: "-0.035em",
-            }}
-          />
-          <Reveal
-            variant="fade-up"
-            delay={100}
-            as="p"
-            className="max-w-[600px] mt-[22px] font-manrope text-[16px] leading-[1.6] text-white/85"
-          >
-            Talk to the franchise — for partnerships, sponsorship, media,
-            golf-development, and merchandise support.
-          </Reveal>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="To Discuss"
+        title={["CONTACT"]}
+        lead={
+    <>
+      Talk to the franchise — for partnerships, sponsorship, media, golf-development, and merchandise support.
+    </>
+  }
+      />
 
-      <section className="bg-cream-100 px-8 pt-24 pb-[120px]">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-8 items-start">
+            <Section surface="ivory" size="default">
           <Reveal variant="fade-up">
             <ContactForm initialTopic={initialTopic} />
           </Reveal>
@@ -133,7 +102,7 @@ export default async function ContactPage({
             <Reveal
               variant="fade-up"
               delay={80}
-              className="bg-cream-50 border border-black/[0.07] rounded-[24px] p-8"
+              className="hp-panel"
             >
               <div className="font-manrope font-bold tracking-[0.18em] text-[11px] text-crimson-600 uppercase">
                 Direct Channels
@@ -158,7 +127,7 @@ export default async function ContactPage({
             <Reveal
               variant="fade-up"
               delay={160}
-              className="bg-cream-50 border border-black/[0.07] rounded-[24px] p-8"
+              className="hp-panel"
             >
               <div className="font-manrope font-bold tracking-[0.18em] text-[11px] text-crimson-600 uppercase">
                 Find us elsewhere
@@ -178,8 +147,7 @@ export default async function ContactPage({
               </div>
             </Reveal>
           </div>
-        </div>
-      </section>
+        </Section>
     </div>
   );
 }

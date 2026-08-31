@@ -143,10 +143,12 @@ async function main() {
   // *genuinely relevant* to the subject of each article. Four of the
   // five entries are Bhullar-centred and reuse the franchise-owned
   // Bhullar player photo. The fifth is a franchise-wide squad story
-  // and uses the hero-golfer composite from the brand kit. No stock,
+  // and uses a tournament-golf photograph. hero-golfer.png is a
+  // transparent cutout and renders as an empty tile under object-cover.
+  // No stock,
   // no AI, no scraped publisher images.
-  const BHULLAR = "/players/gaganjeet-bhullar.jpg";
-  const SQUAD = "/assets/hero-golfer.png";
+  const BHULLAR = "/players/gaganjeet-bhullar-web.jpg";
+  const SQUAD = "/assets/car-2-web.jpg";
   const MEDIA: {
     sourceName: string;
     sourceUrl: string;

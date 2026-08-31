@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import Reveal from "@/components/Reveal";
-import AeText from "@/components/AeText";
+import PageHero from "@/components/site/PageHero";
+import {
+  Section,
+  IndexLabel,
+  SectionTitle,
+  NumberedList,
+  Figures,
+} from "@/components/site/Section";
 
 export const metadata: Metadata = {
   title: "Vimtra Ventures · Vimtra Chennai Lions GC",
@@ -71,7 +77,7 @@ const FOUNDERS = [
     init: "SY",
     name: "Subash Yammada",
     role: "Founder & CEO",
-    image: "/assets/subash-yammada.png",
+    image: "/assets/subash-yammada-web.jpg",
     imagePosition: "50% 12%",
     imageAlt: "Subash Yammada — Founder & CEO, Vimtra Ventures",
     body:
@@ -82,7 +88,7 @@ const FOUNDERS = [
     init: "TY",
     name: "Thimmaji Rao Yammada",
     role: "Founder & Managing Director",
-    image: "/assets/thimmaji-rao-yammada.jpg",
+    image: "/assets/thimmaji-rao-yammada-web.jpg",
     imagePosition: "50% 30%",
     imageAlt: "Thimmaji Rao Yammada — Founder & Managing Director, Vimtra Ventures",
     body:
@@ -133,61 +139,28 @@ const FRANCHISES = [
 export default function VimtraVenturesPage() {
   return (
     <>
-      {/* ============================= HERO ============================= */}
-      <section
-        className="relative overflow-hidden px-8 pt-[96px] pb-[88px]"
-        style={{
-          background:
-            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
-        }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%),radial-gradient(circle at 12% 88%,rgba(233,203,142,0.10),transparent 45%)",
-          }}
-        />
-        <div className="relative max-w-[1200px] mx-auto">
-          <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-            Ownership · The Firm
-          </div>
-          <AeText
-            text="VIMTRA VENTURES"
-            mode="words"
-            as="h1"
-            className="mt-[14px] font-sora font-extrabold text-white"
-            style={{
-              fontSize: "clamp(46px,7.6vw,112px)",
-              lineHeight: 0.9,
-              letterSpacing: "-0.035em",
-            }}
-          />
-          <Reveal
-            variant="fade-up"
-            delay={120}
-            as="p"
-            className="max-w-[720px] mt-[22px] font-manrope text-[17px] leading-[1.6] text-white/85"
-          >
+      <PageHero
+        eyebrow="Ownership · The Firm"
+        title={["VIMTRA", "VENTURES"]}
+        lead={
+          <>
             The brain behind the team. A San Francisco &amp; Chennai-based
             private equity, venture capital, and investment firm focused on
             unlocking growth through strategic investments, corporate-finance
             expertise, operational insight, and value-driven partnerships.
-          </Reveal>
-        </div>
-      </section>
+          </>
+        }
+      />
 
-      {/* ================== FIRM PROFILE / STATS ================== */}
-      <section className="bg-cream-100 px-8 pt-[100px] pb-[92px]">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.15fr] gap-[54px] items-start">
-          <Reveal variant="fade-up">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              The Firm
-            </div>
-            <h2 className="mt-[14px] mb-6 font-sora font-extrabold text-[46px] leading-[1.05] tracking-[-0.025em] text-ink">
-              A firm built to create impactful solutions.
-            </h2>
-            <p className="font-manrope text-[15.5px] leading-[1.66] text-muted">
+      {/* 01 — THE FIRM */}
+      <Section surface="ivory">
+        <IndexLabel n="01">The Firm</IndexLabel>
+        <div className="hp-split">
+          <div>
+            <SectionTitle lines={["A FIRM BUILT", "TO CREATE", "IMPACT."]} />
+          </div>
+          <div>
+            <p className="hp-body" data-rise>
               Vimtra Ventures is a US-based venture capital and investment firm
               founded in 1995, with a track record that includes more than{" "}
               <strong>60 technology acquisitions</strong>. The firm operates as
@@ -195,292 +168,151 @@ export default function VimtraVenturesPage() {
               acquisitions, startups, sports franchises, real estate, golf
               communities and academies, and AI infrastructure — with an
               operating footprint spanning North America and India and{" "}
-              <strong>55+ premium real-estate assets</strong> across the
-              United States.
+              <strong>55+ premium real-estate assets</strong> across the United
+              States.
             </p>
-            <p className="mt-4 font-manrope text-[15.5px] leading-[1.66] text-muted">
+            <p className="hp-body" data-rise>
               By combining capital, strategic vision, and hands-on execution,
               Vimtra partners with businesses and communities to build scalable
               enterprises, develop transformative assets, and create
               sustainable, long-term value.
             </p>
-          </Reveal>
-
-          <Reveal variant="fade-up" delay={120} className="grid grid-cols-2 gap-4">
-            {FIRM_STATS.map((s, i) => (
-              <div
-                key={s.l}
-                className="rounded-[20px] p-6 bg-cream-50 border border-black/[0.07]"
-                style={{ boxShadow: "0 26px 60px -38px rgba(26,21,19,0.45)" }}
-              >
-                <div
-                  className="font-sora font-extrabold text-[46px] leading-none tracking-[-0.025em]"
-                  style={{ color: i === 0 ? "#1A1513" : "#C4202A" }}
-                >
-                  {s.v}
-                </div>
-                <div className="mt-3 font-manrope text-[12.5px] leading-[1.4] text-muted uppercase tracking-[0.08em]">
-                  {s.l}
-                </div>
-              </div>
-            ))}
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ==================== SIX VERTICALS ==================== */}
-      <section className="bg-cream-50 px-8 py-[100px] border-y border-black/[0.06]">
-        <div className="max-w-[1200px] mx-auto">
-          <Reveal variant="fade-up" className="mb-[46px]">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              Core Verticals · Six
-            </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[46px] leading-[1.05] tracking-[-0.025em] text-ink">
-              Where the firm operates.
-            </h2>
-          </Reveal>
-
-          <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
-            {VERTICALS.map((v, i) => (
-              <Reveal
-                key={v.n}
-                variant="fade-up"
-                delay={i * 60}
-                className="bg-white border border-black/[0.07] rounded-[22px] p-7"
-              >
-                <div className="w-12 h-12 rounded-[13px] bg-crimson-600 text-white font-sora font-extrabold text-[16px] flex items-center justify-center tracking-[0.08em]">
-                  {v.n}
-                </div>
-                <h3 className="mt-[18px] mb-2 font-sora font-bold text-[20px] text-ink tracking-[-0.005em] leading-[1.2]">
-                  {v.name}
-                </h3>
-                <p className="m-0 font-manrope text-[14px] leading-[1.62] text-muted">
-                  {v.body}
-                </p>
-              </Reveal>
-            ))}
           </div>
         </div>
-      </section>
+      </Section>
 
-      {/* ================ SPORTS FRANCHISE PORTFOLIO ================ */}
-      <section className="bg-cream-100 px-8 py-[100px]">
-        <div className="max-w-[1200px] mx-auto">
-          <Reveal variant="fade-up" className="mb-[36px]">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              Sports Franchise Portfolio
+      {/* 02 — BY THE NUMBERS */}
+      <Section surface="ink" size="tight">
+        <IndexLabel n="02" tone="dark">
+          By the numbers
+        </IndexLabel>
+        <Figures items={FIRM_STATS} />
+      </Section>
+
+      {/* 03 — SIX VERTICALS */}
+      <Section surface="ivory">
+        <IndexLabel n="03">Six Verticals</IndexLabel>
+        <div className="hp-split">
+          <div>
+            <SectionTitle lines={["ONE FIRM,", "SIX", "VERTICALS."]} />
+            <p className="hp-body" data-rise style={{ marginTop: 26 }}>
+              Every area the firm operates in, on a single canvas — as
+              principal, not intermediary.
+            </p>
+          </div>
+          <NumberedList
+            items={VERTICALS.map((v) => ({ t: v.name, d: v.body }))}
+          />
+        </div>
+      </Section>
+
+      {/* 04 — LEADERSHIP */}
+      <Section surface="paper">
+        <IndexLabel n="04">Leadership</IndexLabel>
+        <SectionTitle lines={["THE PEOPLE", "BEHIND IT."]} />
+        <div className="hp-people">
+          {FOUNDERS.map((f) => (
+            <article className="hp-person" key={f.name} data-rise>
+              <div className="hp-person-figure">
+                <Image
+                  src={f.image}
+                  alt={f.imageAlt}
+                  fill
+                  sizes="(max-width: 900px) 100vw, 420px"
+                  style={{ objectPosition: f.imagePosition }}
+                />
+              </div>
+              <div className="hp-person-body">
+                <p className="hp-person-role">{f.role}</p>
+                <h3 className="hp-person-name">{f.name}</h3>
+                <p className="hp-person-text">{f.body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      {/* 05 — BOARD + ADVISORY */}
+      <Section surface="ivory">
+        <IndexLabel n="05">Governance</IndexLabel>
+        <div className="hp-split">
+          <div>
+            <SectionTitle lines={["BOARD &", "ADVISORY."]} />
+          </div>
+          <div>
+            <div className="hp-quote" data-rise>
+              <p className="hp-person-role">{BOARD_MEMBER.role}</p>
+              <h3 className="hp-person-name">{BOARD_MEMBER.name}</h3>
+              <p className="hp-person-text">{BOARD_MEMBER.body}</p>
             </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[46px] leading-[1.05] tracking-[-0.025em] text-ink">
-              Ownership positions.
-            </h2>
-          </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {FRANCHISES.map((f) => {
-              const inner = (
-                <>
-                  <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-                    {f.tag}
-                  </div>
-                  <div className="mt-3 font-sora font-extrabold text-[30px] text-ink tracking-[-0.02em] leading-[1.1]">
-                    {f.name}
-                  </div>
-                  <p className="mt-3 m-0 font-manrope text-[14.5px] leading-[1.66] text-muted">
-                    {f.detail}
-                  </p>
-                  {f.href && (
-                    <div className="mt-5 font-manrope font-bold text-[13px] text-crimson-600">
-                      Meet the franchise →
-                    </div>
-                  )}
-                </>
-              );
-              const className =
-                "bg-cream-50 border border-black/[0.07] rounded-[22px] p-8 block no-underline text-inherit";
-              return f.href ? (
-                <Reveal key={f.name} variant="fade-up">
-                  <Link href={f.href} className={className}>
+            <p className="hp-index" data-rise style={{ marginTop: 48 }}>
+              <span>Advisory disciplines</span>
+            </p>
+            <ul className="hp-tags" data-rise>
+              {ADVISORY_DISCIPLINES.map((d) => (
+                <li key={d}>{d}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      {/* 06 — SPORTS FRANCHISES */}
+      <Section surface="ink">
+        <IndexLabel n="06" tone="dark">
+          Sports Franchises
+        </IndexLabel>
+        <SectionTitle lines={["OWNERSHIP", "IN SPORT."]} />
+        <ul className="hp-franchises">
+          {FRANCHISES.map((f) => {
+            const inner = (
+              <>
+                <span className="hp-franchise-tag">{f.tag}</span>
+                <span className="hp-franchise-body">
+                  <span className="hp-franchise-name">{f.name}</span>
+                  <span className="hp-franchise-detail">{f.detail}</span>
+                </span>
+                {f.href && (
+                  <span className="hp-arrow" aria-hidden>
+                    →
+                  </span>
+                )}
+              </>
+            );
+            return (
+              <li key={f.name} data-rise>
+                {f.href ? (
+                  <Link href={f.href} className="hp-franchise is-link">
                     {inner}
                   </Link>
-                </Reveal>
-              ) : (
-                <Reveal key={f.name} variant="fade-up" className={className}>
-                  {inner}
-                </Reveal>
-              );
-            })}
+                ) : (
+                  <div className="hp-franchise">{inner}</div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </Section>
+
+      {/* CLOSING */}
+      <Section surface="paper" size="tight">
+        <div className="hp-cta-row">
+          <div>
+            <SectionTitle lines={["BUILT FOR", "THE LONG GAME."]} />
+          </div>
+          <div className="hp-cta-actions" data-rise>
+            <Link href="/the-club" className="hp-btn hp-btn-primary">
+              MEET THE FRANCHISE
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
+            </Link>
+            <Link href="/invest" className="hp-btn hp-btn-ghost">
+              Investment enquiries
+            </Link>
           </div>
         </div>
-      </section>
-
-      {/* ==================== FOUNDERS ==================== */}
-      <section className="bg-cream-50 px-8 py-[100px] border-y border-black/[0.06]">
-        <div className="max-w-[1200px] mx-auto">
-          <Reveal variant="fade-up" className="mb-[46px]">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              Founders
-            </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[46px] leading-[1.05] tracking-[-0.025em] text-ink">
-              The people behind the firm.
-            </h2>
-          </Reveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {FOUNDERS.map((p) => (
-              <Reveal
-                key={p.init}
-                variant="fade-up"
-                className="bg-white border border-black/[0.07] rounded-[22px] overflow-hidden flex flex-col"
-                style={{ boxShadow: "0 26px 60px -38px rgba(26,21,19,0.45)" }}
-              >
-                {/* Founder portrait — aspect fixed so the layout is stable
-                    before the image loads; `object-cover` + tuned
-                    `object-position` keep the face inside the crop at
-                    every viewport width. Warm bronze/red backdrops are
-                    part of the supplied photography and read against the
-                    cream card surface. */}
-                <div
-                  className="relative w-full"
-                  style={{ aspectRatio: "4 / 5", background: "#1a1513" }}
-                >
-                  <Image
-                    src={p.image}
-                    alt={p.imageAlt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px"
-                    className="object-cover"
-                    style={{ objectPosition: p.imagePosition }}
-                    priority={false}
-                  />
-                  {/* Accent hairline anchors the photo to the card and
-                      echoes the franchise's crimson/gold palette without
-                      touching the global CSS. */}
-                  <div
-                    aria-hidden
-                    className="absolute inset-x-0 bottom-0 h-[3px]"
-                    style={{ background: p.accent }}
-                  />
-                </div>
-
-                <div className="p-8 flex-1 flex flex-col">
-                  <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-                    {p.role}
-                  </div>
-                  <h3 className="mt-3 mb-4 font-sora font-extrabold text-[26px] text-ink tracking-[-0.015em] leading-[1.15]">
-                    {p.name}
-                  </h3>
-                  <p className="m-0 font-manrope text-[14.5px] leading-[1.68] text-muted">
-                    {p.body}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ BOARD & ADVISORY BOARD ============ */}
-      <section className="bg-cream-100 px-8 py-[100px]">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.15fr] gap-[54px] items-start">
-          <Reveal variant="fade-up">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              Board of Directors
-            </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[42px] leading-[1.05] tracking-[-0.025em] text-ink">
-              Strategic contribution.
-            </h2>
-
-            <div className="mt-8 bg-cream-50 border border-black/[0.07] rounded-[22px] p-7">
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-[64px] h-[64px] rounded-full font-sora font-extrabold text-[20px] flex items-center justify-center shrink-0"
-                  style={{ background: "#1A1513", color: "#E9CB8E" }}
-                >
-                  {BOARD_MEMBER.init}
-                </div>
-                <div>
-                  <div className="font-sora font-bold text-[19px] text-ink tracking-[-0.005em]">
-                    {BOARD_MEMBER.name}
-                  </div>
-                  <div className="font-manrope text-[12px] text-crimson-600 mt-1 tracking-[0.06em] uppercase">
-                    {BOARD_MEMBER.role}
-                  </div>
-                </div>
-              </div>
-              <p className="mt-4 m-0 font-manrope text-[14px] leading-[1.66] text-muted">
-                {BOARD_MEMBER.body}
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal variant="fade-up" delay={120}>
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              Advisory Board
-            </div>
-            <span className="mt-3 inline-flex items-center gap-2 px-3 py-[6px] rounded-full bg-crimson-600/10 text-crimson-600 font-sora font-bold text-[10.5px] tracking-[0.16em] uppercase">
-              Building in Progress
-            </span>
-            <h2 className="mt-4 font-sora font-extrabold text-[42px] leading-[1.05] tracking-[-0.025em] text-ink">
-              A high-calibre Advisory Board is being assembled.
-            </h2>
-            <p className="mt-5 font-manrope text-[15px] leading-[1.66] text-muted">
-              Across the disciplines a golf-and-communities platform requires.
-              Family offices, institutions, and strategic investors welcome.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {ADVISORY_DISCIPLINES.map((d) => (
-                <span
-                  key={d}
-                  className="tier-badge"
-                  style={{ background: "rgba(26,21,19,0.08)", color: "#1A1513" }}
-                >
-                  {d}
-                </span>
-              ))}
-            </div>
-            <div className="mt-8">
-              <Link
-                href="/invest"
-                className="cta-gold press"
-                style={{ padding: "13px 22px", fontSize: 13.5 }}
-              >
-                JOIN THE ECOSYSTEM
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ==================== VISION ==================== */}
-      <section className="px-8 py-[100px] text-white" style={{ background: "linear-gradient(180deg,#1A1513,#241B17)" }}>
-        <div className="max-w-[1100px] mx-auto text-center">
-          <Reveal variant="fade-up" className="font-manrope font-bold tracking-[0.32em] text-[12px] text-[#E9CB8E] uppercase">
-            Vision
-          </Reveal>
-          <Reveal variant="fade-up" delay={120} as="p" className="mt-6 mx-auto max-w-[860px] font-sora font-bold leading-[1.35] tracking-[-0.01em]" style={{ fontSize: "clamp(22px,3vw,32px)" }}>
-            &ldquo;To identify opportunities where capital, strategic vision,
-            and operational expertise can transform underperforming assets
-            into high-value enterprises — while creating world-class
-            destinations that bring together investment, lifestyle, sport,
-            real estate, and community — generating enduring value for
-            investors, partners, athletes, and future generations.&rdquo;
-          </Reveal>
-          <Reveal variant="fade-up" delay={200} className="mt-10 flex flex-wrap gap-3 justify-center">
-            <Link
-              href="/golf-development"
-              className="cta-gold press"
-              style={{ padding: "14px 26px", fontSize: 13.5 }}
-            >
-              THE PLATFORM · GOLF DEVELOPMENT
-            </Link>
-            <Link
-              href="/invest"
-              className="press inline-flex items-center gap-2 px-5 py-[12px] rounded-[30px] border border-white/25 text-white font-manrope font-bold text-[13.5px] no-underline"
-            >
-              PARTNER WITH THE LIONS →
-            </Link>
-          </Reveal>
-        </div>
-      </section>
+      </Section>
     </>
   );
 }

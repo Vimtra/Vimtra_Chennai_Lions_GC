@@ -4,9 +4,9 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const SLIDES = [
-  { img: "/assets/car-1.png", title: "Team Captain", sub: "Lead Pro · Chennai Lions" },
-  { img: "/assets/car-2.png", title: "Lead Pro", sub: "Tour Roster · 2026" },
-  { img: "/assets/car-3.png", title: "Tour Ambassador", sub: "IGPL Franchise Pro" },
+  { img: "/assets/car-1-web.jpg", title: "Team Captain", sub: "Lead Pro · Chennai Lions" },
+  { img: "/assets/car-2-web.jpg", title: "Lead Pro", sub: "Tour Roster · 2026" },
+  { img: "/assets/car-3-web.jpg", title: "Tour Ambassador", sub: "IGPL Franchise Pro" },
 ];
 
 export default function HeroCarousel() {

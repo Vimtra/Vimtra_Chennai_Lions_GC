@@ -3,13 +3,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, Instagram } from "lucide-react";
 import Reveal from "@/components/Reveal";
-import AeText from "@/components/AeText";
 import { listPublishedPosts, formatPublishedDate } from "@/lib/posts";
 import {
   listActiveMediaCoverage,
   formatCoverageDate,
 } from "@/lib/media-coverage";
 import type { Post, MediaCoverage } from "@prisma/client";
+import PageHero from "@/components/site/PageHero";
+import { Section, IndexLabel } from "@/components/site/Section";
+import { webSrc } from "@/lib/image-src";
 
 export const metadata: Metadata = {
   title: "News · Vimtra Chennai Lions GC",
@@ -29,7 +31,7 @@ const CARD_ASPECT = { w: 16, h: 10 } as const;
 // The single project-owned fallback we ever use — reserved for future
 // items an admin creates without a cover. Never shown for the currently
 // seeded rows (every seeded row already has a genuinely-relevant cover).
-const FRANCHISE_FALLBACK = "/assets/hero-golfer.png";
+const FRANCHISE_FALLBACK = "/assets/hero-golfer-web.png";
 
 export default async function NewsPage() {
   const [posts, articles, social] = await Promise.all([
@@ -41,47 +43,15 @@ export default async function NewsPage() {
   return (
     <>
       {/* ============================ HERO ============================ */}
-      <section
-        className="relative overflow-hidden px-8 pt-[88px] pb-[70px]"
-        style={{
-          background:
-            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
-        }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%)",
-          }}
-        />
-        <div className="relative max-w-[1200px] mx-auto">
-          <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-            From the Den
-          </div>
-          <AeText
-            text="NEWS"
-            mode="words"
-            as="h1"
-            className="mt-[14px] font-sora font-extrabold text-white"
-            style={{
-              fontSize: "clamp(56px,9.4vw,142px)",
-              lineHeight: 0.9,
-              letterSpacing: "-0.035em",
-            }}
-          />
-          <Reveal
-            variant="fade-up"
-            delay={100}
-            as="p"
-            className="max-w-[600px] mt-[22px] font-manrope text-[16px] leading-[1.6] text-white/85"
-          >
-            Official Chennai Lions franchise news, third-party press coverage,
-            and social updates — clearly separated so it&apos;s always clear who
-            is speaking.
-          </Reveal>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="From the Den"
+        title={["NEWS"]}
+        lead={
+    <>
+      Official Chennai Lions franchise news, third-party press coverage, and social updates — clearly separated so it&apos;s always clear who is speaking.
+    </>
+  }
+      />
 
       {/* =================== A · OFFICIAL NEWS =================== */}
       <SectionBand

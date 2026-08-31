@@ -1,4 +1,5 @@
 import rawProducts from "@/data/products.json";
+import { webSrc } from "@/lib/image-src";
 
 /**
  * Product schema (see CLAUDE.md → Products & Merchandising Data Model).
@@ -32,7 +33,7 @@ export const FALLBACK_LOGO = "/assets/logo-lion.png";
 
 /**
  * Normalize a stored image path (e.g. "assets/prod-tshirt.png") to a
- * Next.js public path ("/assets/prod-tshirt.png"). Empty/omitted → undefined.
+ * Next.js public path ("/assets/prod-tshirt-web.jpg"). Empty/omitted → undefined.
  */
 export function normalizeImg(img?: string): string | undefined {
   if (!img) return undefined;
@@ -59,8 +60,10 @@ export const SEED_PRODUCTS: Product[] = (rawProducts as Product[]).map((p) => ({
  *  2. Legacy `img` (M0-M4),
  *  3. Franchise fallback logo. */
 export function productImage(p: Pick<Product, "images" | "img">): string {
-  if (p.images && p.images.length > 0) return p.images[0];
-  return p.img || FALLBACK_LOGO;
+  // Stored paths may predate the optimized derivatives; resolve them here so
+  // every surface (shop, product, cart, order) gets the light version.
+  if (p.images && p.images.length > 0) return webSrc(p.images[0]);
+  return webSrc(p.img) || FALLBACK_LOGO;
 }
 
 /** Convenience: is this product buyable right now? */

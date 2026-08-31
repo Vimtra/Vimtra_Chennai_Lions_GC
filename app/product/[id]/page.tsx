@@ -7,6 +7,7 @@ import ProductCard from "@/components/shop/ProductCard";
 import QtyAddToCart from "@/components/shop/QtyAddToCart";
 import { FALLBACK_LOGO, inr, productImage } from "@/lib/products";
 import { getProductById, listProducts } from "@/lib/db";
+import { Section } from "@/components/site/Section";
 
 export const dynamic = "force-dynamic";
 
@@ -57,8 +58,7 @@ export default async function ProductPage({
   const lowStock = !outOfStock && product.stock <= 5;
 
   return (
-    <section className="bg-cream-100 px-8 pt-[60px] pb-24">
-      <div className="max-w-[1200px] mx-auto">
+    <Section surface="ivory" size="tight">
         {/* Breadcrumbs */}
         <div className="mb-7 font-manrope text-[13px] text-muted font-semibold flex items-center gap-2 flex-wrap">
           <Link href="/shop" className="text-inherit no-underline hover:text-crimson-600">
@@ -197,8 +197,7 @@ export default async function ProductPage({
             </div>
           </div>
         )}
-      </div>
-    </section>
+      </Section>
   );
 }
 

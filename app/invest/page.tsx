@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Reveal from "@/components/Reveal";
-import AeText from "@/components/AeText";
+import PageHero from "@/components/site/PageHero";
+import {
+  Section,
+  IndexLabel,
+  SectionTitle,
+  NumberedList,
+  Figures,
+} from "@/components/site/Section";
 
 export const metadata: Metadata = {
   title: "Invest & Partner · Vimtra Chennai Lions GC",
@@ -110,335 +116,84 @@ const TIERS: Tier[] = [
 export default function InvestPage() {
   return (
     <>
-      {/* ============================= HERO ============================= */}
-      <section
-        className="relative overflow-hidden px-8 pt-[96px] pb-[88px]"
-        style={{
-          background:
-            "radial-gradient(125% 105% at 50% -5%,#C9242E 0%,#A8181F 58%,#871119 100%)",
-        }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 84% 16%,rgba(233,203,142,0.16),transparent 42%),radial-gradient(circle at 12% 88%,rgba(233,203,142,0.10),transparent 45%)",
-          }}
-        />
-        <div className="relative max-w-[1200px] mx-auto">
-          <div className="font-manrope font-bold text-[12px] tracking-[0.32em] text-[#E9CB8E] uppercase">
-            Partner With the Lions
+      <PageHero
+        eyebrow="Invest & Partner"
+        title={["INVEST"]}
+        lead={
+          <>
+            Join a franchise on day one of a decade. The Chennai Lions
+            investment thesis, the first-mover window in franchise golf, and
+            the commercial tiers open to new partners.
+          </>
+        }
+      />
+
+      <Section surface="ink" size="tight">
+        <IndexLabel n="01" tone="dark">The Market</IndexLabel>
+        <Figures items={MARKET.map((m) => ({ v: m.v, l: m.l }))} />
+      </Section>
+
+      <Section surface="ivory">
+        <IndexLabel n="02">Why Now</IndexLabel>
+        <div className="hp-split">
+          <div>
+            <SectionTitle lines={["A FIRST-MOVER", "WINDOW."]} />
           </div>
-          <AeText
-            text="INVEST"
-            mode="words"
-            as="h1"
-            className="mt-[14px] font-sora font-extrabold text-white"
-            style={{
-              fontSize: "clamp(56px,9.4vw,144px)",
-              lineHeight: 0.9,
-              letterSpacing: "-0.035em",
-            }}
-          />
-          <Reveal
-            variant="fade-up"
-            delay={120}
-            as="p"
-            className="max-w-[680px] mt-[22px] font-manrope text-[17px] leading-[1.6] text-white/85"
-          >
-            Join a franchise on day one of a decade. The Vimtra Chennai Lions
-            are the sporting expression of Vimtra&apos;s Indian golf platform —
-            an operating firm building for a decade, not a season.
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ================== MARKET CASE ================== */}
-      <section className="bg-cream-100 px-8 pt-[100px] pb-[92px]">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-[54px] items-start">
-          <Reveal variant="fade-up">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              The Case
-            </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[46px] leading-[1.05] tracking-[-0.025em] text-ink">
-              A billion-dollar market.
-              <br />
-              A first-mover&apos;s window.
-            </h2>
-            <p className="mt-6 font-manrope text-[15.5px] leading-[1.66] text-muted">
-              India&apos;s golf market has crossed the USD 1 billion mark.
-              Franchise sport turned cricket into a national industry — the
-              earliest committed golf franchises will hold the strongest
-              position when the league scales.
+          <div>
+            <p className="hp-body" data-rise>
+              Indian franchise golf begins now. Ten franchises, a fifteen-event
+              calendar, and a domestic golf market already past $1B — entered
+              at formation rather than after the fact.
             </p>
-          </Reveal>
+            <p className="hp-body" data-rise>
+              The Chennai Lions are owned outright by Vimtra Ventures, a firm
+              operating as principal across six verticals since 1995.
+            </p>
+          </div>
+        </div>
+      </Section>
 
-          <Reveal variant="fade-up" delay={120} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {MARKET.map((m) => (
-              <div
-                key={m.l}
-                className="rounded-[20px] p-6 bg-cream-50 border border-black/[0.07] text-center"
-                style={{ boxShadow: "0 26px 60px -38px rgba(26,21,19,0.45)" }}
-              >
-                <div className="font-sora font-extrabold text-[40px] text-crimson-600 leading-none tracking-[-0.025em]">
-                  {m.v}
-                </div>
-                <div className="mt-3 font-manrope text-[12.5px] text-muted leading-[1.4]">
-                  {m.l}
-                </div>
+      <Section surface="paper">
+        <IndexLabel n="03">Who We Welcome</IndexLabel>
+        <div className="hp-split">
+          <div><SectionTitle lines={["ALIGNED", "CAPITAL."]} /></div>
+          <NumberedList items={WELCOME.map((w) => ({ t: w.label, d: w.body }))} />
+        </div>
+      </Section>
+
+      <Section surface="ivory">
+        <IndexLabel n="04">Commercial Tiers</IndexLabel>
+        <SectionTitle lines={["FOUR WAYS IN."]} />
+        <ol className="hp-tiers">
+          {TIERS.map((t) => (
+            <li className="hp-tier" key={t.code} data-rise>
+              <div className="hp-tier-head">
+                <span className="hp-tier-code">{t.code}</span>
+                <h3 className="hp-tier-name">{t.name}</h3>
+                <p className="hp-tier-headline">{t.headline}</p>
               </div>
-            ))}
-          </Reveal>
-        </div>
-      </section>
+              <ul className="hp-tier-list">
+                {t.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      </Section>
 
-      {/* ================== WHY FRANCHISE / WHY NOW ================== */}
-      <section className="bg-cream-50 px-8 py-[80px] border-y border-black/[0.06]">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Reveal
-            variant="fade-up"
-            className="bg-white border border-black/[0.07] rounded-[22px] p-8"
-            style={{ boxShadow: "0 26px 60px -38px rgba(26,21,19,0.45)" }}
-          >
-            <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-              Why Franchise Golf
-            </div>
-            <h3 className="mt-3 mb-3 font-sora font-extrabold text-[26px] text-ink tracking-[-0.015em] leading-[1.2]">
-              A season-long story finally makes it broadcastable.
-            </h3>
-            <p className="m-0 font-manrope text-[14.5px] leading-[1.66] text-muted">
-              Team competition builds the calendar, the audience, and the
-              sponsorship inventory in a way individual golf never has in
-              India.
-            </p>
-          </Reveal>
-
-          <Reveal
-            variant="fade-up"
-            delay={120}
-            className="bg-white border border-black/[0.07] rounded-[22px] p-8"
-            style={{ boxShadow: "0 26px 60px -38px rgba(26,21,19,0.45)" }}
-          >
-            <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-              Why Now
-            </div>
-            <h3 className="mt-3 mb-3 font-sora font-extrabold text-[26px] text-ink tracking-[-0.015em] leading-[1.2]">
-              The window closes as the league scales.
-            </h3>
-            <p className="m-0 font-manrope text-[14.5px] leading-[1.66] text-muted">
-              Franchise inventory is finite. Partnership economics compress
-              with every season the league runs successfully.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ==================== WHO WE WELCOME ==================== */}
-      <section className="bg-cream-100 px-8 py-[100px]">
-        <div className="max-w-[1200px] mx-auto">
-          <Reveal variant="fade-up" className="mb-[36px]">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              Who We Welcome
-            </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[46px] leading-[1.05] tracking-[-0.025em] text-ink">
-              Capital, expertise, and shared commitment.
-            </h2>
-            <p className="mt-6 max-w-[820px] font-manrope text-[15.5px] leading-[1.66] text-muted">
-              Vimtra welcomes participation from individuals, family offices,
-              institutions, corporate partners, and strategic investors who can
-              contribute not only financial capital, but also expertise,
-              relationships, industry knowledge, and a shared commitment to
-              building the next generation of golf-led communities.
-            </p>
-          </Reveal>
-
-          <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
-            {WELCOME.map((w, i) => (
-              <Reveal
-                key={w.label}
-                variant="fade-up"
-                delay={i * 60}
-                className="bg-cream-50 border border-black/[0.07] rounded-[20px] p-6"
-              >
-                <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-                  {w.label}
-                </div>
-                <p className="mt-3 m-0 font-manrope text-[14px] leading-[1.62] text-muted">
-                  {w.body}
-                </p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ==================== FOUR TIERS ==================== */}
-      <section className="bg-cream-50 px-8 py-[100px] border-y border-black/[0.06]">
-        <div className="max-w-[1200px] mx-auto">
-          <Reveal variant="fade-up" className="mb-[36px]">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              Commercial Tiers
-            </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[46px] leading-[1.05] tracking-[-0.025em] text-ink">
-              Four ways to partner.
-            </h2>
-            <p className="mt-6 max-w-[820px] font-manrope text-[15.5px] leading-[1.66] text-muted">
-              Each tier is structured around visibility on player kit, event
-              branding, digital reach, and hospitality access at Chennai home
-              rounds and international events.
-            </p>
-          </Reveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {TIERS.map((t, i) => (
-              <Reveal
-                key={t.code}
-                variant="fade-up"
-                delay={i * 80}
-                className="bg-white border border-black/[0.07] rounded-[22px] p-7"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="tier-badge" style={t.badgeStyle}>
-                    {t.code}
-                  </span>
-                  <span className="font-sora font-bold text-[13px] text-muted tracking-[0.04em]">
-                    {t.name}
-                  </span>
-                </div>
-                <h3 className="mt-1 font-sora font-extrabold text-[22px] tracking-[-0.015em] text-ink leading-[1.15]">
-                  {t.headline}
-                </h3>
-                <ul className="mt-4 grid gap-2 pl-0 list-none">
-                  {t.bullets.map((b) => (
-                    <li
-                      key={b}
-                      className="font-manrope text-[14px] leading-[1.55] text-muted flex gap-2"
-                    >
-                      <span
-                        aria-hidden
-                        className="mt-[9px] w-[6px] h-[6px] rounded-full bg-crimson-600 shrink-0"
-                      />
-                      {/* Trusted text — sourced verbatim from brochure copy. */}
-                      <span dangerouslySetInnerHTML={{ __html: b }} />
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ ADVISORY / BEYOND SPONSORSHIP ============ */}
-      <section className="bg-cream-100 px-8 py-[100px]">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-[46px] items-start">
-          <Reveal variant="fade-up">
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              Beyond Sponsorship
-            </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[42px] leading-[1.05] tracking-[-0.025em] text-ink">
-              Contribute more than capital.
-            </h2>
-            <p className="mt-5 font-manrope text-[15.5px] leading-[1.66] text-muted">
-              A high-calibre Advisory Board is being assembled across the
-              disciplines a golf-and-communities platform requires. If your
-              contribution goes beyond a sponsorship line item — capital,
-              relationships, industry knowledge — the Advisory conversation is
-              the right one to have.
-            </p>
-            <div className="mt-6">
-              <Link
-                href="/vimtra-ventures"
-                className="press inline-flex items-center gap-2 px-5 py-[12px] rounded-[30px] border border-ink/25 text-ink font-manrope font-bold text-[13.5px] no-underline"
-              >
-                READ THE FIRM PROFILE →
-              </Link>
-            </div>
-          </Reveal>
-
-          <Reveal
-            variant="fade-up"
-            delay={120}
-            className="bg-cream-50 border border-black/[0.07] rounded-[22px] p-8"
-          >
-            <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-              Advisory Disciplines
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              {[
-                "Business",
-                "Investments",
-                "Golf",
-                "Real Estate",
-                "Infrastructure",
-                "Community Development",
-                "Branding",
-                "Sports Management",
-              ].map((d) => (
-                <div
-                  key={d}
-                  className="rounded-[12px] px-4 py-3 bg-white border border-black/[0.06]"
-                >
-                  <div className="font-sora font-bold text-[13px] text-ink">
-                    {d}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ==================== CONTACT / CTA ==================== */}
-      <section className="px-8 py-[100px] text-white" style={{ background: "linear-gradient(180deg,#1A1513,#241B17)" }}>
-        <div className="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-10 items-center">
-          <Reveal variant="fade-up">
-            <div className="font-manrope font-bold tracking-[0.32em] text-[12px] text-[#E9CB8E] uppercase">
-              To Discuss
-            </div>
-            <h2 className="my-[18px] font-sora font-extrabold leading-none tracking-[-0.025em]" style={{ fontSize: "clamp(36px,5vw,60px)" }}>
-              Chennai&apos;s roar — on the world&apos;s newest stage.
-            </h2>
-            <p className="font-manrope text-[15px] leading-[1.66] text-white/[0.78]">
-              One city. One roster. Fifteen events. A franchise built for the
-              long game — and a commercial team ready to talk visibility,
-              hospitality, and strategic involvement.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 font-manrope text-[14px]">
-              <a
-                href="mailto:info@vimtra.com"
-                className="text-[#E9CB8E] no-underline hover:underline"
-              >
-                info@vimtra.com
-              </a>
-              <a
-                href="tel:+16504836185"
-                className="text-white/80 no-underline"
-              >
-                +1 650 483 6185
-              </a>
-              <a
-                href="tel:+918939414030"
-                className="text-white/80 no-underline"
-              >
-                +91 89394 14030
-              </a>
-            </div>
-          </Reveal>
-          <Reveal variant="fade-up" delay={120} className="text-center">
-            <Link
-              href="/contact?topic=Partnerships"
-              className="cta-gold press"
-              style={{ padding: "16px 30px", fontSize: 14 }}
-            >
-              START A CONVERSATION
+      <Section surface="ink" size="tight">
+        <div className="hp-cta-row">
+          <div><SectionTitle lines={["LET’S TALK."]} /></div>
+          <div className="hp-cta-actions" data-rise>
+            <Link href="/contact" className="hp-btn hp-btn-primary">
+              CONTACT THE FRANCHISE
+              <span className="hp-arrow" aria-hidden>→</span>
             </Link>
-            <div className="mt-4 font-manrope text-[12px] text-white/50">
-              Prefer email? <a href="mailto:info@vimtra.com" className="text-[#E9CB8E] no-underline">info@vimtra.com</a>
-            </div>
-          </Reveal>
+            <Link href="/partners" className="hp-btn hp-btn-ghost">See current partners</Link>
+          </div>
         </div>
-      </section>
+      </Section>
     </>
   );
 }

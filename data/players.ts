@@ -24,7 +24,7 @@ export const ROSTER: RosterPlayer[] = [
   {
     init: "GB",
     anchor: "bhullar",
-    image: "/players/gaganjeet-bhullar.jpg",
+    image: "/players/gaganjeet-bhullar-web.jpg",
     badgeName: "Gaganjeet Bhullar",
     badgeSub: "Marquee · #01",
     fullName: "Gaganjeet Bhullar",
@@ -34,7 +34,7 @@ export const ROSTER: RosterPlayer[] = [
   {
     init: "HS",
     anchor: "sethie",
-    image: "/players/harshjeet-singh-sethie.jpg",
+    image: "/players/harshjeet-singh-sethie-web.jpg",
     badgeName: "Harshjeet Singh Sethie",
     badgeSub: "Pro · Delhi GC",
     fullName: "Harshjeet Singh Sethie",
@@ -44,7 +44,7 @@ export const ROSTER: RosterPlayer[] = [
   {
     init: "SD",
     anchor: "dwivedi",
-    image: "/players/samarth-dwivedi.jpg",
+    image: "/players/samarth-dwivedi-web.jpg",
     badgeName: "Samarth Dwivedi",
     badgeSub: "Pro · PGTI / IGPL",
     fullName: "Samarth Dwivedi",
@@ -54,7 +54,7 @@ export const ROSTER: RosterPlayer[] = [
   {
     init: "YC",
     anchor: "yashas",
-    image: "/players/yashas-chandra.jpg",
+    image: "/players/yashas-chandra-web.jpg",
     badgeName: "Yashas Chandra M S",
     badgeSub: "Pro · Active IGPL",
     fullName: "Yashas Chandra M S",
@@ -92,7 +92,7 @@ export const FEATURES: PlayerFeature[] = [
   {
     anchor: "bhullar",
     init: "GB",
-    image: "/players/gaganjeet-bhullar.jpg",
+    image: "/players/gaganjeet-bhullar-web.jpg",
     badgeName: "Gaganjeet Bhullar",
     badgeSub: "Marquee · Asian Tour",
     eyebrow: "Marquee Player · #01",
@@ -121,7 +121,7 @@ export const FEATURES: PlayerFeature[] = [
   {
     anchor: "sethie",
     init: "HS",
-    image: "/players/harshjeet-singh-sethie.jpg",
+    image: "/players/harshjeet-singh-sethie-web.jpg",
     badgeName: "Harshjeet Singh Sethie",
     badgeSub: "Pro · Delhi GC",
     eyebrow: "Pro · #02",
@@ -148,7 +148,7 @@ export const FEATURES: PlayerFeature[] = [
   {
     anchor: "dwivedi",
     init: "SD",
-    image: "/players/samarth-dwivedi.jpg",
+    image: "/players/samarth-dwivedi-web.jpg",
     badgeName: "Samarth Dwivedi",
     badgeSub: "Pro · PGTI / IGPL",
     eyebrow: "Pro · #03",
@@ -170,7 +170,7 @@ export const FEATURES: PlayerFeature[] = [
   {
     anchor: "yashas",
     init: "YC",
-    image: "/players/yashas-chandra.jpg",
+    image: "/players/yashas-chandra-web.jpg",
     badgeName: "Yashas Chandra M S",
     badgeSub: "Pro · Active IGPL",
     eyebrow: "Pro · #04",
