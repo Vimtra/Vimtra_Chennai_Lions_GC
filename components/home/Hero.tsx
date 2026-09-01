@@ -26,7 +26,20 @@ import { gsap, registerGsap, revealLines, rise } from "@/components/motion/gsap"
  *
  * The image is the only `priority` media on the page.
  */
-export default function Hero() {
+export interface HeroNext {
+  name: string;
+  place: string;
+  dates: string;
+}
+
+/**
+ * `next` is the real next UPCOMING fixture, read from the database and
+ * passed down by app/page.tsx. It used to be hardcoded in this file, which
+ * would have gone stale silently the moment the calendar moved. When there
+ * is no upcoming fixture the foot rail renders the scroll cue alone rather
+ * than inventing one.
+ */
+export default function Hero({ next }: { next?: HeroNext | null }) {
   const root = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -61,13 +74,11 @@ export default function Hero() {
     <section ref={root} className="hero" aria-label="Pride of Chennai">
       <div className="hero-media" data-media>
         <Image
-          src="/assets/fac-main-web.jpg"
-          alt="The Chennai Lions' home course at golden hour — clubhouse, lake and hill line"
+          src="/assets/photo/home-hero-sunset-green.jpg"
+          alt="A championship green and pin under a dramatic sunset sky"
           fill
           priority
-          // fac-main-web.jpg is a 1024px source; asking for 1920 would
-          // upscale it. Cap at the real resolution.
-          sizes="(max-width: 1080px) 100vw, 1080px"
+          sizes="100vw"
           className="hero-img"
         />
         <div className="hero-veil" data-veil aria-hidden />
@@ -117,17 +128,19 @@ export default function Hero() {
           <i className="v-chev" />
           Scroll
         </span>
-        <span className="hero-next">
-          <span className="hero-k">Next</span>
-          <span className="hero-v">Al Hamra Golf Club</span>
-          <span className="hero-s">Ras Al Khaimah, UAE</span>
-          <Link href="/fixtures" className="hero-date">
-            23—25 Sep 2026
-            <span className="hp-arrow" aria-hidden>
-              →
-            </span>
-          </Link>
-        </span>
+        {next && (
+          <span className="hero-next">
+            <span className="hero-k">Next</span>
+            <span className="hero-v">{next.name}</span>
+            <span className="hero-s">{next.place}</span>
+            <Link href="/fixtures" className="hero-date">
+              {next.dates}
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
+            </Link>
+          </span>
+        )}
       </div>
     </section>
   );

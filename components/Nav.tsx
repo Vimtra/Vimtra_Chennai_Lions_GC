@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useCart, cartCount, useCartHydrated } from "@/store/cart";
 import { signOut } from "@/app/(auth)/actions";
+import { FLOATING_HEADER_ROUTES } from "@/lib/nav";
 import type { SafeUser } from "@/lib/auth";
 
 /**
@@ -65,8 +66,11 @@ const MEGA: MegaGroup[] = [
       { href: "/vimtra-ventures", label: "Vimtra Ventures", desc: "The firm behind the franchise" },
     ],
     // A photograph, never a transparent cutout — cover-fit needs a real frame.
-    image: "/assets/fac-main-web.jpg",
-    caption: "TNGF Cosmo · Chennai",
+    // Sourced photography (public/assets/photo/CREDITS.md), distinct from
+    // every image used on the pages this panel links to.
+    image: "/assets/photo/nav-club-green-flag.jpg",
+    // Generic stock — deliberately NOT captioned with a venue name.
+    caption: "The franchise",
   },
   {
     key: "season",
@@ -76,8 +80,8 @@ const MEGA: MegaGroup[] = [
       { href: "/scores", label: "Scores", desc: "Round-by-round scorecards" },
       { href: "/leaderboards", label: "Standings", desc: "Franchise table · Order of Merit" },
     ],
-    image: "/assets/car-1-web.jpg",
-    caption: "Tournament golf · Season 2026",
+    image: "/assets/photo/nav-season-bunker-ocean.jpg",
+    caption: "Season 2026",
   },
   {
     key: "media",
@@ -86,7 +90,7 @@ const MEGA: MegaGroup[] = [
       { href: "/news", label: "News", desc: "Franchise news & press coverage" },
       { href: "/gallery", label: "Gallery", desc: "Tour frames" },
     ],
-    image: "/assets/car-3-web.jpg",
+    image: "/assets/photo/nav-media-ball-green.jpg",
     caption: "From the den",
   },
 ];
@@ -109,8 +113,9 @@ const MOBILE_GROUPS = [
   },
 ];
 
-/** Routes whose first section is a dark full-bleed hero. */
-const OVER_HERO = new Set(["/"]);
+/** Routes whose first section is a dark full-bleed hero — shared with
+    lib/nav.ts so the header and the heroes cannot drift apart. */
+const OVER_HERO = new Set(FLOATING_HEADER_ROUTES);
 
 export default function Nav({ user }: { user: SafeUser | null }) {
   const pathname = usePathname();
@@ -198,7 +203,6 @@ export default function Nav({ user }: { user: SafeUser | null }) {
             />
             <span className="nv-word">
               <span className="nv-word-1">VIMTRA CHENNAI LIONS</span>
-              <span className="nv-word-2">A franchise by Vimtra Ventures</span>
             </span>
           </Link>
 
@@ -334,7 +338,6 @@ export default function Nav({ user }: { user: SafeUser | null }) {
               <Image src="/assets/logo-lion.png" alt="" width={40} height={40} className="nv-mark" />
               <span className="nv-word">
                 <span className="nv-word-1">VIMTRA CHENNAI LIONS</span>
-                <span className="nv-word-2">A franchise by Vimtra Ventures</span>
               </span>
             </Link>
             <button

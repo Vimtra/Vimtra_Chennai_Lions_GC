@@ -1,4 +1,4 @@
-import Hero from "@/components/home/Hero";
+import Hero, { type HeroNext } from "@/components/home/Hero";
 import {
   Statement,
   Club,
@@ -20,14 +20,18 @@ import { webSrc } from "@/lib/image-src";
  * A single narrative, alternating surface by surface so the page has
  * rhythm rather than a stack of identical blocks:
  *
- *   —   Hero          full-bleed course photograph, brand-first
- *   01  Statement     ivory · typography only
- *   02  Club          ink   · oversized year + image column
+ *   —   Hero          full-bleed photograph + the real next fixture
+ *   01  Statement     ivory · display statement, copy offset right
+ *   02  Club          ink   · oversized year beside a figure that fills
  *   03  Season        ivory · real fixtures as an editorial calendar
- *   04  Development   image · full-bleed facility + numbered initiatives
+ *   04  Development   image · full-bleed range + numbered initiatives
  *   05  Media         paper · one featured story + secondaries
- *   06  Shop          ivory · one merchandise visual
- *   07  Closing       ink   · final brand statement
+ *   06  Shop          ivory · figure left, type right
+ *   07  Closing       ink   · statement left, actions right
+ *
+ * Every chapter sits on the module's 4 / 8 / 12 track (`.cm-track`), so the
+ * home page shares one alignment system with the rest of the site and no
+ * column is left as an empty field.
  *
  * Data is real: fixtures and press coverage are read from the database.
  * When either table is empty the corresponding section renders nothing
@@ -76,6 +80,19 @@ export default async function HomePage() {
       upcoming: f.status === "UPCOMING",
     }));
 
+  // The hero's "Next" rail used to hardcode a fixture in the component.
+  // It is read from the same real records as the calendar below, so the
+  // two can never disagree — and it is simply absent when nothing is
+  // upcoming rather than showing a stale event.
+  const first = upcoming[0];
+  const next: HeroNext | null = first
+    ? {
+        name: first.courseName ?? first.name,
+        place: [first.city, first.country].filter(Boolean).join(", "),
+        dates: formatRange(first.dateStart, first.dateEnd),
+      }
+    : null;
+
   // Each story keeps the cover image stored against that record — the
   // homepage never substitutes a generic photograph.
   const stories: StoryRow[] = coverage.slice(0, 4).map((m) => ({
@@ -94,7 +111,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero next={next} />
       <Statement />
       <Club />
       <Season rows={seasonRows} />

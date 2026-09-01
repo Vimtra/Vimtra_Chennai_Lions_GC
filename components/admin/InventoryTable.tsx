@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { inr, type Product } from "@/lib/products";
 import { bulkUpdateStockAction, deleteProductAction } from "@/app/admin/products/actions";
+import ConfirmDeleteButton from "@/components/admin/ConfirmDeleteButton";
 
 interface InventoryTableProps {
   products: Product[];
@@ -545,21 +546,14 @@ export default function InventoryTable({ products }: InventoryTableProps) {
                         >
                           <Pencil className="w-[12px] h-[12px]" /> Edit
                         </Link>
-                        <form action={deleteProductAction}>
-                          <input type="hidden" name="id" value={p.id} />
-                          <button
-                            type="submit"
-                            onClick={(e) => {
-                              if (!confirm(`Are you sure you want to delete "${p.name}"?`)) {
-                                e.preventDefault();
-                              }
-                            }}
-                            className="btn-ghost btn-danger text-[12px] py-1 px-2.5"
-                            title="Delete product"
-                          >
-                            <Trash2 className="w-[12px] h-[12px]" /> Delete
-                          </button>
-                        </form>
+                        <ConfirmDeleteButton
+                          action={deleteProductAction}
+                          id={p.id}
+                          label={p.name}
+                          description="This permanently removes the product from the catalog, the shop and the admin. It cannot be undone."
+                          triggerClassName="btn-ghost btn-danger text-[12px] py-1 px-2.5"
+                          triggerTitle="Delete product"
+                        />
                       </div>
                     </td>
                   </tr>

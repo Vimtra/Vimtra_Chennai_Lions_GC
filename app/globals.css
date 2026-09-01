@@ -3084,19 +3084,11 @@ a:hover .hp-arrow {
 @media (min-width: 420px) {
   .nv-word-1 { font-size: 12px; letter-spacing: 0.14em; }
 }
-.nv-word-2 {
-  display: none;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 500;
-  font-size: 9.5px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--v-gold);
-  line-height: 1;
-}
+/* The header carries the mark and the wordmark and nothing else — the
+   "A franchise by Vimtra Ventures" descriptor was removed so the bar
+   stays a minimal rubric strip rather than a block of text. */
 @media (min-width: 1024px) {
   .nv-word-1 { font-size: 13.5px; }
-  .nv-word-2 { display: block; }
 }
 
 /* ---- Primary links ------------------------------------------ */
@@ -4533,3 +4525,2221 @@ a:hover .hp-arrow {
 
 /* Skip link must also clear the touch minimum when focused. */
 .gs-skip-link { min-height: 44px; display: inline-flex; align-items: center; }
+
+
+/* ============================================================
+   CLUB MODULE — EDITORIAL REDESIGN
+   ------------------------------------------------------------
+   Namespaced `.cm-*`. Every composition below is expressed on the
+   SAME 4 / 8 / 12 column track as `.hp-grid`, inside the same
+   `.hp-wrap` container — this adds new *compositions*, never a
+   second alignment system. No arbitrary margins, no translateX,
+   no off-ladder padding: spacing comes from --sp-*, type from the
+   --t-* scale, colour from the --v-* brand tokens.
+============================================================ */
+
+/* ---- Shared column track ------------------------------------
+   4 columns on mobile, 8 on tablet, 12 on desktop — identical to
+   `.hp-grid`, so a `.cm-*` section lines up with an `.hp-*` one
+   above or below it. */
+.cm-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--sp-5);
+  row-gap: var(--sp-7);
+}
+.cm-track > * { min-width: 0; }
+@media (min-width: 768px) {
+  .cm-track {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+}
+@media (min-width: 1024px) {
+  .cm-track {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+}
+
+/* ---- Eyebrow -------------------------------------------------
+   `.hp-rule-label` was referenced by PageHero but never defined, so
+   every interior page eyebrow rendered as unstyled body text.
+   Defined here as the module editorial rule + caps label. */
+.hp-rule-label,
+.cm-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0 0 var(--sp-5);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+}
+.hp-rule-label::before,
+.cm-eyebrow::before {
+  content: "";
+  flex: none;
+  width: 40px;
+  height: 1px;
+  background: var(--v-red);
+}
+@media (min-width: 1024px) {
+  .hp-rule-label::before,
+  .cm-eyebrow::before { width: 56px; }
+}
+
+/* ============================================================
+   1 — STORY HERO
+   One cinematic frame. Eyebrow, display title, one short line.
+   The photograph carries the storytelling; the type sits on the
+   left edge of the grid like a masthead.
+============================================================ */
+.cm-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  background: var(--v-ink);
+  color: var(--v-ivory);
+  min-height: clamp(520px, 84svh, 720px);
+  /* Clears the floating header without reserving a dead band. */
+  padding-top: calc(76px + var(--sp-8));
+  padding-bottom: var(--sp-8);
+}
+@media (min-width: 768px) {
+  .cm-hero {
+    min-height: clamp(600px, 86svh, 880px);
+    padding-top: calc(92px + var(--sp-9));
+    padding-bottom: var(--sp-9);
+  }
+}
+
+.cm-hero-media {
+  position: absolute;
+  /* Vertical headroom so the parallax never exposes an edge. */
+  inset: -7% 0;
+  z-index: -2;
+  overflow: hidden;
+}
+.cm-hero-media img {
+  object-fit: cover;
+  /* No `will-change` here. These frames are full-bleed and up to 1800px
+     wide; permanently promoting them costs a compositor texture the whole
+     time the page is open, for a scrub that GSAP already promotes on
+     demand. Leaving it on made the fixed header drop out of the painted
+     frame on scroll. */
+}
+.cm-hero-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Two crossed scrims, kept deliberately light: enough contrast for
+     ivory type on the lower-left, and the photograph still reads across
+     the rest of the frame. Heavier values turned the image into a
+     texture — the picture has to carry the storytelling. */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14, 11, 10, 0.55) 0%,
+      rgba(14, 11, 10, 0.06) 30%,
+      rgba(14, 11, 10, 0.4) 72%,
+      rgba(14, 11, 10, 0.86) 100%
+    ),
+    linear-gradient(
+      92deg,
+      rgba(14, 11, 10, 0.72) 0%,
+      rgba(14, 11, 10, 0.22) 42%,
+      rgba(14, 11, 10, 0) 74%
+    );
+}
+/* Aurora — brand-only, low alpha, slow. The hero is one of the four
+   places this module allows it. */
+.cm-hero-aurora {
+  position: absolute;
+  inset: -24% -14%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(44% 50% at 10% 82%, rgba(189, 34, 39, 0.46), transparent 68%),
+    radial-gradient(38% 42% at 88% 14%, rgba(184, 144, 75, 0.24), transparent 70%),
+    radial-gradient(52% 46% at 62% 96%, rgba(94, 17, 20, 0.42), transparent 74%);
+  filter: blur(54px);
+  mix-blend-mode: screen;
+  animation: cm-aurora 38s var(--ease-io) infinite alternate;
+}
+@keyframes cm-aurora {
+  to { transform: translate3d(2.5%, -2%, 0) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cm-hero-aurora { animation: none; }
+}
+
+.cm-hero-inner { position: relative; width: 100%; row-gap: var(--sp-6); }
+.cm-hero-head { grid-column: 1 / -1; }
+.cm-hero-title {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(54px, 13.2vw, 190px);
+  line-height: 0.84;
+  letter-spacing: -0.052em;
+  color: var(--v-ivory);
+}
+.cm-hero-line {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.62;
+  color: rgba(245, 239, 228, 0.82);
+}
+.cm-hero-cta { grid-column: 1 / -1; margin: 0; }
+@media (min-width: 768px) {
+  .cm-hero-line { grid-column: span 6; }
+  .cm-hero-cta { grid-column: span 8; }
+}
+@media (min-width: 1024px) {
+  /* The title is a masthead: it takes the full frame so the display size
+     is never condensed to fit a sub-column. The supporting line and the
+     single CTA sit under it as a ruled foot rail — line on the left edge,
+     action on the right, both on the 12-column track. */
+  .cm-hero-inner { align-items: end; }
+  .cm-hero-head { grid-column: 1 / -1; }
+  .cm-hero-line { grid-column: 1 / span 4; }
+  .cm-hero-cta { grid-column: 10 / span 3; justify-self: end; }
+}
+
+/* ============================================================
+   2 — STATEMENT
+   A large typographic moment plus its supporting copy offset to
+   the right. No cards, no rail, no boxes.
+============================================================ */
+.cm-statement { row-gap: var(--sp-6); }
+.cm-statement > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.cm-display {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(38px, 7.4vw, 112px);
+  line-height: 0.92;
+  letter-spacing: -0.046em;
+  color: var(--v-ink);
+}
+.hp-sec-ink .cm-display { color: var(--v-ivory); }
+/* The accent word is the only place the module changes voice. */
+.cm-display em {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--v-red);
+}
+.hp-sec-ink .cm-display em { color: var(--v-gold-lit); }
+.cm-statement-support {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.hp-sec-ink .cm-statement-support { border-top-color: var(--v-hair-ink); }
+.cm-statement-support p {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+  max-width: 52ch;
+}
+.hp-sec-ink .cm-statement-support p { color: var(--v-on-ink); }
+@media (min-width: 768px) {
+  .cm-statement-support { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-6); }
+}
+@media (min-width: 1024px) {
+  .cm-display { grid-column: 1 / span 10; }
+  .cm-statement-support { grid-column: 7 / span 6; grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ============================================================
+   3 — CHAPTERS
+   The numbered editorial story. Each chapter is a full-width row
+   on the 12-column track: a large numeral, a heading, short copy
+   and one photograph. Sides alternate for rhythm; the column math
+   is identical in both directions.
+============================================================ */
+.cm-chapters {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  row-gap: var(--sp-8);
+}
+@media (min-width: 1024px) {
+  .cm-chapters { row-gap: var(--sp-9); }
+}
+.cm-ch { row-gap: var(--sp-5); align-items: center; }
+.cm-ch-media { grid-column: 1 / -1; }
+.cm-ch-body { grid-column: 1 / -1; }
+@media (min-width: 768px) {
+  .cm-ch-media { grid-column: span 8; }
+  .cm-ch-body { grid-column: span 8; }
+}
+@media (min-width: 1024px) {
+  .cm-ch { row-gap: var(--sp-6); }
+  .cm-ch-media { grid-column: 1 / span 7; }
+  .cm-ch-body { grid-column: 9 / span 4; }
+  .cm-ch.is-flipped .cm-ch-media { grid-column: 6 / span 7; order: 2; }
+  .cm-ch.is-flipped .cm-ch-body { grid-column: 1 / span 4; order: 1; }
+}
+.cm-ch-fig {
+  position: relative;
+  overflow: hidden;
+  /* Square corners — a rounded photograph reads as a UI card. */
+  border-radius: 0;
+  aspect-ratio: var(--ar-classic);
+  background: var(--v-ink-2);
+}
+@media (min-width: 1024px) {
+  .cm-ch-fig { aspect-ratio: var(--ar-wide); }
+}
+.cm-ch-fig img {
+  object-fit: cover;
+  transform: scale(1.04);
+  transition: transform var(--mo-cine) var(--ease);
+}
+.cm-ch:hover .cm-ch-fig img { transform: scale(1); }
+/* Sourced photography arrives at every exposure. On the deep-ink chapter
+   ground a bright frame reads as a hole punched in the page, so highlights
+   are pulled down a touch. Deliberately small — this is seating the image
+   into the surface, not grading it. */
+.hp-sec-ink .cm-ch-fig img { filter: brightness(0.97) contrast(1.04); }
+.cm-ch-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(44px, 6vw, 86px);
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+  opacity: 0.9;
+}
+.hp-sec-ink .cm-ch-n { color: var(--v-gold-lit); opacity: 0.72; }
+.cm-ch-t {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3.1vw, 44px);
+  line-height: 0.98;
+  letter-spacing: var(--tr-h2);
+  color: var(--v-ink);
+}
+.hp-sec-ink .cm-ch-t { color: var(--v-ivory); }
+.cm-ch-d {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--v-on-ivory);
+  max-width: 44ch;
+}
+.hp-sec-ink .cm-ch-d { color: var(--v-on-ink); }
+
+/* ============================================================
+   4 — KIT SPECTRUM
+   One dominant idea: the palette as a continuous colour field,
+   not five swatch cards. Keys sit under each field on the grid.
+============================================================ */
+.cm-kit { row-gap: var(--sp-7); }
+.cm-kit-head { grid-column: 1 / -1; }
+.cm-lede {
+  margin: var(--sp-5) 0 0;
+  max-width: 46ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+.hp-sec-ink .cm-lede { color: var(--v-on-ink); }
+.cm-spectrum { grid-column: 1 / -1; }
+.cm-credits { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .cm-kit-head { grid-column: 1 / span 7; }
+  .cm-credits { grid-column: 7 / span 6; }
+}
+
+.cm-band {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.cm-band > li {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+/* The credits list below opens with its own rule, so the band's closing
+   rule would otherwise read as an empty ruled row on the stacked layout. */
+.cm-band > li:last-child { border-bottom: 0; }
+.cm-band-f {
+  display: block;
+  width: 100%;
+  height: 44px;
+  background: var(--c);
+}
+.cm-band-k { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-4); }
+.cm-band-l {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--v-ink);
+}
+.cm-band-h {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-on-ivory);
+}
+/* Tablet and up: the five fields become one continuous band with
+   the keys ruled beneath — the dominant visual of the section. */
+@media (min-width: 768px) {
+  .cm-band {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    border-top: 0;
+    column-gap: 0;
+  }
+  .cm-band > li {
+    display: block;
+    padding: 0;
+    border-bottom: 0;
+  }
+  .cm-band-f {
+    height: clamp(180px, 22vw, 300px);
+    transition: transform var(--mo-slow) var(--ease);
+    transform-origin: bottom;
+  }
+  .cm-band > li:hover .cm-band-f { transform: scaleY(1.05); }
+  .cm-band-k {
+    display: block;
+    padding: var(--sp-4) var(--sp-4) 0 0;
+    border-top: 1px solid var(--v-hair-ivory);
+  }
+  .cm-band-l { display: block; }
+  .cm-band-h { display: block; margin-top: var(--sp-1); }
+}
+
+.cm-credits ul { list-style: none; margin: 0; padding: 0; }
+.cm-credits li {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.cm-credits li:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+@media (min-width: 640px) {
+  .cm-credits li {
+    grid-template-columns: minmax(0, 150px) minmax(0, 1fr);
+    column-gap: var(--sp-6);
+    align-items: baseline;
+  }
+}
+.cm-credit-tag {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.cm-credit-name {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.2vw, 27px);
+  letter-spacing: -0.02em;
+  color: var(--v-ink);
+}
+.cm-credit-detail {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+/* ============================================================
+   5 — LEADERSHIP
+   Large portrait photography carrying the section, the relationship
+   with the firm stated typographically beside it, and the rest of
+   the governance as a ruled index — no person cards.
+============================================================ */
+.cm-lead { row-gap: var(--sp-7); }
+.cm-lead-rail { grid-column: 1 / -1; }
+.cm-lead-main { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .cm-lead-rail {
+    grid-column: 1 / span 4;
+    position: sticky;
+    top: 140px;
+    align-self: start;
+  }
+  .cm-lead-main { grid-column: 6 / span 7; }
+}
+.cm-lead-rail .hp-btn-text { margin-top: var(--sp-4); }
+
+.cm-figs {
+  display: grid;
+  gap: var(--sp-5);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 560px) {
+  .cm-figs {
+    grid-template-columns: 1.1fr 0.9fr;
+    column-gap: var(--sp-6);
+    align-items: end;
+  }
+}
+.cm-fig { margin: 0; }
+.cm-fig-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  aspect-ratio: var(--ar-portrait);
+  background: var(--v-ink-2);
+}
+@media (min-width: 560px) {
+  .cm-fig:first-child .cm-fig-frame { aspect-ratio: var(--ar-tall); }
+}
+.cm-fig-frame img {
+  object-fit: cover;
+  filter: saturate(0.94) contrast(1.02);
+  transform: scale(1.02);
+  transition: transform var(--mo-cine) var(--ease), filter var(--mo-slow) var(--ease);
+}
+.cm-fig:hover .cm-fig-frame img { transform: scale(1); filter: saturate(1) contrast(1.02); }
+.cm-fig-cap {
+  display: block;
+  padding-top: var(--sp-4);
+  margin-top: var(--sp-4);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.cm-fig-name {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(19px, 1.9vw, 25px);
+  line-height: 1.12;
+  letter-spacing: -0.026em;
+  color: var(--v-ink);
+}
+.cm-fig-role {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+
+.cm-roll {
+  list-style: none;
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+}
+.cm-roll li {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.cm-roll li:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+@media (min-width: 640px) {
+  .cm-roll li {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+    column-gap: var(--sp-6);
+    align-items: baseline;
+  }
+}
+.cm-roll-name {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 1.8vw, 23px);
+  letter-spacing: -0.022em;
+  color: var(--v-ink);
+}
+.cm-roll-role {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+/* ============================================================
+   6 — CLOSING STATEMENT
+============================================================ */
+.cm-close { row-gap: var(--sp-6); align-items: end; }
+.cm-close-title { grid-column: 1 / -1; }
+.cm-close-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+@media (min-width: 1024px) {
+  .cm-close-title { grid-column: 1 / span 7; }
+  .cm-close-actions {
+    grid-column: 9 / span 4;
+    justify-content: flex-end;
+    padding-bottom: var(--sp-3);
+  }
+}
+
+/* Column-sized headings. A .hp-section-title is scaled for a full-bleed
+   frame; inside a 7- or 4-column container it needs its own step so the
+   masked line never has to condense. */
+.cm-kit-head > .hp-section-title { font-size: clamp(32px, 4.2vw, 62px); }
+.cm-lead-rail > .hp-section-title { font-size: clamp(30px, 3.6vw, 52px); }
+.cm-close-title > .hp-section-title { font-size: clamp(36px, 5.4vw, 88px); }
+
+
+/* ============================================================
+   CLUB MODULE — THE PRIDE
+   Three further compositions on the same 4 / 8 / 12 track.
+============================================================ */
+
+/* ---- Serif counterweight -----------------------------------
+   The module changes voice exactly twice: the accent word inside a
+   `.cm-display`, and this. Used as the emotional counterweight to a
+   sans display statement, never as body copy. */
+.cm-pull {
+  margin: 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(25px, 3.3vw, 48px);
+  line-height: 1.16;
+  letter-spacing: -0.022em;
+  color: var(--v-red);
+}
+.hp-sec-ink .cm-pull { color: var(--v-gold-lit); }
+
+/* ---- The city ----------------------------------------------
+   Asymmetric split: display statement across the upper eight columns,
+   then the documented body on the left edge and the serif line set as
+   a counterweight in the right columns, both bottom-aligned. Distinct
+   from the `.cm-statement` shape used on The Club. */
+.cm-city { row-gap: var(--sp-6); }
+.cm-city > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.cm-city-title { grid-column: 1 / -1; }
+.cm-city-body { grid-column: 1 / -1; }
+.cm-city-pull { grid-column: 1 / -1; }
+.cm-city-title .hp-section-title { font-size: clamp(34px, 6.4vw, 92px); }
+.cm-city-body p {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+.cm-city-body .hp-btn-text { margin-top: var(--sp-4); }
+@media (min-width: 768px) {
+  .cm-city-title { grid-column: span 8; }
+  .cm-city-body { grid-column: span 5; }
+  .cm-city-pull { grid-column: span 7; }
+}
+@media (min-width: 1024px) {
+  .cm-city-title { grid-column: 1 / span 8; }
+  .cm-city-body { grid-column: 1 / span 5; }
+  .cm-city-pull { grid-column: 8 / span 5; align-self: end; padding-bottom: var(--sp-2); }
+}
+
+/* ---- Full-width visual chapter -----------------------------
+   The module's transition device. The photograph is the only element
+   allowed past the container edge; the type stays on the grid. */
+.cm-full {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  background: var(--v-ink);
+  color: var(--v-ivory);
+  min-height: clamp(360px, 60svh, 600px);
+  padding: var(--sp-8) 0;
+}
+@media (min-width: 768px) {
+  .cm-full { padding: var(--sp-9) 0; }
+}
+.cm-full-media {
+  position: absolute;
+  /* Headroom for the parallax so no edge is ever exposed. */
+  inset: -8% 0;
+  z-index: -2;
+  overflow: hidden;
+}
+.cm-full-media img {
+  object-fit: cover;
+  /* See the note on .cm-hero-media img — no permanent promotion. */
+}
+.cm-full-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Lighter than the hero veil — this frame has an open sky and the
+     type sits low, so only the lower third needs holding down. */
+  background: linear-gradient(
+    180deg,
+    rgba(14, 11, 10, 0.4) 0%,
+    rgba(14, 11, 10, 0.04) 32%,
+    rgba(14, 11, 10, 0.5) 76%,
+    rgba(14, 11, 10, 0.88) 100%
+  );
+}
+.cm-full-inner { position: relative; width: 100%; }
+.cm-full-line {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 5.6vw, 86px);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  color: var(--v-ivory);
+}
+@media (min-width: 1024px) {
+  .cm-full-line { grid-column: 1 / span 9; }
+}
+
+/* ---- Place block -------------------------------------------
+   A named venue set typographically. Deliberately carries no
+   photograph: a generic stock frame beside a real venue name reads as
+   a picture of that venue. See public/assets/photo/CREDITS.md. */
+.cm-place { row-gap: var(--sp-5); }
+.cm-place > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.cm-place-name { grid-column: 1 / -1; }
+.cm-place-meta { grid-column: 1 / -1; }
+.cm-place-note { grid-column: 1 / -1; }
+.cm-place-name .hp-section-title { font-size: clamp(36px, 6.8vw, 100px); }
+.cm-place-meta {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+}
+.cm-place-meta dt {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.cm-place-meta dd {
+  margin: var(--sp-1) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 600;
+  font-size: clamp(15px, 1.4vw, 18px);
+  letter-spacing: -0.012em;
+  color: var(--v-ink);
+}
+.cm-place-note {
+  margin: 0;
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--v-hair-ivory);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+  max-width: 56ch;
+}
+@media (min-width: 1024px) {
+  .cm-place-name { grid-column: 1 / span 7; }
+  .cm-place-meta { grid-column: 9 / span 4; align-self: end; padding-bottom: var(--sp-2); }
+  .cm-place-note { grid-column: 1 / span 7; }
+}
+
+
+/* ============================================================
+   HOME — RECOMPOSED ON THE MODULE GRID
+   ------------------------------------------------------------
+   The home page previously used its own `sec-*` / `roar-*` /
+   `club-*` shapes, which left large unused fields: a headline
+   occupying the left half of a 900px-tall section, a closing
+   band with 400px of empty right column, and 60–150px of dead
+   air under most sections.
+
+   These `.hm-*` compositions put it on the same 4 / 8 / 12 track
+   as the rest of the module and make every column earn its width:
+   figures stretch to the height of the text beside them, and the
+   trailing link sits in the columns the headline does not use.
+============================================================ */
+
+/* ---- Section head: title left, standing link right ---------- */
+.hm-head { row-gap: var(--sp-5); align-items: end; }
+.hm-head-t { grid-column: 1 / -1; }
+.hm-head-a { grid-column: 1 / -1; }
+@media (min-width: 768px) {
+  .hm-head-t { grid-column: span 6; }
+  .hm-head-a { grid-column: 7 / span 2; justify-self: end; padding-bottom: var(--sp-2); }
+}
+@media (min-width: 1024px) {
+  .hm-head-t { grid-column: 1 / span 8; }
+  .hm-head-a { grid-column: 10 / span 3; justify-self: end; }
+}
+.hm-head-t .hp-section-title { font-size: clamp(34px, 5.4vw, 78px); }
+
+/* ---- Split: a column of type beside a figure that fills ------
+   `align-items: stretch` plus `height: 100%` on the frame is the
+   whole trick — the photograph takes exactly the height of the
+   type column, so neither side leaves a dead field. */
+.hm-split { row-gap: var(--sp-6); align-items: stretch; }
+.hm-split-t {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hm-split-f { grid-column: 1 / -1; }
+@media (min-width: 768px) {
+  .hm-split-t { grid-column: span 8; }
+  .hm-split-f { grid-column: span 8; }
+}
+@media (min-width: 1024px) {
+  /* Every child here carries an explicit column, so `dense` only ever
+     backfills — it cannot reorder the visual result. Without it, a split
+     whose figure comes first in the DOM claims columns 7-12 and pushes
+     the text onto a second row, opening a large gap under the figure.
+     Use `.is-flipped` when the figure leads; this is the safety net. */
+  .hm-split { grid-auto-flow: row dense; }
+  .hm-split-t { grid-column: 1 / span 5; }
+  .hm-split-f { grid-column: 7 / span 6; }
+  .hm-split.is-flipped .hm-split-t { grid-column: 8 / span 5; order: 2; }
+  .hm-split.is-flipped .hm-split-f { grid-column: 1 / span 6; order: 1; }
+}
+.hm-fig {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  background: var(--v-ink-2);
+  aspect-ratio: var(--ar-classic);
+}
+@media (min-width: 1024px) {
+  /* Height comes from the grid row, not from a ratio. */
+  .hm-fig { aspect-ratio: auto; height: 100%; min-height: 420px; }
+}
+.hm-fig img {
+  object-fit: cover;
+  transform: scale(1.03);
+  transition: transform var(--mo-cine) var(--ease);
+}
+.hm-split:hover .hm-fig img { transform: scale(1); }
+
+/* ---- Oversized year numeral -------------------------------- */
+.hm-year {
+  margin: 0 0 var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(62px, 8.6vw, 146px);
+  line-height: 0.82;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold-lit);
+}
+
+/* ---- Body + link inside a split column ---------------------- */
+.hm-body {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+  max-width: 46ch;
+}
+.hp-sec-ink .hm-body { color: var(--v-on-ink); }
+.hm-split-t .hp-btn-text { margin-top: var(--sp-4); align-self: flex-start; }
+
+/* ---- Full-bleed development chapter -------------------------
+   Text sits over the photograph, so the scrim has to hold ivory
+   type over a pale sky as well as over dark turf. */
+.hm-dev {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--v-ink);
+  color: var(--v-ivory);
+  /* Same rhythm as `.hm-sec`. This chapter was the only one on the
+     sp-10 step, which made it read as a different page. */
+  padding: var(--sp-8) 0;
+}
+@media (min-width: 768px) {
+  .hm-dev { padding: var(--sp-9) 0; }
+}
+.hm-dev-media { position: absolute; inset: -6% 0; z-index: -2; overflow: hidden; }
+.hm-dev-media img { object-fit: cover; }
+.hm-dev-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(14, 11, 10, 0.82) 0%, rgba(14, 11, 10, 0.58) 46%, rgba(14, 11, 10, 0.9) 100%),
+    linear-gradient(96deg, rgba(14, 11, 10, 0.92) 0%, rgba(14, 11, 10, 0.74) 34%, rgba(14, 11, 10, 0.34) 72%, rgba(14, 11, 10, 0.18) 100%);
+}
+/* `.hm-dev` is a dark chapter but it is NOT `.hp-sec-ink`, so the
+   on-ink text colours have to be stated here. Without these the body
+   copy and the standing link inherit the light-surface ink colour and
+   all but disappear against the photograph. */
+.hm-dev .hm-body { color: var(--v-on-ink); }
+.hm-dev .hp-btn-text { color: var(--v-ivory); }
+.hm-dev .hp-btn-text::after { background: currentColor; }
+
+.hm-dev-inner { position: relative; row-gap: var(--sp-6); }
+.hm-dev-head { grid-column: 1 / -1; }
+.hm-dev-list { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .hm-dev-head { grid-column: 1 / span 5; }
+  .hm-dev-list { grid-column: 7 / span 6; }
+}
+.hm-dev-h {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(34px, 5vw, 74px);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  color: var(--v-ivory);
+}
+.hm-dev-list ol { list-style: none; margin: 0; padding: 0; }
+.hm-dev-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--sp-5);
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--v-hair-ink);
+}
+.hm-dev-list li:last-child { border-bottom: 1px solid var(--v-hair-ink); }
+.hm-dev-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold-lit);
+}
+.hm-dev-k {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red-lit);
+}
+.hm-dev-t {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 1.9vw, 24px);
+  letter-spacing: -0.022em;
+  color: var(--v-ivory);
+}
+.hm-dev-d {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.62;
+  color: var(--v-on-ink);
+}
+
+/* ---- Tightened rhythm --------------------------------------
+   The home chapters were running 60–150px of empty air under
+   their content. These are the module's own steps, applied so
+   the page reads dense without losing premium whitespace. */
+.hm-sec { padding: var(--sp-8) 0; }
+@media (min-width: 768px) { .hm-sec { padding: var(--sp-9) 0; } }
+
+/* ---- Home 01: statement over a full-width band ---------------
+   The brand statement previously left a 664 x 196 empty field under
+   the headline. The headline and its supporting column now share the
+   top row — statement left, copy bottom-aligned right — and a
+   cinematic band spans all twelve columns beneath them, so both rows
+   resolve edge to edge. Distinct from chapter 02, which pairs a
+   column of type with a tall figure beside it. */
+.hm-statement { row-gap: var(--sp-6); }
+.hm-statement > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.hm-statement-h { grid-column: 1 / -1; }
+.hm-statement-s { grid-column: 1 / -1; }
+.hm-statement-band { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .hm-statement-h { grid-column: 1 / span 7; }
+  .hm-statement-s {
+    grid-column: 9 / span 4;
+    align-self: end;
+    padding-bottom: var(--sp-2);
+  }
+}
+.hm-statement-s p {
+  margin: 0;
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--v-hair-ivory);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+.hm-statement-s .hp-btn-text { margin-top: var(--sp-3); }
+.hm-band {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  aspect-ratio: var(--ar-wide);
+  background: var(--v-ink-2);
+}
+@media (min-width: 768px) {
+  .hm-band { aspect-ratio: var(--ar-cinema); }
+}
+.hm-band img {
+  object-fit: cover;
+  transform: scale(1.03);
+  transition: transform var(--mo-cine) var(--ease);
+}
+.hm-band:hover img { transform: scale(1); }
+
+/* ---- Home 05: media -----------------------------------------
+   `.story-rest` is a grid. When it sat as a grid item beside the tall
+   lead cover it stretched to that height and spread its three rows
+   across it. It now runs full width beneath the lead, and pins its
+   rows to their natural height so a short list can never be stretched
+   again wherever it is placed. */
+.story-rest { align-content: start; grid-auto-rows: max-content; }
+.hm-lead { text-decoration: none; color: inherit; }
+.hm-lead .story-title-lead { margin-top: var(--sp-3); }
+.hm-lead .story-sum { max-width: 46ch; }
+.hm-lead:hover .story-title { color: var(--v-red); }
+/* `.hm-fig` is a <span> inside the lead anchor — grid blockifies the
+   column, but the frame itself needs to be a block in its own right. */
+.hm-fig { display: block; }
+
+/* ---- Home: spacing corrections ------------------------------
+   Two component rules (`.cal` and `.story-rest`) declare `margin: 0`
+   further down this sheet than the `.hp-mt-lg` utility, so the utility
+   lost on source order and both lists sat flush against their section
+   head with no gap at all. Scoped rules restore the step and cannot be
+   defeated by ordering. */
+.hm-sec .cal,
+.hm-sec .story-rest { margin-top: var(--sp-7); }
+@media (min-width: 768px) {
+  .hm-sec .cal,
+  .hm-sec .story-rest { margin-top: var(--sp-8); }
+}
+
+/* Closing chapter: deliberately tighter than the others, but on the
+   ladder. `.hp-sec-tight` resolves to an off-ladder 72px at desktop. */
+.hm-sec-tight { padding: var(--sp-7) 0; }
+@media (min-width: 768px) {
+  .hm-sec-tight { padding: var(--sp-8) 0; }
+}
+
+
+/* ============================================================
+   PLAYERS — FEATURED PLAYER + EDITORIAL SELECTOR
+   ------------------------------------------------------------
+   Namespaced `.plx-*`, on the same 4 / 8 / 12 track as the rest
+   of the module. Replaces the grid of four equal portrait cards
+   and the four stacked feature sections that followed it.
+============================================================ */
+
+/* ---- Compact hero -------------------------------------------
+   `/players` opens without a photograph: the franchise's own
+   portraits are the subject and they arrive immediately below, so
+   a stock golfer here would be filler. Dropping the media also
+   means dropping the height — an image-less hero at full height
+   would just be an empty ink band. */
+.cm-hero.is-plain {
+  min-height: clamp(300px, 42svh, 420px);
+  padding-top: calc(76px + var(--sp-7));
+  padding-bottom: var(--sp-7);
+}
+@media (min-width: 768px) {
+  .cm-hero.is-plain {
+    min-height: clamp(340px, 46svh, 480px);
+    padding-top: calc(92px + var(--sp-8));
+    padding-bottom: var(--sp-8);
+  }
+}
+/* Without a photograph the veil has nothing to hold down, and its
+   heavy left scrim would only flatten the aurora. */
+.cm-hero.is-plain .cm-hero-veil {
+  background: linear-gradient(
+    180deg,
+    rgba(14, 11, 10, 0.28) 0%,
+    rgba(14, 11, 10, 0) 46%,
+    rgba(14, 11, 10, 0.42) 100%
+  );
+}
+
+/* ---- Selector ------------------------------------------------
+   A contents strip: number, name, verified role. Four ruled rows
+   on mobile, four ruled columns from tablet up. The active item is
+   marked with the brand's own gold rule rather than a filled tab,
+   so it reads as an index, not a dashboard. */
+.plx-nav {
+  display: grid;
+  margin: 0 0 var(--sp-8);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 768px) {
+  .plx-nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-bottom: 1px solid var(--v-hair-ivory);
+    margin-bottom: var(--sp-9);
+  }
+}
+.plx-nav-btn {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--sp-4);
+  width: 100%;
+  padding: var(--sp-5) 0;
+  border: 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: padding-left var(--mo-mid) var(--ease);
+}
+.plx-nav-btn:hover { padding-left: var(--sp-2); }
+@media (min-width: 768px) {
+  .plx-nav-btn {
+    display: block;
+    padding: var(--sp-5) var(--sp-5) var(--sp-5) 0;
+    border-bottom: 0;
+  }
+  .plx-nav-btn + .plx-nav-btn {
+    border-left: 1px solid var(--v-hair-ivory);
+    padding-left: var(--sp-5);
+  }
+  .plx-nav-btn:hover { padding-left: 0; }
+  .plx-nav-btn + .plx-nav-btn:hover { padding-left: var(--sp-5); }
+}
+/* The active marker: a gold rule drawn along the top edge. */
+.plx-nav-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: var(--v-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--mo-mid) var(--ease);
+}
+.plx-nav-btn.is-active::before { transform: scaleX(1); }
+.plx-nav-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-on-ivory);
+  transition: color var(--mo-mid) var(--ease);
+}
+.plx-nav-btn.is-active .plx-nav-n { color: var(--v-red); }
+.plx-nav-body { display: block; min-width: 0; }
+@media (min-width: 768px) {
+  .plx-nav-body { margin-top: var(--sp-3); }
+}
+.plx-nav-name {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(15px, 1.5vw, 19px);
+  line-height: 1.14;
+  letter-spacing: -0.024em;
+  color: var(--v-ink);
+  transition: color var(--mo-mid) var(--ease);
+}
+.plx-nav-btn:hover .plx-nav-name,
+.plx-nav-btn.is-active .plx-nav-name { color: var(--v-red); }
+.plx-nav-role {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.plx-nav-btn:focus-visible {
+  outline: 2px solid var(--v-red);
+  outline-offset: 4px;
+}
+
+/* ---- Featured player ----------------------------------------
+   Portrait and prose stretch to a shared height, and the statistics
+   pin to the bottom of the prose column, so both sides finish on the
+   same line whether a player carries four stats or two. */
+.plx-feature { row-gap: var(--sp-7); align-items: stretch; }
+.plx-portrait-col { grid-column: 1 / -1; }
+.plx-info { grid-column: 1 / -1; display: flex; flex-direction: column; }
+@media (min-width: 1024px) {
+  .plx-portrait-col { grid-column: 1 / span 5; }
+  .plx-info { grid-column: 7 / span 6; }
+}
+.plx-portrait {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 0;
+  aspect-ratio: var(--ar-portrait);
+  background: var(--v-ink-2);
+}
+@media (min-width: 1024px) {
+  .plx-portrait { aspect-ratio: auto; height: 100%; min-height: 540px; }
+}
+.plx-portrait img { object-fit: cover; }
+
+.plx-name {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(34px, 4.6vw, 68px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  color: var(--v-ink);
+}
+.plx-meta {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: var(--t-meta);
+  letter-spacing: 0.01em;
+  color: var(--v-on-ivory);
+}
+.plx-bio { margin-top: var(--sp-5); }
+.plx-bio p {
+  margin: 0 0 var(--sp-4);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+  max-width: 54ch;
+}
+.plx-bio p:last-child { margin-bottom: 0; }
+.plx-bio strong { font-weight: 700; color: var(--v-ink); }
+
+/* Signature moments — ruled rows, never cards. */
+.plx-moments { list-style: none; margin: var(--sp-6) 0 0; padding: 0; }
+.plx-moments li {
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.plx-moments li:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+.plx-moment-k {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.plx-moment-t {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(17px, 1.7vw, 21px);
+  letter-spacing: -0.022em;
+  color: var(--v-ink);
+}
+.plx-moment-s {
+  display: block;
+  margin-top: var(--sp-1);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+/* Statistics pin to the foot of the column. */
+.plx-stats {
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sp-5);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 1024px) { .plx-stats { margin-top: auto; padding-top: var(--sp-7); } }
+@media (min-width: 560px) {
+  .plx-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.plx-stats > div {
+  padding: var(--sp-4) 0 0;
+  min-width: 0;
+}
+.plx-stats dt {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 2.6vw, 36px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-red);
+}
+.plx-stats dd {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+
+
+/* ============================================================
+   GOLF DEVELOPMENT
+   ------------------------------------------------------------
+   Namespaced `.gd-*`, on the same 4 / 8 / 12 track. Replaces the
+   three `NumberedList` card stacks with three distinct editorial
+   compositions: statement + figure + ruled index; a full-bleed
+   typographic thesis; and a filling figure beside a ruled field.
+============================================================ */
+
+.cm-full-eyebrow { grid-column: 1 / -1; margin-bottom: var(--sp-4); }
+.cm-full-eyebrow { color: var(--v-gold-lit); }
+
+/* ---- Shared figure ------------------------------------------ */
+.gd-fig {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 0;
+  aspect-ratio: var(--ar-classic);
+  background: var(--v-ink-2);
+}
+.gd-fig img {
+  object-fit: cover;
+  transform: scale(1.03);
+  transition: transform var(--mo-cine) var(--ease);
+}
+.gd-fig:hover img { transform: scale(1); }
+
+/* ---- Ruled numbered index -----------------------------------
+   The house alternative to a row of cards, used for both the
+   framework entries and the initiatives. Numeral, label + name,
+   then the documented sentence — three fields on one rule. */
+.gd-index {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.gd-index li {
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 768px) {
+  .gd-index li {
+    grid-template-columns: auto minmax(0, 4fr) minmax(0, 6fr);
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+}
+.gd-index-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3vw, 42px);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+}
+.gd-index-k {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.gd-index-t {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(19px, 2.1vw, 27px);
+  line-height: 1.12;
+  letter-spacing: -0.026em;
+  color: var(--v-ink);
+}
+.gd-index-d {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--v-on-ivory);
+}
+/* Dark-surface variant. */
+.hp-sec-ink .gd-index { border-top-color: var(--v-hair-ink); }
+.hp-sec-ink .gd-index li { border-bottom-color: var(--v-hair-ink); }
+.hp-sec-ink .gd-index-n { color: var(--v-gold-lit); }
+.hp-sec-ink .gd-index-k { color: var(--v-red-lit); }
+.hp-sec-ink .gd-index-t { color: var(--v-ivory); }
+.hp-sec-ink .gd-index-d { color: var(--v-on-ink); }
+
+/* ---- 01 The Framework ---------------------------------------
+   Statement and figure share the top row, the ruled index runs the
+   full width beneath — so neither row leaves an empty field. */
+.gd-framework { row-gap: var(--sp-7); }
+.gd-framework > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.gd-framework-h { grid-column: 1 / -1; }
+.gd-framework-f { grid-column: 1 / -1; }
+.gd-framework-h .cm-display { font-size: clamp(36px, 5.6vw, 82px); }
+.gd-lede {
+  margin: var(--sp-5) 0 0;
+  max-width: 46ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+.hp-sec-ink .gd-lede { color: var(--v-on-ink); }
+@media (min-width: 1024px) {
+  .gd-framework-h { grid-column: 1 / span 6; align-self: center; }
+  .gd-framework-f { grid-column: 8 / span 5; }
+  .gd-framework-f .gd-fig { aspect-ratio: var(--ar-portrait); }
+}
+
+/* ---- Signature thesis support ------------------------------- */
+.gd-thesis { row-gap: var(--sp-7); }
+.gd-thesis > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.gd-thesis-lede { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .gd-thesis-lede { grid-column: 1 / span 6; }
+}
+.gd-thesis-lede p {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ink);
+  max-width: 52ch;
+}
+
+/* ---- 03 High performance ------------------------------------
+   A figure that takes the height of the field beside it, and the
+   four documented pillars as a ruled 2x2 rather than four boxes. */
+.gd-perf { row-gap: var(--sp-7); align-items: stretch; }
+.gd-perf-f { grid-column: 1 / -1; }
+.gd-perf-t { grid-column: 1 / -1; display: flex; flex-direction: column; }
+@media (min-width: 1024px) {
+  .gd-perf-f { grid-column: 1 / span 5; }
+  .gd-perf-t { grid-column: 7 / span 6; }
+  .gd-perf-f .gd-fig { aspect-ratio: auto; height: 100%; min-height: 460px; }
+}
+.gd-pillars {
+  list-style: none;
+  margin: var(--sp-6) 0 0;
+  padding: 0;
+  display: grid;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 560px) {
+  .gd-pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--sp-6); }
+}
+@media (min-width: 1024px) { .gd-pillars { margin-top: auto; padding-top: var(--sp-6); } }
+.gd-pillars li {
+  padding: var(--sp-5) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  min-width: 0;
+}
+.gd-pillar-t {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(17px, 1.8vw, 22px);
+  letter-spacing: -0.024em;
+  color: var(--v-ink);
+}
+.gd-pillar-d {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.62;
+  color: var(--v-on-ivory);
+}
+
+/* A display title with a long word (e.g. "DEVELOPMENT") overflows its own
+   masked line at the default scale, and `.mq-line` clips horizontally — so
+   the word silently lost its last letters between roughly 600 and 900px.
+   Titles whose longest line runs past nine characters step down. */
+.cm-hero.is-long .cm-hero-title {
+  font-size: clamp(40px, 11vw, 158px);
+}
+
+
+/* ============================================================
+   VIMTRA VENTURES
+   ------------------------------------------------------------
+   Namespaced `.vv-*`, on the same 4 / 8 / 12 track. A corporate
+   editorial page: type-led, two real portraits, and no stock
+   business photography standing in for things a firm cannot be
+   photographed doing.
+============================================================ */
+
+/* ---- 01 The firm --------------------------------------------
+   Statement and supporting copy share the top row; the four
+   documented credentials run as a ruled rule beneath, replacing
+   the separate "By the numbers" band. */
+.vv-firm { row-gap: var(--sp-6); }
+.vv-firm > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.vv-firm-h { grid-column: 1 / -1; }
+.vv-firm-b { grid-column: 1 / -1; }
+.vv-creds { grid-column: 1 / -1; }
+.vv-firm-h .cm-display { font-size: clamp(36px, 5.8vw, 88px); }
+.vv-firm-b p {
+  margin: 0 0 var(--sp-4);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+.vv-firm-b p:last-child { margin-bottom: 0; }
+.vv-firm-b strong { font-weight: 700; color: var(--v-ink); }
+@media (min-width: 1024px) {
+  .vv-firm-h { grid-column: 1 / span 6; }
+  .vv-firm-b { grid-column: 8 / span 5; align-self: end; }
+}
+
+/* Credentials — a ruled field, not a band of cards. */
+.vv-creds {
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sp-5);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 768px) {
+  .vv-creds { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--sp-6); }
+}
+.vv-creds > div {
+  padding: var(--sp-5) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  min-width: 0;
+}
+@media (min-width: 768px) {
+  .vv-creds > div + div { padding-left: var(--sp-6); border-left: 1px solid var(--v-hair-ivory); }
+}
+.vv-creds dt {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 3.8vw, 58px);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-red);
+}
+.vv-creds dd {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+
+/* ---- 02 Six verticals ---------------------------------------
+   An asymmetric index: the statement holds a sticky rail on the
+   left, the six verticals run as ruled rows on the right. The
+   hover response is typographic — there is no honest photograph
+   of "mergers & acquisitions", and generic business stock would
+   be the filler this module exists to avoid. */
+.vv-verticals { row-gap: var(--sp-7); }
+.vv-rail { grid-column: 1 / -1; }
+.vv-list { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .vv-rail {
+    grid-column: 1 / span 4;
+    position: sticky;
+    top: 140px;
+    align-self: start;
+  }
+  .vv-list { grid-column: 6 / span 7; }
+}
+.vv-rail .hp-section-title { font-size: clamp(32px, 3.8vw, 56px); }
+.vv-rail .cm-lede { margin-top: var(--sp-5); }
+
+.vv-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.vv-item {
+  position: relative;
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  transition: padding-left var(--mo-mid) var(--ease);
+}
+@media (min-width: 640px) {
+  .vv-item {
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--sp-5);
+    align-items: baseline;
+  }
+}
+/* A gold rule sweeps the row on hover — the only ornament. */
+.vv-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--v-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--mo-slow) var(--ease);
+}
+.vv-item:hover { padding-left: var(--sp-3); }
+.vv-item:hover::after { transform: scaleX(1); }
+.vv-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(19px, 2vw, 26px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+  transition: color var(--mo-mid) var(--ease);
+}
+.vv-item:hover .vv-n { color: var(--v-red); }
+.vv-t {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(22px, 2.7vw, 36px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--v-ink);
+  transition: color var(--mo-mid) var(--ease);
+}
+.vv-item:hover .vv-t { color: var(--v-red); }
+.vv-d {
+  display: block;
+  margin-top: var(--sp-3);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--v-on-ivory);
+  max-width: 56ch;
+}
+
+/* ---- 03 Leadership ------------------------------------------
+   One person per row, portrait and full biography side by side,
+   sides alternating. The compact portrait pair on /the-club is a
+   summary; this is the full record, so it is composed differently. */
+.vv-people { display: grid; row-gap: var(--sp-9); }
+.vv-person { row-gap: var(--sp-6); align-items: center; }
+.vv-person-f { grid-column: 1 / -1; }
+.vv-person-b { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .vv-person { grid-auto-flow: row dense; }
+  .vv-person-f { grid-column: 1 / span 4; }
+  .vv-person-b { grid-column: 6 / span 7; }
+  .vv-person.is-flipped .vv-person-f { grid-column: 9 / span 4; order: 2; }
+  .vv-person.is-flipped .vv-person-b { grid-column: 1 / span 7; order: 1; }
+}
+.vv-portrait {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 0;
+  aspect-ratio: var(--ar-portrait);
+  background: var(--v-ink-2);
+}
+.vv-portrait img {
+  object-fit: cover;
+  filter: saturate(0.94) contrast(1.02);
+  transform: scale(1.02);
+  transition: transform var(--mo-cine) var(--ease), filter var(--mo-slow) var(--ease);
+}
+.vv-person:hover .vv-portrait img { transform: scale(1); filter: saturate(1) contrast(1.02); }
+.vv-role {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.vv-name {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 3.6vw, 52px);
+  line-height: 1.02;
+  letter-spacing: -0.034em;
+  color: var(--v-ink);
+}
+.vv-bio {
+  margin: var(--sp-5) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+  max-width: 60ch;
+}
+
+/* ---- 04 Governance ------------------------------------------ */
+.vv-gov { row-gap: var(--sp-7); }
+.vv-gov > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.vv-gov-h { grid-column: 1 / -1; }
+.vv-gov-b { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .vv-gov-h { grid-column: 1 / span 4; }
+  .vv-gov-b { grid-column: 6 / span 7; }
+}
+.vv-board {
+  padding: var(--sp-6) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+.vv-board .vv-name { font-size: clamp(23px, 2.5vw, 33px); }
+.vv-board .vv-bio { margin-top: var(--sp-4); }
+
+/* Disciplines as a ruled field rather than a row of pills. */
+.vv-disciplines {
+  list-style: none;
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sp-5);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 768px) {
+  .vv-disciplines { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--sp-6); }
+}
+.vv-disciplines li {
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.014em;
+  color: var(--v-ink);
+  min-width: 0;
+}
+
+/* A franchise row that is also a link. The anchor carries the row grid so
+   a linked row and a plain row have identical geometry — wrapping the
+   three fields in a link without this collapses them into one column. */
+.gd-index li.is-link { display: block; padding: 0; }
+.vv-franchise-link {
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0;
+  text-decoration: none;
+  color: inherit;
+  transition: padding-left var(--mo-mid) var(--ease);
+}
+@media (min-width: 768px) {
+  .vv-franchise-link {
+    grid-template-columns: auto minmax(0, 4fr) minmax(0, 6fr);
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+}
+.vv-franchise-link:hover { padding-left: var(--sp-3); }
+.vv-franchise-link:hover .gd-index-t { color: var(--v-gold-lit); }
+
+
+/* ============================================================
+   THE SEASON — FIXTURES · SCORES · LEADERBOARDS
+   ------------------------------------------------------------
+   Namespaced `.ss-*`, on the same 4 / 8 / 12 track. Replaces the
+   pill/tab/rounded-card treatment across the three pages with
+   editorial data layouts: a season timeline, a standby
+   scoreboard, and ruled ranking tables.
+
+   NO VENUE PHOTOGRAPHY anywhere in this module — see the note at
+   the top of app/fixtures/page.tsx.
+============================================================ */
+
+/* ---- Status indicator ---------------------------------------
+   One device used across all three pages so "live", "upcoming"
+   and "result" read identically wherever they appear. */
+.ss-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+  white-space: nowrap;
+}
+.hp-sec-ink .ss-status,
+.ss-board .ss-status { color: var(--v-on-ink); }
+.ss-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+.ss-status.is-live { color: var(--v-red); }
+.hp-sec-ink .ss-status.is-live,
+.ss-board .ss-status.is-live { color: var(--v-red-lit); }
+.ss-status.is-live .ss-dot { animation: ss-pulse 2.2s var(--ease-io) infinite; }
+@keyframes ss-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.82); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ss-status.is-live .ss-dot { animation: none; }
+}
+.ss-status.is-upcoming { color: var(--v-gold); }
+.hp-sec-ink .ss-status.is-upcoming,
+.ss-board .ss-status.is-upcoming { color: var(--v-gold-lit); }
+
+/* ---- Featured event -----------------------------------------
+   The next tournament, given the weight of a cover. Oversized
+   tabular date on the left, the event on the right. */
+.ss-next { row-gap: var(--sp-6); align-items: end; }
+.ss-next > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.ss-next-date { grid-column: 1 / -1; }
+.ss-next-body { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .ss-next-date { grid-column: 1 / span 4; }
+  .ss-next-body { grid-column: 6 / span 7; }
+}
+.ss-date {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(46px, 7.4vw, 116px);
+  line-height: 0.84;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-ink);
+}
+.hp-sec-ink .ss-date { color: var(--v-ivory); }
+.ss-date-year {
+  display: block;
+  margin-top: var(--sp-3);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.hp-sec-ink .ss-date-year { color: var(--v-on-ink); }
+.ss-next-name {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3.4vw, 46px);
+  line-height: 1.02;
+  letter-spacing: -0.032em;
+  color: var(--v-ink);
+}
+.hp-sec-ink .ss-next-name { color: var(--v-ivory); }
+.ss-venue {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.66;
+  color: var(--v-on-ivory);
+}
+/* `.ss-board` is a dark chapter but it is NOT `.hp-sec-ink`, so the on-ink
+   colours have to name it explicitly. Without this the venue line inherited
+   the light-surface ink colour and rendered at roughly 1.5:1 against the
+   board — effectively invisible. */
+.hp-sec-ink .ss-venue,
+.ss-board .ss-venue { color: var(--v-on-ink); }
+.ss-presented {
+  display: block;
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--v-hair-ivory);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+/* Crimson small-caps on near-black is about 3:1 — under AA. Gold on ink
+   clears it comfortably and is still on-palette. */
+.hp-sec-ink .ss-presented,
+.ss-board .ss-presented {
+  border-top-color: var(--v-hair-ink);
+  color: var(--v-gold-lit);
+}
+
+/* ---- Season timeline ----------------------------------------
+   Events grouped by month. The month is a spine label; each event
+   is a ruled row carrying its own date, name, venue and status —
+   never a card. */
+.ss-timeline { display: grid; row-gap: var(--sp-8); }
+.ss-group { row-gap: var(--sp-4); }
+.ss-group-label { grid-column: 1 / -1; }
+.ss-group-rows { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .ss-group-label {
+    grid-column: 1 / span 2;
+    position: sticky;
+    top: 140px;
+    align-self: start;
+  }
+  .ss-group-rows { grid-column: 4 / span 9; }
+}
+.ss-month {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(17px, 1.8vw, 22px);
+  line-height: 1.1;
+  letter-spacing: -0.024em;
+  color: var(--v-ink);
+}
+.ss-month-year {
+  display: block;
+  margin-top: var(--sp-1);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+
+.ss-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--v-hair-ivory); }
+.ss-row {
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 640px) {
+  .ss-row {
+    grid-template-columns: 78px minmax(0, 1fr) auto;
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+}
+.ss-row-day {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 2.8vw, 36px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+}
+.ss-row-mon {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  color: var(--v-on-ivory);
+}
+.ss-row-name {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 25px);
+  line-height: 1.14;
+  letter-spacing: -0.026em;
+  color: var(--v-ink);
+}
+.ss-row-venue {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+.ss-row-leg {
+  display: block;
+  margin-top: var(--sp-3);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.ss-row-meta { align-self: start; }
+@media (min-width: 640px) { .ss-row-meta { text-align: right; } }
+
+/* ---- Standby scoreboard -------------------------------------
+   /scores with no live round is not an error state; it is a board
+   that is simply not lit yet. Deep ink, tabular figures, one
+   honest status line. */
+.ss-board {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--v-ink);
+  color: var(--v-ivory);
+  padding: var(--sp-8) 0;
+}
+@media (min-width: 768px) { .ss-board { padding: var(--sp-9) 0; } }
+.ss-board::before {
+  content: "";
+  position: absolute;
+  inset: -30% -12%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 54% at 14% 22%, rgba(189, 34, 39, 0.26), transparent 66%),
+    radial-gradient(38% 48% at 88% 82%, rgba(184, 144, 75, 0.18), transparent 68%);
+  filter: blur(40px);
+}
+.ss-board-inner { row-gap: var(--sp-6); }
+.ss-board-h { grid-column: 1 / -1; }
+.ss-board-b { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .ss-board-h { grid-column: 1 / span 5; }
+  .ss-board-b { grid-column: 7 / span 6; align-self: end; }
+}
+.ss-board-title {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(32px, 4.6vw, 66px);
+  line-height: 0.96;
+  letter-spacing: -0.042em;
+  color: var(--v-ivory);
+}
+.ss-board-note {
+  margin: var(--sp-5) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ink);
+  max-width: 52ch;
+}
+
+/* ---- Ruled data table ---------------------------------------
+   Used for real score rows and real standings. A table, set as
+   editorial type — no rounded container, no zebra fill. */
+.ss-table-wrap { overflow-x: auto; }
+.ss-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.ss-table th {
+  padding: 0 var(--sp-4) var(--sp-4) 0;
+  text-align: left;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+  white-space: nowrap;
+}
+.ss-table td {
+  padding: var(--sp-5) var(--sp-4) var(--sp-5) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 15px;
+  color: var(--v-on-ivory);
+  vertical-align: baseline;
+}
+.ss-table td:last-child,
+.ss-table th:last-child { padding-right: 0; }
+.ss-rank {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--v-gold);
+  width: 1%;
+  white-space: nowrap;
+}
+.ss-who {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(15px, 1.5vw, 18px);
+  letter-spacing: -0.02em;
+  color: var(--v-ink);
+}
+/* The franchise's own row is the one a visitor is looking for. */
+.ss-table tr.is-lions .ss-who,
+.ss-table tr.is-lions .ss-rank { color: var(--v-red); }
+.ss-table tr.is-lions td { background: rgba(189, 34, 39, 0.045); }
+
+/* ---- Board index --------------------------------------------
+   The three standings boards, named and described by the columns
+   they will actually carry, while they are still empty. */
+.ss-boards { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--v-hair-ivory); }
+.ss-boards li {
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 768px) {
+  .ss-boards li {
+    grid-template-columns: auto minmax(0, 4fr) minmax(0, 6fr);
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+}
+.ss-board-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3vw, 42px);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+}
+.ss-board-name {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(19px, 2.1vw, 27px);
+  line-height: 1.12;
+  letter-spacing: -0.026em;
+  color: var(--v-ink);
+}
+.ss-board-cols {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.66;
+  color: var(--v-on-ivory);
+}
+
+/* ---- Editorial tab rail -------------------------------------
+   Replaces the pill tabs. Reads as a masthead index. */
+.ss-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-6);
+  margin: 0 0 var(--sp-7);
+  padding: 0 0 var(--sp-4);
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+.ss-tab {
+  position: relative;
+  padding: var(--sp-2) 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(14px, 1.4vw, 17px);
+  letter-spacing: -0.018em;
+  color: var(--v-on-ivory);
+  transition: color var(--mo-mid) var(--ease);
+}
+.ss-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--sp-4) * -1 - 1px);
+  height: 2px;
+  background: var(--v-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--mo-mid) var(--ease);
+}
+.ss-tab:hover { color: var(--v-ink); }
+.ss-tab.is-active { color: var(--v-red); }
+.ss-tab.is-active::after { transform: scaleX(1); }
+.ss-tab:focus-visible { outline: 2px solid var(--v-red); outline-offset: 4px; }
+
+/* ---- Cross-links foot --------------------------------------- */
+.ss-links { row-gap: var(--sp-5); }
+.ss-links > * { grid-column: 1 / -1; }
+@media (min-width: 768px) {
+  .ss-links > * { grid-column: span 4; }
+}
+.ss-link {
+  display: block;
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+  text-decoration: none;
+  transition: padding-left var(--mo-mid) var(--ease);
+}
+.hp-sec-ink .ss-link { border-top-color: var(--v-hair-ink); }
+.ss-link:hover { padding-left: var(--sp-2); }
+.ss-link-k {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.ss-link-t {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 1.9vw, 23px);
+  letter-spacing: -0.024em;
+  color: var(--v-ink);
+  transition: color var(--mo-mid) var(--ease);
+}
+.hp-sec-ink .ss-link-t { color: var(--v-ivory); }
+.ss-link:hover .ss-link-t { color: var(--v-red); }
+.hp-sec-ink .ss-link:hover .ss-link-t { color: var(--v-gold-lit); }

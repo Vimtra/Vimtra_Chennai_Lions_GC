@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import PageHero from "@/components/site/PageHero";
-import {
-  Section,
-  IndexLabel,
-  SectionTitle,
-  NumberedList,
-  Figures,
-} from "@/components/site/Section";
+import StoryHero from "@/components/site/StoryHero";
+import Chapters, { type Chapter } from "@/components/site/Chapters";
+import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   title: "The Club · Vimtra Chennai Lions GC",
@@ -15,102 +11,86 @@ export const metadata: Metadata = {
     "Chennai's franchise in the AM Green IGPL — founded 2026, owned outright by Vimtra Ventures, built for the decade of franchise golf.",
 };
 
-// Every stat below is sourced from the Chennai Lions IGPL brochure (Season
-// 2026) and the Vimtra Ventures profile. No membership counts, seat-of-pants
-// numbers, or aspirational-as-fact stats are included.
-const STATS = [
-  // Brochure p. 06 — "FOUNDED · 2026 · Inaugural franchise season".
-  { v: "2026", l: "Inaugural Season", dark: false },
-  // Brochure p. 06 — "Season 2026 roster · Four names. One team sheet."
-  { v: "04", l: "Season 2026 Roster", dark: false },
-  // Brochure p. 05 — "15 EVENTS / SEASON · Ten in India, five international".
-  { v: "15", l: "Events on the Calendar", dark: false },
-  // Brochure p. 05 — "10 FRANCHISES · Ten Indian cities represented".
-  { v: "IGPL", l: "AM Green · Franchise", dark: true },
-];
+/* ---------------------------------------------------------------------------
+   CONTENT SOURCES
+   Every string on this page comes from the Chennai Lions IGPL brochure
+   (Season 2026) or the Vimtra Ventures profile. Nothing is written to fill
+   a layout. Where a composition needed more room it was solved with type,
+   image and spacing — never with new copy.
 
-// Brochure-verified positioning language used across the page. Nothing here
-// is a claim of measurable performance — it's brand narrative sourced from
-// the brochure's own headings ("A team built for the long game", "The
-// long-game city", "Chennai's roar on the world's newest stage").
-const CODE = [
+   The former "The franchise in numbers" statistics band has been removed
+   in full and is not reproduced anywhere else on the page.
+
+   PHOTOGRAPHY: real licensed photographs from public/assets/photo/ (see the
+   CREDITS.md in that directory for source, licence and the no-identifiable-
+   face rule). Each section uses a different frame — no image is repeated on
+   this page or shared with the header's mega panel. Alt text describes the
+   scene only: these are generic stock locations, so nothing here is captioned
+   as a Lions venue.
+--------------------------------------------------------------------------- */
+
+// How the team was built — brochure p. 06 ("Four names. One team sheet.")
+// plus p. 04 for the home city. Copy is the brochure's own framing.
+const CHAPTERS: Chapter[] = [
   {
     n: "01",
-    t: "Marquee",
+    title: "Marquee",
     // Brochure p. 06 — "MARQUEE · A proven international marquee".
-    d: "A proven international marquee at the front of the team sheet — a signal to the roster, the gallery, and the calendar.",
+    body:
+      "A proven international marquee at the front of the team sheet — a signal to the roster, the gallery, and the calendar.",
+    image: "/assets/photo/club-01-marquee-swing.jpg",
+    alt: "A golfer at the moment of impact from the tee",
+    position: "45% 50%",
   },
   {
     n: "02",
-    t: "Domestic Core",
-    // Brochure p. 06 — "…a proven domestic winner, an internationally ranked pro,
-    // and a rising IGPL competitor — balanced by design".
-    d: "A proven domestic winner, an internationally ranked pro, and an active IGPL competitor — balanced by design.",
+    title: "Domestic Core",
+    // Brochure p. 06 — "…a proven domestic winner, an internationally ranked
+    // pro, and a rising IGPL competitor — balanced by design".
+    body:
+      "A proven domestic winner, an internationally ranked pro, and an active IGPL competitor — balanced by design.",
+    image: "/assets/photo/club-02-core-aerial-green.jpg",
+    alt: "A putting green photographed from the air, players grouped on the surface",
+    position: "50% 42%",
   },
   {
     n: "03",
-    t: "Long Game",
-    // Brochure p. 06 — "Our commitment is not to a single season. It is to the
-    // decade of Indian franchise golf that begins now."
-    d: "A commitment measured in decades, not seasons — every roster and infrastructure decision made against a ten-year horizon.",
+    title: "Long Game",
+    // Brochure p. 06 — "Our commitment is not to a single season. It is to
+    // the decade of Indian franchise golf that begins now."
+    body:
+      "A commitment measured in decades, not seasons — every roster and infrastructure decision made against a ten-year horizon.",
+    image: "/assets/photo/club-03-longgame-coastal.jpg",
+    alt: "A coastal golf course seen from above, the open sea beyond it",
+    position: "50% 58%",
   },
   {
     n: "04",
-    t: "Home City",
-    // Brochure p. 04 — "A coastal capital, a deep amateur golf base, and one of
-    // the country's most consistent producers of touring professionals."
-    d: "Chennai. A coastal capital, a deep amateur golf base, and one of the country's most consistent producers of touring pros.",
+    title: "Home City",
+    // Brochure p. 04 — "A coastal capital, a deep amateur golf base, and one
+    // of the country's most consistent producers of touring professionals."
+    body:
+      "Chennai. A coastal capital, a deep amateur golf base, and one of the country's most consistent producers of touring pros.",
+    image: "/assets/photo/club-04-chennai-coast.jpg",
+    alt: "A coastal city meeting the shoreline, the beach running the length of the frame",
+    position: "50% 45%",
   },
 ];
 
-// Named leadership — Vimtra Ventures Profile & brochure pp. 14, 16.
-// Only individuals explicitly named in the source documents appear here.
-const LEADERSHIP = [
-  {
-    init: "SY",
-    name: "Subash Yammada",
-    role: "Founder & CEO · Vimtra Ventures",
-    // Brochure p. 14.
-    d: "Serial entrepreneur and CEO of Vimtra Ventures — three decades of leadership across sports franchises, PE, VC, real estate, golf communities and academies, tech, healthcare, and hospitality.",
-    bg: "linear-gradient(160deg,#C9242E,#871119)",
-    color: "#fff",
-  },
-  {
-    init: "TY",
-    name: "Thimmaji Rao Yammada",
-    role: "Founder & Managing Director · Vimtra Ventures",
-    // Brochure p. 14.
-    d: "Thirty-one years of leadership across PE, sports franchises, infrastructure, real estate, and industrial development across North America and India — with full-cycle real-estate expertise across commercial, residential, retail, and mixed-use assets.",
-    bg: "linear-gradient(160deg,#E6C57E,#C39A52)",
-    color: "#3A1A06",
-  },
-  {
-    init: "RB",
-    name: "Ravi Babu Mannam",
-    role: "Board of Directors · Vimtra Ventures",
-    // Brochure p. 16 (Vision & Advisory).
-    d: "Strengthening the firm's leadership and advisory ecosystem and the expansion of its golf and community-development initiatives.",
-    bg: "#1A1513",
-    color: "#E9CB8E",
-  },
-  {
-    init: "AB",
-    name: "Advisory Board",
-    role: "Building in Progress",
-    // Brochure p. 16 — "A high-calibre Advisory Board is being assembled…".
-    d: "A high-calibre Advisory Board is being assembled across business, investments, golf, real estate, infrastructure, community development, branding, and sports management.",
-    bg: "#C4202A",
-    color: "#fff",
-  },
+// Brochure p. 13 — kit palette, verbatim labels and hex values.
+const PALETTE = [
+  { label: "Pride Red", hex: "#C4202A" },
+  { label: "Highlight Gold", hex: "#C39A52" },
+  { label: "Court Yellow", hex: "#F2D66C" },
+  { label: "Stadium Cream", hex: "#F4F0E8" },
+  { label: "Jet Black", hex: "#1A1513" },
 ];
 
-// Kit sponsors — brochure p. 13. Everything on this row is verified: title
-// sponsor "am green" and kit manufacturer "FIRSTCUT". Palette also verified.
-const KIT = [
+// Brochure p. 13 — title sponsor "am green", kit manufacturer "FIRSTCUT".
+const KIT_CREDITS = [
   {
     tag: "Title Partner",
     name: "am green",
-    // Brochure p. 13 verbatim.
     detail: "League-wide title partner and kit sponsor.",
   },
   {
@@ -120,49 +100,73 @@ const KIT = [
   },
 ];
 
-// Brochure p. 13 — kit palette verbatim.
-const PALETTE = [
-  { label: "Pride Red", swatch: "#C4202A", ink: "#fff" },
-  { label: "Highlight Gold", swatch: "#C39A52", ink: "#3A1A06" },
-  { label: "Court Yellow", swatch: "#F2D66C", ink: "#3A1A06" },
-  { label: "Stadium Cream", swatch: "#F4F0E8", ink: "#1A1513" },
-  { label: "Jet Black", swatch: "#1A1513", ink: "#E9CB8E" },
+// Named leadership — Vimtra Ventures profile & brochure pp. 14, 16.
+// Photographed principals carry the section; the full biographies live on
+// /vimtra-ventures rather than being duplicated here.
+const PRINCIPALS = [
+  {
+    name: "Subash Yammada",
+    role: "Founder & CEO",
+    image: "/assets/subash-yammada-web.jpg",
+    position: "50% 16%",
+    alt: "Subash Yammada — Founder & CEO, Vimtra Ventures",
+  },
+  {
+    name: "Thimmaji Rao Yammada",
+    role: "Founder & Managing Director",
+    image: "/assets/thimmaji-rao-yammada-web.jpg",
+    position: "50% 26%",
+    alt: "Thimmaji Rao Yammada — Founder & Managing Director, Vimtra Ventures",
+  },
+];
+
+// Brochure p. 16 — the remainder of the governance, stated as a ruled index.
+const GOVERNANCE = [
+  {
+    name: "Ravi Babu Mannam",
+    role:
+      "Board of Directors · strengthening the firm's leadership and advisory ecosystem and the expansion of its golf and community-development initiatives.",
+  },
+  {
+    name: "Advisory Board",
+    role:
+      "Being assembled across business, investments, golf, real estate, infrastructure, community development, branding, and sports management.",
+  },
 ];
 
 export default function TheClubPage() {
   return (
     <>
-      <PageHero
-        variant="immersive"
-        eyebrow="The Franchise · Season 2026"
+      <StoryHero
+        eyebrow="AM Green IGPL · Season 2026"
         title={["THE CLUB"]}
-        lead={
-          <>
-            Vimtra Chennai Lions GC is Chennai&apos;s franchise in the AM Green
-            Indian Golf Premier League — founded in 2026 and owned outright by
-            Vimtra Ventures. A proven international marquee paired with a
-            rising domestic core, built for the decade of franchise golf that
-            begins now.
-          </>
-        }
+        line="Chennai's franchise in the AM Green Indian Golf Premier League. Owned outright by Vimtra Ventures."
+        image="/assets/photo/club-hero-fairway-dusk.jpg"
+        imageAlt="A championship fairway and treeline under a dusk sky"
+        imagePosition="50% 50%"
+        cta={{ href: "/players", label: "MEET THE PRIDE" }}
       />
 
-      {/* 01 — IDENTITY */}
+      {/* 01 — IDENTITY.
+          One dominant idea: a display statement, with the two documented
+          paragraphs set as supporting copy offset into the right columns. */}
       <Section surface="ivory">
-        <div className="hp-split">
-          <div className="hp-rail">
-            <IndexLabel n="01">Identity</IndexLabel>
-            <SectionTitle lines={["A FRANCHISE", "BUILT FOR THE", "LONG GAME."]} />
-          </div>
-          <div>
-            <p className="hp-body" data-rise>
+        <div className="cm-track cm-statement">
+          <IndexLabel n="01">Identity</IndexLabel>
+          <h2 className="cm-display" data-rise>
+            A FRANCHISE BUILT
+            <br />
+            FOR THE <em>long game</em>.
+          </h2>
+          <div className="cm-statement-support" data-rise>
+            <p>
               The Chennai Lions are Chennai&apos;s roar in a global league — a
               team built to compete on day one and grow through the
               international leg of a fifteen-event season. Every roster
               decision was made against the same test: can this team compete
               week to week, and can it grow through the season?
             </p>
-            <p className="hp-body" data-rise>
+            <p>
               The commitment is not to a single season. It is to the decade of
               Indian franchise golf that begins now — anchored by Vimtra
               Ventures and a home city with a deep amateur base.
@@ -171,61 +175,68 @@ export default function TheClubPage() {
         </div>
       </Section>
 
-      {/* 02 — BY THE NUMBERS */}
-      <Section surface="ink" size="tight" className="hp-sec-atmos">
-        <span className="hp-chapter-mark" aria-hidden />
-        <IndexLabel n="02" tone="dark">
-          The franchise in numbers
-        </IndexLabel>
-        <Figures items={STATS.map((s) => ({ v: s.v, l: s.l }))} />
-      </Section>
-
-      {/* 03 — HOW THE TEAM WAS BUILT */}
-      <Section surface="ivory">
-        <div className="hp-split">
-          <div className="hp-rail">
-            <IndexLabel n="03">How the team was built</IndexLabel>
-            <SectionTitle lines={["FOUR NAMES.", "ONE TEAM", "SHEET."]} />
-          </div>
-          <NumberedList items={CODE.map((c) => ({ t: c.t, d: c.d }))} />
+      {/* 02 — HOW THE TEAM WAS BUILT.
+          A numbered visual timeline on deep ink: numeral, heading, short
+          documented copy, one photograph per chapter, sides alternating. */}
+      <Section surface="ink" className="hp-sec-atmos">
+        <div className="cm-track cm-statement">
+          <IndexLabel n="02" tone="dark">
+            How the team was built
+          </IndexLabel>
+          <h2 className="cm-display" data-rise>
+            FOUR NAMES.
+            <br />
+            ONE TEAM SHEET.
+          </h2>
+        </div>
+        <div className="hp-mt-lg">
+          <Chapters items={CHAPTERS} />
         </div>
       </Section>
 
-      {/* 04 — THE KIT */}
+      {/* 03 — THE KIT.
+          The palette as one continuous colour field rather than five swatch
+          cards, with the two verified kit credits ruled beneath it. */}
       <Section surface="paper">
-        <div className="hp-kit">
-          <div className="hp-kit-head">
-            <IndexLabel n="04">The Kit · Season 2026</IndexLabel>
-            <SectionTitle lines={["A WHITE-TO-", "COURT-YELLOW", "GRADIENT."]} />
-            <p className="hp-body hp-mt-sm" data-rise>
+        <div className="cm-track cm-kit">
+          <div className="cm-kit-head">
+            <IndexLabel n="03">The Kit · Season 2026</IndexLabel>
+            <SectionTitle
+              lines={["A WHITE-TO-", "COURT-YELLOW", "GRADIENT."]}
+            />
+            <p className="cm-lede" data-rise>
               Designed to travel from Chennai heat to floodlit international
               venues without losing the team&apos;s visual identity.
             </p>
           </div>
-          <div>
-            <ul className="hp-swatches" data-rise>
+
+          <div className="cm-spectrum" data-rise>
+            <ul className="cm-band">
               {PALETTE.map((p) => (
                 <li key={p.label}>
                   <span
-                    className="hp-swatch"
-                    style={{ background: p.swatch }}
+                    className="cm-band-f"
+                    style={{ ["--c" as string]: p.hex }}
                     aria-hidden
                   />
-                  <span className="hp-swatch-label">{p.label}</span>
-                  <span className="hp-swatch-hex">{p.swatch}</span>
+                  <span className="cm-band-k">
+                    <span className="cm-band-l">{p.label}</span>
+                    <span className="cm-band-h">{p.hex}</span>
+                  </span>
                 </li>
               ))}
             </ul>
-            <ul className="hp-franchises hp-mt-md" data-rise>
-              {KIT.map((k) => (
+          </div>
+
+          <div className="cm-credits" data-rise>
+            <ul>
+              {KIT_CREDITS.map((k) => (
                 <li key={k.name}>
-                  <div className="hp-franchise">
-                    <span className="hp-franchise-tag">{k.tag}</span>
-                    <span className="hp-franchise-body">
-                      <span className="hp-franchise-name">{k.name}</span>
-                      <span className="hp-franchise-detail">{k.detail}</span>
-                    </span>
-                  </div>
+                  <span className="cm-credit-tag">{k.tag}</span>
+                  <span>
+                    <span className="cm-credit-name">{k.name}</span>
+                    <span className="cm-credit-detail">{k.detail}</span>
+                  </span>
                 </li>
               ))}
             </ul>
@@ -233,16 +244,19 @@ export default function TheClubPage() {
         </div>
       </Section>
 
-      {/* 05 — LEADERSHIP */}
+      {/* 04 — LEADERSHIP · VIMTRA VENTURES.
+          Photography carries the section; the firm's relationship to the
+          franchise is stated in the rail; the rest of the governance is a
+          ruled index. No person cards, no duplicated biographies. */}
       <Section surface="ivory">
-        <div className="hp-split">
-          <div className="hp-rail">
-            <IndexLabel n="05">Leadership · Vimtra Ventures</IndexLabel>
+        <div className="cm-track cm-lead">
+          <div className="cm-lead-rail">
+            <IndexLabel n="04">Leadership · Vimtra Ventures</IndexLabel>
             <SectionTitle lines={["THE BRAIN", "BEHIND", "THE TEAM."]} />
-            <p className="hp-body hp-mt-sm" data-rise>
+            <p className="cm-lede" data-rise>
               Vimtra Ventures is a San Francisco &amp; Chennai-based PE, VC,
               and investment firm — founded 1995, operating as principal
-              across six verticals.
+              across six verticals. The Lions are owned outright by the firm.
             </p>
             <Link href="/vimtra-ventures" className="hp-btn hp-btn-text" data-rise>
               About the firm
@@ -251,26 +265,54 @@ export default function TheClubPage() {
               </span>
             </Link>
           </div>
-          <NumberedList
-            items={LEADERSHIP.map((l) => ({ k: l.role, t: l.name, d: l.d }))}
-          />
+
+          <div className="cm-lead-main">
+            <div className="cm-figs">
+              {PRINCIPALS.map((p) => (
+                <figure className="cm-fig" key={p.name} data-rise>
+                  <div className="cm-fig-frame">
+                    <Image
+                      src={p.image}
+                      alt={p.alt}
+                      fill
+                      sizes="(max-width: 559px) 100vw, (max-width: 1023px) 50vw, 340px"
+                      style={{ objectPosition: p.position }}
+                    />
+                  </div>
+                  <figcaption className="cm-fig-cap">
+                    <span className="cm-fig-name">{p.name}</span>
+                    <span className="cm-fig-role">{p.role}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+
+            <ul className="cm-roll">
+              {GOVERNANCE.map((g) => (
+                <li key={g.name} data-rise>
+                  <span className="cm-roll-name">{g.name}</span>
+                  <span className="cm-roll-role">{g.role}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </Section>
 
       {/* CLOSING */}
-      <Section surface="ink" size="tight">
-        <div className="hp-cta-row">
-          <div>
+      <Section surface="ink" size="tight" className="hp-sec-atmos">
+        <div className="cm-track cm-close">
+          <div className="cm-close-title">
             <SectionTitle lines={["CHENNAI’S ROAR."]} />
           </div>
-          <div className="hp-cta-actions" data-rise>
+          <div className="cm-close-actions" data-rise>
             <Link href="/players" className="hp-btn hp-btn-primary">
               MEET THE PRIDE
               <span className="hp-arrow" aria-hidden>
                 →
               </span>
             </Link>
-            <Link href="/partners" className="hp-btn hp-btn-ghost">
+            <Link href="/partners" className="hp-btn hp-btn-ghost hp-on-dark">
               Partner with the Lions
             </Link>
           </div>

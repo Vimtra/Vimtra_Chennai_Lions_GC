@@ -70,7 +70,12 @@ export default async function AdminUsersPage() {
                               )}
                             </button>
                           </form>
-                          <ConfirmDeleteButton action={deleteUserAction} id={u.id} label={u.name} />
+                          <ConfirmDeleteButton
+                            action={deleteUserAction}
+                            id={u.id}
+                            label={u.name}
+                            description="This permanently deletes the account and signs the user out everywhere. It cannot be undone."
+                          />
                         </>
                       )}
                     </div>

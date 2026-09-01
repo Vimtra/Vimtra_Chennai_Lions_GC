@@ -16,10 +16,18 @@ import {
 /**
  * Home page chapters.
  *
- * Player photography is deliberately absent here — the homepage speaks for
- * the club, the city and the season; portraits belong to /players. Fixture
- * and press rows are real records passed down from the server component, so
- * nothing on this page is invented.
+ * Recomposed onto the module's 4 / 8 / 12 track (`.cm-track`) so the home
+ * page reads in the same editorial language as /the-club and /the-pride,
+ * and so every column earns its width. The previous `roar-*` / `club-*` /
+ * `shop-*` shapes left large unused fields — a headline in the left half of
+ * a 900px section, a closing band with 400px of empty right column, and
+ * 60–150px of dead air beneath most sections.
+ *
+ * Player photography is deliberately absent — the homepage speaks for the
+ * club, the city and the season; portraits belong to /players. Fixture and
+ * press rows are real records passed down from the server component, so
+ * nothing here is invented. Photography is licensed and self-hosted; see
+ * public/assets/photo/CREDITS.md.
  */
 
 /** Shared scroll choreography. Sections opt in via data attributes. */
@@ -39,8 +47,9 @@ function useSectionMotion(withImage = false) {
       if (withImage) {
         el.querySelectorAll<HTMLElement>("[data-fig]").forEach((fig) => {
           revealImageOnScroll(fig, el, { start: "top 82%" });
-          parallax(fig, el, 4);
         });
+        const bleed = el.querySelector("[data-bleed]");
+        if (bleed) parallax(bleed, el, 5);
       }
       el.querySelectorAll<HTMLElement>("[data-count]").forEach((n) => {
         countUp(n, Number(n.dataset.count || "0"));
@@ -53,83 +62,108 @@ function useSectionMotion(withImage = false) {
 
 /* ── 01 · BRAND STATEMENT ────────────────────────────────── */
 export function Statement() {
-  const root = useSectionMotion();
+  const root = useSectionMotion(true);
   return (
-    /* Brand statement chapter.
-       One dominant element — the headline — carried by atmosphere rather
-       than by any container. "CHENNAI'S ROAR" is the franchise's own line
-       (it also heads /the-club and /the-pride); the supporting paragraph
-       is the verified Vimtra Ventures ownership fact. Nothing is invented,
-       and nothing here is a card. */
-    <section ref={root} className="sec sec-roar" aria-labelledby="st-h">
-      <div className="roar-atmos" aria-hidden />
-      <div className="v-grain" aria-hidden />
-
-      <div className="hp-wrap roar-grid">
-        <p className="rubric roar-rubric" data-rise>
-          <span>01</span> The Franchise
-        </p>
-
-        <h2 id="st-h" className="roar-h">
-          <span className="mq-line" data-line><span>CHENNAI&rsquo;S</span></span>
-          <span className="mq-line roar-h2" data-line><span>ROAR.</span></span>
-        </h2>
-
-        {/* The supporting column sits against the headline's last line and
-            runs to the frame edge — the offset is the composition. */}
-        <div className="roar-tail">
-          <p className="roar-body" data-rise>
-            Chennai&rsquo;s franchise in the AM Green Indian Golf Premier
-            League — owned outright by Vimtra Ventures, a San Francisco &amp;
-            Chennai investment firm founded in 1995. The commitment is not to
-            a single season. It is to the decade of Indian franchise golf that
-            begins now.
+    /* One dominant element — the headline — with the supporting copy
+       offset into the columns the headline does not use, so the section
+       fills its frame instead of leaving the right half empty.
+       "CHENNAI'S ROAR" is the franchise's own line; the paragraph is the
+       verified Vimtra Ventures ownership fact. Nothing is invented. */
+    <section
+      ref={root}
+      className="hp-sec hp-sec-ivory hm-sec"
+      aria-labelledby="st-h"
+    >
+      <div className="hp-wrap">
+        <div className="cm-track hm-statement">
+          <p className="hp-index" data-rise>
+            01 <span>The Franchise</span>
           </p>
-          <Link href="/the-club" className="link-arrow roar-link" data-rise>
-            The story of the club
-            <span className="hp-arrow" aria-hidden>→</span>
-          </Link>
+          <h2 id="st-h" className="cm-display hm-statement-h" data-rise>
+            CHENNAI&rsquo;S <em>roar</em>.
+          </h2>
+          <div className="hm-statement-s" data-rise>
+            <p>
+              Chennai&rsquo;s franchise in the AM Green Indian Golf Premier
+              League — owned outright by Vimtra Ventures, a San Francisco
+              &amp; Chennai investment firm founded in 1995. The commitment is
+              not to a single season. It is to the decade of Indian franchise
+              golf that begins now.
+            </p>
+            <Link href="/the-club" className="hp-btn hp-btn-text">
+              The story of the club
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
+            </Link>
+          </div>
+          <div className="hm-statement-band">
+            <div className="hm-band" data-fig>
+              <Image
+                src="/assets/photo/home-01-links-twilight.jpg"
+                alt="A links fairway at twilight, a lone figure far down the hole"
+                fill
+                sizes="100vw"
+                style={{ objectPosition: "50% 62%" }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
+/* ── 02 · THE CLUB ───────────────────────────────────────── */
 export function Club() {
   const root = useSectionMotion(true);
   return (
-    <section ref={root} className="sec sec-ink" aria-labelledby="cl-h">
-      <div className="hp-wrap club-grid">
-        <div className="club-type">
-          <p className="rubric rubric-dark" data-rise>
-            <span>02</span> The Club
-          </p>
-          <p className="club-year" data-rise>
-            <span data-count="2026">2026</span>
-          </p>
-          <h2 id="cl-h" className="club-h">
-            <span className="mq-line" data-line><span>THE INAUGURAL</span></span>
-            <span className="mq-line" data-line><span>SEASON.</span></span>
-          </h2>
-          <p className="club-body" data-rise>
-            Ten franchises. Fifteen events across a single season — ten in
-            India, five international. Chennai is one of them, and the Lions
-            play their first ball in 2026.
-          </p>
-          <Link href="/the-pride" className="link-arrow link-arrow-dark" data-rise>
-            The mark &amp; the city
-            <span className="hp-arrow" aria-hidden>→</span>
-          </Link>
-        </div>
+    <section
+      ref={root}
+      className="hp-sec hp-sec-ink hm-sec"
+      aria-labelledby="cl-h"
+    >
+      <div className="hp-wrap">
+        <div className="cm-track hm-split">
+          <div className="hm-split-t">
+            <p className="hp-index hp-index-dark" data-rise>
+              02 <span>The Club</span>
+            </p>
+            <p className="hm-year" data-rise>
+              <span data-count="2026">2026</span>
+            </p>
+            <h2 id="cl-h" className="cm-ch-t" style={{ marginTop: 0 }}>
+              <span className="mq-line" data-line>
+                <span>THE INAUGURAL</span>
+              </span>
+              <span className="mq-line" data-line>
+                <span>SEASON.</span>
+              </span>
+            </h2>
+            <p className="hm-body" data-rise>
+              Ten franchises. Fifteen events across a single season — ten in
+              India, five international. Chennai is one of them, and the Lions
+              play their first ball in 2026.
+            </p>
+            <Link href="/the-pride" className="hp-btn hp-btn-text" data-rise>
+              The mark &amp; the city
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
+            </Link>
+          </div>
 
-        <div className="club-fig" data-fig>
-          <Image
-            src="/assets/car-1-web.jpg"
-            alt="Tournament golf — reading the line on the closing green"
-            fill
-            sizes="(max-width: 900px) 100vw, 46vw"
-            className="club-img"
-          />
+          <div className="hm-split-f">
+            <div className="hm-fig" data-fig>
+              <Image
+                src="/assets/photo/home-club-aerial-golden.jpg"
+                alt="A championship course from the air at golden hour, the sea on the horizon"
+                fill
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                style={{ objectPosition: "56% 46%" }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -151,21 +185,31 @@ export function Season({ rows }: { rows: SeasonRow[] }) {
   const root = useSectionMotion();
   if (!rows.length) return null;
   return (
-    <section ref={root} className="sec sec-ivory" aria-labelledby="se-h">
+    <section
+      ref={root}
+      className="hp-sec hp-sec-ivory hm-sec"
+      aria-labelledby="se-h"
+    >
       <div className="hp-wrap">
-        <div className="sec-head">
-          <div>
-            <p className="rubric" data-rise>
-              <span>03</span> The Season
+        <div className="cm-track hm-head">
+          <div className="hm-head-t">
+            <p className="hp-index" data-rise>
+              03 <span>The Season</span>
             </p>
-            <h2 id="se-h" className="sec-h">
-              <span className="mq-line" data-line><span>THE 2026</span></span>
-              <span className="mq-line" data-line><span>CALENDAR.</span></span>
+            <h2 id="se-h" className="hp-section-title">
+              <span className="mq-line" data-line>
+                <span>THE 2026</span>
+              </span>
+              <span className="mq-line" data-line>
+                <span>CALENDAR.</span>
+              </span>
             </h2>
           </div>
-          <Link href="/fixtures" className="link-arrow" data-rise>
+          <Link href="/fixtures" className="hp-btn hp-btn-text hm-head-a" data-rise>
             All fixtures
-            <span className="hp-arrow" aria-hidden>→</span>
+            <span className="hp-arrow" aria-hidden>
+              →
+            </span>
           </Link>
         </div>
 
@@ -215,50 +259,59 @@ const PILLARS = [
 export function Development() {
   const root = useSectionMotion(true);
   return (
-    <section ref={root} className="sec-dev" aria-labelledby="dv-h">
-      <div className="dev-media" data-fig>
+    <section ref={root} className="hm-dev" aria-labelledby="dv-h">
+      <div className="hm-dev-media" data-bleed>
         <Image
-          src="/assets/fac-range-web.jpg"
-          alt="A floodlit practice facility with launch-monitor bays at dusk"
+          src="/assets/photo/home-dev-range-silhouette.jpg"
+          alt="A backlit golfer at the top of the backswing on a practice range"
           fill
-          // fac-range-web.jpg is a 1024px source — see Hero.
-          sizes="(max-width: 1080px) 100vw, 1080px"
-          className="dev-img"
+          sizes="100vw"
+          style={{ objectPosition: "40% 50%" }}
         />
-        <span className="dev-scrim" aria-hidden />
       </div>
+      <div className="hm-dev-veil" aria-hidden />
+      <div className="v-grain" aria-hidden />
 
-      <div className="hp-wrap dev-inner">
-        <p className="rubric rubric-dark" data-rise>
-          <span>04</span> Golf Development
-        </p>
-        <h2 id="dv-h" className="dev-h">
-          <span className="mq-line" data-line><span>A PLATFORM,</span></span>
-          <span className="mq-line" data-line><span>NOT A BET.</span></span>
-        </h2>
-        <p className="dev-body" data-rise>
-          Coaching, academies, event standards and course operations to
-          international championship level — built as an institution, not a
-          single season.
-        </p>
+      <div className="hp-wrap cm-track hm-dev-inner">
+        <div className="hm-dev-head">
+          <p className="hp-index hp-index-dark" data-rise>
+            04 <span>Golf Development</span>
+          </p>
+          <h2 id="dv-h" className="hm-dev-h">
+            <span className="mq-line" data-line>
+              <span>A PLATFORM,</span>
+            </span>
+            <span className="mq-line" data-line>
+              <span>NOT A BET.</span>
+            </span>
+          </h2>
+          <p className="hm-body" data-rise>
+            Coaching, academies, event standards and course operations to
+            international championship level — built as an institution, not a
+            single season.
+          </p>
+          <Link href="/golf-development" className="hp-btn hp-btn-text" data-rise>
+            Explore the platform
+            <span className="hp-arrow" aria-hidden>
+              →
+            </span>
+          </Link>
+        </div>
 
-        <ol className="dev-list">
-          {PILLARS.map((p, i) => (
-            <li key={p.t} data-rise>
-              <span className="dev-n">{String(i + 1).padStart(2, "0")}</span>
-              <span className="dev-item">
-                <span className="dev-k">{p.k}</span>
-                <span className="dev-t">{p.t}</span>
-                <span className="dev-d">{p.d}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-
-        <Link href="/golf-development" className="link-arrow link-arrow-dark" data-rise>
-          Explore the platform
-          <span className="hp-arrow" aria-hidden>→</span>
-        </Link>
+        <div className="hm-dev-list">
+          <ol>
+            {PILLARS.map((p, i) => (
+              <li key={p.t} data-rise>
+                <span className="hm-dev-n">{String(i + 1).padStart(2, "0")}</span>
+                <span>
+                  <span className="hm-dev-k">{p.k}</span>
+                  <span className="hm-dev-t">{p.t}</span>
+                  <span className="hm-dev-d">{p.d}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );
@@ -281,84 +334,105 @@ export function Media({ stories }: { stories: StoryRow[] }) {
   const [lead, ...rest] = stories;
 
   return (
-    <section ref={root} className="sec sec-paper" aria-labelledby="md-h">
+    <section
+      ref={root}
+      className="hp-sec hp-sec-paper hm-sec"
+      aria-labelledby="md-h"
+    >
       <div className="hp-wrap">
-        <div className="sec-head">
-          <div>
-            <p className="rubric" data-rise>
-              <span>05</span> Media
+        <div className="cm-track hm-head">
+          <div className="hm-head-t">
+            <p className="hp-index" data-rise>
+              05 <span>Media</span>
             </p>
-            <h2 id="md-h" className="sec-h">
-              <span className="mq-line" data-line><span>FROM</span></span>
-              <span className="mq-line" data-line><span>THE DEN.</span></span>
+            <h2 id="md-h" className="hp-section-title">
+              <span className="mq-line" data-line>
+                <span>FROM</span>
+              </span>
+              <span className="mq-line" data-line>
+                <span>THE DEN.</span>
+              </span>
             </h2>
           </div>
-          <Link href="/news" className="link-arrow" data-rise>
+          <Link href="/news" className="hp-btn hp-btn-text hm-head-a" data-rise>
             All coverage
-            <span className="hp-arrow" aria-hidden>→</span>
+            <span className="hp-arrow" aria-hidden>
+              →
+            </span>
           </Link>
         </div>
 
-        <div className="media-grid">
-          <a
-            className="story story-lead"
-            href={lead.href}
-            target="_blank"
-            rel="noreferrer"
-            data-rise
-          >
-            {lead.cover && (
-              <span className="story-fig story-fig-lead" data-fig>
+        {/* The lead used to sit in a two-column grid beside the secondary
+            list. The list is a grid item, so it stretched to the height of
+            the tall cover image and distributed its three rows across it —
+            producing the large vertical gaps between 02, 03 and 04.
+
+            The lead is now its own split (figure beside its own type, the
+            figure taking exactly the height of the column next to it), and
+            the secondary coverage runs full width beneath as a ruled list
+            at its natural row height. Nothing stretches. */}
+        <a
+          className="cm-track hm-split is-flipped hm-lead hp-mt-lg"
+          href={lead.href}
+          target="_blank"
+          rel="noreferrer"
+          data-rise
+        >
+          {lead.cover && (
+            <span className="hm-split-f">
+              <span className="hm-fig" data-fig>
                 <Image
                   src={lead.cover}
                   alt=""
                   fill
-                  sizes="(max-width: 900px) 100vw, 56vw"
+                  sizes="(max-width: 1023px) 100vw, 48vw"
                   className="story-img"
                 />
               </span>
-            )}
+            </span>
+          )}
+          <span className="hm-split-t">
             <span className="story-meta">
               <span className="story-src">{lead.source}</span>
               {lead.date && <span className="story-date">{lead.date}</span>}
             </span>
             <span className="story-title story-title-lead">{lead.title}</span>
             <span className="story-sum">{lead.summary}</span>
-          </a>
+          </span>
+        </a>
 
-          {/* Secondary coverage is typographic, not thumbnailed.
-              Several of these stories share one subject, so repeating the
-              same portrait four times would read as a template error. A
-              numbered masthead list is how a newsroom actually sets
-              "more coverage" — and it keeps every cover honest. */}
-          <ol className="story-rest">
-            {rest.slice(0, 3).map((s, i) => (
-              <li key={s.id}>
-                <a
-                  className="story story-row"
-                  href={s.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  data-rise
-                >
-                  <span className="story-n">
-                    {String(i + 2).padStart(2, "0")}
+        {/* Secondary coverage is typographic, not thumbnailed.
+            Several of these stories share one subject, so repeating the
+            same portrait four times would read as a template error. A
+            numbered masthead list is how a newsroom actually sets
+            "more coverage" — and it keeps every cover honest. */}
+        <ol className="story-rest">
+          {rest.slice(0, 3).map((s, i) => (
+            <li key={s.id}>
+              <a
+                className="story story-row"
+                href={s.href}
+                target="_blank"
+                rel="noreferrer"
+                data-rise
+              >
+                <span className="story-n">
+                  {String(i + 2).padStart(2, "0")}
+                </span>
+                <span className="story-col">
+                  <span className="story-meta">
+                    <span className="story-src">{s.source}</span>
+                    {s.date && <span className="story-date">{s.date}</span>}
                   </span>
-                  <span className="story-col">
-                    <span className="story-meta">
-                      <span className="story-src">{s.source}</span>
-                      {s.date && <span className="story-date">{s.date}</span>}
-                    </span>
-                    <span className="story-title">{s.title}</span>
-                  </span>
-                  <span className="story-go" aria-hidden>
-                    &#8599;
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </div>
+                  <span className="story-title">{s.title}</span>
+                </span>
+                <span className="story-go" aria-hidden>
+                  &#8599;
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
@@ -368,33 +442,51 @@ export function Media({ stories }: { stories: StoryRow[] }) {
 export function Shop() {
   const root = useSectionMotion(true);
   return (
-    <section ref={root} className="sec sec-ivory" aria-labelledby="sh-h">
-      <div className="hp-wrap shop-grid">
-        <div className="shop-fig" data-fig>
-          <Image
-            src="/assets/Golf_polo_shirt_and_cap_202608220321-web.jpg"
-            alt="Official Chennai Lions apparel — polo and cap"
-            fill
-            sizes="(max-width: 900px) 100vw, 50vw"
-            className="shop-img"
-          />
-        </div>
-        <div className="shop-type">
-          <p className="rubric" data-rise>
-            <span>06</span> The Store
-          </p>
-          <h2 id="sh-h" className="sec-h">
-            <span className="mq-line" data-line><span>WEAR</span></span>
-            <span className="mq-line" data-line><span>THE PRIDE.</span></span>
-          </h2>
-          <p className="chapter-body" data-rise>
-            Match-day kit, performance apparel and tour-tested accessories —
-            fan-priced, shipped across India.
-          </p>
-          <Link href="/shop" className="btn-gold" data-rise>
-            EXPLORE THE SHOP
-            <span className="hp-arrow" aria-hidden>→</span>
-          </Link>
+    <section
+      ref={root}
+      className="hp-sec hp-sec-ivory hm-sec"
+      aria-labelledby="sh-h"
+    >
+      <div className="hp-wrap">
+        {/* Flipped so the figure takes the left edge — the store is the
+            only chapter that leads with the product rather than the type.
+            The image stays the catalogue's own merchandise photography;
+            a stock golf-apparel frame would show kit that is not ours. */}
+        <div className="cm-track hm-split is-flipped">
+          <div className="hm-split-t">
+            <p className="hp-index" data-rise>
+              06 <span>The Store</span>
+            </p>
+            <h2 id="sh-h" className="cm-ch-t" style={{ marginTop: 0 }}>
+              <span className="mq-line" data-line>
+                <span>WEAR</span>
+              </span>
+              <span className="mq-line" data-line>
+                <span>THE PRIDE.</span>
+              </span>
+            </h2>
+            <p className="hm-body" data-rise>
+              Match-day kit, performance apparel and tour-tested accessories —
+              fan-priced, shipped across India.
+            </p>
+            <Link href="/shop" className="hp-btn hp-btn-primary hp-mt-md" data-rise>
+              EXPLORE THE SHOP
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
+            </Link>
+          </div>
+
+          <div className="hm-split-f">
+            <div className="hm-fig" data-fig>
+              <Image
+                src="/assets/Golf_polo_shirt_and_cap_202608220321-web.jpg"
+                alt="Official Chennai Lions apparel — polo and cap"
+                fill
+                sizes="(max-width: 1023px) 100vw, 48vw"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -405,24 +497,37 @@ export function Shop() {
 export function Closing() {
   const root = useSectionMotion();
   return (
-    <section ref={root} className="sec-close" aria-labelledby="cs-h">
-      <div className="close-atmos" aria-hidden />
-      <div className="hp-wrap close-inner">
-        <h2 id="cs-h" className="close-h">
-          <span className="mq-line" data-line><span>ONE CITY.</span></span>
-          <span className="mq-line" data-line><span>ONE PRIDE.</span></span>
-        </h2>
-        <p className="close-body" data-rise>
-          Chennai&rsquo;s roar — on the world&rsquo;s newest stage.
-        </p>
-        <div className="close-actions" data-rise>
-          <Link href="/contact" className="btn-gold">
-            TALK TO THE FRANCHISE
-            <span className="hp-arrow" aria-hidden>→</span>
-          </Link>
-          <Link href="/partners" className="btn-ghost-dark">
-            Partner with the Lions
-          </Link>
+    <section
+      ref={root}
+      className="hp-sec hp-sec-ink hm-sec hm-sec-tight hp-sec-atmos"
+      aria-labelledby="cs-h"
+    >
+      <div className="hp-wrap">
+        <div className="cm-track cm-close">
+          <div className="cm-close-title">
+            <h2 id="cs-h" className="hp-section-title">
+              <span className="mq-line" data-line>
+                <span>ONE CITY.</span>
+              </span>
+              <span className="mq-line" data-line>
+                <span>ONE PRIDE.</span>
+              </span>
+            </h2>
+            <p className="cm-pull hp-mt-sm" data-rise>
+              Chennai&rsquo;s roar — on the world&rsquo;s newest stage.
+            </p>
+          </div>
+          <div className="cm-close-actions" data-rise>
+            <Link href="/contact" className="hp-btn hp-btn-primary">
+              TALK TO THE FRANCHISE
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
+            </Link>
+            <Link href="/partners" className="hp-btn hp-btn-ghost hp-on-dark">
+              Partner with the Lions
+            </Link>
+          </div>
         </div>
       </div>
     </section>

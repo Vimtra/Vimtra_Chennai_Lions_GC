@@ -48,6 +48,29 @@ export const NAV_ITEMS: NavItem[] = [
 export const PRIMARY_NAV = ["/the-club", "/players", "/fixtures", "/news", "/shop"];
 
 /**
+ * Routes whose first section is a dark, full-bleed image hero.
+ *
+ * On these the header floats over the photograph as a veil instead of
+ * reserving a solid strip above it, and resolves to the deep-ink state on
+ * scroll. The hero itself reserves header height as top padding (see
+ * `.cm-hero` / `.hero` in app/globals.css), so nothing is ever covered.
+ *
+ * Routes join this list as their heroes are converted, one Club-module
+ * phase at a time — never speculatively.
+ */
+export const FLOATING_HEADER_ROUTES = [
+  "/",
+  "/the-club",
+  "/the-pride",
+  "/players",
+  "/golf-development",
+  "/vimtra-ventures",
+  "/fixtures",
+  "/scores",
+  "/leaderboards",
+];
+
+/**
  * Overlay grouping. The three columns of the hamburger overlay are
  * assembled from these ordered path lists so the taxonomy has one
  * source of truth (this file) rather than the JSX in components/Nav.tsx.

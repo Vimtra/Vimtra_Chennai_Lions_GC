@@ -63,7 +63,12 @@ export default async function AdminProductsPage() {
                 <td>
                   <div className="flex items-center gap-2 justify-end">
                     <ProductModalButton product={p} action={updateProductAction} />
-                    <ConfirmDeleteButton action={deleteProductAction} id={p.id} label={p.name} />
+                    <ConfirmDeleteButton
+                      action={deleteProductAction}
+                      id={p.id}
+                      label={p.name}
+                      description="This permanently removes the product from the catalog, the shop and the admin. It cannot be undone."
+                    />
                   </div>
                 </td>
               </tr>

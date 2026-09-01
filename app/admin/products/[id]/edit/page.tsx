@@ -33,7 +33,12 @@ export default async function EditProductPage({
       </p>
 
       <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-7 max-w-[760px]">
-        <ProductForm action={updateProductAction} product={product} submitLabel="Save changes" />
+        <ProductForm
+          action={updateProductAction}
+          product={product}
+          submitLabel="Save changes"
+          redirectOnSuccess="/admin/products"
+        />
       </div>
     </AdminShell>
   );

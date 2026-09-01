@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import PageHero from "@/components/site/PageHero";
-import {
-  Section,
-  IndexLabel,
-  SectionTitle,
-  NumberedList,
-  Figures,
-} from "@/components/site/Section";
+import StoryHero from "@/components/site/StoryHero";
+import FullBleedStatement from "@/components/site/FullBleedStatement";
+import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   title: "The Pride · Vimtra Chennai Lions GC",
@@ -16,47 +10,58 @@ export const metadata: Metadata = {
     "Chennai's roar on the world's newest stage — the emotional charter of the Vimtra Chennai Lions and the fifteen-event AM Green IGPL Season 2026.",
 };
 
-// This page carries the emotional/brand story. Every quantifiable claim on
-// it is sourced from the Chennai Lions IGPL brochure (Season 2026). No
-// membership counts, invented timeline dates, or academy-school figures
-// appear — those were fabrications that have been removed in M1.
+/* ---------------------------------------------------------------------------
+   CONTENT SOURCES
+   This page carries the emotional / brand story. Every sentence on it already
+   existed in the approved copy for this route or is cited to the Chennai Lions
+   IGPL brochure (Season 2026). Nothing was written to fill a composition.
 
-// Brochure p. 05 — "10 FRANCHISES · 15 EVENTS / SEASON · 2025 INAUGURAL SEASON"
-// and p. 06 — "FOUNDED 2026 · Inaugural franchise season".
-const NUMBERS = [
-  { v: "2026", l: "Chennai Lions Inaugural Season", dark: true },
-  { v: "10", l: "IGPL Franchises", dark: false },
-  { v: "15", l: "Events per Season", dark: false },
-  { v: "5", l: "International Events on the Calendar", dark: false },
-];
+   The "The season in numbers" band (2026 / 10 / 15 / 5) has been REMOVED in
+   full. It is not reproduced anywhere else on the page, and no replacement
+   statistics section was introduced.
+
+   PHOTOGRAPHY: public/assets/photo/ — see CREDITS.md for source, licence and
+   the no-identifiable-face rule. Two frames on this page, both new: neither is
+   used on /the-club or in the header panel.
+
+   NO PHOTOGRAPH ON "HOME GROUND": TNGF Cosmo is a real, documented venue
+   (brochure p. 04; it is also the footer address and the /contact venue). The
+   previous design placed an AI-generated stock image beside that heading and
+   captioned it as the venue, which asserted something untrue about a named
+   real place. The section is set typographically instead. Add a photograph
+   only when the franchise supplies one actually taken there.
+--------------------------------------------------------------------------- */
 
 export default function ThePridePage() {
   return (
     <>
-      <PageHero
-        variant="immersive"
+      <StoryHero
         eyebrow="The Mark · Pride of Chennai"
         title={["THE PRIDE"]}
-        lead={
-          <>
-            A franchise carries a city, not a company. The Lions belong to
-            Chennai — a coastal capital with a deep amateur golf base and one
-            of India&apos;s most consistent pipelines of touring professionals.
-          </>
-        }
+        // Existing approved lead, cut to its strongest clause. The hero
+        // carries one line; the full statement lives in section 01.
+        line="A franchise carries a city, not a company. The Lions belong to Chennai."
+        image="/assets/photo/pride-hero-dawn-coast.jpg"
+        imageAlt="A crimson dawn breaking over the open sea"
+        imagePosition="50% 32%"
       />
 
+      {/* 01 — THE CITY.
+          Asymmetric split: the display statement across the upper columns,
+          the documented body on the left edge, and the brochure's own line
+          set as a serif counterweight in the right columns. */}
       <Section surface="ivory">
-        <div className="hp-split">
-          <div className="hp-rail">
-            <IndexLabel n="01">The City</IndexLabel>
-            <SectionTitle lines={["CHENNAI’S ROAR", "ON THE WORLD’S", "NEWEST STAGE."]} />
+        <div className="cm-track cm-city">
+          <IndexLabel n="01">The City</IndexLabel>
+
+          <div className="cm-city-title">
+            <SectionTitle
+              lines={["CHENNAI’S ROAR", "ON THE WORLD’S", "NEWEST STAGE."]}
+            />
           </div>
-          <div>
-            <p className="hp-lead" data-rise>
-              A team built for the long game.
-            </p>
-            <p className="hp-body" data-rise>
+
+          <div className="cm-city-body">
+            <p data-rise>
               The Bay of Bengal at our back, a deep amateur golf base at our
               feet, and one of the country&apos;s most consistent pipelines of
               touring professionals in front of us. The Lions are the sporting
@@ -65,48 +70,75 @@ export default function ThePridePage() {
             </p>
             <Link href="/the-club" className="hp-btn hp-btn-text" data-rise>
               The story of the club
-              <span className="hp-arrow" aria-hidden>→</span>
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
             </Link>
           </div>
+
+          {/* Brochure p. 06 — "A team built for the long game." */}
+          <p className="cm-pull cm-city-pull" data-rise>
+            A team built for the long game.
+          </p>
         </div>
       </Section>
 
-      <Section surface="ink" size="tight" className="hp-sec-atmos">
-        <span className="hp-chapter-mark" aria-hidden />
-        <IndexLabel n="02" tone="dark">The season in numbers</IndexLabel>
-        <Figures items={NUMBERS.map((n) => ({ v: n.v, l: n.l }))} />
-      </Section>
+      {/* TRANSITION — full-width visual chapter.
+          The line is brand copy with no geographic claim, so the generic
+          coastal frame beneath it is never read as a named place. */}
+      <FullBleedStatement
+        line={["THE SPORTING", "EXPRESSION", "OF THAT CITY."]}
+        image="/assets/photo/pride-sea-green-pin.jpg"
+        imageAlt="A putting green and pin flag on high ground above the open sea"
+        imagePosition="52% 58%"
+      />
 
+      {/* 02 — HOME GROUND.
+          Typographic only — see the note at the top of this file. */}
       <Section surface="paper">
-        <div className="hp-media">
-          <div className="hp-media-figure" data-rise>
-            <Image
-              src="/assets/fac-main-web.jpg"
-              alt="TNGF Cosmo — the Lions&apos; home practice venue in Chennai"
-              fill
-              sizes="(max-width: 900px) 100vw, 620px"
-            />
-          </div>
-          <div>
-            <IndexLabel n="03">Home Ground</IndexLabel>
+        <div className="cm-track cm-place">
+          <IndexLabel n="02">Home Ground</IndexLabel>
+
+          <div className="cm-place-name">
             <SectionTitle lines={["TNGF COSMO,", "CHENNAI."]} />
-            <p className="hp-body hp-mt-sm" data-rise>
-              The franchise&apos;s home practice venue — where the season is
-              prepared before it travels.
-            </p>
           </div>
+
+          {/* Both rows are the franchise's own venue details, as used by
+              /contact and the site footer. */}
+          <dl className="cm-place-meta" data-rise>
+            <div>
+              <dt>Home Practice Venue</dt>
+              <dd>TNGF Cosmo</dd>
+            </div>
+            <div>
+              <dt>Location</dt>
+              <dd>Chennai · South India</dd>
+            </div>
+          </dl>
+
+          <p className="cm-place-note" data-rise>
+            The franchise&apos;s home practice venue — where the season is
+            prepared before it travels.
+          </p>
         </div>
       </Section>
 
-      <Section surface="ivory" size="tight">
-        <div className="hp-cta-row">
-          <div><SectionTitle lines={["ONE CITY.", "ONE PRIDE."]} /></div>
-          <div className="hp-cta-actions" data-rise>
+      {/* CLOSING */}
+      <Section surface="ink" size="tight" className="hp-sec-atmos">
+        <div className="cm-track cm-close">
+          <div className="cm-close-title">
+            <SectionTitle lines={["ONE CITY.", "ONE PRIDE."]} />
+          </div>
+          <div className="cm-close-actions" data-rise>
             <Link href="/players" className="hp-btn hp-btn-primary">
               MEET THE PLAYERS
-              <span className="hp-arrow" aria-hidden>→</span>
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
             </Link>
-            <Link href="/fixtures" className="hp-btn hp-btn-ghost">See the season</Link>
+            <Link href="/fixtures" className="hp-btn hp-btn-ghost hp-on-dark">
+              See the season
+            </Link>
           </div>
         </div>
       </Section>
