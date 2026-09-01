@@ -10,13 +10,7 @@ import { updateProfile } from "@/app/profile/actions";
 type Section = "membership" | "settings" | "saved" | "orders" | "rsvps" | "notifications";
 
 const MENU: { target: Section | "all"; label: string; icon: React.ElementType }[] = [
-  { target: "all", label: "Overview", icon: LayoutDashboard },
-  { target: "membership", label: "Membership", icon: Ticket },
-  { target: "orders", label: "Orders", icon: Package },
-  { target: "saved", label: "Saved Items", icon: Heart },
-  { target: "rsvps", label: "Fixture RSVPs", icon: CalendarCheck },
   { target: "settings", label: "Account Settings", icon: Settings },
-  { target: "notifications", label: "Notifications", icon: Bell },
 ];
 
 function initials(name: string): string {
@@ -32,7 +26,7 @@ export default function ProfileClient({
   saved?: boolean;
   error?: string;
 }) {
-  const [active, setActive] = useState<Section | "all">("all");
+  const [active, setActive] = useState<Section | "all">("settings");
   const visible = (sec: Section) =>
     active === "all" ? sec !== "saved" && sec !== "notifications" : active === sec;
 
@@ -116,7 +110,7 @@ export default function ProfileClient({
               )}
               {error && (
                 <div className="mb-4 p-3 rounded-[12px] font-manrope font-semibold text-[13.5px]" style={{ background: "rgba(196,32,42,0.10)", color: "#C4202A" }}>
-                  {error === "email-taken" ? "That email is already in use." : "Please check your details and try again."}
+                  {error === "email-taken" ? "That email is already in use." : error === "password-mismatch" ? "New password and confirmation must match." : "Please check your details and try again."}
                 </div>
               )}
 
@@ -132,6 +126,10 @@ export default function ProfileClient({
                 <div className="field">
                   <label>New Password</label>
                   <input type="password" name="password" minLength={8} placeholder="Leave blank to keep current" autoComplete="new-password" />
+                </div>
+                <div className="field">
+                  <label>Confirm New Password</label>
+                  <input type="password" name="confirmPassword" minLength={8} placeholder="Re-enter new password" autoComplete="new-password" />
                 </div>
                 <div className="field">
                   <label>Jersey Size</label>

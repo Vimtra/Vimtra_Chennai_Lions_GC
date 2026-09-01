@@ -41,23 +41,31 @@ export default function Footer() {
       <div className="ft-atmos" aria-hidden />
 
       <div className="hp-wrap ft-top">
-        <Link href="/" className="ft-brand">
-          <Image
-            src="/assets/logo-lion.png"
-            alt=""
-            width={56}
-            height={56}
-            className="ft-mark"
-          />
-          <span className="ft-word">
-            <span className="ft-word-1">VIMTRA CHENNAI LIONS</span>
-            <span className="ft-word-2">A franchise by Vimtra Ventures</span>
-          </span>
-        </Link>
-        <p className="ft-statement">
-          Chennai&rsquo;s franchise in the AM Green Indian Golf Premier
-          League. A team built for the long game.
-        </p>
+        <div className="ft-intro">
+          <p className="ft-kicker">AM Green IGPL · Season 2026</p>
+          <Link href="/" className="ft-brand">
+            <Image
+              src="/assets/logo-lion.png"
+              alt=""
+              width={56}
+              height={56}
+              className="ft-mark"
+            />
+            <span className="ft-word">
+              <span className="ft-word-1">VIMTRA CHENNAI LIONS</span>
+              <span className="ft-word-2">A franchise by Vimtra Ventures</span>
+            </span>
+          </Link>
+        </div>
+        <div className="ft-intro-copy">
+          <p className="ft-statement">
+            Chennai&rsquo;s franchise in the AM Green Indian Golf Premier
+            League. A team built for the long game.
+          </p>
+          <Link href="/contact" className="ft-talk">
+            Work with the Lions <ArrowUpRight aria-hidden />
+          </Link>
+        </div>
       </div>
 
       <div className="hp-wrap ft-grid">
@@ -66,7 +74,7 @@ export default function Footer() {
           <ul>
             {CLUB.map((l) => (
               <li key={l.href}>
-                <Link href={l.href}>{l.label}</Link>
+                <Link href={l.href}><span>{l.label}</span><ArrowUpRight aria-hidden /></Link>
               </li>
             ))}
           </ul>
@@ -77,7 +85,7 @@ export default function Footer() {
           <ul>
             {SEASON.map((l) => (
               <li key={l.href}>
-                <Link href={l.href}>{l.label}</Link>
+                <Link href={l.href}><span>{l.label}</span><ArrowUpRight aria-hidden /></Link>
               </li>
             ))}
           </ul>
@@ -88,14 +96,14 @@ export default function Footer() {
           <ul>
             {BUSINESS.map((l) => (
               <li key={l.href}>
-                <Link href={l.href}>{l.label}</Link>
+                <Link href={l.href}><span>{l.label}</span><ArrowUpRight aria-hidden /></Link>
               </li>
             ))}
           </ul>
         </nav>
 
         <div className="ft-col ft-contact">
-          <h2 className="ft-h">Contact</h2>
+          <h2 className="ft-h">Stay connected</h2>
           <ul>
             <li>
               <a href="mailto:info@vimtra.com">info@vimtra.com</a>

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Pencil, Trash2 } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { listProducts } from "@/lib/db";
 import { inr } from "@/lib/products";
 import AdminShell from "@/components/admin/AdminShell";
-import ProductForm from "@/components/admin/ProductForm";
-import { createProductAction, deleteProductAction } from "./actions";
+import ProductModalButton from "@/components/admin/ProductModalButton";
+import ConfirmDeleteButton from "@/components/admin/ConfirmDeleteButton";
+import { createProductAction, updateProductAction, deleteProductAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Products · Lions Admin",
@@ -28,7 +28,7 @@ export default async function AdminProductsPage() {
           <Link href="/admin/inventory" className="btn-ghost">
             Manage stock →
           </Link>
-          <Link href="#new" className="btn-dark">+ Add product</Link>
+          <ProductModalButton action={createProductAction} />
         </div>
       </div>
 
@@ -62,15 +62,8 @@ export default async function AdminProductsPage() {
                 <td className="font-manrope text-[12.5px] text-muted">{p.img ?? "— logo —"}</td>
                 <td>
                   <div className="flex items-center gap-2 justify-end">
-                    <Link href={`/admin/products/${p.id}/edit`} className="btn-ghost">
-                      <Pencil className="w-[13px] h-[13px]" /> Edit
-                    </Link>
-                    <form action={deleteProductAction}>
-                      <input type="hidden" name="id" value={p.id} />
-                      <button type="submit" className="btn-ghost btn-danger">
-                        <Trash2 className="w-[13px] h-[13px]" /> Delete
-                      </button>
-                    </form>
+                    <ProductModalButton product={p} action={updateProductAction} />
+                    <ConfirmDeleteButton action={deleteProductAction} id={p.id} label={p.name} />
                   </div>
                 </td>
               </tr>
@@ -79,12 +72,6 @@ export default async function AdminProductsPage() {
         </table>
       </div>
 
-      <div id="new" className="mt-12 scroll-mt-24">
-        <h2 className="font-sora font-extrabold text-[24px] tracking-[-0.02em] text-ink mb-5">Add a product</h2>
-        <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-7 max-w-[760px]">
-          <ProductForm action={createProductAction} submitLabel="Add product" />
-        </div>
-      </div>
     </AdminShell>
   );
 }
