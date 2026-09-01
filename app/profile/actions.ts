@@ -10,6 +10,7 @@ const schema = z.object({
   name: z.string().trim().min(2),
   email: z.string().email(),
   password: z.string().min(8).optional().or(z.literal("")),
+  confirmPassword: z.string().optional(),
 });
 
 export async function updateProfile(formData: FormData) {
@@ -18,8 +19,10 @@ export async function updateProfile(formData: FormData) {
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password") ?? "",
+    confirmPassword: formData.get("confirmPassword") ?? "",
   });
   if (!parsed.success) redirect("/profile?error=invalid");
+  if (parsed.data.password !== parsed.data.confirmPassword) redirect("/profile?error=password-mismatch");
 
   const email = parsed.data.email.trim().toLowerCase();
 

@@ -222,7 +222,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
                   aria-expanded={openMega === g.key}
                   aria-haspopup="true"
                 >
-                  {g.label}
+                  <span className="nv-link-label">{g.label}</span>
                   <ChevronDown className="nv-caret" aria-hidden />
                 </button>
               );
@@ -235,7 +235,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
                 onMouseEnter={closeMega}
                 onFocus={closeMega}
               >
-                {l.label}
+                <span className="nv-link-label">{l.label}</span>
               </Link>
             ))}
           </nav>

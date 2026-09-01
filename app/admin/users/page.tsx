@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Trash2, ShieldCheck, ShieldOff } from "lucide-react";
+import { ShieldCheck, ShieldOff } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import AdminShell from "@/components/admin/AdminShell";
+import ConfirmDeleteButton from "@/components/admin/ConfirmDeleteButton";
 import { setRoleAction, deleteUserAction } from "./actions";
 
 export const metadata: Metadata = {
@@ -69,12 +70,7 @@ export default async function AdminUsersPage() {
                               )}
                             </button>
                           </form>
-                          <form action={deleteUserAction}>
-                            <input type="hidden" name="id" value={u.id} />
-                            <button type="submit" className="btn-ghost btn-danger">
-                              <Trash2 className="w-[13px] h-[13px]" /> Delete
-                            </button>
-                          </form>
+                          <ConfirmDeleteButton action={deleteUserAction} id={u.id} label={u.name} />
                         </>
                       )}
                     </div>

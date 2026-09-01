@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { Product } from "@/lib/products";
 
@@ -5,14 +7,17 @@ export default function ProductForm({
   action,
   product,
   submitLabel,
+  onCancel,
 }: {
   action: (formData: FormData) => void | Promise<void>;
   product?: Product;
   submitLabel: string;
+  onCancel?: () => void;
 }) {
   return (
     <form action={action} className="grid gap-4">
       {product && <input type="hidden" name="id" value={product.id} />}
+      <input type="hidden" name="currentImg" value={product?.img ?? product?.images?.[0] ?? ""} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="field">
           <label>Name</label>
@@ -34,8 +39,9 @@ export default function ProductForm({
       <div className="field">
         <label>Image path (optional)</label>
         <input
-          name="img"
-          defaultValue={product?.img ?? ""}
+          name="image"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif"
           placeholder="/assets/prod-x.png — leave blank to use the team logo"
         />
       </div>
@@ -49,7 +55,7 @@ export default function ProductForm({
       </div>
       <div className="flex gap-3">
         <button type="submit" className="btn-dark press">{submitLabel}</button>
-        <Link href="/admin/products" className="btn-ghost">Cancel</Link>
+        {onCancel ? <button type="button" onClick={onCancel} className="btn-ghost">Cancel</button> : <Link href="/admin/products" className="btn-ghost">Cancel</Link>}
       </div>
     </form>
   );

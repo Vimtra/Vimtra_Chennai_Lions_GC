@@ -2868,32 +2868,47 @@ a:hover .hp-arrow {
 /* A gold rule that draws from the left — the only hover ornament
    in the header, so it stays a signal rather than decoration. */
 .nv-link::after {
+  content: none;
+}
+.nv-link-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.nv-link-label::after {
   content: "";
   position: absolute;
+  right: 0;
+  bottom: 5px;
   left: 0;
-  bottom: 26px;
-  width: 100%;
-  height: 1px;
+  height: 2px;
   background: var(--v-gold);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform var(--mo-slow) var(--ease);
+  transition: transform var(--mo-mid) var(--ease);
 }
 .nv-link:hover,
 .nv-link:focus-visible,
 .nv-link.is-open,
 .nv-link.is-active { color: var(--v-ivory); }
-.nv-link:hover::after,
-.nv-link:focus-visible::after,
-.nv-link.is-open::after,
-.nv-link.is-active::after { transform: scaleX(1); }
+.nv-link:hover .nv-link-label::after,
+.nv-link:focus-visible .nv-link-label::after,
+.nv-link.is-open .nv-link-label::after,
+.nv-link.is-active .nv-link-label::after { transform: scaleX(1); }
 .nv-caret {
-  width: 13px;
-  height: 13px;
-  opacity: 0.5;
-  transition: transform var(--mo-mid) var(--ease), opacity var(--mo-mid) var(--ease);
+  flex: none;
+  width: 15px;
+  height: 15px;
+  margin-top: 1px;
+  stroke-width: 2.4;
+  opacity: 0.72;
+  transition: transform var(--mo-mid) var(--ease), opacity var(--mo-mid) var(--ease), color var(--mo-mid) var(--ease);
 }
-.nv-link.is-open .nv-caret { transform: rotate(180deg); opacity: 1; }
+.nv-link:hover .nv-caret,
+.nv-link:focus-visible .nv-caret,
+.nv-link.is-open .nv-caret { color: var(--v-gold-lit); opacity: 1; }
+.nv-link.is-open .nv-caret { transform: rotate(180deg); }
 
 /* ---- Actions ------------------------------------------------ */
 .nv-actions { display: flex; align-items: center; gap: var(--sp-2); }
@@ -4032,6 +4047,180 @@ a:hover .hp-arrow {
   transition: color 0.2s var(--hp-e);
 }
 .ft-legal a:hover { color: var(--hp-ivory); }
+
+/* ============================================================
+   NAVIGATION + FOOTER REFINEMENT
+   A compact, glass-like navigation rail paired with a clearer footer
+   hierarchy. These rules deliberately use the current brand tokens so both
+   components share the same grid, contrast and responsive rhythm.
+============================================================ */
+
+/* Header: the actions become a deliberate utility cluster instead of three
+   loose icons; the central nav keeps breathing room at laptop widths. */
+.nv {
+  background: color-mix(in srgb, var(--v-ink) 92%, transparent);
+  border-bottom-color: rgba(245, 239, 228, 0.09);
+}
+.nv-over { border-bottom-color: transparent; }
+.nv-bar { gap: clamp(16px, 3vw, 48px); }
+@media (min-width: 1024px) {
+  .nv-links { gap: clamp(18px, 2.3vw, 42px); margin-left: auto; }
+  .nv-actions {
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid rgba(245, 239, 228, 0.12);
+    border-radius: 999px;
+    background: rgba(245, 239, 228, 0.05);
+  }
+  .nv-icon { width: 38px; height: 38px; border-radius: 50%; }
+  .nv-icon:hover, .nv-icon:focus-visible {
+    background: var(--v-gold);
+    color: var(--v-ink);
+    outline: none;
+  }
+  .nv-badge { top: -2px; right: -2px; }
+}
+@media (max-width: 1023px) {
+  .nv-actions { gap: 0; }
+  .nv-icon { width: 42px; height: 42px; }
+  .nv-brand { min-width: 0; }
+  .nv-word-1 { overflow: hidden; text-overflow: ellipsis; max-width: 205px; }
+}
+
+/* Footer: a branded closing panel rather than a plain set of columns. */
+.ft {
+  background:
+    linear-gradient(135deg, rgba(189, 34, 39, 0.12), transparent 34%),
+    var(--v-ink);
+  color: var(--v-ivory);
+  padding-top: clamp(56px, 8vw, 112px);
+  border-top-color: rgba(184, 144, 75, 0.35);
+}
+.ft-top {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-7);
+  padding-bottom: clamp(36px, 5vw, 64px);
+  border-bottom-color: rgba(245, 239, 228, 0.14);
+}
+.ft-intro { display: grid; gap: var(--sp-4); }
+.ft-kicker {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-micro);
+  font-weight: 700;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+}
+.ft-brand { width: max-content; max-width: 100%; gap: var(--sp-4); }
+.ft-mark { width: 58px; height: 58px; }
+.ft-word-1 { color: var(--v-ivory); font-size: clamp(13px, 1.3vw, 17px); }
+.ft-word-2 { color: var(--v-gold-lit); }
+.ft-intro-copy { display: grid; gap: var(--sp-5); align-content: end; }
+.ft-statement {
+  max-width: 36ch;
+  color: rgba(245, 239, 228, 0.84);
+  font-size: clamp(19px, 2vw, 26px);
+}
+.ft-talk {
+  display: inline-flex;
+  width: max-content;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 44px;
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--v-gold);
+  color: var(--v-ivory);
+  font-family: var(--font-sora), sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-decoration: none;
+  transition: color var(--mo-mid) var(--ease), gap var(--mo-mid) var(--ease);
+}
+.ft-talk svg { width: 16px; height: 16px; }
+.ft-talk:hover { gap: var(--sp-3); color: var(--v-gold-lit); }
+@media (min-width: 900px) {
+  .ft-top { grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: var(--sp-10); }
+  .ft-intro-copy { justify-items: start; }
+}
+.ft-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-7) var(--sp-5);
+  padding-top: var(--sp-7);
+  padding-bottom: var(--sp-7);
+}
+.ft-h { margin-bottom: var(--sp-3); color: var(--v-gold-lit); }
+.ft-col a {
+  justify-content: space-between;
+  gap: var(--sp-3);
+  width: 100%;
+  color: var(--v-on-ink);
+  font-size: 14.5px;
+}
+.ft-col a svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition: opacity var(--mo-fast) var(--ease), transform var(--mo-mid) var(--ease);
+}
+.ft-col a:hover { color: var(--v-ivory); transform: none; }
+.ft-col a:hover svg { opacity: .9; transform: none; }
+.ft-contact {
+  grid-column: 1 / -1;
+  padding: var(--sp-5);
+  border: 1px solid rgba(245, 239, 228, .14);
+  background: rgba(245, 239, 228, .045);
+}
+.ft-contact ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 0 var(--sp-5); }
+.ft-contact a { width: auto; justify-content: flex-start; }
+.ft-contact a svg { display: none; }
+.ft-place { color: var(--v-on-ink-faint); }
+.ft-social { color: var(--v-ivory); }
+.ft-bottom {
+  padding-top: var(--sp-5);
+  padding-bottom: var(--sp-6);
+  border-top-color: rgba(245, 239, 228, .14);
+  color: var(--v-on-ink-faint);
+}
+.ft-legal a { color: var(--v-on-ink); }
+@media (min-width: 900px) {
+  .ft-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(290px, 1.2fr); gap: var(--sp-8); }
+  .ft-contact { grid-column: auto; padding: 0 0 0 var(--sp-7); border-width: 0 0 0 1px; background: none; }
+  .ft-contact ul { display: block; }
+}
+@media (max-width: 520px) {
+  .ft-word-1 { letter-spacing: .09em; font-size: 12px; }
+  .ft-word-2 { letter-spacing: .16em; font-size: 8px; }
+  .ft-mark { width: 48px; height: 48px; }
+  .ft-bottom { align-items: flex-start; flex-direction: column; }
+  .ft-legal { margin-left: -8px; }
+}
+
+/* Keep every footer row on one deliberate content axis. The footer used the
+   global wrapper's full-width behaviour on very wide displays, which made
+   the columns feel detached from each other. */
+.ft > .hp-wrap {
+  width: min(calc(100% - 40px), 1440px);
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+}
+@media (min-width: 768px) {
+  .ft > .hp-wrap { width: min(calc(100% - 80px), 1440px); }
+}
+@media (min-width: 900px) {
+  .ft-grid {
+    grid-template-columns: .9fr .9fr .9fr 1.25fr;
+    gap: clamp(40px, 5vw, 88px);
+    padding-top: clamp(48px, 5vw, 72px);
+    padding-bottom: clamp(48px, 5vw, 72px);
+  }
+  .ft-contact { padding-left: clamp(32px, 4vw, 64px); }
+}
 
 /* Skip link must also clear the touch minimum when focused. */
 .gs-skip-link { min-height: 44px; display: inline-flex; align-items: center; }
