@@ -1729,20 +1729,7 @@ label {
   --hp-e: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-/* Shared shell ------------------------------------------------ */
-.hp-wrap {
-  width: 100%;
-  max-width: 1360px;
-  margin: 0 auto;
-  padding-left: 22px;
-  padding-right: 22px;
-}
-@media (min-width: 768px) {
-  .hp-wrap {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-}
+/* Shared shell — see the single .hp-wrap container below. */
 
 /* Masked line of display type. GSAP animates the inner span; if JS never
    runs the span simply sits at rest, so content is never hidden by CSS. */
@@ -1829,19 +1816,23 @@ a:hover .hp-arrow {
   font-family: var(--font-fraunces), Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(21px, 2.5vw, 30px);
-  line-height: 1.4;
+  font-size: clamp(20px, 2.2vw, 27px);
+  line-height: 1.42;
+  letter-spacing: -0.01em;
   color: var(--hp-ink);
-  margin: 0 0 20px;
+  margin: 0 0 var(--sp-5);
+  max-width: 40ch;
 }
 .hp-body {
   font-family: var(--font-manrope), sans-serif;
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: clamp(15.5px, 1.15vw, 17px);
+  line-height: 1.72;
   color: var(--hp-muted);
-  margin: 0 0 26px;
-  max-width: 60ch;
+  margin: 0 0 var(--sp-5);
+  /* A measure, not a container width — 60ch reads long at 17px. */
+  max-width: 54ch;
 }
+.hp-body:last-child { margin-bottom: 0; }
 .hp-accent-serif {
   font-family: var(--font-fraunces), Georgia, serif;
   font-style: italic;
@@ -2124,16 +2115,26 @@ a:hover .hp-arrow {
 /* Editorial split used by most interior pages. */
 .hp-split {
   display: grid;
-  gap: 40px;
+  gap: var(--sp-7);
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hp-split {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+  .hp-split > * { grid-column: span 8; }
 }
 @media (min-width: 1024px) {
+  /* Same geometry as .hp-grid: a 5-column statement, one column of air,
+     a 6-column evidence block. Expressed on the 12-column track so a
+     split section lines up with a full-width one above or below it. */
   .hp-split {
-    /* The statement column is narrower than the evidence column: the
-       headline is an anchor, the list is the substance. */
-    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
-    gap: 96px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
     align-items: start;
   }
+  .hp-split > :first-child { grid-column: span 5; }
+  .hp-split > :last-child { grid-column: 7 / span 6; }
 }
 
 /* Editorial rail.
@@ -2212,6 +2213,140 @@ a:hover .hp-arrow {
 }
 
 /* Figures can also sit on a light surface. */
+/* ---- Kit chapter -------------------------------------------
+   A third shape for the Club module: the title runs the full frame
+   instead of sitting in a 5-column rail, then the palette and the kit
+   list share the width beneath it as two ruled fields. Same 12-column
+   track — only the spans differ, so nothing drifts off the grid. */
+.hp-kit { display: grid; gap: var(--sp-7); }
+.hp-kit-head .hp-body { max-width: 46ch; }
+@media (min-width: 1024px) {
+  .hp-kit {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    row-gap: var(--sp-9);
+  }
+  .hp-kit-head { grid-column: span 9; }
+  .hp-kit > :last-child {
+    grid-column: span 12;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+  .hp-kit > :last-child > .hp-swatches { grid-column: span 5; }
+  .hp-kit > :last-child > .hp-franchises { grid-column: 7 / span 6; margin-top: 0; }
+}
+
+/* ---- Atmospheric ink band ----------------------------------
+   Opt-in (not applied to every ink section). Crimson and gold at low
+   alpha over deep ink so the statistics band reads as a lit chapter
+   rather than a flat colour swap. Grain kills gradient banding. */
+.hp-sec-atmos { position: relative; isolation: isolate; overflow: hidden; }
+.hp-sec-atmos::before {
+  content: "";
+  position: absolute;
+  inset: -30% -12%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 54% at 12% 18%, rgba(189, 34, 39, 0.3), transparent 66%),
+    radial-gradient(38% 48% at 90% 86%, rgba(184, 144, 75, 0.2), transparent 68%);
+  filter: blur(34px);
+  animation: hp-atmos-drift 42s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate;
+}
+@keyframes hp-atmos-drift {
+  to { transform: translate3d(2%, -2.5%, 0) scale(1.07); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hp-sec-atmos::before { animation: none; }
+}
+.hp-sec-atmos > .hp-wrap { position: relative; z-index: 1; }
+
+/* ---- Chapter mark -------------------------------------------
+   A hairline that resolves into the mark's chevron, set where one
+   surface hands over to the next. Replaces a hard colour edge with a
+   deliberate transition — one small brand device, not a divider on
+   every section. */
+.hp-chapter-mark {
+  position: relative;
+  display: block;
+  height: 1px;
+  margin-bottom: var(--sp-8);
+  background: var(--hp-hair);
+}
+.hp-sec-ink .hp-chapter-mark { background: var(--hp-hair-dark); }
+.hp-chapter-mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 46px;
+  height: 9px;
+  background: var(--hp-gold);
+  clip-path: polygon(0 0, 11% 0, 50% 62%, 89% 0, 100% 0, 50% 100%);
+}
+
+/* ---- Statistics band ---------------------------------------
+   The base rules for this were missing, so the numbers rendered as one
+   run of 16px body text. Set as an editorial band, not cards: the
+   numerals ARE the graphic, separated by hairlines on the same 12/8/4
+   track as everything else. */
+.hp-figures-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sp-6);
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--hp-hair-dark);
+}
+@media (min-width: 768px) {
+  .hp-figures-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.hp-figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0 var(--sp-7);
+  border-bottom: 1px solid var(--hp-hair-dark);
+  min-width: 0;
+}
+/* Vertical hairlines only between columns, so the band reads as one
+   ruled field rather than four boxes. */
+@media (min-width: 768px) {
+  .hp-figure + .hp-figure {
+    padding-left: var(--sp-6);
+    border-left: 1px solid var(--hp-hair-dark);
+  }
+}
+.hp-figure-n {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(40px, 5.2vw, 82px);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--hp-gold-lt);
+}
+.hp-figure-l { margin: 0; }
+.hp-figure-label {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--hp-muted-dark);
+}
+.hp-figure-sub {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13px;
+  color: var(--hp-muted-dark);
+}
+
 .hp-figures-grid.is-light {
   border-top-color: var(--hp-hair);
 }
@@ -2297,28 +2432,42 @@ a:hover .hp-arrow {
 /* --- Editorial media row (image + text chapters) ----------- */
 .hp-media {
   display: grid;
-  gap: 40px;
+  gap: var(--sp-7);
   align-items: center;
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
+  /* Same 12-column track as .hp-split — image 6 / air 1 / prose 5 — so a
+     media section lines up with the ruled sections above and below it. */
   .hp-media {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 72px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
   }
-  .hp-media.is-flipped > :first-child {
-    order: 2;
-  }
+  .hp-media > :first-child { grid-column: span 6; }
+  .hp-media > :last-child { grid-column: 8 / span 5; }
+  .hp-media.is-flipped > :first-child { grid-column: 7 / span 6; order: 2; }
+  .hp-media.is-flipped > :last-child { grid-column: 1 / span 5; order: 1; }
 }
 .hp-media-figure {
   position: relative;
-  aspect-ratio: 4 / 3;
+  /* A squarer frame than 4:3 gives the photograph presence beside a
+     column of type; the square source crops cleanly to it. */
+  aspect-ratio: 5 / 4;
   overflow: hidden;
-  border-radius: 12px;
+  /* Square corners: a rounded photo reads as a UI card, not editorial. */
+  border-radius: 0;
   background: var(--hp-ink);
+}
+@media (min-width: 1024px) {
+  .hp-media-figure { aspect-ratio: 4 / 5; }
 }
 .hp-media-figure img {
   object-fit: cover;
+  /* Hold the clubhouse and the horizon; drop the empty foreground turf. */
+  object-position: 54% 38%;
+  transform: scale(1.02);
+  transition: transform 1.4s var(--ease, cubic-bezier(0.16, 1, 0.3, 1));
 }
+.hp-media-figure:hover img { transform: scale(1); }
 
 /* --- Simple editorial card grid (news, gallery, shop) ------ */
 .hp-grid {
@@ -2443,7 +2592,7 @@ a:hover .hp-arrow {
   display: grid; grid-template-columns: 40px minmax(0,1fr) auto; gap: 18px;
   align-items: center; padding: 16px 0; border-bottom: 1px solid var(--hp-hair);
 }
-.hp-swatch { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--hp-hair); display: block; }
+.hp-swatch { width: 40px; height: 40px; border-radius: 0; border: 1px solid var(--hp-hair); display: block; }
 .hp-swatch-label {
   font-family: var(--font-sora), sans-serif; font-weight: 700; font-size: 14.5px;
   color: var(--hp-ink); letter-spacing: -0.01em;
@@ -2648,6 +2797,118 @@ a:hover .hp-arrow {
 }
 @media (min-width: 1600px) {
   .hp-wrap { padding-left: 80px; padding-right: 80px; }
+}
+
+/* Vertical stack steps. Sections use these instead of inline
+   `style={{ marginTop: 26 }}` so spacing comes from one ladder. */
+.hp-mt-sm { margin-top: var(--sp-5); }   /* 24 */
+.hp-mt-md { margin-top: var(--sp-6); }   /* 32 */
+.hp-mt-lg { margin-top: var(--sp-7); }   /* 48 */
+
+/* ---- Editorial column grid ---------------------------------
+   4 columns on mobile, 8 on tablet, 12 on desktop, sharing the
+   .hp-wrap gutters. Every Club-module split is expressed as a span of
+   these columns rather than an ad-hoc fr ratio, so headings, body copy,
+   images and CTAs land on the same vertical lines down the whole page. */
+.hp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--sp-5);
+  row-gap: var(--sp-7);
+}
+@media (min-width: 768px) {
+  .hp-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+}
+@media (min-width: 1024px) {
+  .hp-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    row-gap: var(--sp-8);
+  }
+}
+/* Spans. Mobile is always full-bleed within the container (4 of 4);
+   tablet is full width (8 of 8) so columns stack deliberately rather
+   than being squeezed; desktop takes the real 12-column split. */
+.col-full { grid-column: span 4; }
+.col-a,
+.col-b { grid-column: span 4; }
+@media (min-width: 768px) {
+  .col-full { grid-column: span 8; }
+  .col-a,
+  .col-b { grid-column: span 8; }
+}
+@media (min-width: 1024px) {
+  .col-full { grid-column: span 12; }
+  .col-a { grid-column: span 5; }          /* statement / rail        */
+  .col-b { grid-column: 7 / span 6; }      /* evidence, 1 col of air  */
+}
+
+/* ---- Player feature ----------------------------------------
+   Portrait and prose on the same 12/8/4 track as every other Club-module
+   section, so the portrait edge, the player name and the stat row all
+   land on the page's vertical lines. `is-reverse` swaps which side the
+   portrait takes without changing the column math. */
+.pf-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--sp-5);
+  row-gap: var(--sp-7);
+}
+.pf-grid > * { grid-column: span 4; min-width: 0; }
+@media (min-width: 768px) {
+  .pf-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--sp-6); }
+  .pf-grid > * { grid-column: span 8; }
+}
+@media (min-width: 1024px) {
+  .pf-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    align-items: center;
+  }
+  /* portrait 5 | air 1 | prose 6 */
+  .pf-grid > *:first-child { grid-column: span 5; }
+  .pf-grid > *:last-child { grid-column: 7 / span 6; }
+  /* reversed: prose 6 | air 1 | portrait 5 */
+  .pf-grid.is-reverse > *:first-child { grid-column: 1 / span 6; }
+  .pf-grid.is-reverse > *:last-child { grid-column: 8 / span 5; }
+}
+
+/* Stats sit flush under the portrait and share its width exactly. */
+.pf-stats {
+  margin-top: var(--sp-4);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+
+.pf-name {
+  margin: var(--sp-3) 0 var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(34px, 4.4vw, 54px);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--hp-ink);
+}
+.pf-para {
+  margin-top: var(--sp-3);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #3a322d;
+}
+.pf-para-first { margin-top: var(--sp-5); }
+.pf-sides {
+  margin-top: var(--sp-6);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+}
+@media (min-width: 640px) {
+  .pf-sides { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* ---- Brand device: the chevron from the mark ---------------- */
@@ -3667,28 +3928,83 @@ a:hover .hp-arrow {
 .btn-ghost-dark:hover { background: var(--hp-ivory); color: var(--hp-ink); border-color: var(--hp-ivory); }
 
 /* ── 01 Statement ─────────────────────────────────────────── */
-.statement-h {
+/* ── 01 Brand statement — "CHENNAI'S ROAR" ─────────────────
+   One dominant element. The headline is the whole chapter; the
+   atmosphere carries it and the supporting column resolves the frame.
+   Warm ivory rather than ink, deliberately: the hero above is a dark
+   photograph, so a third dark band would flatten the page rhythm. The
+   Aurora is crimson and gold on ivory — brand only, no neon. */
+.sec-roar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--hp-ivory);
+  color: var(--hp-ink);
+  padding: 76px 0 84px;
+}
+@media (min-width: 768px) { .sec-roar { padding: 104px 0 112px; } }
+@media (min-width: 1280px) { .sec-roar { padding: 124px 0 132px; } }
+
+/* Aurora: two slow brand blooms. Low alpha — depth you feel, not a
+   gradient you notice. */
+.roar-atmos {
+  position: absolute; inset: -20% -10%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(46% 52% at 14% 26%, rgba(189, 34, 39, 0.16), transparent 66%),
+    radial-gradient(40% 46% at 88% 78%, rgba(184, 144, 75, 0.2), transparent 68%),
+    radial-gradient(34% 40% at 62% 8%, rgba(189, 34, 39, 0.08), transparent 70%);
+  filter: blur(28px);
+  animation: roar-drift 38s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate;
+}
+@keyframes roar-drift {
+  to { transform: translate3d(2.5%, -2%, 0) scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .roar-atmos { animation: none; }
+}
+.sec-roar .v-grain { z-index: -1; opacity: 0.028; }
+
+.roar-grid { position: relative; z-index: 1; }
+.roar-rubric { margin-bottom: 28px; }
+
+.roar-h {
   margin: 0;
-  font-family: var(--font-sora), sans-serif; font-weight: 800;
-  font-size: clamp(40px, 7.4vw, 122px); line-height: 0.9; letter-spacing: -0.046em;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  /* Genuinely giant: the single dominant element on the viewport. */
+  /* 52px floor rather than 56: at 375 the longer line ("CHENNAI'S")
+     measures ~288px inside a 335px column, so fallback-font metrics
+     cannot push it into the mask. */
+  font-size: clamp(52px, 12.4vw, 200px);
+  line-height: 0.84;
+  letter-spacing: -0.052em;
   color: var(--hp-ink);
 }
-/* The tail sits against the headline's last line rather than floating in
-   the space beneath it — the offset is the composition, not the gap. */
-.statement-tail { margin-top: 28px; max-width: 54ch; }
+/* The second line steps in, echoing the mark's converging V — the same
+   device the hero uses, so the two chapters read as one system. */
+.roar-h2 { margin-left: 0; }
+@media (min-width: 900px) { .roar-h2 { margin-left: 9%; } }
+
+.roar-tail { margin-top: 34px; max-width: 54ch; }
 @media (min-width: 900px) {
-  .statement-tail {
-    margin-top: -4px;
+  /* Sits against the headline's last line and runs to the frame edge:
+     the offset is the composition, not a gap. */
+  .roar-tail {
+    margin-top: -2px;
     margin-left: auto;
-    max-width: 44ch;
-    padding-left: 8%;
+    max-width: 46ch;
+    padding-left: 9%;
   }
 }
-.statement-body {
-  margin: 0 0 22px;
-  font-family: var(--font-manrope), sans-serif; font-size: 16px; line-height: 1.72;
+.roar-body,
+.chapter-body {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(15.5px, 1.25vw, 17.5px);
+  line-height: 1.72;
   color: var(--hp-muted);
 }
+.roar-link { margin-top: 26px; }
 
 /* ── 02 Club ──────────────────────────────────────────────── */
 .club-grid { display: grid; gap: 44px; align-items: center; }
@@ -3914,7 +4230,7 @@ a:hover .hp-arrow {
   border-radius: 3px; background: var(--hp-ink-2); will-change: clip-path;
 }
 .shop-img { object-fit: cover; }
-.shop-type .statement-body { max-width: 42ch; }
+.shop-type .chapter-body { max-width: 42ch; }
 
 /* ── 07 Closing ───────────────────────────────────────────── */
 .sec-close {
@@ -4202,16 +4518,9 @@ a:hover .hp-arrow {
 /* Keep every footer row on one deliberate content axis. The footer used the
    global wrapper's full-width behaviour on very wide displays, which made
    the columns feel detached from each other. */
-.ft > .hp-wrap {
-  width: min(calc(100% - 40px), 1440px);
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 0;
-  padding-left: 0;
-}
-@media (min-width: 768px) {
-  .ft > .hp-wrap { width: min(calc(100% - 80px), 1440px); }
-}
+/* The footer uses the SAME .hp-wrap container as the header and every
+   page section — no local width/padding override, so the brand mark,
+   nav columns and legal row share the site's left edge. */
 @media (min-width: 900px) {
   .ft-grid {
     grid-template-columns: .9fr .9fr .9fr 1.25fr;

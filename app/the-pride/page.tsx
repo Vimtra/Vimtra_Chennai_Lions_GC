@@ -47,9 +47,9 @@ export default function ThePridePage() {
       />
 
       <Section surface="ivory">
-        <IndexLabel n="01">The City</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="01">The City</IndexLabel>
             <SectionTitle lines={["CHENNAI’S ROAR", "ON THE WORLD’S", "NEWEST STAGE."]} />
           </div>
           <div>
@@ -71,7 +71,8 @@ export default function ThePridePage() {
         </div>
       </Section>
 
-      <Section surface="ink" size="tight">
+      <Section surface="ink" size="tight" className="hp-sec-atmos">
+        <span className="hp-chapter-mark" aria-hidden />
         <IndexLabel n="02" tone="dark">The season in numbers</IndexLabel>
         <Figures items={NUMBERS.map((n) => ({ v: n.v, l: n.l }))} />
       </Section>
@@ -89,7 +90,7 @@ export default function ThePridePage() {
           <div>
             <IndexLabel n="03">Home Ground</IndexLabel>
             <SectionTitle lines={["TNGF COSMO,", "CHENNAI."]} />
-            <p className="hp-body" data-rise style={{ marginTop: 24 }}>
+            <p className="hp-body hp-mt-sm" data-rise>
               The franchise&apos;s home practice venue — where the season is
               prepared before it travels.
             </p>

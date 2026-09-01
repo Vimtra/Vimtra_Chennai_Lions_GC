@@ -149,9 +149,9 @@ export default function TheClubPage() {
 
       {/* 01 — IDENTITY */}
       <Section surface="ivory">
-        <IndexLabel n="01">Identity</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="01">Identity</IndexLabel>
             <SectionTitle lines={["A FRANCHISE", "BUILT FOR THE", "LONG GAME."]} />
           </div>
           <div>
@@ -172,7 +172,8 @@ export default function TheClubPage() {
       </Section>
 
       {/* 02 — BY THE NUMBERS */}
-      <Section surface="ink" size="tight">
+      <Section surface="ink" size="tight" className="hp-sec-atmos">
+        <span className="hp-chapter-mark" aria-hidden />
         <IndexLabel n="02" tone="dark">
           The franchise in numbers
         </IndexLabel>
@@ -181,9 +182,9 @@ export default function TheClubPage() {
 
       {/* 03 — HOW THE TEAM WAS BUILT */}
       <Section surface="ivory">
-        <IndexLabel n="03">How the team was built</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="03">How the team was built</IndexLabel>
             <SectionTitle lines={["FOUR NAMES.", "ONE TEAM", "SHEET."]} />
           </div>
           <NumberedList items={CODE.map((c) => ({ t: c.t, d: c.d }))} />
@@ -192,11 +193,11 @@ export default function TheClubPage() {
 
       {/* 04 — THE KIT */}
       <Section surface="paper">
-        <IndexLabel n="04">The Kit · Season 2026</IndexLabel>
-        <div className="hp-split">
-          <div>
+        <div className="hp-kit">
+          <div className="hp-kit-head">
+            <IndexLabel n="04">The Kit · Season 2026</IndexLabel>
             <SectionTitle lines={["A WHITE-TO-", "COURT-YELLOW", "GRADIENT."]} />
-            <p className="hp-body" data-rise style={{ marginTop: 26 }}>
+            <p className="hp-body hp-mt-sm" data-rise>
               Designed to travel from Chennai heat to floodlit international
               venues without losing the team&apos;s visual identity.
             </p>
@@ -215,7 +216,7 @@ export default function TheClubPage() {
                 </li>
               ))}
             </ul>
-            <ul className="hp-franchises" data-rise style={{ marginTop: 40 }}>
+            <ul className="hp-franchises hp-mt-md" data-rise>
               {KIT.map((k) => (
                 <li key={k.name}>
                   <div className="hp-franchise">
@@ -234,11 +235,11 @@ export default function TheClubPage() {
 
       {/* 05 — LEADERSHIP */}
       <Section surface="ivory">
-        <IndexLabel n="05">Leadership · Vimtra Ventures</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="05">Leadership · Vimtra Ventures</IndexLabel>
             <SectionTitle lines={["THE BRAIN", "BEHIND", "THE TEAM."]} />
-            <p className="hp-body" data-rise style={{ marginTop: 26 }}>
+            <p className="hp-body hp-mt-sm" data-rise>
               Vimtra Ventures is a San Francisco &amp; Chennai-based PE, VC,
               and investment firm — founded 1995, operating as principal
               across six verticals.

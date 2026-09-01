@@ -100,8 +100,8 @@ export default function Hero() {
             Chennai&rsquo;s franchise in the AM Green Indian Golf Premier
             League. A team built for the long game.
           </p>
-          <Link href="/the-club" className="hero-cta" data-tail>
-            EXPLORE THE CLUB
+          <Link href="/fixtures" className="hero-cta" data-tail>
+            EXPLORE THE SEASON
             <span className="hp-arrow" aria-hidden>
               →
             </span>

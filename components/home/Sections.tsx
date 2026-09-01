@@ -55,25 +55,37 @@ function useSectionMotion(withImage = false) {
 export function Statement() {
   const root = useSectionMotion();
   return (
-    <section ref={root} className="sec sec-ivory" aria-labelledby="st-h">
-      <div className="hp-wrap">
-        <p className="rubric" data-rise>
+    /* Brand statement chapter.
+       One dominant element — the headline — carried by atmosphere rather
+       than by any container. "CHENNAI'S ROAR" is the franchise's own line
+       (it also heads /the-club and /the-pride); the supporting paragraph
+       is the verified Vimtra Ventures ownership fact. Nothing is invented,
+       and nothing here is a card. */
+    <section ref={root} className="sec sec-roar" aria-labelledby="st-h">
+      <div className="roar-atmos" aria-hidden />
+      <div className="v-grain" aria-hidden />
+
+      <div className="hp-wrap roar-grid">
+        <p className="rubric roar-rubric" data-rise>
           <span>01</span> The Franchise
         </p>
-        <h2 id="st-h" className="statement-h">
-          <span className="mq-line" data-line><span>A TEAM BUILT</span></span>
-          <span className="mq-line" data-line><span>FOR THE</span></span>
-          <span className="mq-line" data-line><span>LONG GAME.</span></span>
+
+        <h2 id="st-h" className="roar-h">
+          <span className="mq-line" data-line><span>CHENNAI&rsquo;S</span></span>
+          <span className="mq-line roar-h2" data-line><span>ROAR.</span></span>
         </h2>
-        <div className="statement-tail">
-          <p className="statement-body" data-rise>
+
+        {/* The supporting column sits against the headline's last line and
+            runs to the frame edge — the offset is the composition. */}
+        <div className="roar-tail">
+          <p className="roar-body" data-rise>
             Chennai&rsquo;s franchise in the AM Green Indian Golf Premier
             League — owned outright by Vimtra Ventures, a San Francisco &amp;
             Chennai investment firm founded in 1995. The commitment is not to
             a single season. It is to the decade of Indian franchise golf that
             begins now.
           </p>
-          <Link href="/the-club" className="link-arrow" data-rise>
+          <Link href="/the-club" className="link-arrow roar-link" data-rise>
             The story of the club
             <span className="hp-arrow" aria-hidden>→</span>
           </Link>
@@ -83,7 +95,6 @@ export function Statement() {
   );
 }
 
-/* ── 02 · THE CLUB ───────────────────────────────────────── */
 export function Club() {
   const root = useSectionMotion(true);
   return (
@@ -376,7 +387,7 @@ export function Shop() {
             <span className="mq-line" data-line><span>WEAR</span></span>
             <span className="mq-line" data-line><span>THE PRIDE.</span></span>
           </h2>
-          <p className="statement-body" data-rise>
+          <p className="chapter-body" data-rise>
             Match-day kit, performance apparel and tour-tested accessories —
             fan-priced, shipped across India.
           </p>

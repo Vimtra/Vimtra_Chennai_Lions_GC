@@ -110,7 +110,7 @@ export default function GolfDevelopmentPage() {
           <div className="hp-rail">
             <IndexLabel n="02" tone="dark">Signature Thesis</IndexLabel>
             <SectionTitle lines={["GOLF-LED HNI", "COMMUNITIES."]} />
-            <p className="hp-body" data-rise style={{ marginTop: 26 }}>
+            <p className="hp-body hp-mt-sm" data-rise>
               Premium golf facilities integrated with luxury residential
               communities, lifestyle amenities, and investment opportunities —
               an ecosystem connecting sport, real estate, and long-term value.

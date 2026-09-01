@@ -155,9 +155,9 @@ export default function VimtraVenturesPage() {
 
       {/* 01 — THE FIRM */}
       <Section surface="ivory">
-        <IndexLabel n="01">The Firm</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="01">The Firm</IndexLabel>
             <SectionTitle lines={["A FIRM BUILT", "TO CREATE", "IMPACT."]} />
           </div>
           <div>
@@ -192,11 +192,11 @@ export default function VimtraVenturesPage() {
 
       {/* 03 — SIX VERTICALS */}
       <Section surface="ivory">
-        <IndexLabel n="03">Six Verticals</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="03">Six Verticals</IndexLabel>
             <SectionTitle lines={["ONE FIRM,", "SIX", "VERTICALS."]} />
-            <p className="hp-body" data-rise style={{ marginTop: 26 }}>
+            <p className="hp-body hp-mt-sm" data-rise>
               Every area the firm operates in, on a single canvas — as
               principal, not intermediary.
             </p>
@@ -235,9 +235,9 @@ export default function VimtraVenturesPage() {
 
       {/* 05 — BOARD + ADVISORY */}
       <Section surface="ivory">
-        <IndexLabel n="05">Governance</IndexLabel>
         <div className="hp-split">
-          <div>
+          <div className="hp-rail">
+            <IndexLabel n="05">Governance</IndexLabel>
             <SectionTitle lines={["BOARD &", "ADVISORY."]} />
           </div>
           <div>
@@ -246,7 +246,7 @@ export default function VimtraVenturesPage() {
               <h3 className="hp-person-name">{BOARD_MEMBER.name}</h3>
               <p className="hp-person-text">{BOARD_MEMBER.body}</p>
             </div>
-            <p className="hp-index" data-rise style={{ marginTop: 48 }}>
+            <p className="hp-index hp-mt-lg" data-rise>
               <span>Advisory disciplines</span>
             </p>
             <ul className="hp-tags" data-rise>
