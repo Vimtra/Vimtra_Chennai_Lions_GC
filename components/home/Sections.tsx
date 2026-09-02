@@ -325,12 +325,22 @@ export interface StoryRow {
   summary: string;
   href: string;
   cover: string | null;
-  date: string | null;
 }
 
+/**
+ * 05 — Media.
+ *
+ * A press wall, not a heading over an empty band. The chapter reads the
+ * real MediaCoverage rows: the first is given a cover and its summary, the
+ * rest run as ruled rows carrying source and headline. Only the featured
+ * story shows an image — four of the five rows currently point at the same
+ * portrait, so repeating it would read as a template rather than a page.
+ *
+ * With no coverage the wall is simply absent and the chapter falls back to
+ * the route into the news desk. Nothing is padded out.
+ */
 export function Media({ stories }: { stories: StoryRow[] }) {
-  const root = useSectionMotion(true);
-  if (!stories.length) return null;
+  const root = useSectionMotion();
   const [lead, ...rest] = stories;
 
   return (
@@ -340,8 +350,10 @@ export function Media({ stories }: { stories: StoryRow[] }) {
       aria-labelledby="md-h"
     >
       <div className="hp-wrap">
-        <div className="cm-track hm-head">
-          <div className="hm-head-t">
+        {/* Head and the route out share one baseline — the right half of
+            this row was empty in the previous layout. */}
+        <div className="hm-press-head">
+          <div>
             <p className="hp-index" data-rise>
               05 <span>Media</span>
             </p>
@@ -354,92 +366,115 @@ export function Media({ stories }: { stories: StoryRow[] }) {
               </span>
             </h2>
           </div>
-          <Link href="/news" className="hp-btn hp-btn-text hm-head-a" data-rise>
-            All coverage
+          <Link href="/news" className="hp-btn hp-btn-text" data-rise>
+            Visit the news desk
             <span className="hp-arrow" aria-hidden>
               →
             </span>
           </Link>
         </div>
 
-        {/* The lead used to sit in a two-column grid beside the secondary
-            list. The list is a grid item, so it stretched to the height of
-            the tall cover image and distributed its three rows across it —
-            producing the large vertical gaps between 02, 03 and 04.
-
-            The lead is now its own split (figure beside its own type, the
-            figure taking exactly the height of the column next to it), and
-            the secondary coverage runs full width beneath as a ruled list
-            at its natural row height. Nothing stretches. */}
-        <a
-          className="cm-track hm-split is-flipped hm-lead hp-mt-lg"
-          href={lead.href}
-          target="_blank"
-          rel="noreferrer"
-          data-rise
-        >
-          {lead.cover && (
-            <span className="hm-split-f">
-              <span className="hm-fig" data-fig>
-                <Image
-                  src={lead.cover}
-                  alt=""
-                  fill
-                  sizes="(max-width: 1023px) 100vw, 48vw"
-                  className="story-img"
-                />
+        {lead ? (
+          <div className="hm-press">
+            <a
+              className="hm-press-lead"
+              href={lead.href}
+              target="_blank"
+              rel="noreferrer noopener"
+              data-rise
+            >
+              {lead.cover && (
+                <span className="hm-press-fig">
+                  <Image
+                    src={lead.cover}
+                    alt=""
+                    fill
+                    sizes="(max-width: 767px) 100vw, 42vw"
+                  />
+                </span>
+              )}
+              <span className="hm-press-lead-b">
+                <span className="hm-press-src">{lead.source}</span>
+                <span className="hm-press-t">{lead.title}</span>
+                <span className="hm-press-sum">{lead.summary}</span>
+                <span className="hm-press-go" aria-hidden>
+                  Read at {lead.source} →
+                </span>
               </span>
-            </span>
-          )}
-          <span className="hm-split-t">
-            <span className="story-meta">
-              <span className="story-src">{lead.source}</span>
-              {lead.date && <span className="story-date">{lead.date}</span>}
-            </span>
-            <span className="story-title story-title-lead">{lead.title}</span>
-            <span className="story-sum">{lead.summary}</span>
-          </span>
-        </a>
+            </a>
 
-        {/* Secondary coverage is typographic, not thumbnailed.
-            Several of these stories share one subject, so repeating the
-            same portrait four times would read as a template error. A
-            numbered masthead list is how a newsroom actually sets
-            "more coverage" — and it keeps every cover honest. */}
-        <ol className="story-rest">
-          {rest.slice(0, 3).map((s, i) => (
-            <li key={s.id}>
-              <a
-                className="story story-row"
-                href={s.href}
-                target="_blank"
-                rel="noreferrer"
-                data-rise
-              >
-                <span className="story-n">
-                  {String(i + 2).padStart(2, "0")}
-                </span>
-                <span className="story-col">
-                  <span className="story-meta">
-                    <span className="story-src">{s.source}</span>
-                    {s.date && <span className="story-date">{s.date}</span>}
-                  </span>
-                  <span className="story-title">{s.title}</span>
-                </span>
-                <span className="story-go" aria-hidden>
-                  &#8599;
-                </span>
-              </a>
-            </li>
-          ))}
-        </ol>
+            {rest.length > 0 && (
+              <ul className="hm-press-rows">
+                {rest.map((m) => (
+                  <li key={m.id} data-rise>
+                    <a
+                      href={m.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      <span className="hm-press-src">{m.source}</span>
+                      <span className="hm-press-rt">{m.title}</span>
+                      <span className="hp-arrow" aria-hidden>
+                        →
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : (
+          <p className="hm-body hp-mt-lg" data-rise>
+            News, press coverage and updates from the Chennai Lions — all in
+            one place, kept current by the team.
+          </p>
+        )}
       </div>
     </section>
   );
 }
 
-/* ── 06 · SHOP ───────────────────────────────────────────── */
-export function Shop() {
+export interface StoreFacts {
+  items: number;
+  categories: number;
+}
+
+/**
+ * 06 — The Store.
+ *
+ * Two earlier attempts are worth recording, because the fix is a reaction
+ * to both. A 50/50 figure-left/type-right split left a tall empty column
+ * whenever the copy ran short. Replacing it with a full-width photograph
+ * and the type stacked beneath solved the empty column but produced a
+ * product banner — a 558px merchandise slab with the chapter's type
+ * orphaned below it, and 1,092px of section for one headline, one line and
+ * three counted facts.
+ *
+ * The chapter is now a mounted case. A single deep-ink panel holds the
+ * photograph and the type side by side, so the image is a component of the
+ * chapter rather than a banner above it. The panel's height is set by the
+ * type column and the photograph covers whatever that comes to, which is
+ * what makes the empty-column failure structurally impossible this time
+ * rather than merely absent: there is no free-standing image box left to
+ * run short of.
+ *
+ * The counted rail moved inside the type column. It was the full-width
+ * strip under the old banner, and it is the element that gives the column
+ * enough to hold — the reason the original split ran out of content.
+ *
+ * The type still never sits on the photograph. The merchandise shot is a
+ * bright near-neutral studio backdrop where the index label measured
+ * 1.16:1, and any scrim heavy enough to fix that buried the product. On
+ * ink the same type clears 14:1 and the photograph stays unobstructed —
+ * the panel supplies the dark ground the type needed without touching the
+ * image. Gold reads as an accent here for the same reason it cannot on
+ * ivory (2.83:1), which is why the index and rail labels change colour
+ * with the surface.
+ *
+ * The image stays the catalogue's own merchandise photography; a stock
+ * golf-apparel frame would show kit that is not ours.
+ */
+export function Shop({ facts }: { facts: StoreFacts }) {
   const root = useSectionMotion(true);
   return (
     <section
@@ -448,44 +483,56 @@ export function Shop() {
       aria-labelledby="sh-h"
     >
       <div className="hp-wrap">
-        {/* Flipped so the figure takes the left edge — the store is the
-            only chapter that leads with the product rather than the type.
-            The image stays the catalogue's own merchandise photography;
-            a stock golf-apparel frame would show kit that is not ours. */}
-        <div className="cm-track hm-split is-flipped">
-          <div className="hm-split-t">
-            <p className="hp-index" data-rise>
+        <div className="hm-store">
+          <figure className="hm-store-fig" data-fig>
+            <Image
+              src="/assets/Golf_polo_shirt_and_cap_202608220321-web.jpg"
+              alt="Official Chennai Lions apparel — polo and cap"
+              fill
+              sizes="(max-width: 767px) 100vw, (max-width: 1023px) 92vw, 56vw"
+            />
+          </figure>
+
+          <div className="hm-store-body">
+            <p className="hp-index hp-index-dark" data-rise>
               06 <span>The Store</span>
             </p>
-            <h2 id="sh-h" className="cm-ch-t" style={{ marginTop: 0 }}>
+            <h2 id="sh-h" className="hm-store-t">
               <span className="mq-line" data-line>
-                <span>WEAR</span>
-              </span>
-              <span className="mq-line" data-line>
-                <span>THE PRIDE.</span>
+                <span>WEAR THE PRIDE.</span>
               </span>
             </h2>
-            <p className="hm-body" data-rise>
-              Match-day kit, performance apparel and tour-tested accessories —
-              fan-priced, shipped across India.
+            <p className="hm-store-note" data-rise>
+              Match-day kit, performance apparel and tour-tested accessories
+              — fan-priced, shipped across India.
             </p>
-            <Link href="/shop" className="hp-btn hp-btn-primary hp-mt-md" data-rise>
+
+            {/* Counted from the catalogue in app/page.tsx — never typed in. */}
+            <dl className="hm-store-rail">
+              <div data-rise>
+                <dt>Items</dt>
+                <dd>{facts.items}</dd>
+              </div>
+              <div data-rise>
+                <dt>Categories</dt>
+                <dd>{facts.categories}</dd>
+              </div>
+              <div data-rise>
+                <dt>Delivery</dt>
+                <dd className="is-text">Across India</dd>
+              </div>
+            </dl>
+
+            <Link
+              href="/shop"
+              className="hp-btn hp-btn-primary hm-store-cta"
+              data-rise
+            >
               EXPLORE THE SHOP
               <span className="hp-arrow" aria-hidden>
                 →
               </span>
             </Link>
-          </div>
-
-          <div className="hm-split-f">
-            <div className="hm-fig" data-fig>
-              <Image
-                src="/assets/Golf_polo_shirt_and_cap_202608220321-web.jpg"
-                alt="Official Chennai Lions apparel — polo and cap"
-                fill
-                sizes="(max-width: 1023px) 100vw, 48vw"
-              />
-            </div>
           </div>
         </div>
       </div>
@@ -493,7 +540,6 @@ export function Shop() {
   );
 }
 
-/* ── 07 · CLOSING ────────────────────────────────────────── */
 export function Closing() {
   const root = useSectionMotion();
   return (

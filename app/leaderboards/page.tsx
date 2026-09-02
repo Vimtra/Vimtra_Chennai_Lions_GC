@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import SeasonMasthead from "@/components/season/SeasonMasthead";
+import PageMasthead from "@/components/site/PageMasthead";
 import { Section } from "@/components/site/Section";
 import StandingsBoard from "@/components/season/StandingsBoard";
 import { listStandings } from "@/lib/standings";
@@ -55,7 +55,7 @@ export default async function LeaderboardsPage() {
 
   return (
     <>
-      <SeasonMasthead
+      <PageMasthead
         eyebrow={`AM Green IGPL · Season ${SEASON}`}
         title={["LEADER", "BOARDS"]}
         image="/assets/photo/ss-standings-hero-green-marsh.jpg"

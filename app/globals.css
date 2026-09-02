@@ -4551,6 +4551,11 @@ a:hover .hp-arrow {
   backdrop-filter: saturate(150%) blur(14px);
   border-bottom-color: rgba(245, 239, 228, 0.09);
 }
+.nv.nv-admin {
+  background: var(--v-ink);
+  backdrop-filter: none;
+  border-bottom-color: rgba(245, 239, 228, 0.12);
+}
 .nv-over { border-bottom-color: transparent; }
 .nv-bar { gap: clamp(12px, 2.5vw, 32px); height: 64px; }
 @media (min-width: 1024px) {
@@ -4696,9 +4701,39 @@ a:hover .hp-arrow {
   color: var(--v-on-ink-faint);
 }
 .ft-legal a { color: var(--v-on-ink); }
+/* Four link columns, not three: the footer renders the header's four
+   sections (lib/nav.ts → SITE_SECTIONS) since Media stopped being folded
+   into The Season. Between 900 and 1279 all four tracks are needed for the
+   links alone — a fifth would squeeze "Golf Development" onto two lines —
+   so the contact block takes its own row and reads as a band. */
 @media (min-width: 900px) {
-  .ft-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(290px, 1.2fr); gap: var(--sp-8); }
-  .ft-contact { grid-column: auto; padding: 0 0 0 var(--sp-7); border-width: 0 0 0 1px; background: none; }
+  .ft-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-8); }
+  .ft-contact {
+    grid-column: 1 / -1;
+    padding: var(--sp-5) 0 0;
+    border-width: 1px 0 0;
+    background: none;
+  }
+  .ft-contact ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, auto));
+    justify-content: start;
+    gap: 0 var(--sp-7);
+  }
+}
+
+/* From 1280 there is room for the contact column to come back inline as a
+   fifth track, which is where it reads best — the footer closes on the
+   franchise's own details rather than on a rule. */
+@media (min-width: 1280px) {
+  .ft-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(250px, 1.15fr);
+  }
+  .ft-contact {
+    grid-column: auto;
+    padding: 0 0 0 var(--sp-7);
+    border-width: 0 0 0 1px;
+  }
   .ft-contact ul { display: block; }
 }
 @media (max-width: 520px) {
@@ -4717,12 +4752,16 @@ a:hover .hp-arrow {
    nav columns and legal row share the site's left edge. */
 @media (min-width: 900px) {
   .ft-grid {
-    grid-template-columns: .9fr .9fr .9fr 1.25fr;
-    gap: clamp(40px, 5vw, 88px);
+    /* Column count is set above and deliberately not repeated here — this
+       rule owns the gap and the rhythm only. Gap is tighter than the old
+       three-column value because there is one more track to fit. */
+    gap: clamp(28px, 3.4vw, 64px);
     padding-top: clamp(32px, 4vw, 52px);
     padding-bottom: clamp(32px, 4vw, 52px);
   }
-  .ft-contact { padding-left: clamp(32px, 4vw, 64px); }
+}
+@media (min-width: 1280px) {
+  .ft-contact { padding-left: clamp(28px, 3vw, 56px); }
 }
 
 @media (max-width: 520px) {
@@ -6949,8 +6988,11 @@ a:hover .hp-arrow {
    Both mastheads carry 10.5px gold labels — the eyebrow and the rail's
    keys — and gold needs a near-ink ground to clear AA. The band where the
    eyebrow sits was 0.62 and measured 3.43:1 against the brightest sky in
-   the /scores photograph; it is 0.78 here. The top stays lighter so the
-   image is not flattened, and the base runs to 0.95 under the rail. */
+   the /scores photograph, then 4.32:1 against the brighter pavilion frame
+   on /partners; it is 0.84 here, which clears all three. The top stays
+   lighter so the image is not flattened, and the base runs to 0.95 under
+   the rail. Re-measure this band whenever a masthead photograph changes —
+   it is the one that keeps failing. */
 .tb-mast.has-media .tb-mast-aurora {
   inset: 0;
   background:
@@ -6959,8 +7001,8 @@ a:hover .hp-arrow {
     linear-gradient(
       180deg,
       rgba(14, 11, 10, 0.8) 0%,
-      rgba(14, 11, 10, 0.5) 18%,
-      rgba(14, 11, 10, 0.78) 42%,
+      rgba(14, 11, 10, 0.56) 16%,
+      rgba(14, 11, 10, 0.84) 42%,
       rgba(14, 11, 10, 0.9) 74%,
       rgba(14, 11, 10, 0.95) 100%
     );
@@ -7085,6 +7127,15 @@ a:hover .hp-arrow {
   color: var(--v-ivory);
   font-variant-numeric: tabular-nums;
 }
+
+/* The eyebrow goes ivory once there is a photograph behind it.
+   Gold-lit sits at the top of the frame where the scrim is lightest, and
+   it has now measured under AA against three different photographs and
+   crops — 3.43:1, 4.32:1 and 4.05:1 — because which pixels land behind it
+   changes with the image AND the viewport. Ivory clears it whatever is
+   back there. Gold keeps the rail labels at the foot, where the scrim is
+   0.9+ and guaranteed. */
+.tb-mast.has-media .tb-mast-eyebrow { color: var(--v-ivory); }
 
 /* Status device on ink: the crimson lives in the dot, which is a
    non-text indicator. The words stay ivory so they pass AA. */
@@ -7321,39 +7372,20 @@ a:hover .hp-arrow {
    Not an error card. The rail the data will occupy, drawn faint,
    with the reason stated over it. Carries no values at all. */
 .tb-unlit {
-  margin: 0 0 var(--sp-8);
+  margin: 0 0 var(--sp-7);
   padding: var(--sp-6) 0 0;
   border-top: 1px solid var(--v-gold);
 }
-/* The board's own rail, drawn faint and fading out below the statement.
-   It carries no values and is hidden from assistive tech — it must never
-   be mistaken for data that is loading. */
-.tb-unlit-ghost {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-6);
-  margin-top: var(--sp-8);
-  opacity: 0.34;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 88%);
-  mask-image: linear-gradient(180deg, #000 0%, transparent 88%);
+/* The columns the board will carry, on the dark stage. `.tb-await-cols` is
+   authored for a light surface, and `.tb-stage` is NOT `.hp-sec-ink`, so it
+   has to be named explicitly — the same inheritance trap that put a 1.5:1
+   line on the old season board. */
+.tb-unlit .tb-await-cols {
+  margin: var(--sp-6) 0 var(--sp-2);
 }
-.tb-unlit-head {
-  display: flex;
-  gap: var(--sp-6);
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-on-ink-faint);
-}
-.tb-unlit-head i { font-style: normal; }
-.tb-unlit-head i:nth-child(2) { flex: 1; }
-.tb-unlit-rule {
-  display: block;
-  height: 1px;
-  background: var(--v-hair-ink);
+.tb-unlit .tb-await-cols li {
+  border-color: var(--v-hair-ink);
+  color: var(--v-on-ink);
 }
 .tb-unlit-say { max-width: 54ch; }
 .tb-unlit-k {
@@ -7645,6 +7677,10 @@ a:hover .hp-arrow {
 }
 /* The leader, and the franchise's own row. Both marked by rule and
    weight rather than by a coloured block of type. */
+/* The rank numeral is gold, which clears AA on the two ink boards but
+   measures 2.57:1 on the ivory one. Light surfaces take crimson. */
+.hp-sec-ivory .tb-rank-n,
+.hp-sec-paper .tb-rank-n { color: var(--v-red); }
 .tb-ranks li.is-lead { border-bottom-color: var(--v-gold); }
 .tb-ranks li.is-lead .tb-rank-n { color: var(--v-red); }
 .tb-ranks li.is-lead .tb-rank-name { font-size: clamp(22px, 2.7vw, 38px); }
@@ -7724,3 +7760,871 @@ a:hover .hp-arrow {
 .hp-sec-ink .tb-ranks li.is-lead { border-bottom-color: var(--v-gold); }
 .hp-sec-ink .tb-ranks li.is-lead .tb-rank-n { color: var(--v-gold-lit); }
 .hp-sec-ink .tb-ranks li.is-lions { border-left-color: var(--v-red-lit); }
+
+
+/* ============================================================
+   HOME 05 — THE PRESS WALL
+   ------------------------------------------------------------
+   Replaces a heading, one sentence and a link stranded in a
+   full-height paper band. The chapter now carries the real
+   MediaCoverage rows: one featured story with its cover, then
+   the rest as ruled rows. No cards, and no empty half.
+============================================================ */
+
+.hm-press-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+}
+@media (min-width: 768px) {
+  /* The route out takes the right edge of the same baseline the
+     title sits on — that half of the row was previously empty. */
+  .hm-press-head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-7);
+  }
+}
+.hm-press-head .hp-section-title { font-size: clamp(34px, 5.4vw, 78px); }
+
+.hm-press {
+  margin-top: var(--sp-7);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+
+/* ---- Featured story ---------------------------------------- */
+.hm-press-lead {
+  display: grid;
+  gap: var(--sp-5);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  text-decoration: none;
+  color: inherit;
+}
+@media (min-width: 768px) {
+  .hm-press-lead {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--sp-7);
+    align-items: center;
+    padding: var(--sp-7) 0;
+  }
+}
+.hm-press-fig {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: var(--ar-classic);
+  background: var(--v-ink-2);
+}
+.hm-press-fig img {
+  object-fit: cover;
+  object-position: 50% 22%;
+  transition: transform var(--mo-cine) var(--ease);
+}
+.hm-press-lead:hover .hm-press-fig img { transform: scale(1.04); }
+.hm-press-lead-b { display: block; min-width: 0; }
+
+.hm-press-src {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.hm-press-t {
+  display: block;
+  margin-top: var(--sp-3);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(22px, 2.9vw, 40px);
+  line-height: 1.1;
+  letter-spacing: var(--tr-h2);
+  color: var(--v-ink);
+}
+.hm-press-sum {
+  display: block;
+  max-width: 56ch;
+  margin-top: var(--sp-4);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.66;
+  color: var(--v-on-ivory);
+}
+.hm-press-go {
+  display: inline-block;
+  margin-top: var(--sp-4);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--v-ink);
+  border-bottom: 1px solid var(--v-gold);
+  padding-bottom: 2px;
+  transition: color var(--mo-mid) var(--ease);
+}
+.hm-press-lead:hover .hm-press-go { color: var(--v-red); }
+
+/* ---- The rest, as ruled rows -------------------------------- */
+.hm-press-rows { list-style: none; margin: 0; padding: 0; }
+.hm-press-rows li { border-bottom: 1px solid var(--v-hair-ivory); }
+.hm-press-rows a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-2);
+  padding: var(--sp-5) 0;
+  text-decoration: none;
+  color: inherit;
+  transition: padding-left var(--mo-mid) var(--ease);
+}
+@media (min-width: 768px) {
+  .hm-press-rows a {
+    grid-template-columns: minmax(0, 22ch) minmax(0, 1fr) auto;
+    column-gap: var(--sp-6);
+    align-items: center;
+  }
+}
+.hm-press-rows a:hover { padding-left: var(--sp-3); }
+.hm-press-rows a:focus-visible { outline: 2px solid var(--v-red); outline-offset: -2px; }
+.hm-press-rows .hm-press-src { grid-column: 1 / -1; }
+@media (min-width: 768px) {
+  .hm-press-rows .hm-press-src { grid-column: auto; }
+}
+.hm-press-rt {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 1.7vw, 21px);
+  line-height: 1.24;
+  letter-spacing: -0.022em;
+  color: var(--v-ink);
+  transition: color var(--mo-mid) var(--ease);
+}
+.hm-press-rows a:hover .hm-press-rt { color: var(--v-red); }
+.hm-press-rows .hp-arrow { color: var(--v-gold); }
+
+
+/* ============================================================
+   HOME 06 — THE STORE, AS A MOUNTED CASE
+   ------------------------------------------------------------
+   Superseding two earlier passes: a 50/50 split that left a
+   tall empty column, then a full-width photograph with the
+   type stacked under it, which read as a product banner and
+   cost 1,092px of page for one headline and three facts.
+
+   One deep-ink panel now holds the photograph and the type as
+   a single object. The type column sets the panel's height and
+   the photograph covers it (`align-items: stretch`), so the
+   image can never be a free-standing box that runs short of
+   its neighbour — the failure mode of the first pass — and it
+   is mounted rather than laid on top, which is what stops it
+   reading as a banner.
+
+   CONTRAST — the panel is the reason the type can be gold and
+   ivory here at all. See the note on Shop() in
+   components/home/Sections.tsx.
+============================================================ */
+
+.hm-store {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  background: var(--v-ink);
+  color: var(--v-ivory);
+}
+
+/* Mobile: the panel breaks the wrap's gutters and runs to both
+   viewport edges, so the chapter arrives as one full-width case
+   instead of a card floating inside a margin. The negative inset
+   matches `.hp-wrap`'s padding exactly, so it reaches the edge
+   without ever overflowing it. */
+@media (max-width: 767px) {
+  .hm-store { margin-inline: -20px; }
+}
+
+/* Tablet: side by side from 768 up, not from 1024. Left to stack,
+   this range produced the tallest version of the chapter on the
+   whole site — a 673x449 photograph above a 460px type block, 1,103px
+   in total, taller than the banner it replaced. An even 6/6 split is
+   what fits here: the headline needs ~250px to hold one line and a
+   5fr track at this width cannot give it that. */
+@media (min-width: 768px) {
+  .hm-store {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+    min-height: 400px;
+  }
+}
+
+/* Desktop: the type column has more width than it needs at 6/6, so
+   the photograph takes the surplus. 7/5 also stops the split reading
+   as two panels meeting in the middle. */
+@media (min-width: 1024px) {
+  .hm-store {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    min-height: clamp(430px, 40vw, 560px);
+  }
+}
+
+/* Atmosphere: one gold wash behind the type, no larger than the
+   column it lights. Sits under the content (z-index) and is
+   decorative only. */
+.hm-store::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 90% at 88% 8%,
+    rgba(184, 144, 75, 0.17),
+    transparent 62%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- The photograph -----------------------------------------
+   Fills whatever height the type column resolves to. `min-height`
+   only guards the single-column case, where there is no sibling
+   to take height from. */
+/* `width: 100%` is load-bearing, not a default. With `aspect-ratio` set
+   and a `min-height` floor, the floor wins and the ratio then resolves
+   the WIDTH from it — at 375 a 260px floor produced a 390px-wide figure
+   inside a 375px panel, silently cropped by the panel's overflow. The
+   ratio governs height here and nothing else sets height, so no floor is
+   needed below 768. */
+.hm-store-fig {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: var(--ar-classic);
+  background: var(--v-ink-2);
+}
+@media (min-width: 768px) {
+  .hm-store-fig { aspect-ratio: auto; min-height: 100%; }
+}
+.hm-store-fig img {
+  object-fit: cover;
+  /* Centred: the products sit mid-frame and the backdrop is even,
+     so a tighter column crops the dead grey from the sides rather
+     than cutting into the kit. */
+  object-position: 50% 50%;
+  transition: transform var(--mo-cine) var(--ease);
+}
+.hm-store:hover .hm-store-fig img { transform: scale(1.03); }
+@media (prefers-reduced-motion: reduce) {
+  .hm-store:hover .hm-store-fig img { transform: none; }
+}
+
+/* A hairline down the seam so the two halves read as one mounted
+   object rather than two abutting blocks. */
+@media (min-width: 768px) {
+  .hm-store-fig::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    right: 0;
+    width: 1px;
+    background: var(--v-hair-ink);
+  }
+}
+
+/* ---- The type column ----------------------------------------
+   One left axis for the label, the headline, the line, the rail
+   and the action — every element starts on the same edge. */
+.hm-store-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: var(--sp-5);
+  padding: var(--sp-6) 20px var(--sp-7);
+}
+/* Tighter at tablet than at desktop: at 6/6 the column is ~344px, and
+   48px gutters would leave the headline too little to hold one line. */
+@media (min-width: 768px) {
+  .hm-store-body { padding: var(--sp-6); gap: var(--sp-4); }
+}
+@media (min-width: 1024px) {
+  .hm-store-body { padding: var(--sp-7); gap: var(--sp-5); }
+}
+@media (min-width: 1440px) {
+  .hm-store-body { padding: var(--sp-8) var(--sp-8) var(--sp-8) var(--sp-7); }
+}
+
+/* `.hp-index` ships a 40px bottom margin for stacked chapter
+   heads. This column is a grid with its own gap, so the margin
+   would double the space under the label. */
+.hm-store-body .hp-index { margin: 0; }
+
+.hm-store-t {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  /* Capped below the full-bleed display size — this is a column
+     headline, not a page title, and "WEAR THE PRIDE." has to hold
+     one line down to the 5fr track. */
+  font-size: clamp(31px, 3.9vw, 56px);
+  line-height: 0.94;
+  letter-spacing: var(--tr-h1);
+  color: var(--v-ivory);
+}
+.hm-store-note {
+  margin: 0;
+  max-width: 42ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-lead);
+  line-height: 1.6;
+  color: var(--v-on-ink);
+}
+
+/* ---- Counted catalogue rail ---------------------------------
+   Inside the type column, ruled top and bottom, so it reads as
+   the column's own foot rather than a strip under a banner. */
+.hm-store-rail {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  margin: var(--sp-2) 0 0;
+  border-top: 1px solid var(--v-hair-ink);
+  border-bottom: 1px solid var(--v-hair-ink);
+}
+.hm-store-rail > div {
+  padding: var(--sp-4) var(--sp-3) var(--sp-4) 0;
+  border-right: 1px solid var(--v-hair-ink);
+}
+.hm-store-rail > div:last-child { border-right: 0; padding-right: 0; }
+@media (min-width: 1024px) {
+  .hm-store-rail > div { padding-left: var(--sp-4); }
+  .hm-store-rail > div:first-child { padding-left: 0; }
+}
+.hm-store-rail dt {
+  margin: 0 0 var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  /* Gold clears AA on ink and is unreadable on ivory — the
+     inverse of the old rail, which sat on ivory and used red. */
+  color: var(--v-gold);
+}
+.hm-store-rail dd {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(20px, 2.1vw, 30px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-ivory);
+}
+/* A word is not a figure. At display size "Across India" wrapped to two
+   lines and out-weighed the counts beside it, which inverted the rail's
+   hierarchy — the two real catalogue numbers are the point of it. Set as
+   a statement instead, it holds one line and lets the figures lead. */
+.hm-store-rail dd.is-text {
+  font-size: clamp(14px, 1.15vw, 17px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--v-on-ink);
+  padding-block: 0.28em;
+}
+
+/* The action closes the column on the same left axis as the rest,
+   rather than floating to an opposite edge. */
+.hm-store-cta { margin-top: var(--sp-2); }
+
+
+/* ============================================================
+   NEWS DESK — /news
+   ------------------------------------------------------------
+   Three chapters, one per author: franchise editorial, press,
+   social. The press wall itself is `.hm-press-*`, shared with
+   the home page's Media chapter — this layer only adds the
+   chapter heads, the official-post list and the empty state.
+============================================================ */
+
+.nw-sec { overflow-x: clip; }
+
+.nw-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-7);
+}
+@media (min-width: 900px) {
+  /* The note takes the right of the same baseline rather than sitting
+     under the title in a half-width column. */
+  .nw-head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-8);
+  }
+}
+.nw-h {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 4.6vw, 62px);
+  line-height: 0.98;
+  letter-spacing: var(--tr-h1);
+  color: var(--v-ink);
+}
+.nw-note {
+  max-width: 40ch;
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+@media (min-width: 900px) {
+  .nw-note { text-align: right; }
+}
+
+/* Source · date, sharing the press-wall's source style. */
+.nw-sep { font-style: normal; margin: 0 6px; opacity: 0.55; }
+
+/* ---- Official posts ----------------------------------------
+   A ruled list, not a card grid: these are franchise headlines
+   and the headline is what carries them. */
+.nw-posts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.nw-posts li { border-bottom: 1px solid var(--v-hair-ivory); }
+.nw-posts a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--sp-5);
+  row-gap: var(--sp-4);
+  padding: var(--sp-5) 0;
+  text-decoration: none;
+  color: inherit;
+  transition: padding-left var(--mo-mid) var(--ease);
+}
+@media (min-width: 768px) {
+  .nw-posts a {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    column-gap: var(--sp-6);
+  }
+}
+.nw-posts a:hover { padding-left: var(--sp-3); }
+.nw-posts a:focus-visible { outline: 2px solid var(--v-red); outline-offset: -2px; }
+.nw-n {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.18em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+}
+.nw-fig {
+  position: relative;
+  display: none;
+  overflow: hidden;
+  width: 120px;
+  aspect-ratio: var(--ar-classic);
+  background: var(--v-ink-2);
+}
+@media (min-width: 768px) {
+  .nw-fig { display: block; }
+}
+.nw-fig img { object-fit: cover; }
+.nw-post-b { min-width: 0; }
+.nw-post-t {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(17px, 1.9vw, 24px);
+  line-height: 1.2;
+  letter-spacing: -0.024em;
+  color: var(--v-ink);
+  transition: color var(--mo-mid) var(--ease);
+}
+.nw-posts a:hover .nw-post-t { color: var(--v-red); }
+.nw-date {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.nw-posts .hp-arrow { color: var(--v-gold); }
+
+/* ---- Newsroom empty state ----------------------------------
+   The franchise controls this section, so it says so rather than
+   disappearing — and it points at the press wall below, which is
+   the actual record while the newsroom is quiet. */
+.nw-empty {
+  border-top: 1px solid var(--v-gold);
+  padding-top: var(--sp-6);
+}
+.nw-empty-k {
+  margin: 0 0 var(--sp-3);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.nw-empty-t {
+  max-width: 26ch;
+  margin: 0 0 var(--sp-4);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(24px, 3.4vw, 44px);
+  line-height: 1.06;
+  letter-spacing: var(--tr-h2);
+  color: var(--v-ink);
+}
+.nw-empty-d {
+  max-width: 58ch;
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.68;
+  color: var(--v-on-ivory);
+}
+
+/* Social rows reuse the press-wall rows; only the accent differs so the
+   two chapters are not mistaken for one another. */
+.nw-social .hm-press-src { color: var(--v-gold); }
+
+
+/* ============================================================
+   PARTNERS — /partners
+   ------------------------------------------------------------
+   Shares `.nw-head` with the news desk so chapter heads read
+   the same across the site. Adds three devices of its own: the
+   confirmed-partner bands, the market figures, and the tier
+   ladder.
+
+   CONTRAST — chapter 02 sits on ink and is NOT reached by the
+   `.hp-sec-ink` type rules that cover `.hp-section-title`, so
+   every colour it uses is restated below. That inheritance gap
+   has produced three separate sub-AA bugs in this project.
+============================================================ */
+
+/* ---- Vertical rhythm ----------------------------------------
+   Chapters 01–03 carried a surface class but no size class, and
+   `.hp-sec` sets no padding of its own — so all three rendered at
+   0/0 and their content sat hard against every surface seam, while
+   the close (the one section that did carry `.hp-sec-tight`) opened
+   to 72px. That mismatch, not an excess of space, is what made the
+   page read as unevenly composed.
+
+   The rhythm is owned here rather than borrowed from the shared
+   ladder: `.hp-sec-default` resolves to 96px at desktop, which is a
+   home-page cadence and too loose for a four-chapter commercial
+   page. One variable drives every chapter, so the seams cannot
+   drift apart again, and the two transitions that need to be
+   closer than a seam — hero into 01, ladder into the close —
+   scale from that same value instead of being hand-set. */
+.pt-sec {
+  overflow-x: clip;
+  --pt-rhythm: 52px;
+  padding-top: var(--pt-rhythm);
+  padding-bottom: var(--pt-rhythm);
+}
+@media (min-width: 768px) {
+  .pt-sec { --pt-rhythm: 72px; }
+}
+@media (min-width: 1280px) {
+  .pt-sec { --pt-rhythm: 84px; }
+}
+
+/* The masthead ends on its stat rail, which is already a closing
+   edge. A full seam after it reads as a gap between two pages, so
+   the opening chapter sits closer to it than the chapters do to
+   each other. */
+.pt-sec-open { padding-top: calc(var(--pt-rhythm) * 0.62); }
+
+/* The close is the same thought as the ladder above it, not a new
+   one — it arrives tight, and its foot is trimmed because the
+   footer supplies the page's real bottom margin. */
+.pt-sec-close {
+  padding-top: calc(var(--pt-rhythm) * 0.74);
+  padding-bottom: calc(var(--pt-rhythm) * 0.86);
+}
+
+/* ---- 01 · Confirmed partners --------------------------------
+   Two bands, full width. A card grid built for many reads as a
+   page waiting to be filled when only two are real. */
+.pt-partners {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.pt-partners li {
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 900px) {
+  /* Centred, not top-aligned: the wordmark is display-sized and the body
+     beside it is two lines, so aligning to the top left the right column
+     floating well above the name's optical centre. */
+  .pt-partners li {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--sp-8);
+    align-items: center;
+  }
+}
+/* The mark: official artwork when the franchise supplies it, the name set
+   as a wordmark until then. A logo is rendered at its own intrinsic ratio
+   and capped by height, so its proportions are never distorted. */
+.pt-partner-mark { min-width: 0; }
+.pt-partner-logo {
+  display: block;
+  width: auto;
+  height: clamp(38px, 5vw, 64px);
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+.pt-partner-tag {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.pt-partner-name {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 4.2vw, 58px);
+  line-height: 0.96;
+  letter-spacing: var(--tr-h1);
+  color: var(--v-ink);
+}
+.pt-partner-b { min-width: 0; }
+/* Not gold: `--v-gold` on ivory measures 2.57:1, well under AA for an
+   11px label. Gold is a dark-surface accent in this system. */
+.pt-partner-scope {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.pt-partner-detail {
+  max-width: 52ch;
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-lead);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+/* ---- Hero crop ----------------------------------------------
+   A pavilion looking out over the course: the dark timber roof fills
+   the top of the frame, so the desktop crop sits low enough to keep
+   the opening and the horizon. The portrait crop on mobile pulls
+   further down again, or the roof eats the frame. */
+.pt-hero .tb-mast-media img { object-position: 50% 58%; }
+@media (max-width: 767px) {
+  .pt-hero .tb-mast-media img { object-position: 46% 66%; }
+}
+
+/* The shared chapter head sits on ink here, and `.hp-sec-ink` does not
+   reach `.nw-*` — it only covers `.hp-section-title` and friends. Without
+   these two lines the heading renders ink-on-ink at 1.0:1, i.e. invisible.
+   (Measured, after an earlier edit removed them.) */
+.hp-sec-ink .nw-h { color: var(--v-ivory); }
+.hp-sec-ink .nw-note { color: var(--v-on-ink); }
+
+/* ---- 02 · The four partnership surfaces, on ink -------------- */
+.pt-dims {
+  list-style: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--v-hair-ink);
+}
+@media (min-width: 640px) {
+  .pt-dims { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .pt-dims { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.pt-dims li {
+  padding: var(--sp-6) var(--sp-5) var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ink);
+}
+@media (min-width: 1024px) {
+  .pt-dims li {
+    border-bottom: 0;
+    border-right: 1px solid var(--v-hair-ink);
+    padding-left: var(--sp-6);
+  }
+  .pt-dims li:first-child { padding-left: 0; }
+  .pt-dims li:last-child { border-right: 0; }
+}
+.pt-dim-k {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold);
+}
+.pt-dim-t {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(19px, 1.9vw, 25px);
+  line-height: 1.14;
+  letter-spacing: var(--tr-h3);
+  color: var(--v-ivory);
+}
+.pt-dim-d {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.66;
+  color: var(--v-on-ink);
+}
+
+/* ---- 03 · The tier ladder -----------------------------------
+   Ordered, so the numeral carries the hierarchy — no coloured
+   badges, no four identical cards. */
+.pt-tiers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--v-hair-ivory);
+  counter-reset: tier;
+}
+.pt-tiers li {
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 1024px) {
+  /* Two columns, not three. The numeral used to hold a track of its own,
+     which pushed the identity into the middle and opened a dead channel
+     between the headline and the inclusions. It now sits inside the
+     identity block, against the same left axis as everything else. */
+  .pt-tiers li {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    column-gap: var(--sp-8);
+    align-items: start;
+  }
+}
+.pt-tier-b {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--sp-5);
+  align-items: baseline;
+}
+/* Crimson, not gold: gold on the paper surface measures 2.83:1, which
+   misses even the 3:1 large-text threshold. Crimson clears it at 5.4:1
+   and matches the numeral treatment on /leaderboards. */
+.pt-tier-n {
+  grid-row: 1 / span 2;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3vw, 42px);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-red);
+}
+.pt-tier-name {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(21px, 2.4vw, 32px);
+  line-height: 1.1;
+  letter-spacing: var(--tr-h3);
+  color: var(--v-ink);
+}
+.pt-tier-head {
+  max-width: 34ch;
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+.pt-tier-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-tier-list li {
+  position: relative;
+  padding: var(--sp-2) 0 var(--sp-2) var(--sp-5);
+  border: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--v-ink);
+}
+.pt-tier-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.95em;
+  width: 12px;
+  height: 1px;
+  background: var(--v-gold);
+}
+
+/* ---- Close -------------------------------------------------- */
+.pt-close {
+  display: grid;
+  gap: var(--sp-6);
+}
+@media (min-width: 900px) {
+  .pt-close {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--sp-8);
+  }
+}
+.pt-close-t {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(34px, 5.4vw, 74px);
+  line-height: 0.94;
+  letter-spacing: var(--tr-h1);
+  color: var(--v-ink);
+}
+.pt-close-a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4);
+}

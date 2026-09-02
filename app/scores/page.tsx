@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import SeasonMasthead from "@/components/season/SeasonMasthead";
+import PageMasthead from "@/components/site/PageMasthead";
 import ScoreExperience, {
   type BoardEvent,
   type ScoreRow,
@@ -131,7 +131,7 @@ export default async function ScoresPage() {
 
   return (
     <>
-      <SeasonMasthead
+      <PageMasthead
         eyebrow="AM Green IGPL · Season 2026"
         title={["SCORES"]}
         image="/assets/photo/ss-scores-hero-twilight-course.jpg"

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
+import { SITE_SECTIONS } from "@/lib/nav";
 
 /**
  * Global footer — the final chapter, not a link dump.
@@ -14,26 +15,16 @@ import { Instagram, ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
  * (Instagram is the single social account the brochure names).
  */
 
-const CLUB = [
-  { href: "/the-club", label: "The Club" },
-  { href: "/the-pride", label: "The Pride" },
-  { href: "/players", label: "Players" },
-  { href: "/golf-development", label: "Golf Development" },
-  { href: "/vimtra-ventures", label: "Vimtra Ventures" },
-];
-const SEASON = [
-  { href: "/fixtures", label: "Fixtures" },
-  { href: "/scores", label: "Scores" },
-  { href: "/leaderboards", label: "Standings" },
-  { href: "/news", label: "News" },
-  { href: "/gallery", label: "Gallery" },
-];
-const BUSINESS = [
-  { href: "/shop", label: "Shop" },
-  { href: "/partners", label: "Partners" },
-  { href: "/invest", label: "Invest" },
-  { href: "/contact", label: "Contact" },
-];
+/**
+ * The link columns are the header's own sections, read from lib/nav.ts.
+ *
+ * They used to be three hand-kept arrays here, and they had drifted: News
+ * and Gallery sat under "The Season" in this footer while the header filed
+ * them under "Media", so the same link belonged to a different section
+ * depending on which end of the page you were reading. Rendering from the
+ * shared list means adding a page to the header adds it here too.
+ */
+const COLUMNS = SITE_SECTIONS;
 
 export default function Footer() {
   return (
@@ -69,38 +60,18 @@ export default function Footer() {
       </div>
 
       <div className="hp-wrap ft-grid">
-        <nav className="ft-col" aria-label="The Club">
-          <h2 className="ft-h">The Club</h2>
-          <ul>
-            {CLUB.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href}><span>{l.label}</span><ArrowUpRight aria-hidden /></Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <nav className="ft-col" aria-label="The Season">
-          <h2 className="ft-h">The Season</h2>
-          <ul>
-            {SEASON.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href}><span>{l.label}</span><ArrowUpRight aria-hidden /></Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <nav className="ft-col" aria-label="Business">
-          <h2 className="ft-h">Business</h2>
-          <ul>
-            {BUSINESS.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href}><span>{l.label}</span><ArrowUpRight aria-hidden /></Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {COLUMNS.map((section) => (
+          <nav className="ft-col" aria-label={section.label} key={section.key}>
+            <h2 className="ft-h">{section.label}</h2>
+            <ul>
+              {section.items.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href}><span>{l.label}</span><ArrowUpRight aria-hidden /></Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
 
         <div className="ft-col ft-contact">
           <h2 className="ft-h">Stay connected</h2>

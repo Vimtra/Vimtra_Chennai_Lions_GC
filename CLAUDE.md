@@ -6,6 +6,136 @@ This file provides comprehensive guidelines for development, styling, and the in
 
 ---
 
+---
+
+## 🚫 DATA INTEGRITY — permanent project rule
+
+**This section outranks any design brief.** It applies to every public page —
+Home, The Club, The Pride, Players, Golf Development, Vimtra Ventures,
+Fixtures, Scores, Leaderboards, News, Gallery, Partners, Invest, Contact,
+Shop, and anything added later.
+
+### 1. Never invent data
+
+Do not create numbers, statistics, rankings, scores, player achievements,
+match results, fixtures, records, attendance, sponsorship or business
+figures, performance claims, awards, dates, or tournament information.
+
+If a value is not available from an approved source, render an **intentional
+empty / unavailable state** — never a placeholder, an estimate, an
+illustrative row, or a "for example" figure. Existing empty states to copy
+the tone from: the unlit board on `/scores` and the per-board "awaiting
+verified data" panels on `/leaderboards`.
+
+**Never fill a gap from general model knowledge.** If it is not in an
+approved source below, it does not go on the site.
+
+### 2. Source hierarchy
+
+1. **Official IGPL data** — `https://theigpl.com` and its backend (below).
+   Authoritative for all IGPL competition numbers: event count, dates,
+   scores, standings, rankings, Order of Merit, points, player and
+   tournament statistics, prize money, franchise data, schedule.
+2. **Project database rows that have been verified against (1).** The
+   `Fixture`, `Score`, `Standing` and `MediaCoverage` tables are the render
+   path; a row is only trustworthy once it has been checked against IGPL.
+3. **Project documentation** — the Season 2026 brochure, for Vimtra Chennai
+   Lions brand messaging and franchise-specific copy (see `data/players.ts`,
+   which cites brochure pages per player).
+
+Documentation decides Lions-specific *content*. IGPL decides official
+*numbers*. The two never swap roles.
+
+### 3. Chennai scope
+
+Only show information belonging to **Vimtra Chennai Lions GC / Vimtra
+Ventures (Chennai)** as the franchise's own. On the official IGPL feed this
+franchise is `id: "che"`, `city: "Chennai"`, `name: "Vimtra Ventures"`.
+
+Other franchises' players, scores, rankings and achievements must never be
+presented as the Lions'. They may appear only where an official competition
+context requires it — a league table, a tournament leaderboard — and must
+stay clearly attributed to that team. The existing `is-lions` row marker on
+`/scores` and `/leaderboards` is the pattern: everyone in the field is
+listed, only ours is marked.
+
+### 4. Official IGPL data source — what actually exists
+
+Investigated 2026-09-02. `theigpl.com` is a **Next.js** app — there is no
+WordPress REST API, no `sitemap.xml`, no RSS feed. It does expose a public
+config endpoint that names its own backends:
+
+```bash
+curl https://theigpl.com/api/config
+# {"apiBase":"https://bknd.theigpl.com/api",
+#  "scorecardApiBase":"https://bknd.golfpuppet.com"}
+```
+
+**Confirmed reachable, returning JSON:**
+
+| Endpoint | Returns |
+|---|---|
+| `GET https://bknd.theigpl.com/api/franchises` | 10 franchises — `id, city, name, logo, color, cityIcon`. Chennai is `che` / "Vimtra Ventures". |
+| `GET https://bknd.theigpl.com/api/players` | 46 players — `name, city, age, turned_pro, wins, img, nationality, bio, highlights` |
+
+**Referenced by the official site's own client bundle** (not yet verified by
+us end to end):
+
+| Endpoint | Notes |
+|---|---|
+| `GET {scorecardApiBase}/tournaments/leaderboard/saved/static?tournamentId=<id>&orgId=39` | static leaderboard snapshot; `orgId=39` is IGPL |
+| `GET {scorecardApiBase}/tournaments/leaderboard/saved?tournamentId=<id>&roundNo=0` | round leaderboard |
+| `EventSource {scorecardApiBase}/commentary/sse?tournamentId=<id>` | live commentary stream |
+
+Payload shape for the leaderboard calls: `{ data: [...] }`, entries carry
+`leaderboard_type` (`"tournament"` \| `"round"`) and `type` (`"player"`),
+with rows nested at `leaderboard[0].leaderboard`. Tournament ids are the
+numbers in `theigpl.com/schedule/<id>` (e.g. 253, 283, 284).
+
+**Known gaps — do not paper over these:**
+
+- No `standings` / `schedule` / `tournaments` collection endpoint responded
+  on `bknd.theigpl.com/api`. The standings and schedule pages are
+  server-rendered, so that data has no confirmed public JSON route yet.
+- `/api/players` carries **no franchise field**. It cannot tell you which
+  players are Chennai's, so it cannot by itself verify our four-player
+  roster.
+
+### 5. Before depending on that API — ask
+
+These are the official site's **internal, undocumented** endpoints. They are
+publicly reachable and CORS-open, but they are not a published API with
+terms, versioning or a stability guarantee, and they can change or close
+without notice. **Get IGPL's agreement before wiring production to them**,
+and ask whether they will provide a documented feed or a per-franchise
+export. Until then: keep the verified-database fallback, and do not build an
+aggressive scraper.
+
+### 6. Automatic updates — the intended architecture
+
+`app/api/sync/igpl/route.ts` already exists as the sync entry point, gated
+behind `IGPL_SYNC_ENABLED` (default `false`) and scheduled by `vercel.json`.
+The design goal is that a new fixture, a changed date, a published score or
+an updated leaderboard appears on the site with **no code edit**:
+
+- The sync writes into the existing `Fixture`, `Score` and `Standing`
+  tables; every public page already renders those tables and their empty
+  states, so nothing downstream needs to change.
+- It must be **fail-closed**: on an unreachable or unparseable source it
+  leaves existing rows untouched and writes nothing. A failed sync shows the
+  last verified data or the empty state — never partial or guessed rows.
+- Scope every write to the Chennai franchise except where a full field is
+  required for a leaderboard.
+- `revalidatePath` `/fixtures`, `/scores`, `/leaderboards` after a write.
+
+### 7. Auditing a page
+
+Before redesigning any page: list every number on it, name the source of
+each, and delete any that no source supports. Record the outcome next to the
+value in code, the way `data/players.ts` cites brochure pages.
+
+---
+
 ## 🛠️ Build and Development Commands
 
 ### Active Next.js App

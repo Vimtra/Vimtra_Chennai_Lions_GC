@@ -253,11 +253,19 @@ async function main() {
     throw new Error("Refusing to seed: ADMIN_PASSWORD must be at least 12 characters.");
   }
   const passwordHash = await bcrypt.hash(password, 10);
-  await prisma.user.upsert({
-    where: { email },
-    update: { role: "ADMIN", passwordHash },
-    create: { email, name: "Lions Admin", passwordHash, role: "ADMIN" },
-  });
+  const configuredUser = await prisma.user.findUnique({ where: { email } });
+  const existingAdmin =
+    configuredUser ?? (await prisma.user.findFirst({ where: { role: "ADMIN" } }));
+  if (existingAdmin) {
+    await prisma.user.update({
+      where: { id: existingAdmin.id },
+      data: { email, role: "ADMIN", passwordHash },
+    });
+  } else {
+    await prisma.user.create({
+      data: { email, name: "Lions Admin", passwordHash, role: "ADMIN" },
+    });
+  }
   console.log(`✔ Admin ready: ${email}`);
 }
 

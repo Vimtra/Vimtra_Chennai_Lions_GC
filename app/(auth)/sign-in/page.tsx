@@ -4,6 +4,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { signIn } from "../actions";
 import { getCurrentUser } from "@/lib/auth";
+import PasswordField from "@/components/auth/PasswordField";
 
 export const metadata: Metadata = {
   title: "Sign In · Vimtra Chennai Lions GC",
@@ -50,7 +51,7 @@ export default async function SignInPage({
           </div>
           <div className="field">
             <label>Password</label>
-            <input type="password" name="password" required autoComplete="current-password" />
+            <PasswordField name="password" required autoComplete="current-password" />
           </div>
           <button type="submit" className="cta-gold press justify-center" style={{ padding: 13 }}>
             SIGN IN

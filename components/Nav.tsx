@@ -23,7 +23,13 @@ import {
 } from "lucide-react";
 import { useCart, cartCount, useCartHydrated } from "@/store/cart";
 import { signOut } from "@/app/(auth)/actions";
-import { FLOATING_HEADER_ROUTES } from "@/lib/nav";
+import {
+  DIRECT_NAV,
+  FLOATING_HEADER_ROUTES,
+  MEGA_SECTIONS,
+  SITE_SECTIONS,
+  type SiteSection,
+} from "@/lib/nav";
 import type { SafeUser } from "@/lib/auth";
 
 /**
@@ -41,77 +47,19 @@ import type { SafeUser } from "@/lib/auth";
  * an existing route; nothing is invented.
  */
 
-interface MegaItem {
-  href: string;
-  label: string;
-  desc: string;
-}
-interface MegaGroup {
-  key: "club" | "season" | "media";
-  label: string;
-  items: MegaItem[];
-  image: string;
-  caption: string;
-}
+/**
+ * Header groups come from `lib/nav.ts` so the header and the footer render
+ * the same taxonomy. They used to be defined here, which is how News and
+ * Gallery ended up under "Media" in the header and under "The Season" in
+ * the footer.
+ */
+type MegaGroup = SiteSection;
 
-const MEGA: MegaGroup[] = [
-  {
-    key: "club",
-    label: "The Club",
-    items: [
-      { href: "/the-club", label: "The Club", desc: "Franchise story · Chennai roots" },
-      { href: "/the-pride", label: "The Pride", desc: "The city and the mark" },
-      { href: "/players", label: "Players", desc: "Season 2026 roster" },
-      { href: "/golf-development", label: "Golf Development", desc: "Coaching · academies · course" },
-      { href: "/vimtra-ventures", label: "Vimtra Ventures", desc: "The firm behind the franchise" },
-    ],
-    // A photograph, never a transparent cutout — cover-fit needs a real frame.
-    // Sourced photography (public/assets/photo/CREDITS.md), distinct from
-    // every image used on the pages this panel links to.
-    image: "/assets/photo/nav-club-green-flag.jpg",
-    // Generic stock — deliberately NOT captioned with a venue name.
-    caption: "The franchise",
-  },
-  {
-    key: "season",
-    label: "The Season",
-    items: [
-      { href: "/fixtures", label: "Fixtures", desc: "AM Green IGPL · 2026 calendar" },
-      { href: "/scores", label: "Scores", desc: "Round-by-round scorecards" },
-      { href: "/leaderboards", label: "Standings", desc: "Franchise table · Order of Merit" },
-    ],
-    image: "/assets/photo/nav-season-bunker-ocean.jpg",
-    caption: "Season 2026",
-  },
-  {
-    key: "media",
-    label: "Media",
-    items: [
-      { href: "/news", label: "News", desc: "Franchise news & press coverage" },
-      { href: "/gallery", label: "Gallery", desc: "Tour frames" },
-    ],
-    image: "/assets/photo/nav-media-ball-green.jpg",
-    caption: "From the den",
-  },
-];
+const MEGA = MEGA_SECTIONS;
+const DIRECT = DIRECT_NAV;
 
-const DIRECT = [{ href: "/shop", label: "Shop" }];
-
-const MOBILE_GROUPS = [
-  ...MEGA,
-  {
-    key: "business" as const,
-    label: "Business",
-    items: [
-      { href: "/partners", label: "Partners", desc: "Commercial partners" },
-      { href: "/invest", label: "Invest", desc: "Investment & sponsorship" },
-      { href: "/shop", label: "Shop", desc: "Official merchandise" },
-      { href: "/contact", label: "Contact", desc: "Talk to the franchise" },
-    ],
-    image: "",
-    caption: "",
-  },
-];
+/** The overlay carries every section, including the one with no figure. */
+const MOBILE_GROUPS = SITE_SECTIONS;
 
 /** Routes whose first section is a dark full-bleed hero — shared with
     lib/nav.ts so the header and the heroes cannot drift apart. */
@@ -120,6 +68,7 @@ const OVER_HERO = new Set(FLOATING_HEADER_ROUTES);
 export default function Nav({ user }: { user: SafeUser | null }) {
   const pathname = usePathname();
   const overHero = OVER_HERO.has(pathname);
+  const isAdmin = pathname.startsWith("/admin");
 
   const [scrolled, setScrolled] = useState(false);
   const [openMega, setOpenMega] = useState<MegaGroup["key"] | null>(null);
@@ -184,6 +133,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
         className={[
           "nv",
           overHero ? "nv-over" : "",
+          isAdmin ? "nv-admin" : "",
           scrolled ? "nv-scrolled" : "",
           openMega ? "nv-open" : "",
         ]

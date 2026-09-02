@@ -9,9 +9,11 @@ import {
   Closing,
   type SeasonRow,
   type StoryRow,
+  type StoreFacts,
 } from "@/components/home/Sections";
 import { listFixtures } from "@/lib/fixtures";
 import { listActiveMediaCoverage } from "@/lib/media-coverage";
+import { listProducts } from "@/lib/db";
 import { webSrc } from "@/lib/image-src";
 
 /**
@@ -25,8 +27,8 @@ import { webSrc } from "@/lib/image-src";
  *   02  Club          ink   · oversized year beside a figure that fills
  *   03  Season        ivory · real fixtures as an editorial calendar
  *   04  Development   image · full-bleed range + numbered initiatives
- *   05  Media         paper · one featured story + secondaries
- *   06  Shop          ivory · figure left, type right
+ *   05  Media         paper · one featured story over a ruled press wall
+ *   06  Shop          ivory · full-bleed merchandising band + a real rail
  *   07  Closing       ink   · statement left, actions right
  *
  * Every chapter sits on the module's 4 / 8 / 12 track (`.cm-track`), so the
@@ -60,10 +62,29 @@ function formatRange(start: Date, end: Date | null): string {
 }
 
 export default async function HomePage() {
-  const [fixtures, coverage] = await Promise.all([
+  const [fixtures, coverage, products] = await Promise.all([
     listFixtures().catch(() => []),
     listActiveMediaCoverage().catch(() => []),
+    listProducts().catch(() => []),
   ]);
+
+  // Press coverage is real and already in the database. The Media section
+  // had stopped reading it entirely — five live rows, none of them rendered,
+  // which is what left that chapter as a heading over an empty band.
+  const stories: StoryRow[] = coverage.slice(0, 5).map((m) => ({
+    id: m.id,
+    source: m.sourceName,
+    title: m.title,
+    summary: m.summary,
+    href: m.sourceUrl,
+    cover: webSrc(m.coverImage),
+  }));
+
+  // Counted from the live catalogue, not typed in.
+  const store: StoreFacts = {
+    items: products.length,
+    categories: new Set(products.map((p) => p.cat)).size,
+  };
 
   // Upcoming first, then the most recent completed events.
   const upcoming = fixtures.filter((f) => f.status === "UPCOMING");
@@ -93,22 +114,6 @@ export default async function HomePage() {
       }
     : null;
 
-  // Each story keeps the cover image stored against that record — the
-  // homepage never substitutes a generic photograph.
-  const stories: StoryRow[] = coverage.slice(0, 4).map((m) => ({
-    id: m.id,
-    source: m.sourceName,
-    title: m.title,
-    summary: m.summary,
-    href: m.sourceUrl,
-    cover: webSrc(m.coverImage),
-    date: m.publishedAt
-      ? `${new Date(m.publishedAt).getUTCDate()} ${
-          MONTHS[new Date(m.publishedAt).getUTCMonth()]
-        } ${new Date(m.publishedAt).getUTCFullYear()}`
-      : null,
-  }));
-
   return (
     <>
       <Hero next={next} />
@@ -117,7 +122,7 @@ export default async function HomePage() {
       <Season rows={seasonRows} />
       <Development />
       <Media stories={stories} />
-      <Shop />
+      <Shop facts={store} />
       <Closing />
     </>
   );

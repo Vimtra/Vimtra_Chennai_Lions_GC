@@ -1,29 +1,54 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import PageHero from "@/components/site/PageHero";
-import {
-  Section,
-  IndexLabel,
-  SectionTitle,
-  NumberedList,
-  Figures,
-} from "@/components/site/Section";
+import Image from "next/image";
+import PageMasthead from "@/components/site/PageMasthead";
 
 export const metadata: Metadata = {
   title: "Partners · Vimtra Chennai Lions GC",
   description:
-    "Verified partners of the Vimtra Chennai Lions GC — league title partner am green, kit manufacturer FIRSTCUT — and the four commercial tiers open to new partners.",
+    "Partner with the Vimtra Chennai Lions GC — the partners on record, what a partnership carries, and the four commercial tiers.",
 };
 
-// Only two commercial partners are named on the current record: the league
-// title partner and the kit manufacturer, both documented in the brochure
-// (p. 13). No sponsor slots are pre-filled with fictional brands and no
-// "Slot Available" tiles are presented as marketing filler — the tiered
-// section below describes what a partnership actually includes.
+/* ---------------------------------------------------------------------------
+   Every claim on this page is sourced, and this page owns the partnership
+   material outright.
 
-const CONFIRMED_PARTNERS = [
+   DE-DUPLICATION. /partners and /invest previously carried the same three
+   market figures AND the same four commercial tiers, so a reader moving
+   between them met the same page twice. Ownership is now split by subject:
+
+     /invest   — the market case, who the firm welcomes, the first-mover
+                 window. Capital.
+     /partners — who is already on the record, what a partnership actually
+                 carries, and the tiers. Commercial.
+
+   The market figures have been removed from this page and are linked to
+   rather than repeated.
+
+   SOURCES. Confirmed partners: brochure p. 13, verbatim. The partnership
+   dimensions and the four tiers: brochure p. 19, verbatim — "each structured
+   around visibility on player kit, event branding, digital reach, and
+   hospitality access at Chennai home rounds and international events."
+
+   PARTNER LOGOS. The repository holds no am green or FIRSTCUT artwork —
+   the only marks in public/assets are the Lions' own. Rather than source
+   third-party brand marks from the web, each partner renders as a
+   typographic lockup. `logo` below is the slot: set it to a path and the
+   mark replaces the wordmark, at its own aspect ratio, with no other change.
+--------------------------------------------------------------------------- */
+
+interface Partner {
+  tag: string;
+  name: string;
+  scope: string;
+  detail: string;
+  /** Official artwork, when the franchise supplies it. See the note above. */
+  logo?: { src: string; width: number; height: number; alt: string };
+}
+
+const CONFIRMED_PARTNERS: Partner[] = [
   {
-    tag: "League Title Partner · Kit Sponsor",
+    tag: "League title partner · Kit sponsor",
     name: "am green",
     scope: "AM Green Indian Golf Premier League",
     // Brochure p. 13 verbatim.
@@ -31,28 +56,51 @@ const CONFIRMED_PARTNERS = [
       "League-wide title partner of the AM Green IGPL and kit sponsor across the Vimtra Chennai Lions Season 2026 match kit.",
   },
   {
-    tag: "Kit Manufacturer",
+    tag: "Kit manufacturer",
     name: "FIRSTCUT",
-    scope: "Season 2026 Match Kit",
+    scope: "Season 2026 match kit",
     // Brochure p. 13 verbatim.
     detail: "Kit production partner for the Chennai Lions Season 2026.",
   },
 ];
 
-// Brochure p. 19 — "Four commercial tiers, each structured around visibility
-// on player kit, event branding, digital reach, and hospitality access at
-// Chennai home rounds and international events."
+// Brochure p. 19 — the four dimensions every tier is structured around.
+// Unique to this page: /invest describes capital, this describes reach.
+const DIMENSIONS = [
+  {
+    k: "Kit",
+    t: "Visibility on player kit",
+    d: "Positioning on the match kit the squad wears through the season.",
+  },
+  {
+    k: "Event",
+    t: "Event branding",
+    d: "Presence in the event lockup and across tournament backdrops.",
+  },
+  {
+    k: "Digital",
+    t: "Digital reach",
+    d: "The franchise's own channels and its content output through the season.",
+  },
+  {
+    k: "Access",
+    t: "Hospitality access",
+    d: "At Chennai home rounds and at international events on the card.",
+  },
+];
+
+// Brochure p. 19 — four commercial tiers, verbatim structure. No tier,
+// benefit or inclusion here is invented.
 interface Tier {
   code: string;
   name: string;
   headline: string;
   bullets: string[];
-  badgeStyle: React.CSSProperties;
 }
 
 const TIERS: Tier[] = [
   {
-    code: "TIER 01",
+    code: "01",
     name: "Principal Partner",
     headline: "Front-of-jersey positioning with the team mark.",
     bullets: [
@@ -61,10 +109,9 @@ const TIERS: Tier[] = [
       "Hospitality across all Chennai home rounds",
       "Co-branded press moments",
     ],
-    badgeStyle: { background: "#1A1513", color: "#E9CB8E" },
   },
   {
-    code: "TIER 02",
+    code: "02",
     name: "Associate Partner",
     headline: "Secondary kit branding, digital-first storytelling.",
     bullets: [
@@ -73,113 +120,183 @@ const TIERS: Tier[] = [
       "Digital-first team storytelling package",
       "Curated home-round hospitality",
     ],
-    badgeStyle: {
-      background: "linear-gradient(180deg,#E6C57E,#C39A52)",
-      color: "#3A1A06",
-    },
   },
   {
-    code: "TIER 03",
+    code: "03",
     name: "Season Partner",
-    headline: "Season-long content + curated tournament hospitality.",
+    headline: "Season-long content and curated tournament hospitality.",
     bullets: [
       "Season-long visibility across a defined content and event stack",
       "Curated hospitality at selected tournaments",
     ],
-    badgeStyle: { background: "rgba(196,32,42,0.10)", color: "#C4202A" },
   },
   {
-    code: "TIER 04",
+    code: "04",
     name: "Community Partner",
     headline: "Grassroots and junior-development co-programmes.",
     bullets: [
       "Grassroots and junior-development co-programmes with the franchise",
-      "Anchored around Chennai&apos;s home fixtures",
+      "Anchored around Chennai’s home fixtures",
     ],
-    badgeStyle: { background: "rgba(26,21,19,0.08)", color: "#1A1513" },
   },
-];
-
-// Brochure p. 17 — "India's golf market has crossed the USD 1 billion mark.
-// … 17.1% sports-tourism CAGR. … Ten franchises — Chennai is one."
-const MARKET_CASE = [
-  { v: "$1B+", l: "India Golf Market Today" },
-  { v: "17.1%", l: "Sports Tourism CAGR" },
-  { v: "10", l: "IGPL Franchises · Chennai is one" },
 ];
 
 export default function PartnersPage() {
   return (
     <>
-      <PageHero
-        variant="immersive"
-        eyebrow="Partner With the Lions"
+      <PageMasthead
+        className="pt-hero"
+        eyebrow="Partner with the Lions · Season 2026"
         title={["PARTNERS"]}
-        lead={
-          <>
-            Join a franchise on day one of a decade. Four commercial tiers,
-            each structured around visibility on player kit, event branding,
-            digital reach, and hospitality.
-          </>
-        }
+        line="Kit, event, digital and hospitality — across a full international season."
+        image="/assets/photo/pt-hero-pavilion-golden.jpg"
+        stats={[
+          { k: "On record", v: String(CONFIRMED_PARTNERS.length) },
+          { k: "Tiers", v: String(TIERS.length) },
+          { k: "Season", v: "2026" },
+        ]}
       />
 
-      <Section surface="ivory">
-        <IndexLabel n="01">Confirmed Partners</IndexLabel>
-        <SectionTitle lines={["WHO’S", "ALREADY IN."]} />
-        <ul className="hp-franchises">
-          {CONFIRMED_PARTNERS.map((p) => (
-            <li key={p.name} data-rise>
-              <div className="hp-franchise">
-                <span className="hp-franchise-tag">{p.scope}</span>
-                <span className="hp-franchise-body">
-                  <span className="hp-franchise-name">{p.name}</span>
-                  <span className="hp-franchise-detail">{p.detail}</span>
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </Section>
+      {/* ---- 01 · The partners on record ---- */}
+      <section
+        className="hp-sec hp-sec-ivory pt-sec pt-sec-open"
+        aria-labelledby="pt-a"
+      >
+        <div className="hp-wrap">
+          <div className="nw-head">
+            <div>
+              <p className="hp-index">
+                01 <span>On the record</span>
+              </p>
+              <h2 id="pt-a" className="nw-h">
+                Who&rsquo;s already in.
+              </h2>
+            </div>
+            <p className="nw-note">
+              Two partners are named because two are confirmed. No slot on
+              this page is filled with a placeholder brand.
+            </p>
+          </div>
 
-      <Section surface="ink" size="tight">
-        <IndexLabel n="02" tone="dark">The Market Case</IndexLabel>
-        <Figures items={MARKET_CASE.map((m) => ({ v: m.v, l: m.l }))} />
-      </Section>
+          <ol className="pt-partners">
+            {CONFIRMED_PARTNERS.map((p) => (
+              <li key={p.name}>
+                <div className="pt-partner-mark">
+                  {p.logo ? (
+                    <Image
+                      src={p.logo.src}
+                      alt={p.logo.alt}
+                      width={p.logo.width}
+                      height={p.logo.height}
+                      className="pt-partner-logo"
+                    />
+                  ) : (
+                    <span className="pt-partner-name">{p.name}</span>
+                  )}
+                  <p className="pt-partner-tag">{p.tag}</p>
+                </div>
+                <div className="pt-partner-b">
+                  <p className="pt-partner-scope">{p.scope}</p>
+                  <p className="pt-partner-detail">{p.detail}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
-      <Section surface="paper">
-        <IndexLabel n="03">Commercial Tiers</IndexLabel>
-        <SectionTitle lines={["FOUR WAYS", "TO PARTNER."]} />
-        <ol className="hp-tiers">
-          {TIERS.map((t) => (
-            <li className="hp-tier" key={t.code} data-rise>
-              <div className="hp-tier-head">
-                <span className="hp-tier-code">{t.code}</span>
-                <h3 className="hp-tier-name">{t.name}</h3>
-                <p className="hp-tier-headline">{t.headline}</p>
-              </div>
-              <ul className="hp-tier-list">
-                {t.bullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
-      </Section>
+      {/* ---- 02 · What a partnership carries ---- */}
+      <section
+        className="hp-sec hp-sec-ink hp-sec-atmos pt-sec"
+        aria-labelledby="pt-b"
+      >
+        <div className="hp-wrap">
+          <div className="nw-head">
+            <div>
+              <p className="hp-index hp-index-dark">
+                02 <span>What it carries</span>
+              </p>
+              <h2 id="pt-b" className="nw-h">
+                Four surfaces.
+              </h2>
+            </div>
+            <p className="nw-note">
+              Every tier below is structured around these four. What changes
+              between tiers is depth, not kind.
+            </p>
+          </div>
 
-      <Section surface="ivory" size="tight">
-        <div className="hp-cta-row">
-          <div><SectionTitle lines={["PARTNER WITH", "THE LIONS."]} /></div>
-          <div className="hp-cta-actions" data-rise>
+          <ol className="pt-dims">
+            {DIMENSIONS.map((d) => (
+              <li key={d.k}>
+                <span className="pt-dim-k">{d.k}</span>
+                <h3 className="pt-dim-t">{d.t}</h3>
+                <p className="pt-dim-d">{d.d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ---- 03 · The tiers ---- */}
+      <section className="hp-sec hp-sec-paper pt-sec" aria-labelledby="pt-c">
+        <div className="hp-wrap">
+          <div className="nw-head">
+            <div>
+              <p className="hp-index">
+                03 <span>Commercial tiers</span>
+              </p>
+              <h2 id="pt-c" className="nw-h">
+                Four ways to partner.
+              </h2>
+            </div>
+          </div>
+
+          {/* A ladder, not four cards. The tiers are ordered, so the numeral
+              carries the hierarchy and the inclusions run as a ruled list. */}
+          <ol className="pt-tiers">
+            {TIERS.map((t) => (
+              <li key={t.code}>
+                <div className="pt-tier-b">
+                  <span className="pt-tier-n" aria-hidden>
+                    {t.code}
+                  </span>
+                  <h3 className="pt-tier-name">{t.name}</h3>
+                  <p className="pt-tier-head">{t.headline}</p>
+                </div>
+                <ul className="pt-tier-list">
+                  {t.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ---- Close. The market case lives on /invest and is linked, not
+              repeated. ---- */}
+      <section className="hp-sec hp-sec-ivory pt-sec pt-sec-close">
+        <div className="hp-wrap pt-close">
+          <h2 className="pt-close-t">
+            Partner with
+            <br />
+            the Lions.
+          </h2>
+          <div className="pt-close-a">
             <Link href="/contact" className="hp-btn hp-btn-primary">
               START A CONVERSATION
-              <span className="hp-arrow" aria-hidden>→</span>
+              <span className="hp-arrow" aria-hidden>
+                →
+              </span>
             </Link>
-            <Link href="/invest" className="hp-btn hp-btn-ghost">Investment thesis</Link>
+            <Link href="/invest" className="hp-btn hp-btn-ghost">
+              The market case
+            </Link>
           </div>
         </div>
-      </Section>
+      </section>
     </>
   );
 }

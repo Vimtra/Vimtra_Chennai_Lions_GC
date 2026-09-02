@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, Instagram } from "lucide-react";
-import Reveal from "@/components/Reveal";
+import PageMasthead from "@/components/site/PageMasthead";
 import { listPublishedPosts, formatPublishedDate } from "@/lib/posts";
 import {
   listActiveMediaCoverage,
   formatCoverageDate,
 } from "@/lib/media-coverage";
 import type { Post, MediaCoverage } from "@prisma/client";
-import PageHero from "@/components/site/PageHero";
-import { Section, IndexLabel } from "@/components/site/Section";
 import { webSrc } from "@/lib/image-src";
 
 export const metadata: Metadata = {
@@ -23,14 +20,29 @@ export const metadata: Metadata = {
 // updates are reflected immediately.
 export const dynamic = "force-dynamic";
 
-// Uniform premium editorial ratio for every card on the page. Kept as a
-// tuple so the same numbers apply to both the container and next/image
-// sizes calculation.
-const CARD_ASPECT = { w: 16, h: 10 } as const;
+/* ---------------------------------------------------------------------------
+   The news desk.
 
-// The single project-owned fallback we ever use — reserved for future
-// items an admin creates without a cover. Never shown for the currently
-// seeded rows (every seeded row already has a genuinely-relevant cover).
+   Three kinds of item, kept visibly apart because they have different
+   authors: what the franchise wrote, what the press wrote, and what the
+   franchise posted. That separation is the point of the page — a reader
+   should never have to guess who is speaking — so it survives the redesign
+   as three chapters rather than one merged feed.
+
+   What changed is the presentation. The page was three bands of identical
+   16:10 cards; it is now the same press-wall language the home page's Media
+   chapter uses — one lead with its cover, the rest as ruled rows — so the
+   two surfaces read as one system and the hand-off from the home page lands
+   somewhere familiar.
+
+   Every row is a real database row. Counts in the masthead rail are
+   computed here. Nothing is padded: a section with no rows either shows its
+   honest empty state (official news, which the franchise controls) or is
+   absent entirely (press and social, which it does not).
+--------------------------------------------------------------------------- */
+
+// The single project-owned fallback, for an item an admin creates without a
+// cover. Never shown for the currently seeded rows.
 const FRANCHISE_FALLBACK = "/assets/car-2-web.jpg";
 
 export default async function NewsPage() {
@@ -42,327 +54,238 @@ export default async function NewsPage() {
 
   return (
     <>
-      {/* ============================ HERO ============================ */}
-      <PageHero
-        variant="editorial"
-        eyebrow="From the Den"
+      <PageMasthead
+        eyebrow="From the Den · Vimtra Chennai Lions GC"
         title={["NEWS"]}
-        lead={
-    <>
-      Official Chennai Lions franchise news, third-party press coverage, and social updates — clearly separated so it&apos;s always clear who is speaking.
-    </>
-  }
+        line="What we publish, what the press publishes, and what we post — kept apart."
+        stats={[
+          { k: "Official", v: String(posts.length) },
+          { k: "Press", v: String(articles.length) },
+          { k: "Social", v: String(social.length) },
+        ]}
       />
 
-      {/* =================== A · OFFICIAL NEWS =================== */}
-      <SectionBand
-        eyebrow="Official News · Franchise Editorial"
-        title="From the newsroom."
-        blurb="Articles written and published by the Chennai Lions editorial team."
-        variant="cream"
-      >
-        {posts.length === 0 ? (
-          <EditorialEmpty />
-        ) : (
-          <CardGrid>
-            {posts.map((post) => (
-              <EditorialCard key={post.id} post={post} />
-            ))}
-          </CardGrid>
-        )}
-      </SectionBand>
+      {/* ---- 01 · Official franchise editorial ---- */}
+      <section className="hp-sec hp-sec-ivory nw-sec" aria-labelledby="nw-a">
+        <div className="hp-wrap">
+          <div className="nw-head">
+            <div>
+              <p className="hp-index">
+                01 <span>Official news</span>
+              </p>
+              <h2 id="nw-a" className="nw-h">
+                From the newsroom.
+              </h2>
+            </div>
+            <p className="nw-note">
+              Written and published by the Chennai Lions editorial team.
+            </p>
+          </div>
 
-      {/* =================== B · MEDIA COVERAGE =================== */}
+          {posts.length === 0 ? (
+            <div className="nw-empty">
+              <p className="nw-empty-k">Nothing published yet</p>
+              <p className="nw-empty-t">
+                The newsroom opens with the season.
+              </p>
+              <p className="nw-empty-d">
+                Franchise editorial publishes here once it is written and
+                signed off. Until then the press coverage below is the record
+                — reported by others, linked to the source.
+              </p>
+            </div>
+          ) : (
+            <ol className="nw-posts">
+              {posts.map((post, i) => (
+                <li key={post.id}>
+                  <Link href={`/news/${post.slug}`}>
+                    <span className="nw-n" aria-hidden>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {post.coverImage && (
+                      <span className="nw-fig">
+                        <Image
+                          src={webSrc(post.coverImage) ?? FRANCHISE_FALLBACK}
+                          alt=""
+                          fill
+                          sizes="(max-width: 767px) 100vw, 22vw"
+                        />
+                      </span>
+                    )}
+                    <span className="nw-post-b">
+                      <span className="nw-post-t">{post.title}</span>
+                      {post.publishedAt && (
+                        <span className="nw-date">
+                          {formatPublishedDate(post.publishedAt)}
+                        </span>
+                      )}
+                    </span>
+                    <span className="hp-arrow" aria-hidden>
+                      →
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      </section>
+
+      {/* ---- 02 · Third-party press ---- */}
       {articles.length > 0 && (
-        <SectionBand
-          eyebrow="Media Coverage · In The News"
-          title="What the press is writing about the franchise."
-          blurb="Third-party coverage of the Vimtra Chennai Lions and IGPL — curated by us, published by others. Click through to read the full article on the source."
-          variant="paper"
-        >
-          {/* One lead story carries the photograph; the rest are a
-              numbered masthead list. Several of these articles share a
-              subject, so a grid of identical thumbnails read as a
-              template error rather than as coverage. */}
-          <PressRun items={articles} />
-        </SectionBand>
+        <section className="hp-sec hp-sec-paper nw-sec" aria-labelledby="nw-b">
+          <div className="hp-wrap">
+            <div className="nw-head">
+              <div>
+                <p className="hp-index">
+                  02 <span>Media coverage</span>
+                </p>
+                <h2 id="nw-b" className="nw-h">
+                  What the press is writing.
+                </h2>
+              </div>
+              <p className="nw-note">
+                Curated by us, published by others. Each headline opens at its
+                source.
+              </p>
+            </div>
+            <PressWall items={articles} />
+          </div>
+        </section>
       )}
 
-      {/* =================== C · SOCIAL UPDATES =================== */}
+      {/* ---- 03 · Franchise social ---- */}
       {social.length > 0 && (
-        <SectionBand
-          eyebrow="Social Updates · From the Franchise Channels"
-          title="Straight from the feed."
-          blurb="Posts from the Chennai Lions and IGPL social channels. Tap through to view on the source platform."
-          variant="cream"
-        >
-          <CardGrid>
-            {social.map((item) => (
-              <SocialCard key={item.id} item={item} />
-            ))}
-          </CardGrid>
-        </SectionBand>
+        <section className="hp-sec hp-sec-ivory nw-sec" aria-labelledby="nw-c">
+          <div className="hp-wrap">
+            <div className="nw-head">
+              <div>
+                <p className="hp-index">
+                  03 <span>Social</span>
+                </p>
+                <h2 id="nw-c" className="nw-h">
+                  Straight from the feed.
+                </h2>
+              </div>
+              <p className="nw-note">
+                Posts from the franchise channels. Tap through to the platform.
+              </p>
+            </div>
+            <ul className="hm-press-rows nw-social">
+              {social.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={item.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    <span className="hm-press-src">{item.sourceName}</span>
+                    <span className="hm-press-rt">{item.title}</span>
+                    <span className="hp-arrow" aria-hidden>
+                      →
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       )}
+
+      <section className="hp-sec hp-sec-paper hp-sec-tight">
+        <div className="hp-wrap cm-track ss-links">
+          <Link href="/the-pride" className="ss-link">
+            <span className="ss-link-k">The franchise</span>
+            <span className="ss-link-t">The Pride</span>
+          </Link>
+          <Link href="/fixtures" className="ss-link">
+            <span className="ss-link-k">Season 2026</span>
+            <span className="ss-link-t">Fixtures</span>
+          </Link>
+          <Link href="/gallery" className="ss-link">
+            <span className="ss-link-k">Tour frames</span>
+            <span className="ss-link-t">Gallery</span>
+          </Link>
+        </div>
+      </section>
     </>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Layout primitives — kept local to this page so section rhythm stays
-// consistent without introducing new global CSS.
-
-function SectionBand({
-  eyebrow,
-  title,
-  blurb,
-  variant,
-  children,
-}: {
-  eyebrow: string;
-  title: string;
-  blurb: string;
-  variant: "cream" | "paper";
-  children: React.ReactNode;
-}) {
-  return (
-    <section
-      className={`hp-sec hp-sec-default ${
-        variant === "paper"
-          ? "bg-cream-50 border-y border-black/[0.06]"
-          : "bg-cream-100"
-      }`}
-    >
-      {/* hp-wrap: the newsroom shares the same left edge as the header,
-          the page hero above it and the footer below. */}
-      <div className="hp-wrap">
-        <Reveal
-          variant="fade-up"
-          className="mb-10 flex items-end justify-between gap-8 flex-wrap"
-        >
-          <div>
-            <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-              {eyebrow}
-            </div>
-            <h2 className="mt-[14px] font-sora font-extrabold text-[clamp(28px,4vw,44px)] leading-[1.05] tracking-[-0.02em] text-ink">
-              {title}
-            </h2>
-          </div>
-          <p className="max-w-[440px] m-0 font-manrope text-[14px] leading-[1.62] text-muted">
-            {blurb}
-          </p>
-        </Reveal>
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function CardGrid({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
-      {children}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Card: Editorial post (Section A)
-
-function EditorialCard({ post }: { post: Post }) {
-  return (
-    <Reveal
-      variant="fade-up"
-      className="lift group flex flex-col h-full no-underline text-inherit bg-cream-50 border border-black/[0.08] rounded-[20px] overflow-hidden"
-    >
-      <Link
-        href={`/news/${post.slug}`}
-        className="flex flex-col h-full no-underline text-inherit"
-      >
-        <div
-          className="relative bg-ink"
-          style={{ aspectRatio: `${CARD_ASPECT.w} / ${CARD_ASPECT.h}` }}
-        >
-          <Image
-            src={webSrc(post.coverImage) ?? FRANCHISE_FALLBACK}
-            alt={`${post.title} — Vimtra Chennai Lions GC`}
-            fill
-            sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 400px"
-            className="object-cover"
-          />
-          {post.category && (
-            <div className="absolute top-3 left-3 inline-flex items-center gap-2 rounded-[999px] bg-crimson-600/95 backdrop-blur-[6px] px-3 py-[6px] text-[10.5px] font-sora font-extrabold tracking-[0.16em] text-white uppercase">
-              {post.category}
-            </div>
-          )}
-        </div>
-        <div className="p-6 flex-1 flex flex-col">
-          <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-            Franchise Editorial
-            {post.publishedAt ? ` · ${formatPublishedDate(post.publishedAt)}` : ""}
-          </div>
-          <h3 className="mt-[10px] mb-2 font-sora font-bold text-[20px] leading-[1.2] tracking-[-0.01em] text-ink">
-            {post.title}
-          </h3>
-          {post.excerpt && (
-            <p className="m-0 font-manrope text-[13.5px] leading-[1.55] text-muted">
-              {post.excerpt}
-            </p>
-          )}
-          <div className="mt-auto pt-4 border-t border-black/[0.06] flex items-center justify-between">
-            <span className="font-manrope text-[12.5px] text-muted">
-              By {post.authorName}
-            </span>
-            <span className="font-manrope font-semibold text-[12.5px] text-crimson-600 group-hover:underline">
-              Read →
-            </span>
-          </div>
-        </div>
-      </Link>
-    </Reveal>
-  );
-}
-
-function EditorialEmpty() {
-  return (
-    <Reveal
-      variant="fade-up"
-      className="rounded-[22px] border border-dashed border-black/[0.18] bg-cream-50 p-10 md:p-14"
-    >
-      <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-        Nothing Published Yet
-      </div>
-      <h3 className="mt-3 mb-4 font-sora font-extrabold text-[clamp(24px,3.4vw,32px)] leading-[1.15] tracking-[-0.02em] text-ink">
-        The Notebook opens with the first real story.
-      </h3>
-      <p className="m-0 max-w-[640px] font-manrope text-[15px] leading-[1.68] text-muted">
-        Franchise notes, tournament wraps, player features, and academy
-        updates will publish here when they&apos;re written and signed off — not
-        before.
-      </p>
-    </Reveal>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Press run — one lead with a cover, the remainder as an editorial list.
-// Uses the same .story-* language as the homepage Media chapter so the
-// two surfaces read as one design system.
-
-function PressRun({ items }: { items: MediaCoverage[] }) {
+/**
+ * Press wall — one lead carrying its cover, the rest as ruled rows.
+ *
+ * Shares `.hm-press-*` with the home page's Media chapter. Several of these
+ * articles are about the same subject and point at the same portrait, so a
+ * grid of identical thumbnails read as a template error rather than as
+ * coverage; only the lead takes an image.
+ */
+function PressWall({ items }: { items: MediaCoverage[] }) {
   const [lead, ...rest] = items;
   if (!lead) return null;
-  const leadDate = lead.publishedAt ? formatCoverageDate(lead.publishedAt) : "";
+  const cover = webSrc(lead.coverImage);
+  const leadDate = lead.publishedAt ? formatCoverageDate(lead.publishedAt) : null;
+
   return (
-    <div className="media-grid">
+    <div className="hm-press">
       <a
-        className="story story-lead"
+        className="hm-press-lead"
         href={lead.sourceUrl}
         target="_blank"
         rel="noreferrer noopener"
       >
-        <span className="story-fig story-fig-lead">
+        <span className="hm-press-fig">
           <Image
-            src={webSrc(lead.coverImage) ?? FRANCHISE_FALLBACK}
-            alt={`${lead.sourceName} — ${lead.title}`}
+            src={cover ?? FRANCHISE_FALLBACK}
+            alt=""
             fill
-            sizes="(max-width: 1024px) 100vw, 56vw"
-            className="story-img"
+            sizes="(max-width: 767px) 100vw, 42vw"
           />
         </span>
-        <span className="story-meta">
-          <span className="story-src">{lead.sourceName}</span>
-          {leadDate && <span className="story-date">{leadDate}</span>}
+        <span className="hm-press-lead-b">
+          <span className="hm-press-src">
+            {lead.sourceName}
+            {leadDate && <i className="nw-sep">·</i>}
+            {leadDate}
+          </span>
+          <span className="hm-press-t">{lead.title}</span>
+          <span className="hm-press-sum">{lead.summary}</span>
+          <span className="hm-press-go" aria-hidden>
+            Read at {lead.sourceName} →
+          </span>
         </span>
-        <span className="story-title story-title-lead">{lead.title}</span>
-        <span className="story-sum">{lead.summary}</span>
       </a>
 
-      <ol className="story-rest">
-        {rest.map((item, i) => (
-          <li key={item.id}>
-            <a
-              className="story story-row"
-              href={item.sourceUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              <span className="story-n">{String(i + 2).padStart(2, "0")}</span>
-              <span className="story-col">
-                <span className="story-meta">
-                  <span className="story-src">{item.sourceName}</span>
-                  {item.publishedAt && (
-                    <span className="story-date">
-                      {formatCoverageDate(item.publishedAt)}
-                    </span>
-                  )}
-                </span>
-                <span className="story-title">{item.title}</span>
-              </span>
-              <span className="story-go" aria-hidden>
-                &#8599;
-              </span>
-            </a>
-          </li>
-        ))}
-      </ol>
+      {rest.length > 0 && (
+        <ul className="hm-press-rows">
+          {rest.map((item) => {
+            const date = item.publishedAt
+              ? formatCoverageDate(item.publishedAt)
+              : null;
+            return (
+              <li key={item.id}>
+                <a
+                  href={item.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <span className="hm-press-src">
+                    {item.sourceName}
+                    {date && <i className="nw-sep">·</i>}
+                    {date}
+                  </span>
+                  <span className="hm-press-rt">{item.title}</span>
+                  <span className="hp-arrow" aria-hidden>
+                    →
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Card: Social update — Instagram / social-platform post (Section C)
-
-function SocialCard({ item }: { item: MediaCoverage }) {
-  const dateStr = item.publishedAt ? formatCoverageDate(item.publishedAt) : "";
-  const isInstagram = /instagram/i.test(item.sourceName);
-  return (
-    <Reveal
-      variant="fade-up"
-      className="lift group flex flex-col h-full no-underline text-inherit bg-white border border-black/[0.08] rounded-[20px] overflow-hidden"
-    >
-      <a
-        href={item.sourceUrl}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="flex flex-col h-full no-underline text-inherit"
-      >
-        <div
-          className="relative bg-ink"
-          style={{ aspectRatio: `${CARD_ASPECT.w} / ${CARD_ASPECT.h}` }}
-        >
-          <Image
-            src={webSrc(item.coverImage) ?? FRANCHISE_FALLBACK}
-            alt={`${item.sourceName} — ${item.title}`}
-            fill
-            sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 400px"
-            className="object-cover"
-          />
-          <div className="absolute top-3 left-3 inline-flex items-center gap-2 rounded-[999px] bg-gradient-to-br from-[#E1306C] to-[#833AB4] px-3 py-[6px] text-[10.5px] font-sora font-extrabold tracking-[0.16em] text-white uppercase">
-            {isInstagram && <Instagram className="w-3 h-3" />}
-            {item.sourceName}
-          </div>
-          <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 flex items-center justify-center text-ink group-hover:bg-crimson-600 group-hover:text-white transition-colors">
-            <ArrowUpRight className="w-4 h-4" />
-          </div>
-        </div>
-        <div className="p-6 flex-1 flex flex-col">
-          <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-            Social Update{dateStr ? ` · ${dateStr}` : ""}
-          </div>
-          <h3 className="mt-[10px] mb-2 font-sora font-bold text-[18px] leading-[1.22] tracking-[-0.005em] text-ink">
-            {item.title}
-          </h3>
-          <p className="m-0 font-manrope text-[13.5px] leading-[1.6] text-muted">
-            {item.summary}
-          </p>
-          <div className="mt-auto pt-4 border-t border-black/[0.06] flex items-center justify-between">
-            <span className="font-manrope font-semibold text-[12.5px] text-ink group-hover:text-crimson-600 transition-colors">
-              {isInstagram ? "View on Instagram" : `View on ${item.sourceName}`}
-            </span>
-            <ArrowUpRight className="w-4 h-4 text-muted group-hover:text-crimson-600 transition-colors" />
-          </div>
-        </div>
-      </a>
-    </Reveal>
-  );
-}
+export type { Post };

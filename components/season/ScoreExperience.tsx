@@ -12,10 +12,10 @@ import { gsap, registerGsap, reduced, rise } from "@/components/motion/gsap";
  * row of filter pills.
  *
  * The board renders exactly what the Score table holds for the selected
- * fixture. With no rows it does not apologise with an empty card — it shows
- * the board unlit: the column rail the data will occupy, drawn faint, with
- * the reason stated over it. Nothing provisional, projected or illustrative
- * is ever drawn, so the lit and unlit states are the same component.
+ * fixture. With no rows it states the absence and names the columns the
+ * board will carry — the same device /leaderboards uses — rather than
+ * drawing an empty table. Nothing provisional, projected or illustrative is
+ * ever drawn, so the lit and unlit states are the same component.
  *
  * Every value is passed in pre-formatted by app/scores/page.tsx from real
  * Fixture and Score rows.
@@ -220,24 +220,19 @@ export default function ScoreExperience({ events }: { events: BoardEvent[] }) {
             </p>
           </div>
 
-          {/* The shape the board will take, drawn faint beneath the
-              statement and fading out. Decorative and hidden from assistive
-              tech — it carries no values, and must never be mistaken for
-              data that is still loading. */}
-          <div className="tb-unlit-ghost" aria-hidden>
-            <span className="tb-unlit-head">
-              <i>Pos</i>
-              <i>Player</i>
-              <i>R1</i>
-              <i>R2</i>
-              <i>R3</i>
-              <i>R4</i>
-              <i>Total</i>
-            </span>
-            {[0, 1, 2, 3, 4, 5].map((n) => (
-              <span className="tb-unlit-rule" key={n} />
-            ))}
-          </div>
+          {/* The columns this board will carry, named. An earlier version
+              drew the header over six empty rules — "the board, unlit" —
+              but stripped of context that reads as a table that failed to
+              load, and it cost a screen of dead space to say nothing. This
+              is the same device /leaderboards uses for its empty boards, so
+              the two pages state absence the same way. */}
+          <ul className="tb-await-cols" data-tb-row>
+            {["Pos", "Player", "R1", "R2", "R3", "R4", "Thru", "Today", "Total"].map(
+              (c) => (
+                <li key={c}>{c}</li>
+              )
+            )}
+          </ul>
         </div>
       )}
 

@@ -107,7 +107,7 @@ const TIERS: Tier[] = [
     headline: "Grassroots and junior-development co-programmes.",
     bullets: [
       "Grassroots and junior-development co-programmes with the franchise",
-      "Anchored around Chennai&apos;s home fixtures",
+      "Anchored around Chennai’s home fixtures",
     ],
     badgeStyle: { background: "rgba(26,21,19,0.08)", color: "#1A1513" },
   },

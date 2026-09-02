@@ -4,6 +4,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { signUp } from "../actions";
 import { getCurrentUser } from "@/lib/auth";
+import PasswordField from "@/components/auth/PasswordField";
 
 export const metadata: Metadata = {
   title: "Create Account · Vimtra Chennai Lions GC",
@@ -48,7 +49,7 @@ export default async function SignUpPage({
           </div>
           <div className="field">
             <label>Password</label>
-            <input type="password" name="password" required minLength={8} autoComplete="new-password" placeholder="At least 8 characters" />
+            <PasswordField name="password" required minLength={8} autoComplete="new-password" placeholder="At least 8 characters" />
           </div>
           <button type="submit" className="cta-gold press justify-center" style={{ padding: 13 }}>
             CREATE ACCOUNT

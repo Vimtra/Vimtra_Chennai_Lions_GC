@@ -5,7 +5,11 @@ import { useEffect, useRef } from "react";
 import { gsap, registerGsap, revealLines, rise } from "@/components/motion/gsap";
 
 /**
- * Season-module masthead.
+ * Page masthead — shared by the season module and the news desk.
+ *
+ * Lives in components/site/ rather than components/season/ because /news
+ * uses it too: one opening device across those pages means the reader
+ * meets the same rail on each.
  *
  * A title card, not a hero band. `StoryHero` (the club module's opener)
  * reserves 42–46svh for an eyebrow and a word, which on /scores and
@@ -28,14 +32,15 @@ export interface MastheadStat {
   v: string;
 }
 
-export default function SeasonMasthead({
+export default function PageMasthead({
   eyebrow,
   title,
   line,
   status,
   stats,
   image,
-  imagePosition = "50% 62%",
+  imagePosition,
+  className = "",
 }: {
   eyebrow: string;
   /** Hand-broken lines — each becomes one masked line that slides up. */
@@ -47,6 +52,12 @@ export default function SeasonMasthead({
   /** Decorative only — see the note above. */
   image?: string;
   imagePosition?: string;
+  /**
+   * Optional. Omit it to let CSS own the crop — an inline style beats a
+   * stylesheet, so a page that needs a different crop per breakpoint must
+   * not pass this.
+   */
+  className?: string;
 }) {
   const root = useRef<HTMLElement | null>(null);
 
@@ -73,7 +84,9 @@ export default function SeasonMasthead({
   return (
     <section
       ref={root}
-      className={`tb-mast ${image ? "has-media" : ""}`.trim()}
+      className={`tb-mast ${image ? "has-media" : ""} ${className}`
+        .replace(/\s+/g, " ")
+        .trim()}
       aria-label={title.join(" ")}
     >
       {image && (
@@ -84,7 +97,7 @@ export default function SeasonMasthead({
             fill
             priority
             sizes="100vw"
-            style={{ objectPosition: imagePosition }}
+            style={imagePosition ? { objectPosition: imagePosition } : undefined}
           />
         </div>
       )}
