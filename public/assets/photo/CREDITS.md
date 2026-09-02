@@ -46,6 +46,8 @@ face.** Keep that rule if these are ever swapped out.
 | `home-01-links-twilight.jpg` | [pexels 6256754](https://www.pexels.com/photo/golf-course-at-dawn-6256754/) | Links fairway at twilight, a lone distant figure | `/` 01 statement band |
 | `home-club-aerial-golden.jpg` | [pexels 35723500](https://www.pexels.com/photo/aerial-view-of-golf-course-in-faro-portugal-35723500/) | Course from the air at golden hour, sea on the horizon | `/` 02 The Club |
 | `home-dev-range-silhouette.jpg` | [pexels 36937400](https://www.pexels.com/photo/golfer-taking-a-swing-at-driving-range-36937400/) | Backlit silhouette practising at a range | `/` 04 Golf Development |
+| `ss-scores-hero-twilight-course.jpg` | [pexels 13359834](https://www.pexels.com/photo/trees-on-golf-course-at-dawn-13359834/) | Green and pin among tall trees at twilight, no people | `/scores` masthead |
+| `ss-standings-hero-green-marsh.jpg` | [pexels 8454463](https://www.pexels.com/photo/grass-golf-field-beside-river-8454463/) | Championship green, bunker and marsh in low light, no people | `/leaderboards` masthead |
 | `gd-hero-clubhouse-lake.jpg` | [pexels 6048946](https://www.pexels.com/photo/photo-of-a-golf-course-during-daytime-6048946/) | Clubhouse across a lake from the fairway | `/golf-development` hero |
 | `gd-framework-facility.jpg` | [pexels 29276528](https://www.pexels.com/photo/aerial-view-of-golf-course-in-setubal-portugal-29276528/) | Clubhouse, practice range and course from the air | `/golf-development` 01 The Framework |
 | `gd-thesis-villas-aerial.jpg` | [pexels 34823930](https://www.pexels.com/photo/aerial-view-of-sheikh-zayed-luxury-villas-and-golf-course-34823930/) | Villas woven through a golf course, straight down | `/golf-development` Signature Thesis |
@@ -61,6 +63,21 @@ Kept here so the same mistakes are not re-made on the next swap.
 - **[pexels 30752230](https://www.pexels.com/photo/golf-caddy-assisting-player-at-nairobi-course-30752230/)** — a caddie's hi-vis vest carries a legible advertisement with a phone number.
 - **Every golf-coaching result on Pexels** — the search returns almost exclusively photographs of children being taught. Identifiable minors do not go on a commercial franchise page. The academy and grassroots initiatives are therefore set typographically, with no stand-in photography.
 - **Chennai beach scenes with people in the foreground** — good for "community", but they put private individuals' faces on a commercial page for no editorial gain. Passed over in favour of frames without them.
+- **[pexels 32988401](https://www.pexels.com/photo/scenic-golf-course-with-mountain-view-32988401/)** — a strong mountain-course frame, but the pin flag carries a legible golf-estate name and logo. Downloaded, inspected at 2x, and discarded for the same reason as the TopGolf and NOCTA frames above.
+
+## Season module — why these two exist
+
+`/scores` and `/leaderboards` had no photography at all until the season
+module was redesigned. Every one of the nineteen files above was already
+in use on another page, and repeating one would have put the same frame on
+two heroes, so two new photographs were sourced under the same rules.
+
+Both sit behind the **page's own title** — "SCORES", "LEADERBOARDS" — and
+never beside an event name. That distinction matters here: the tournament
+card on `/scores` names Al Hamra, Anahita, Royal Johannesburg and
+Lubumbashi, and a photograph adjacent to any of those headings would read
+as a picture of that venue. Venue identity on these pages is text from the
+Fixture row, never imagery. Both files carry `alt=""`.
 
 ## Location claims — read before writing a caption
 

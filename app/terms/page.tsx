@@ -102,7 +102,7 @@ const SECTIONS: { id: string; title: string; body: string[] }[] = [
     id: "contact",
     title: "Contact",
     body: [
-      "Questions about these terms? Reach us at info@vimtra.com or on the numbers listed on our contact page.",
+      "Questions about these terms? Reach us at golfventures@vimtra.com or on the numbers listed on our contact page.",
     ],
   },
 ];
@@ -126,10 +126,10 @@ export default function TermsPage() {
               placing an order. If you have any question about them, contact us
               at{" "}
               <a
-                href="mailto:info@vimtra.com"
+                href="mailto:golfventures@vimtra.com"
                 className="text-crimson-600 font-semibold no-underline"
               >
-                info@vimtra.com
+                golfventures@vimtra.com
               </a>
               .
             </p>

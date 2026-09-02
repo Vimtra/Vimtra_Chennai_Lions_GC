@@ -3,28 +3,32 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { gsap, registerGsap, revealLines, rise } from "@/components/motion/gsap";
+import { gsap, registerGsap, reduced, revealLines, rise } from "@/components/motion/gsap";
 
 /**
- * Home hero — campaign opener.
+ * Home hero — centre-stage campaign opener.
  *
- * One composed field rather than a text block sitting on a background.
- * The photograph is art-directed: the source is a 1:1 aerial of the
- * course at golden hour, so on a wide frame the crop is chosen (see
- * `.hero-img` object-position) instead of defaulting to centre and
- * losing the clubhouse and horizon.
+ * Composed in depth rather than as a text block on a background:
  *
- * The type is staged across the frame as a poster — PRIDE flush to the
- * left edge, a tracked gold connector, then CHENNAI stepped inward. The
- * step echoes the converging V of the lion mark.
+ *   photograph → veil → spotlight → display type → FIGURE → scrim → UI
  *
- * Deliberately no player portrait: the homepage is the club, the city
- * and the season. Player photography belongs to /players.
+ * The cut-out golfer stands in the centre of the frame and crosses the
+ * display type, so the headline reads as a printed backdrop the figure is
+ * standing in front of. That occlusion is the whole point of the layer
+ * order — the type is real text and stays in the accessibility tree, it is
+ * simply overlapped by the figure the way a poster would overlap it.
  *
- * Copy is the franchise's own brand line ("Pride of Chennai", brochure
- * p.06 "The Mark") and the brochure-verified Season 2026 opener.
+ * The source cut-out (`hero-golfer.png`, 1024²) carries a full-width strip
+ * of turf with a hard horizontal top edge, and the figure itself fills only
+ * the middle 38% of the canvas. `hero-golfer-cut.png` is that same artwork
+ * cropped to the figure column (see the note in globals.css), so it can be
+ * sized by height without the transparent margins pushing it off-frame.
+ * The remaining turf is dissolved by a mask rather than cropped away, which
+ * keeps the figure grounded instead of floating.
  *
- * The image is the only `priority` media on the page.
+ * Copy is unchanged and remains the franchise's own: the brand line
+ * "Pride of Chennai" (brochure p.06 "The Mark") and the real next fixture,
+ * read from the database by app/page.tsx.
  */
 export interface HeroNext {
   name: string;
@@ -34,10 +38,8 @@ export interface HeroNext {
 
 /**
  * `next` is the real next UPCOMING fixture, read from the database and
- * passed down by app/page.tsx. It used to be hardcoded in this file, which
- * would have gone stale silently the moment the calendar moved. When there
- * is no upcoming fixture the foot rail renders the scroll cue alone rather
- * than inventing one.
+ * passed down by app/page.tsx. When there is no upcoming fixture the foot
+ * rail renders the scroll cue alone rather than inventing one.
  */
 export default function Hero({ next }: { next?: HeroNext | null }) {
   const root = useRef<HTMLElement | null>(null);
@@ -46,6 +48,11 @@ export default function Hero({ next }: { next?: HeroNext | null }) {
     registerGsap();
     const el = root.current;
     if (!el) return;
+    // Every element's resting state is its final one, so under reduced
+    // motion there is simply no timeline. (rise/revealLines already no-op;
+    // the veil fade and the frame's opening scale did not, and the scale
+    // is exactly the kind of motion the preference asks us to drop.)
+    if (reduced()) return;
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
       // 0.00 — atmosphere settles before anything moves
@@ -63,9 +70,24 @@ export default function Hero({ next }: { next?: HeroNext | null }) {
       // 0.50 — the headline, word by word
       const ln = revealLines("[data-line] > span", { stagger: 0.13 });
       if (ln) tl.add(ln, 0.5);
-      // 0.95 — supporting rail, then the foot
+      // 0.50 — the stage light comes up
+      tl.fromTo(
+        "[data-glow]",
+        { opacity: 0 },
+        { opacity: 1, duration: 1.6, ease: "power2.out" },
+        0.5
+      );
+      // 0.62 — the figure steps into the frame, behind the last word and
+      //        slower than the type so it reads as arriving, not sliding.
+      tl.fromTo(
+        "[data-figure]",
+        { yPercent: 5, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 1.5, ease: "power3.out" },
+        0.62
+      );
+      // 1.05 — supporting rail, then the foot
       const tail = rise("[data-tail]", { y: 14, stagger: 0.07 });
-      if (tail) tl.add(tail, 0.95);
+      if (tail) tl.add(tail, 1.05);
     }, el);
     return () => ctx.revert();
   }, []);
@@ -75,7 +97,7 @@ export default function Hero({ next }: { next?: HeroNext | null }) {
       <div className="hero-media" data-media>
         <Image
           src="/assets/photo/home-hero-sunset-green.jpg"
-          alt="A championship green and pin under a dramatic sunset sky"
+          alt=""
           fill
           priority
           sizes="100vw"
@@ -85,6 +107,11 @@ export default function Hero({ next }: { next?: HeroNext | null }) {
         <div className="v-grain" aria-hidden />
       </div>
 
+      {/* Stage light behind the figure — brand crimson at the base, gold
+          above it. Lifts the cut-out off the photograph so its edge is a
+          silhouette rather than a sticker. */}
+      <div className="hero-glow" data-glow aria-hidden />
+
       <div className="hero-grid hp-wrap">
         <p className="hero-marker" data-marker>
           <i aria-hidden />
@@ -92,19 +119,21 @@ export default function Hero({ next }: { next?: HeroNext | null }) {
           <span>Season 2026</span>
         </p>
 
-        <h1 className="hero-type">
-          <span className="hero-row">
+        <div className="hero-stage">
+          <h1 className="hero-type">
+            <span className="hero-row">
+              <span className="mq-line" data-line>
+                <span>PRIDE</span>
+              </span>
+              <span className="hero-of" aria-hidden>
+                OF
+              </span>
+            </span>
             <span className="mq-line" data-line>
-              <span>PRIDE</span>
+              <span>CHENNAI</span>
             </span>
-            <span className="hero-of" aria-hidden>
-              OF
-            </span>
-          </span>
-          <span className="mq-line hero-w2" data-line>
-            <span>CHENNAI</span>
-          </span>
-        </h1>
+          </h1>
+        </div>
 
         <div className="hero-rail">
           <p className="hero-lead" data-tail>
@@ -119,6 +148,25 @@ export default function Hero({ next }: { next?: HeroNext | null }) {
           </Link>
         </div>
       </div>
+
+      {/* The figure sits outside the padded wrap: it is anchored to the
+          frame, not to the text column, and never takes pointer events so
+          the rail and foot links underneath it stay clickable. */}
+      <div className="hero-figure" data-figure>
+        <Image
+          src="/assets/hero-golfer-cut.png"
+          alt="A golfer at the moment of impact, driving from the tee"
+          width={428}
+          height={968}
+          priority
+          sizes="(max-width: 767px) 240px, 320px"
+          className="hero-cut"
+        />
+      </div>
+
+      {/* Base scrim: dissolves the turf into the frame and seats the copy,
+          the CTA and the foot rail on ink instead of on khaki. */}
+      <div className="hero-base" aria-hidden />
 
       {/* Foot rail: the scroll cue anchors the left edge, the season
           opener the right — so the frame reads as a poster with all

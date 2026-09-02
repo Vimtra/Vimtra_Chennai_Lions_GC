@@ -641,7 +641,7 @@ function StepTwo({
               key={it.id}
               className="flex items-center gap-4 py-2 border-b border-black/[0.06] last:border-b-0"
             >
-              <div className="relative w-[54px] h-[54px] rounded-[10px] overflow-hidden bg-cream-100 shrink-0 flex items-center justify-center">
+              <div className="v-lift-sm relative w-[54px] h-[54px] rounded-[10px] overflow-hidden bg-cream-100 shrink-0 flex items-center justify-center">
                 <Image
                   src={it.img || FALLBACK_LOGO}
                   alt={it.name}

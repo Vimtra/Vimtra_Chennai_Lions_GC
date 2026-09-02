@@ -20,26 +20,20 @@ const CHANNELS = [
   {
     label: "General & Partnerships",
     kind: "email" as const,
-    value: "info@vimtra.com",
-    href: "mailto:info@vimtra.com",
-  },
-  {
-    label: "United States",
-    kind: "phone" as const,
-    value: "+1 650 483 6185",
-    href: "tel:+16504836185",
+    value: "golfventures@vimtra.com",
+    href: "mailto:golfventures@vimtra.com",
   },
   {
     label: "India",
     kind: "phone" as const,
-    value: "+91 89394 14030",
-    href: "tel:+918939414030",
+    value: "+91 98403 34456",
+    href: "tel:+919840334456",
   },
   {
     label: "Instagram",
     kind: "social" as const,
-    value: "@vimtra.chennai.gc",
-    href: "https://instagram.com/vimtra.chennai.gc",
+    value: "@chennailionsgc",
+    href: "https://www.instagram.com/chennailionsgc/",
   },
 ];
 

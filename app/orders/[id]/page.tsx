@@ -79,7 +79,7 @@ export default async function OrderConfirmationPage({
                     key={it.id}
                     className="flex items-center gap-4 py-2 border-b border-black/[0.06] last:border-b-0"
                   >
-                    <div className="relative w-[60px] h-[60px] rounded-[10px] overflow-hidden bg-cream-100 shrink-0 flex items-center justify-center">
+                    <div className="v-lift-sm relative w-[60px] h-[60px] rounded-[10px] overflow-hidden bg-cream-100 shrink-0 flex items-center justify-center">
                       <Image
                         src={it.productImage || FALLBACK_LOGO}
                         alt={it.productName}

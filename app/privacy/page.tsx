@@ -66,7 +66,7 @@ const SECTIONS: { id: string; title: string; body: string[] }[] = [
     title: "Your rights",
     body: [
       "You may access, correct, or update the information in your account at any time from your profile page.",
-      "You may request deletion of your account and associated data by contacting us at info@vimtra.com. Some records may be retained where required by law.",
+      "You may request deletion of your account and associated data by contacting us at golfventures@vimtra.com. Some records may be retained where required by law.",
       "You may withdraw consent to future marketing communications at any time.",
     ],
   },
@@ -97,7 +97,7 @@ const SECTIONS: { id: string; title: string; body: string[] }[] = [
     id: "contact",
     title: "Contact",
     body: [
-      "Questions about this policy or how we handle your data? Reach us at info@vimtra.com or on the numbers listed on our contact page.",
+      "Questions about this policy or how we handle your data? Reach us at golfventures@vimtra.com or on the numbers listed on our contact page.",
     ],
   },
 ];

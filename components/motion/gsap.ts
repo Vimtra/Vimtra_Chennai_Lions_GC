@@ -31,7 +31,14 @@ export function reduced(): boolean {
 
 export const EASE = "power3.out";
 
-/** Wipe an image open with clip-path. */
+/**
+ * Wipe an image open with clip-path.
+ *
+ * The clip is cleared on completion rather than left sitting at
+ * `inset(0% 0% 0% 0%)`. A clip-path clips everything the element paints,
+ * box-shadow included — so a figure that had been revealed this way could
+ * never show a shadow, even though the clip was a no-op by then.
+ */
 export function revealImage(
   target: gsap.TweenTarget,
   o: { duration?: number; from?: "left" | "bottom" } = {}
@@ -44,6 +51,7 @@ export function revealImage(
       clipPath: "inset(0% 0% 0% 0%)",
       duration: o.duration ?? 1.1,
       ease: EASE,
+      clearProps: "clipPath",
     }
   );
 }
@@ -143,6 +151,9 @@ export function revealImageOnScroll(
       clipPath: "inset(0% 0% 0% 0%)",
       duration: 1.15,
       ease: EASE,
+      // See revealImage: a left-behind clip-path would swallow the
+      // figure's box-shadow.
+      clearProps: "clipPath",
       scrollTrigger: { trigger, start: o.start ?? "top 82%", once: true },
     }
   );

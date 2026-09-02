@@ -192,7 +192,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
         onMouseLeave={closeMega}
       >
         <div className="nv-bar hp-wrap">
-          <Link href="/" className="nv-brand" onClick={closeMega} aria-label="Vimtra Chennai Lions — home">
+          <Link href="/" className="nv-brand" onClick={closeMega} aria-label="Vimtra Chennai Lions GC — home">
             <Image
               src="/assets/logo-lion.png"
               alt=""
@@ -202,7 +202,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
               className="nv-mark"
             />
             <span className="nv-word">
-              <span className="nv-word-1">VIMTRA CHENNAI LIONS</span>
+              <span className="nv-word-1">VIMTRA CHENNAI LIONS GC</span>
             </span>
           </Link>
 
@@ -258,6 +258,13 @@ export default function Nav({ user }: { user: SafeUser | null }) {
             >
               <UserRound aria-hidden />
             </Link>
+            {user && (
+              <form action={signOut} className="nv-desktop-signout">
+                <button type="submit" className="nv-icon" aria-label="Sign out" title="Sign out">
+                  <LogOut aria-hidden />
+                </button>
+              </form>
+            )}
             <button
               ref={triggerRef}
               type="button"
@@ -337,7 +344,7 @@ export default function Nav({ user }: { user: SafeUser | null }) {
             <Link href="/" className="nv-brand" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>
               <Image src="/assets/logo-lion.png" alt="" width={40} height={40} className="nv-mark" />
               <span className="nv-word">
-                <span className="nv-word-1">VIMTRA CHENNAI LIONS</span>
+                <span className="nv-word-1">VIMTRA CHENNAI LIONS GC</span>
               </span>
             </Link>
             <button

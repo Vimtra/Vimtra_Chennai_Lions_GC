@@ -74,6 +74,7 @@ export default async function AdminUsersPage() {
                             action={deleteUserAction}
                             id={u.id}
                             label={u.name}
+                            meta={u.email}
                             description="This permanently deletes the account and signs the user out everywhere. It cannot be undone."
                           />
                         </>

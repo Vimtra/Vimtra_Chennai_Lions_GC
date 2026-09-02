@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, ArrowUpRight } from "lucide-react";
+import { Instagram, ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
 
 /**
  * Global footer — the final chapter, not a link dump.
@@ -10,7 +10,7 @@ import { Instagram, ArrowUpRight } from "lucide-react";
  * every page section, so the brand mark shares a left edge with the nav
  * logo above it. Every link clears the 44px touch minimum.
  *
- * Links and contact details are unchanged — verified channels only
+ * Links and contact details are verified channels only
  * (Instagram is the single social account the brochure names).
  */
 
@@ -52,7 +52,7 @@ export default function Footer() {
               className="ft-mark"
             />
             <span className="ft-word">
-              <span className="ft-word-1">VIMTRA CHENNAI LIONS</span>
+              <span className="ft-word-1">VIMTRA CHENNAI LIONS GC</span>
               <span className="ft-word-2">A franchise by Vimtra Ventures</span>
             </span>
           </Link>
@@ -106,27 +106,35 @@ export default function Footer() {
           <h2 className="ft-h">Stay connected</h2>
           <ul>
             <li>
-              <a href="mailto:info@vimtra.com">info@vimtra.com</a>
+              <a href="mailto:golfventures@vimtra.com">
+                <Mail aria-hidden />
+                <span>golfventures@vimtra.com</span>
+              </a>
             </li>
             <li>
-              <a href="tel:+16504836185">+1 650 483 6185</a>
-            </li>
-            <li>
-              <a href="tel:+918939414030">+91 89394 14030</a>
+              <a href="tel:+919840334456">
+                <Phone aria-hidden />
+                <span>+91 98403 34456</span>
+              </a>
             </li>
           </ul>
-          <p className="ft-place">TNGF Cosmo · Chennai, India</p>
-          <a
-            href="https://instagram.com/vimtra.chennai.gc"
-            target="_blank"
-            rel="noreferrer"
-            className="ft-social"
-            aria-label="Instagram · @vimtra.chennai.gc — opens in a new tab"
-          >
-            <Instagram aria-hidden />
-            <span>@vimtra.chennai.gc</span>
-            <ArrowUpRight className="ft-social-a" aria-hidden />
-          </a>
+          <div className="ft-contact-meta">
+            <p className="ft-place">
+              <MapPin aria-hidden />
+              <span>TNGF Cosmo · Chennai, India</span>
+            </p>
+            <a
+              href="https://www.instagram.com/chennailionsgc/"
+              target="_blank"
+              rel="noreferrer"
+              className="ft-social"
+              aria-label="Instagram · @chennailionsgc — opens in a new tab"
+            >
+              <Instagram className="ft-social-icon" aria-hidden />
+              <span>@chennailionsgc</span>
+              <ArrowUpRight className="ft-social-a" aria-hidden />
+            </a>
+          </div>
         </div>
       </div>
 

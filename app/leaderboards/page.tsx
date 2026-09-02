@@ -1,133 +1,100 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import StoryHero from "@/components/site/StoryHero";
-import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
+import SeasonMasthead from "@/components/season/SeasonMasthead";
+import { Section } from "@/components/site/Section";
+import StandingsBoard from "@/components/season/StandingsBoard";
 import { listStandings } from "@/lib/standings";
-import LeaderboardTabs from "@/components/leaderboards/LeaderboardTabs";
+import { listFixtures } from "@/lib/fixtures";
 
 export const metadata: Metadata = {
   title: "Leaderboards · Vimtra Chennai Lions GC",
   description:
-    "AM Green IGPL Season 2026 standings — franchise table, Player of the Season race, and Order of Merit. Populates as verified season data becomes available.",
+    "AM Green IGPL Season 2026 standings — the Franchise Table, the Player of the Season race and the Order of Merit, published from verified season data.",
 };
 
-// Standings live in the database. The locked state renders whenever no rows
-// exist for the current season — no illustrative or placeholder ranks are
-// ever presented as though they were live.
+// Standings live in the database. Boards render their real rows the moment
+// any exist; until then each one states what it ranks. No illustrative or
+// placeholder ranks are ever presented as though they were live.
 export const dynamic = "force-dynamic";
 
 const SEASON = 2026;
 
 /* ---------------------------------------------------------------------------
-   With no verified rows yet, this page does not apologise with an empty
-   card. It states what the three boards ARE and what each one will rank —
-   described by the columns the schema actually carries, not by invented
-   marketing copy — so a visitor understands the ranking system before a
-   single row exists. The moment standings are keyed in, the same page
-   renders the real tables instead.
+   Three boards, presented as one championship spread rather than a tabbed
+   widget: each is its own chapter, on its own ground, with its own figure —
+   points for the two points races, rupees for the Order of Merit.
+
+   The empty state is factual and counted, not written. "Four events on the
+   card, none of them ranked yet" comes from the Fixture and Standing tables;
+   if a card is published the same sentence changes on its own.
 
    No venue photography — see the note at the top of app/fixtures/page.tsx.
 --------------------------------------------------------------------------- */
 
-const BOARDS = [
-  {
-    name: "Franchise Table",
-    cols: "Position · Franchise · Events · Points · Best finish · Average score",
-  },
-  {
-    name: "Player of the Season",
-    cols: "Position · Player · Franchise · Top tens · Wins · Points",
-  },
-  {
-    name: "Order of Merit",
-    cols: "Position · Player · Events · Earnings · Average per event",
-  },
-];
-
 export default async function LeaderboardsPage() {
-  const boards = await listStandings(SEASON);
-  const total = boards.team.length + boards.player.length + boards.order.length;
+  const [boards, fixtures] = await Promise.all([
+    listStandings(SEASON),
+    listFixtures(),
+  ]);
+
+  const ranked =
+    boards.team.length + boards.player.length + boards.order.length;
+  const played = fixtures.filter((f) => f.status === "COMPLETED").length;
+
+  // One counted line for the first board, and a distinct line for each of
+  // the others. Repeating a single paragraph under all three read as
+  // boilerplate, and the count only belongs where it is first stated.
+  const noteTeam =
+    played > 0
+      ? `${played} of ${fixtures.length} Season ${SEASON} events have been played. Ranked rows publish here as the league confirms them.`
+      : `Season ${SEASON} has ${fixtures.length} events on the card. Ranked rows publish here as the league confirms them.`;
+  const notePlayer =
+    "Nothing provisional and no projected points are published on this board.";
+  const noteOrder =
+    "Prize money is published here only once the league has confirmed it.";
 
   return (
     <>
-      <StoryHero
+      <SeasonMasthead
         eyebrow={`AM Green IGPL · Season ${SEASON}`}
         title={["LEADER", "BOARDS"]}
+        image="/assets/photo/ss-standings-hero-green-marsh.jpg"
+        imagePosition="52% 58%"
         line="Three boards. One season."
+        status={{
+          live: false,
+          label: ranked > 0 ? "Standings published" : "Standings pending",
+        }}
+        stats={[
+          { k: "Boards", v: "3" },
+          { k: "Events", v: String(fixtures.length) },
+          { k: "Ranked", v: String(ranked) },
+        ]}
       />
 
-      {total > 0 ? (
-        <Section surface="ivory">
-          <LeaderboardTabs seasonYear={SEASON} boards={boards} />
-        </Section>
-      ) : (
-        <>
-          {/* The boards, named and defined while they are still empty. */}
-          <Section surface="ivory">
-            <div className="cm-track cm-statement">
-              <IndexLabel n="01">The boards</IndexLabel>
-              <h2 className="cm-display" data-rise>
-                THREE WAYS TO
-                <br />
-                READ A <em>season</em>.
-              </h2>
-              <div className="cm-statement-support" data-rise>
-                <p>
-                  Standings unlock as the season progresses. Nothing on this
-                  page is fabricated — no illustrative ranks, no projected
-                  points. Each board below populates the moment verified
-                  Season {SEASON} data is available.
-                </p>
-              </div>
-            </div>
+      {/* 01 — the franchise race, on the championship ground. */}
+      <Section surface="ink" className="hp-sec-atmos tb-sec">
+        <StandingsBoard board="team" rows={boards.team} note={noteTeam} />
+      </Section>
 
-            <ol className="ss-boards hp-mt-lg">
-              {BOARDS.map((b, i) => (
-                <li key={b.name} data-rise>
-                  <span className="ss-board-n">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span>
-                    <span className="ss-board-name">{b.name}</span>
-                  </span>
-                  <p className="ss-board-cols">{b.cols}</p>
-                </li>
-              ))}
-            </ol>
-          </Section>
+      {/* 02 — the player race, lifted onto ivory so the spread breathes. */}
+      <Section surface="ivory" className="tb-sec">
+        <StandingsBoard board="player" rows={boards.player} note={notePlayer} />
+      </Section>
 
-          {/* The honest status, stated once and clearly. */}
-          <Section surface="ink" className="hp-sec-atmos">
-            <div className="cm-track cm-statement">
-              <IndexLabel n="02" tone="dark">
-                Status
-              </IndexLabel>
-              <h2 className="cm-display" data-rise>
-                STANDINGS
-                <br />
-                <em>locked</em>.
-              </h2>
-              <div className="cm-statement-support" data-rise>
-                <p>
-                  The Chennai Lions play their first ball of Season {SEASON} at
-                  the season opener. Franchise points, the Player of the Season
-                  race and the Order of Merit are all published here from
-                  verified season data as it is confirmed.
-                </p>
-              </div>
-            </div>
-          </Section>
-        </>
-      )}
+      {/* 03 — the money list, back on ink where the figures carry. */}
+      <Section surface="ink" className="hp-sec-atmos tb-sec">
+        <StandingsBoard board="order" rows={boards.order} note={noteOrder} />
+      </Section>
 
-      <Section surface="paper" size="tight">
-        <div className="cm-track ss-links">
+      <section className="hp-sec hp-sec-paper hp-sec-tight">
+        <div className="hp-wrap cm-track ss-links">
           <Link href="/fixtures" className="ss-link">
             <span className="ss-link-k">Season 2026</span>
             <span className="ss-link-t">Fixtures</span>
           </Link>
           <Link href="/scores" className="ss-link">
-            <span className="ss-link-k">Live scoring</span>
+            <span className="ss-link-k">Round scoring</span>
             <span className="ss-link-t">Scores</span>
           </Link>
           <Link href="/players" className="ss-link">
@@ -135,7 +102,7 @@ export default async function LeaderboardsPage() {
             <span className="ss-link-t">The Players</span>
           </Link>
         </div>
-      </Section>
+      </section>
     </>
   );
 }

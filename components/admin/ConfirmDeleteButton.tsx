@@ -20,19 +20,30 @@ import { Loader2, Trash2, X } from "lucide-react";
  * Every delete action this is used with revalidates its own list path, so a
  * successful delete refreshes the table underneath and the row disappears.
  */
+/**
+ * A delete action may report an outcome. Actions that return nothing are
+ * treated as success, so existing callers are unaffected.
+ */
+export type DeleteActionResult = void | { ok: boolean; error?: string };
+
 export default function ConfirmDeleteButton({
   action,
   id,
   label,
+  meta,
   description,
   triggerClassName = "btn-ghost btn-danger",
   triggerLabel = "Delete",
   triggerTitle,
 }: {
-  action: (formData: FormData) => void | Promise<void>;
+  action: (
+    formData: FormData
+  ) => DeleteActionResult | Promise<DeleteActionResult>;
   id: string;
   /** The record's own name — shown so the admin can see what they are about to remove. */
   label: string;
+  /** A second identifier (email, SKU) where the name alone may be ambiguous. */
+  meta?: string;
   /** What deletion actually does here. Defaults to a generic permanence warning. */
   description?: string;
   triggerClassName?: string;
@@ -106,7 +117,17 @@ export default function ConfirmDeleteButton({
     try {
       const formData = new FormData();
       formData.set("id", id);
-      await action(formData);
+      const result = await action(formData);
+
+      // A refusal (self-delete, missing row) must keep the dialog open and
+      // say why, rather than closing as though it had worked.
+      if (result && typeof result === "object" && result.ok === false) {
+        if (mountedRef.current) {
+          setError(result.error ?? "That didn't go through. Please try again.");
+        }
+        return;
+      }
+
       // The action revalidates the cache, but without a navigation the router
       // keeps serving the payload it already holds — so the deleted row would
       // linger in the table until a manual reload. Ask for the refetch.
@@ -157,6 +178,11 @@ export default function ConfirmDeleteButton({
               >
                 Delete &ldquo;{label}&rdquo;?
               </p>
+              {meta && (
+                <p className="mt-1 truncate font-manrope text-[13px] text-muted">
+                  {meta}
+                </p>
+              )}
               <p
                 id={descId}
                 className="mt-2 font-manrope text-[14px] leading-6 text-muted"

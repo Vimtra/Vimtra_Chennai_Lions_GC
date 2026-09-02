@@ -69,7 +69,7 @@ export default async function NewsArticlePage({
       {post.coverImage && (
         <section className="bg-cream-100 px-8">
           <div className="max-w-[1100px] mx-auto -mt-10 relative">
-            <div className="relative aspect-[16/9] rounded-[22px] overflow-hidden border border-black/[0.06]">
+            <div className="v-lift relative aspect-[16/9] rounded-[22px] overflow-hidden border border-black/[0.06]">
               <Image
                 src={webSrc(post.coverImage)}
                 alt={post.title}

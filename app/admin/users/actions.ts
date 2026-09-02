@@ -15,10 +15,34 @@ export async function setRoleAction(formData: FormData) {
   revalidatePath("/admin/users");
 }
 
-export async function deleteUserAction(formData: FormData) {
+/** Outcome so the confirmation dialog can report a refusal or a failure. */
+export type UserActionResult = { ok: true } | { ok: false; error: string };
+
+export async function deleteUserAction(
+  formData: FormData
+): Promise<UserActionResult> {
   const admin = await requireAdmin();
-  const id = String(formData.get("id") ?? "");
-  if (id === admin.id) return; // can't delete yourself
-  await prisma.user.delete({ where: { id } }).catch(() => {});
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) return { ok: false, error: "Missing user identifier." };
+
+  // Lockout guard, unchanged — but it now says so instead of silently
+  // doing nothing and looking like a success.
+  if (id === admin.id) {
+    return { ok: false, error: "You cannot delete your own account." };
+  }
+
+  try {
+    await prisma.user.delete({ where: { id } });
+  } catch (err) {
+    // Previously `.catch(() => {})` swallowed this, so a failed delete
+    // reported success and the row simply stayed in the table.
+    console.error("[deleteUserAction]", err);
+    return {
+      ok: false,
+      error: "That account could not be deleted. Reload and try again.",
+    };
+  }
+
   revalidatePath("/admin/users");
+  return { ok: true };
 }

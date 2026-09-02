@@ -5,7 +5,7 @@ import { useState } from "react";
 import {
   LayoutDashboard, Ticket, Package, Heart, CalendarCheck, Settings, Bell,
 } from "lucide-react";
-import { updateProfile } from "@/app/profile/actions";
+import AccountSettingsForm from "@/components/profile/AccountSettingsForm";
 
 type Section = "membership" | "settings" | "saved" | "orders" | "rsvps" | "notifications";
 
@@ -19,10 +19,10 @@ function initials(name: string): string {
 
 export default function ProfileClient({
   user,
-  saved,
-  error,
 }: {
   user: { name: string; email: string; role: string };
+  /** Retained so /profile's existing ?saved / ?error links keep type-checking.
+   *  Status is now reported inline by the form itself. */
   saved?: boolean;
   error?: string;
 }) {
@@ -103,44 +103,7 @@ export default function ProfileClient({
             <div className="card" style={{ display: visible("settings") ? "block" : "none" }}>
               <h2 className="mb-[18px] font-sora font-extrabold text-[22px] tracking-[-0.02em]">Account Settings</h2>
 
-              {saved && (
-                <div className="mb-4 p-3 rounded-[12px] font-manrope font-semibold text-[13.5px]" style={{ background: "rgba(14,138,79,0.10)", color: "#0E8A4F" }}>
-                  Profile updated.
-                </div>
-              )}
-              {error && (
-                <div className="mb-4 p-3 rounded-[12px] font-manrope font-semibold text-[13.5px]" style={{ background: "rgba(196,32,42,0.10)", color: "#C4202A" }}>
-                  {error === "email-taken" ? "That email is already in use." : error === "password-mismatch" ? "New password and confirmation must match." : "Please check your details and try again."}
-                </div>
-              )}
-
-              <form action={updateProfile} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="field">
-                  <label>Full Name</label>
-                  <input type="text" name="name" required defaultValue={user.name} />
-                </div>
-                <div className="field">
-                  <label>Email</label>
-                  <input type="email" name="email" required defaultValue={user.email} />
-                </div>
-                <div className="field">
-                  <label>New Password</label>
-                  <input type="password" name="password" minLength={8} placeholder="Leave blank to keep current" autoComplete="new-password" />
-                </div>
-                <div className="field">
-                  <label>Confirm New Password</label>
-                  <input type="password" name="confirmPassword" minLength={8} placeholder="Re-enter new password" autoComplete="new-password" />
-                </div>
-                <div className="field">
-                  <label>Jersey Size</label>
-                  <select defaultValue="L">
-                    <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
-                  </select>
-                </div>
-                <div className="sm:col-span-2">
-                  <button type="submit" className="cta-gold press" style={{ padding: "13px 22px" }}>SAVE CHANGES</button>
-                </div>
-              </form>
+              <AccountSettingsForm user={{ name: user.name, email: user.email }} />
             </div>
 
             {/* Saved (demo) */}

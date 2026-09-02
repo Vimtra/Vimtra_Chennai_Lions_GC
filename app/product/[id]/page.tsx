@@ -117,7 +117,7 @@ export default async function ProductPage({
                 {gallery.slice(0, 6).map((src, i) => (
                   <div
                     key={i}
-                    className="relative w-[74px] h-[74px] rounded-[12px] overflow-hidden border border-black/[0.08] bg-cream-50"
+                    className="v-lift-sm relative w-[74px] h-[74px] rounded-[12px] overflow-hidden border border-black/[0.08] bg-cream-50"
                   >
                     <Image
                       src={src}
