@@ -4477,7 +4477,7 @@ a:hover .hp-arrow {
   grid-template-columns: repeat(2, minmax(0,1fr));
 }
 @media (min-width: 900px) {
-  .ft-grid { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 40px; padding: 52px 0 48px; }
+  .ft-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 40px; padding: 52px 0 48px; }
 }
 .ft-h {
   margin: 0 0 12px;
@@ -4516,13 +4516,13 @@ a:hover .hp-arrow {
 
 /* Bottom rule */
 .ft-bottom {
-  display: flex; flex-wrap: wrap; gap: 10px 22px;
+  display: flex; flex-wrap: wrap; gap: 12px 32px;
   align-items: center; justify-content: space-between;
-  padding: 20px 0 24px; border-top: 1px solid rgba(245,239,228,0.1);
+  padding: 24px 0 32px; border-top: 1px solid rgba(245,239,228,0.1);
   font-family: var(--font-manrope), sans-serif; font-size: 10.5px;
   letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,239,228,0.46);
 }
-.ft-legal { display: flex; gap: 22px; }
+.ft-legal { display: flex; gap: 28px; }
 .ft-legal a {
   display: inline-flex; align-items: center; min-height: 44px;
   color: rgba(245,239,228,0.62); text-decoration: none;
@@ -4591,7 +4591,7 @@ a:hover .hp-arrow {
     linear-gradient(135deg, rgba(189, 34, 39, 0.12), transparent 34%),
     var(--v-ink);
   color: var(--v-ivory);
-  padding-top: clamp(36px, 5vw, 72px);
+  padding: clamp(36px, 5vw, 72px) clamp(20px, 4vw, 48px) 0;
   border-top-color: rgba(184, 144, 75, 0.35);
 }
 .ft-top {
@@ -4644,9 +4644,9 @@ a:hover .hp-arrow {
 }
 .ft-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sp-5) var(--sp-4);
-  padding-top: var(--sp-5);
-  padding-bottom: var(--sp-5);
+  gap: var(--sp-6) var(--sp-5);
+  padding-top: var(--sp-6);
+  padding-bottom: var(--sp-6);
 }
 .ft-h { margin-bottom: var(--sp-3); color: var(--v-gold-lit); }
 .ft-col a {
@@ -4695,22 +4695,20 @@ a:hover .hp-arrow {
   transform: none !important;
 }
 .ft-bottom {
-  padding-top: var(--sp-4);
-  padding-bottom: var(--sp-5);
+  padding-top: var(--sp-5);
+  padding-bottom: var(--sp-6);
   border-top-color: rgba(245, 239, 228, .14);
   color: var(--v-on-ink-faint);
 }
 .ft-legal a { color: var(--v-on-ink); }
-/* Four link columns, not three: the footer renders the header's four
-   sections (lib/nav.ts → SITE_SECTIONS) since Media stopped being folded
-   into The Season. Between 900 and 1279 all four tracks are needed for the
-   links alone — a fifth would squeeze "Golf Development" onto two lines —
-   so the contact block takes its own row and reads as a band. */
+/* Three link columns from SITE_SECTIONS (The Club, The Season, Business).
+   Between 900 and 1279 those three tracks hold the links alone — contact
+   takes its own row as a band. From 1280 the contact column sits inline. */
 @media (min-width: 900px) {
-  .ft-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-8); }
+  .ft-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-9); }
   .ft-contact {
     grid-column: 1 / -1;
-    padding: var(--sp-5) 0 0;
+    padding: var(--sp-6) 0 0;
     border-width: 1px 0 0;
     background: none;
   }
@@ -4718,20 +4716,18 @@ a:hover .hp-arrow {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, auto));
     justify-content: start;
-    gap: 0 var(--sp-7);
+    gap: 0 var(--sp-8);
   }
 }
 
-/* From 1280 there is room for the contact column to come back inline as a
-   fifth track, which is where it reads best — the footer closes on the
-   franchise's own details rather than on a rule. */
+/* From 1280 there is room for the contact column to come back inline. */
 @media (min-width: 1280px) {
   .ft-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(250px, 1.15fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(280px, 1fr);
   }
   .ft-contact {
     grid-column: auto;
-    padding: 0 0 0 var(--sp-7);
+    padding: 0 0 0 var(--sp-8);
     border-width: 0 0 0 1px;
   }
   .ft-contact ul { display: block; }
@@ -4772,7 +4768,65 @@ a:hover .hp-arrow {
   .ft-contact a { overflow-wrap: anywhere; }
   .ft-bottom { gap: 4px 16px; }
   .ft-bottom > span { line-height: 1.5; }
-  .ft-legal { gap: 16px; }
+}
+
+/* ============================================================
+   SCROLL TO TOP BUTTON
+============================================================ */
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--v-gold);
+  color: var(--v-ink);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.3s var(--ease);
+  z-index: 1000;
+}
+
+.scroll-to-top:hover {
+  background: var(--v-gold-lit);
+  transform: translateY(-2px);
+}
+
+.scroll-to-top:active {
+  transform: translateY(0);
+}
+
+.scroll-to-top svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Hide scrollbar for scroll-to-top button */
+.scroll-to-top::-webkit-scrollbar {
+  display: none;
+}
+.scroll-to-top {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (max-width: 768px) {
+  .scroll-to-top {
+    bottom: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+  }
+  .scroll-to-top svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 /* Skip link must also clear the touch minimum when focused. */
@@ -8513,80 +8567,146 @@ a:hover .hp-arrow {
   color: var(--v-on-ink);
 }
 
-/* ---- 03 · The tier ladder -----------------------------------
-   Ordered, so the numeral carries the hierarchy — no coloured
-   badges, no four identical cards. */
+/* ---- 03 · The tier grid ---------------------------------------
+   Was a ladder: four full-width rows, each a 5fr/6fr split of an
+   identity block against a bullet column. Two problems came from
+   that shape. First, comparing tiers meant scrolling — holding
+   tier 01 against tier 03 in memory across 600px of page. Second,
+   the bullet column was a fixed 6fr regardless of how much text it
+   held: tier 03's two short lines sat in the same ~610px column as
+   tier 01's four, leaving a wide dead field to their right that had
+   nothing to do with the tier itself being shorter.
+
+   Restructured as a four-up grid — the same mechanic chapter 02
+   already uses for the four surfaces above it (`.pt-dims`), so the
+   two chapters now visibly rhyme: dimensions across the top, tiers
+   in the same column rhythm below. A column's width is set by the
+   grid, not by its content, so bullet text wraps close to that
+   width instead of stranding itself in a wide fixed track — the
+   dead-space failure is structurally gone, not shortened. Comparing
+   tiers is now a left-to-right glance along one row instead of a
+   scroll through four.
+
+   Tier 03 and 04 still carry fewer inclusions than 01 and 02 — that
+   is the source data, unchanged; a column grid lets a shorter list
+   end early instead of forcing every row to match the tallest one.
+
+   The container keeps its own border-bottom (added; `.pt-dims`
+   doesn't need one) because that chapter closes into a same-tone
+   paper section below it, unlike `.pt-dims`, which closes on an
+   ink→paper surface change strong enough to read as a boundary on
+   its own. */
 .pt-tiers {
   list-style: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   margin: 0;
   padding: 0;
   border-top: 1px solid var(--v-hair-ivory);
-  counter-reset: tier;
+  border-bottom: 1px solid var(--v-hair-ivory);
 }
-.pt-tiers li {
-  display: grid;
-  gap: var(--sp-4);
-  padding: var(--sp-6) 0;
+@media (min-width: 640px) {
+  .pt-tiers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .pt-tiers { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+/* `> li`, not `li` — each tier column holds its own nested bullet
+   `<ul><li>`, so a bare descendant selector matches those too. With
+   `:first-child`/`:last-child` added below that stopped being safe:
+   `.pt-tiers li:first-child` doesn't mean "the first column," it
+   means "any li that is its parent's first child," which is every
+   column AND every column's own first bullet — that combination
+   briefly zeroed the left padding on every tier's first inclusion,
+   dragging its bullet dash back on top of the text next to it. */
+.pt-tiers > li {
+  padding: var(--sp-6) var(--sp-5) var(--sp-6) 0;
   border-bottom: 1px solid var(--v-hair-ivory);
 }
 @media (min-width: 1024px) {
-  /* Two columns, not three. The numeral used to hold a track of its own,
-     which pushed the identity into the middle and opened a dead channel
-     between the headline and the inclusions. It now sits inside the
-     identity block, against the same left axis as everything else. */
-  .pt-tiers li {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    column-gap: var(--sp-8);
-    align-items: start;
+  .pt-tiers > li {
+    border-bottom: 0;
+    border-right: 1px solid var(--v-hair-ivory);
+    padding-left: var(--sp-6);
   }
+  .pt-tiers > li:first-child { padding-left: 0; }
+  .pt-tiers > li:last-child { border-right: 0; }
 }
-.pt-tier-b {
+
+/* The identity block: numeral, name, headline. Inline at one and two
+   columns, where a cell still spans most of the viewport and a
+   numeral-left baseline row reads as a compact list item. Stacked
+   from two columns' own breakpoint up, where a cell has narrowed
+   enough that the numeral works better as a column header sitting
+   above its name — the same relationship `.pt-dim-k` has to
+   `.pt-dim-t` one chapter up. */
+.pt-tier-id {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  column-gap: var(--sp-5);
+  column-gap: var(--sp-4);
   align-items: baseline;
 }
-/* Crimson, not gold: gold on the paper surface measures 2.83:1, which
-   misses even the 3:1 large-text threshold. Crimson clears it at 5.4:1
-   and matches the numeral treatment on /leaderboards. */
 .pt-tier-n {
   grid-row: 1 / span 2;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(26px, 3vw, 42px);
+  font-size: clamp(24px, 2.6vw, 34px);
   line-height: 0.86;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
+  /* Crimson, not gold: gold on the paper surface measures 2.83:1,
+     which misses even the 3:1 large-text threshold. Crimson clears
+     it at 5.4:1 and matches the numeral treatment on /leaderboards. */
   color: var(--v-red);
 }
 .pt-tier-name {
+  grid-column: 2;
+  grid-row: 1;
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 700;
-  font-size: clamp(21px, 2.4vw, 32px);
-  line-height: 1.1;
+  font-size: clamp(19px, 1.7vw, 24px);
+  line-height: 1.14;
   letter-spacing: var(--tr-h3);
   color: var(--v-ink);
 }
 .pt-tier-head {
-  max-width: 34ch;
+  grid-column: 2;
+  grid-row: 2;
   margin: var(--sp-2) 0 0;
   font-family: var(--font-manrope), sans-serif;
-  font-size: var(--t-body);
+  font-size: var(--t-meta);
   line-height: 1.6;
   color: var(--v-on-ivory);
 }
+@media (min-width: 640px) {
+  .pt-tier-id { display: block; }
+  .pt-tier-n {
+    display: block;
+    margin: 0 0 var(--sp-3);
+    font-size: clamp(22px, 2.2vw, 30px);
+  }
+  .pt-tier-name { margin: 0; }
+  .pt-tier-head { margin: var(--sp-2) 0 0; max-width: 30ch; }
+}
+
+/* The inclusions, ruled off from the identity block above them — a
+   divider a reader can feel with a thumb, not just see, and the
+   thing that reads as "here is what changes between tiers" even
+   when the two identity blocks above it run to different lengths. */
 .pt-tier-list {
-  margin: 0;
-  padding: 0;
+  margin: var(--sp-5) 0 0;
+  padding: var(--sp-4) 0 0;
   list-style: none;
+  border-top: 1px solid var(--v-hair-ivory);
 }
 .pt-tier-list li {
   position: relative;
-  padding: var(--sp-2) 0 var(--sp-2) var(--sp-5);
+  padding: var(--sp-2) 0 var(--sp-2) var(--sp-4);
   border: 0;
   font-family: var(--font-manrope), sans-serif;
-  font-size: var(--t-body);
+  font-size: var(--t-meta);
   line-height: 1.55;
   color: var(--v-ink);
 }
@@ -8594,8 +8714,8 @@ a:hover .hp-arrow {
   content: "";
   position: absolute;
   left: 0;
-  top: 0.95em;
-  width: 12px;
+  top: 0.9em;
+  width: 10px;
   height: 1px;
   background: var(--v-gold);
 }
@@ -8627,4 +8747,265 @@ a:hover .hp-arrow {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sp-4);
+}
+
+/* ============================================================
+   INVEST
+   ------------------------------------------------------------
+   Namespaced `.iv-*` on the same 4 / 8 / 12 track. Compositions
+   only — no second alignment system, no new colour tokens.
+============================================================ */
+
+.iv-thesis { row-gap: var(--sp-6); }
+.iv-thesis > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.iv-thesis-h { grid-column: 1 / -1; }
+.iv-thesis-b { grid-column: 1 / -1; }
+.iv-thesis-h.cm-display { font-size: clamp(36px, 5.8vw, 88px); }
+.iv-thesis-b p {
+  margin: 0;
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--v-hair-ivory);
+  max-width: 46ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+.iv-market {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.iv-market > div {
+  padding: var(--sp-5) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+  min-width: 0;
+}
+.iv-market dt {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-red);
+}
+.iv-market dd {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+@media (min-width: 768px) {
+  .iv-market { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .iv-market > div + div {
+    padding-left: var(--sp-6);
+    border-left: 1px solid var(--v-hair-ivory);
+  }
+}
+@media (min-width: 1024px) {
+  .iv-thesis-h { grid-column: 1 / span 7; }
+  .iv-thesis-b { grid-column: 9 / span 4; align-self: end; }
+}
+
+/* Parent / platform / franchise — statement + figure, index below. */
+.iv-model { row-gap: var(--sp-7); }
+.iv-model > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.iv-model-h { grid-column: 1 / -1; }
+.iv-model-f { grid-column: 1 / -1; }
+.iv-model-h .cm-display { font-size: clamp(32px, 5.2vw, 78px); }
+@media (min-width: 1024px) {
+  .iv-model-h { grid-column: 1 / span 6; align-self: center; }
+  .iv-model-f { grid-column: 8 / span 5; }
+  .iv-model-f .gd-fig { aspect-ratio: var(--ar-portrait); }
+}
+
+/* Why — sticky rail + three statements, then a five-name welcome field. */
+.iv-why { row-gap: var(--sp-7); }
+.iv-why-rail { grid-column: 1 / -1; }
+.iv-why-rail .hp-index { margin-bottom: var(--sp-4); }
+.iv-why-rail .hp-section-title { font-size: clamp(32px, 4vw, 58px); }
+.iv-reasons {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--v-hair-ink);
+}
+.iv-reasons li {
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ink);
+}
+.iv-reason-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  color: var(--v-gold-lit);
+}
+.iv-reason-t {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(26px, 3.2vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: var(--v-ivory);
+}
+.iv-reason-d {
+  margin: var(--sp-3) 0 0;
+  max-width: 46ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--v-on-ink);
+}
+@media (min-width: 768px) {
+  .iv-reasons li {
+    display: grid;
+    grid-template-columns: 3.2rem minmax(0, 1fr);
+    column-gap: var(--sp-5);
+    align-items: start;
+  }
+  .iv-reason-n { grid-row: 1 / span 2; padding-top: 0.35em; }
+  .iv-reason-t { margin-top: 0; }
+}
+@media (min-width: 1024px) {
+  .iv-why-rail {
+    grid-column: 1 / span 4;
+    position: sticky;
+    top: 140px;
+    align-self: start;
+  }
+  .iv-reasons { grid-column: 6 / span 7; }
+}
+
+.iv-welcome-k {
+  grid-column: 1 / -1;
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+}
+.iv-welcome {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 1px solid var(--v-hair-ink);
+}
+.iv-welcome li {
+  padding: var(--sp-5) 0;
+  border-bottom: 1px solid var(--v-hair-ink);
+}
+.iv-welcome h3 {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 1.8vw, 22px);
+  letter-spacing: -0.022em;
+  color: var(--v-ivory);
+}
+.iv-welcome p {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.62;
+  color: var(--v-on-ink);
+}
+@media (min-width: 768px) {
+  .iv-welcome { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .iv-welcome li {
+    padding: var(--sp-5) var(--sp-5) var(--sp-5) 0;
+  }
+  .iv-welcome li:nth-child(odd) { padding-right: var(--sp-6); }
+  .iv-welcome li:nth-child(even) {
+    padding-left: var(--sp-6);
+    border-left: 1px solid var(--v-hair-ink);
+  }
+}
+@media (min-width: 1024px) {
+  .iv-welcome { grid-column: 6 / span 7; }
+  .iv-welcome-k { grid-column: 6 / span 7; }
+}
+
+/* Owner — display left, copy right. No credential dump. */
+.iv-owner { row-gap: var(--sp-6); }
+.iv-owner > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.iv-owner-h { grid-column: 1 / -1; }
+.iv-owner-b { grid-column: 1 / -1; }
+.iv-owner-h.cm-display { font-size: clamp(36px, 5.4vw, 82px); }
+.iv-owner-b p {
+  margin: 0 0 var(--sp-5);
+  max-width: 46ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+@media (min-width: 1024px) {
+  .iv-owner-h { grid-column: 1 / span 6; }
+  .iv-owner-b { grid-column: 8 / span 5; align-self: end; }
+}
+
+/* Enquiry close — mail as the subject, actions as the foot. */
+.iv-enquire { row-gap: var(--sp-6); }
+.iv-enquire > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.iv-enquire-h { grid-column: 1 / -1; }
+.iv-enquire-b { grid-column: 1 / -1; }
+.iv-enquire-h .hp-section-title { font-size: clamp(36px, 5.4vw, 88px); }
+.iv-enquire-b p {
+  margin: 0 0 var(--sp-4);
+  max-width: 42ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--v-on-ink);
+}
+.iv-enquire-mail {
+  display: block;
+  margin: 0 0 var(--sp-6);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.6vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--v-gold-lit);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.iv-enquire-mail:hover { color: var(--v-ivory); }
+.iv-enquire-mail:focus-visible {
+  outline: 2px solid var(--v-gold-lit);
+  outline-offset: 4px;
+}
+.iv-enquire-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+@media (min-width: 1024px) {
+  .iv-enquire-h { grid-column: 1 / span 6; }
+  .iv-enquire-b { grid-column: 8 / span 5; align-self: end; }
+}
+
+@media (max-width: 767px) {
+  .iv-reasons li:last-child { padding-bottom: var(--sp-6); }
+  .iv-welcome li { padding-right: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iv-model-f .gd-fig img { transform: none; }
 }

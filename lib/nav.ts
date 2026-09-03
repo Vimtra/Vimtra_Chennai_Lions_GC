@@ -7,7 +7,6 @@ import {
   Activity,
   Trophy,
   Newspaper,
-  Image as ImageIcon,
   ShoppingBag,
   Handshake,
   Send,
@@ -36,7 +35,6 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/scores", label: "Scores", icon: Activity },
   { href: "/leaderboards", label: "Leaderboards", icon: Trophy },
   { href: "/news", label: "News", icon: Newspaper },
-  { href: "/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/shop", label: "Shop", icon: ShoppingBag },
   { href: "/partners", label: "Partners", icon: Handshake },
   { href: "/invest", label: "Invest", icon: TrendingUp },
@@ -73,6 +71,8 @@ export const FLOATING_HEADER_ROUTES = [
   // strip above it was cutting the image off from the top of the page
   // instead of letting it run full-bleed.
   "/partners",
+  // Photographic story hero (same terms as the other Club-module routes).
+  "/invest",
 ];
 
 /**
@@ -80,11 +80,8 @@ export const FLOATING_HEADER_ROUTES = [
  *
  * This replaces a `NAV_CLUSTERS` export that claimed the same role but had
  * no importers. The header had quietly grown its own copy in the JSX and
- * the footer a third, and the three had drifted: the header filed News and
- * Gallery under "Media" while the footer filed them under "The Season", so
- * the same link sat in a different section depending on which end of the
- * page you read. Both now render from the list below, which is why they
- * cannot disagree again.
+ * the footer a third, and the three had drifted on where News sat. Both
+ * now render from the list below, which is why they cannot disagree again.
  *
  * `image` / `caption` are the header mega-panel's figure. "Business" has
  * neither — it appears only in the mobile overlay and the footer, neither
@@ -98,7 +95,7 @@ export interface SectionItem {
 }
 
 export interface SiteSection {
-  key: "club" | "season" | "media" | "business";
+  key: "club" | "season" | "business";
   label: string;
   items: SectionItem[];
   /** Present only on sections the desktop mega panel can open. */
@@ -131,19 +128,10 @@ export const SITE_SECTIONS: SiteSection[] = [
       { href: "/fixtures", label: "Fixtures", desc: "AM Green IGPL · 2026 calendar" },
       { href: "/scores", label: "Scores", desc: "Round-by-round scorecards" },
       { href: "/leaderboards", label: "Standings", desc: "Franchise table · Order of Merit" },
+      { href: "/news", label: "News", desc: "Franchise news & press coverage" },
     ],
     image: "/assets/photo/nav-season-bunker-ocean.jpg",
     caption: "Season 2026",
-  },
-  {
-    key: "media",
-    label: "Media",
-    items: [
-      { href: "/news", label: "News", desc: "Franchise news & press coverage" },
-      { href: "/gallery", label: "Gallery", desc: "Tour frames" },
-    ],
-    image: "/assets/photo/nav-media-ball-green.jpg",
-    caption: "From the den",
   },
   {
     key: "business",

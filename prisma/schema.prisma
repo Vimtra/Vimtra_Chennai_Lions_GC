@@ -205,6 +205,41 @@ model MediaCoverage {
 }
 
 // ---------------------------------------------------------------
+// Contact — /contact enquiries.
+//
+// One row per submission. `category` is a free-text label rather than an
+// enum, same choice as Post.category — the canonical set of topics lives
+// in components/contact/topics.ts (CONTACT_TOPICS) and is validated
+// against there at submission time, so adding a topic never needs a
+// migration. Deliberately minimal: no IP address, no user-agent, no
+// referrer — nothing beyond what an admin needs to read and answer the
+// enquiry (CLAUDE.md's data-integrity rule reads narrowly here too: don't
+// collect what wasn't asked for).
+// ---------------------------------------------------------------
+
+enum ContactStatus {
+  NEW
+  READ
+  RESOLVED
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String? // optional on the form
+  city      String? // optional on the form
+  category  String // one of CONTACT_TOPICS at submission time
+  message   String
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------
 // M5 — Commerce (Address, Order, OrderItem).
 //
 // Buyer flow: /shop -> /product/[id] -> /cart -> /checkout -> Order.

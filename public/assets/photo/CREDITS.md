@@ -32,7 +32,7 @@ face.** Keep that rule if these are ever swapped out.
 
 | File | Source | Depicts | Used on |
 |---|---|---|---|
-| `club-hero-fairway-dusk.jpg` | [pexels 919335](https://www.pexels.com/photo/photo-of-golf-course-919335/) | Fairway and treeline at dusk | `/the-club` hero |
+| `club-hero-fairway-dusk.jpg` | [pexels 919335](https://www.pexels.com/photo/photo-of-golf-course-919335/) | Fairway and treeline at dusk | `/the-club` hero; `/invest` full-bleed statement |
 | `club-01-marquee-swing.jpg` | [pexels 114972](https://www.pexels.com/photo/person-grass-sport-outdoors-114972/) | Golfer mid-swing, cropped below the head | `/the-club` ch. 01 Marquee |
 | `club-02-core-aerial-green.jpg` | [pexels 9736758](https://www.pexels.com/photo/aerial-view-of-people-playing-golf-on-a-golf-course-9736758/) | Aerial of a green, distant figures | `/the-club` ch. 02 Domestic Core |
 | `club-03-longgame-coastal.jpg` | [pexels 33689451](https://www.pexels.com/photo/scenic-hong-kong-coastal-golf-course-overlook-33689451/) | Coastal golf course from above | `/the-club` ch. 03 Long Game |
@@ -44,13 +44,13 @@ face.** Keep that rule if these are ever swapped out.
 | `pride-sea-green-pin.jpg` | [pexels 35918456](https://www.pexels.com/photo/scenic-golf-course-overlooking-the-ocean-35918456/) | Putting green and pin flag above the sea | `/the-pride` full-bleed statement |
 | `home-hero-sunset-green.jpg` | [pexels 19334920](https://www.pexels.com/photo/golf-course-under-a-dramatic-sky-at-sunset-19334920/) | Green and pin under a dramatic sunset sky | `/` hero |
 | `home-01-links-twilight.jpg` | [pexels 6256754](https://www.pexels.com/photo/golf-course-at-dawn-6256754/) | Links fairway at twilight, a lone distant figure | `/` 01 statement band |
-| `home-club-aerial-golden.jpg` | [pexels 35723500](https://www.pexels.com/photo/aerial-view-of-golf-course-in-faro-portugal-35723500/) | Course from the air at golden hour, sea on the horizon | `/` 02 The Club |
+| `home-club-aerial-golden.jpg` | [pexels 35723500](https://www.pexels.com/photo/aerial-view-of-golf-course-in-faro-portugal-35723500/) | Course from the air at golden hour, sea on the horizon | `/` 02 The Club; `/invest` hero |
 | `home-dev-range-silhouette.jpg` | [pexels 36937400](https://www.pexels.com/photo/golfer-taking-a-swing-at-driving-range-36937400/) | Backlit silhouette practising at a range | `/` 04 Golf Development |
 | `ss-scores-hero-twilight-course.jpg` | [pexels 13359834](https://www.pexels.com/photo/trees-on-golf-course-at-dawn-13359834/) | Green and pin among tall trees at twilight, no people | `/scores` masthead |
 | `ss-standings-hero-green-marsh.jpg` | [pexels 8454463](https://www.pexels.com/photo/grass-golf-field-beside-river-8454463/) | Championship green, bunker and marsh in low light, no people | `/leaderboards` masthead |
 | `pt-hero-pavilion-golden.jpg` | [pexels 6216840](https://www.pexels.com/photo/gazebo-overlooking-golf-course-at-sunset-6216840/) | Hospitality pavilion looking over a course at golden hour, no people | `/partners` masthead |
 | `gd-hero-clubhouse-lake.jpg` | [pexels 6048946](https://www.pexels.com/photo/photo-of-a-golf-course-during-daytime-6048946/) | Clubhouse across a lake from the fairway | `/golf-development` hero |
-| `gd-framework-facility.jpg` | [pexels 29276528](https://www.pexels.com/photo/aerial-view-of-golf-course-in-setubal-portugal-29276528/) | Clubhouse, practice range and course from the air | `/golf-development` 01 The Framework |
+| `gd-framework-facility.jpg` | [pexels 29276528](https://www.pexels.com/photo/aerial-view-of-golf-course-in-setubal-portugal-29276528/) | Clubhouse, practice range and course from the air | `/golf-development` 01 The Framework; `/invest` 02 The Franchise |
 | `gd-thesis-villas-aerial.jpg` | [pexels 34823930](https://www.pexels.com/photo/aerial-view-of-sheikh-zayed-luxury-villas-and-golf-course-34823930/) | Villas woven through a golf course, straight down | `/golf-development` Signature Thesis |
 | `vv-hero-cliffside-community.jpg` | [pexels 37727309](https://www.pexels.com/photo/coastal-golf-course-with-luxurious-cliffside-homes-37727309/) | Cliffside homes above a coastal green | `/vimtra-ventures` hero |
 | `gd-perf-putt-hole.jpg` | [pexels 6573259](https://www.pexels.com/photo/a-golf-putter-and-ball-near-the-green-hole-6573259/) | Putter and ball beside the hole | `/golf-development` 03 High Performance |

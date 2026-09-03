@@ -56,7 +56,13 @@ export default function StoryHero({
   image?: string;
   imageAlt?: string;
   imagePosition?: string;
-  cta?: { href: string; label: string };
+  cta?: {
+    href: string;
+    label: string;
+    /** Default ghost on dark. Primary is the gold fill — used where the
+     *  hero itself is the call to act, not a chapter opener. */
+    variant?: "ghost" | "primary";
+  };
 }) {
   const root = useRef<HTMLElement | null>(null);
 
@@ -144,7 +150,14 @@ export default function StoryHero({
 
         {cta && (
           <p className="cm-hero-cta" data-sh-tail>
-            <Link href={cta.href} className="hp-btn hp-btn-ghost hp-on-dark">
+            <Link
+              href={cta.href}
+              className={
+                cta.variant === "primary"
+                  ? "hp-btn hp-btn-primary"
+                  : "hp-btn hp-btn-ghost hp-on-dark"
+              }
+            >
               {cta.label}
               <span className="hp-arrow" aria-hidden>
                 →

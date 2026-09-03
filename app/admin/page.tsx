@@ -8,6 +8,7 @@ import {
   CalendarDays,
   Activity,
   Trophy,
+  Mail,
 } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { listProducts } from "@/lib/db";
@@ -31,6 +32,8 @@ export default async function AdminDashboard() {
     publishedPostCount,
     mediaTotal,
     mediaActive,
+    messageTotal,
+    messageNew,
   ] = await Promise.all([
     listProducts(),
     prisma.user.count(),
@@ -41,6 +44,8 @@ export default async function AdminDashboard() {
     prisma.post.count({ where: { status: "PUBLISHED" } }),
     prisma.mediaCoverage.count(),
     prisma.mediaCoverage.count({ where: { active: true } }),
+    prisma.contactMessage.count(),
+    prisma.contactMessage.count({ where: { status: "NEW" } }),
   ]);
 
   return (
@@ -57,6 +62,7 @@ export default async function AdminDashboard() {
         <StatTile n={standingCount} label="Standings" />
         <StatTile n={publishedPostCount} label={`Published posts / ${postCount} total`} />
         <StatTile n={mediaActive} label={`Media visible / ${mediaTotal} total`} />
+        <StatTile n={messageNew} label={`New enquiries / ${messageTotal} total`} />
         <StatTile n={userCount} label="Users" />
       </div>
 
@@ -108,6 +114,18 @@ export default async function AdminDashboard() {
           icon={<UsersIcon className="w-6 h-6" />}
           bg="bg-gold-500"
           fg="text-[#3A1A06]"
+        />
+        <ManagerCard
+          href="/admin/messages"
+          title="Messages"
+          body={
+            messageNew > 0
+              ? `${messageNew} new enquir${messageNew === 1 ? "y" : "ies"} from the contact form.`
+              : "Enquiries submitted through /contact — read, mark resolved, or remove."
+          }
+          icon={<Mail className="w-6 h-6" />}
+          bg="bg-crimson-600"
+          fg="text-white"
         />
       </div>
 

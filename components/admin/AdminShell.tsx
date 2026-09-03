@@ -14,6 +14,7 @@ export type AdminSection =
   | "users"
   | "news"
   | "media"
+  | "messages"
   | "fixtures"
   | "scores"
   | "leaderboards";
@@ -55,6 +56,7 @@ export default function AdminShell({
             {link("/admin/leaderboards", "leaderboards", "Standings")}
             {link("/admin/news", "news", "News")}
             {link("/admin/media", "media", "Media")}
+            {link("/admin/messages", "messages", "Messages")}
             {link("/admin/users", "users", "Users")}
           </nav>
           <div className="flex-1" />

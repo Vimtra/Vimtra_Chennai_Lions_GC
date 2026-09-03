@@ -202,9 +202,9 @@ export default async function NewsPage() {
             <span className="ss-link-k">Season 2026</span>
             <span className="ss-link-t">Fixtures</span>
           </Link>
-          <Link href="/gallery" className="ss-link">
-            <span className="ss-link-k">Tour frames</span>
-            <span className="ss-link-t">Gallery</span>
+          <Link href="/scores" className="ss-link">
+            <span className="ss-link-k">Live board</span>
+            <span className="ss-link-t">Scores</span>
           </Link>
         </div>
       </section>

@@ -328,10 +328,30 @@ Use this path only when you deliberately want to work offline against `prisma/de
 
 **Transient backups** (`prisma/dev.db.backup-*`) are excluded from git via `.gitignore` — they may sit next to `dev.db` on disk but never enter version control.
 
+### Contact Form & Email (Gmail SMTP)
+
+`/contact` persists every submission to the `ContactMessage` table (`lib/contact-messages.ts`) — validated server-side with `zod` in `app/contact/actions.ts`, then reviewable, markable read/resolved, and deletable from `/admin/messages`. The database write is the source of truth and always happens first; email is best-effort on top of it, sent via **Gmail SMTP** (Nodemailer):
+
+```
+validate (zod) → save to ContactMessage → send confirmation + notification (SMTP, independent of each other and of the save)
+```
+
+*   **Transport**: `lib/mail.ts` — a Nodemailer transporter targeting Gmail's SMTP endpoint, gated by `isContactSmtpConfigured()` (`SMTP_HOST` + `SMTP_USER` + `SMTP_PASSWORD` + `MAIL_FROM`). Without all four set, sending is skipped — never attempted, never thrown — and `submitContact` still returns success once the database write has succeeded. An email failure is logged server-side (the SMTP transport's own error message only, never the submitted name/email/message, never the App Password) and never surfaces to the visitor or rolls back the saved row.
+*   **Templates**: `lib/email-templates.ts` — two pure functions, `contactConfirmationEmail` (to the enquirer) and `contactNotificationEmail` (to the franchise), each returning `{subject, text, html}`. Branded to the site's own tokens (ink `#0E0B0A`, crimson `#BD2227`, gold `#B8904B`, ivory `#F5EFE4`), table-based HTML for mail-client compatibility, every interpolated value passed through `escapeHtml`.
+*   **Env vars** (see `.env.example`):
+    *   `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` — `smtp.gmail.com` / `465` / `true`, Gmail's documented SMTP settings.
+    *   `SMTP_USER` — the Gmail address sending the mail.
+    *   `SMTP_PASSWORD` — a Gmail **App Password** ([myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords), requires 2-Step Verification) — never the account's normal login password, never committed to the repo.
+    *   `MAIL_FROM` — the `From:` address; normally the same address as `SMTP_USER`.
+    *   `CONTACT_NOTIFY_EMAIL` — where the admin notification goes; optional, falls back to `ADMIN_EMAIL` when unset.
+*   **To activate real delivery**: turn on 2-Step Verification on the sending Gmail account, generate an App Password at the link above, and set `SMTP_USER` / `SMTP_PASSWORD` / `MAIL_FROM` / `CONTACT_NOTIFY_EMAIL` in the deployment environment (Vercel project settings, not `.env` in git). `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` can stay at their `.env.example` defaults. Nothing else changes — the app already sends whenever it sees a complete config.
+*   `sendOrderReceipt` (order-confirmation email, commerce) is a separate, still-unwired stub that happens to read the same `SMTP_HOST` / `MAIL_FROM` names — see that function's own comment in `lib/mail.ts`. Both of its branches return `sent: false` regardless, so it never actually sends; it is unrelated to and untouched by the contact-form email above.
+*   **Deliverability**: both emails are transactional — fixed subjects, no marketing copy, no external links/images/tracking. The confirmation's Reply-To is the franchise's own sending address (not the enquirer's); the admin notification's Reply-To is the enquirer's, so replying from either inbox goes to the right place. `resolveFromAddress()` in `lib/mail.ts` guarantees the From: header always matches `SMTP_USER` even if `MAIL_FROM` is misconfigured — Gmail rejects or rewrites a From: that doesn't match the authenticated account.
+
 ### Remaining Work (post-M0)
 *   **News editor**: add the rich-text UI + a `Post` model (draft/publish/archive) feeding `/news`.
 *   **IGPL scraper**: `app/api/sync/igpl/route.ts` is currently a scaffold and is gated behind the `IGPL_SYNC_ENABLED` env flag (default `false`). Implement the real `cheerio` scrape + DB write + `revalidatePath` before enabling the cron.
-*   **Contact + email**: `submitContact` validates + logs only — wire to email/DB; will persist as `ContactMessage`.
+*   **Order-receipt email**: `sendOrderReceipt` in `lib/mail.ts` is still a stub — wire it to a real transport the same way the contact form now is.
 *   **Optional**: password reset / email verification; session rotation on password change.
 
 ### Component Guidelines

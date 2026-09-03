@@ -17,12 +17,8 @@ import { SITE_SECTIONS } from "@/lib/nav";
 
 /**
  * The link columns are the header's own sections, read from lib/nav.ts.
- *
- * They used to be three hand-kept arrays here, and they had drifted: News
- * and Gallery sat under "The Season" in this footer while the header filed
- * them under "Media", so the same link belonged to a different section
- * depending on which end of the page you were reading. Rendering from the
- * shared list means adding a page to the header adds it here too.
+ * Rendering from the shared list means adding a page to the header adds
+ * it here too — the two cannot drift.
  */
 const COLUMNS = SITE_SECTIONS;
 

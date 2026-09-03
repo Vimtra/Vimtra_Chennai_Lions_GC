@@ -252,12 +252,14 @@ export default function PartnersPage() {
             </div>
           </div>
 
-          {/* A ladder, not four cards. The tiers are ordered, so the numeral
-              carries the hierarchy and the inclusions run as a ruled list. */}
+          {/* Four columns, not a ladder of four rows — see the note on
+              `.pt-tiers` in globals.css. Ordered left to right, so the
+              numeral still carries the hierarchy; no colour badges, no
+              four identical cards. */}
           <ol className="pt-tiers">
             {TIERS.map((t) => (
               <li key={t.code}>
-                <div className="pt-tier-b">
+                <div className="pt-tier-id">
                   <span className="pt-tier-n" aria-hidden>
                     {t.code}
                   </span>

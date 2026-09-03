@@ -22,7 +22,6 @@ const STATIC_ROUTES: {
   { path: "/scores", changeFrequency: "hourly", priority: 0.6 },
   { path: "/leaderboards", changeFrequency: "daily", priority: 0.6 },
   { path: "/news", changeFrequency: "daily", priority: 0.8 },
-  { path: "/gallery", changeFrequency: "weekly", priority: 0.5 },
   { path: "/partners", changeFrequency: "monthly", priority: 0.6 },
   { path: "/invest", changeFrequency: "monthly", priority: 0.7 },
   { path: "/shop", changeFrequency: "daily", priority: 0.9 },

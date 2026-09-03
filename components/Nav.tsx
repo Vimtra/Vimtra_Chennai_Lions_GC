@@ -49,9 +49,7 @@ import type { SafeUser } from "@/lib/auth";
 
 /**
  * Header groups come from `lib/nav.ts` so the header and the footer render
- * the same taxonomy. They used to be defined here, which is how News and
- * Gallery ended up under "Media" in the header and under "The Season" in
- * the footer.
+ * the same taxonomy.
  */
 type MegaGroup = SiteSection;
 

@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Loader from "@/components/Loader";
 import ToastHost from "@/components/ToastHost";
+import ScrollToTop from "@/components/ScrollToTop";
 import { getCurrentUser } from "@/lib/auth";
 
 // Self-hosted, CLS-free font loading. The `variable` values are the CSS
@@ -67,6 +68,7 @@ export default async function RootLayout({
           {children}
         </main>
         <Footer />
+        <ScrollToTop />
         <ToastHost />
       </body>
     </html>

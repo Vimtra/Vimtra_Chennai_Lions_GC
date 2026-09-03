@@ -163,3 +163,31 @@ model MediaCoverage {
 
   @@index([active, kind, sortOrder])
 }
+
+// Contact — /contact enquiries. Mirrors the model in schema.prisma; see
+// that file for the field-by-field rationale. Model definitions are kept
+// in sync between the two schemas as a matter of course, independent of
+// this file's pre-existing gap against the M5 commerce models — running
+// `npm run db:sqlite:migrate` will generate the matching local migration
+// the next time this schema is used.
+enum ContactStatus {
+  NEW
+  READ
+  RESOLVED
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  city      String?
+  category  String
+  message   String
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+}
