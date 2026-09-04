@@ -30,7 +30,7 @@ export default async function ShopPage() {
 
             <Section surface="ivory" size="tight">
         {hasAnything ? (
-          <div className="shop-grid">
+          <div className="shop-catalog">
             {products.map((p, i) => (
               <ProductCard
                 key={p.id}
