@@ -38,12 +38,10 @@ export default async function AdminScoresPage({
 
   return (
     <AdminShell email={user.email} active="scores">
-      <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div className="admin-head !mb-0">
         <div>
-          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
-            Scores
-          </h1>
-          <p className="font-manrope text-[14px] text-muted mt-1">
+          <h1>Scores</h1>
+          <p>
             Hand-key round-by-round leaderboard rows. The public{" "}
             <Link href="/scores" className="text-crimson-600 no-underline">
               /scores
@@ -53,7 +51,7 @@ export default async function AdminScoresPage({
         </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="admin-chip-row">
         {fixtures.length === 0 && (
           <span className="font-manrope text-[13px] text-muted">
             Add a fixture first.
@@ -63,11 +61,7 @@ export default async function AdminScoresPage({
           <Link
             key={f.id}
             href={`/admin/scores?fixtureId=${f.id}`}
-            className={`px-3 py-[7px] rounded-full font-manrope font-semibold text-[12.5px] transition-colors border ${
-              active?.id === f.id
-                ? "bg-ink text-white border-ink"
-                : "bg-cream-50 text-ink border-black/[0.08] hover:border-crimson-600 hover:text-crimson-600"
-            }`}
+            className={`admin-chip ${active?.id === f.id ? "is-active" : ""}`}
           >
             {f.name}
           </Link>
@@ -75,35 +69,31 @@ export default async function AdminScoresPage({
       </div>
 
       {saved === "1" && (
-        <div
-          role="status"
-          className="mt-5 p-[12px] rounded-[12px] font-manrope font-semibold text-[13.5px]"
-          style={{ background: "rgba(14,138,79,0.10)", color: "#0E8A4F" }}
-        >
+        <div role="status" className="admin-banner is-success">
           Saved.
         </div>
       )}
 
       {!active ? (
-        <div className="mt-8 rounded-[18px] border border-dashed border-black/[0.18] bg-cream-50 p-8 text-center">
-          <div className="font-manrope text-[14px] text-muted">
+        <div className="admin-card !border-dashed text-center">
+          <p className="font-manrope text-[14px] text-muted m-0">
             No fixture selected. Add one under{" "}
             <Link href="/admin/fixtures" className="text-crimson-600 no-underline">
               Fixtures
             </Link>
             .
-          </div>
+          </p>
         </div>
       ) : (
         <>
-          <div className="mt-8 bg-ink text-white rounded-[18px] p-6">
-            <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-[#E9CB8E] uppercase">
+          <div className="mt-6 rounded-[4px] p-6" style={{ background: "var(--hp-ink)", color: "var(--hp-ivory)" }}>
+            <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] uppercase" style={{ color: "var(--hp-gold-lt)" }}>
               Current fixture · {active.status}
             </div>
             <div className="mt-2 font-sora font-extrabold text-[22px] tracking-[-0.015em]">
               {active.name}
             </div>
-            <div className="font-manrope text-[13px] text-white/70 mt-1">
+            <div className="font-manrope text-[13px] mt-1" style={{ color: "var(--hp-muted-dark)" }}>
               {active.courseName ? `${active.courseName} · ` : ""}
               {active.city}
               {active.city !== active.country ? `, ${active.country}` : ""}
@@ -112,7 +102,7 @@ export default async function AdminScoresPage({
             </div>
           </div>
 
-          <div className="mt-6 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
+          <div className="admin-card mt-6 overflow-x-auto">
             <table className="admin-table">
               <thead>
                 <tr>
@@ -135,8 +125,8 @@ export default async function AdminScoresPage({
                 ))}
                 {scores.length === 0 && (
                   <tr>
-                    <td colSpan={11} className="text-center font-manrope text-muted py-8">
-                      No score rows for this fixture yet. Add the first row below.
+                    <td colSpan={11} className="admin-empty">
+                      <p>No score rows for this fixture yet. Add the first row below.</p>
                     </td>
                   </tr>
                 )}
@@ -145,12 +135,12 @@ export default async function AdminScoresPage({
           </div>
 
           <div id="new" className="mt-10 scroll-mt-24">
-            <h2 className="font-sora font-extrabold text-[22px] tracking-[-0.02em] text-ink mb-4">
+            <h2 className="font-sora font-extrabold text-[20px] tracking-[-0.01em] text-ink mb-4">
               Add a score row
             </h2>
             <form
               action={createScoreAction}
-              className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-6 grid grid-cols-1 md:grid-cols-11 gap-3"
+              className="admin-card grid grid-cols-1 md:grid-cols-11 gap-3"
             >
               <input type="hidden" name="fixtureId" value={active.id} />
               <ScoreInput label="Pos" name="position" placeholder="T2" />
@@ -194,9 +184,9 @@ function ScoreInput({
   );
 }
 
-// Compact cell input — no dependency on custom admin CSS classes.
-const CELL =
-  "w-full px-2 py-[6px] border border-black/[0.12] rounded-[8px] font-manrope text-[13.5px] bg-white text-ink";
+// Compact cell input — shared with the rest of admin via .admin-cell-input
+// rather than a bespoke opt-out class.
+const CELL = "admin-cell-input";
 
 function ScoreEditRow({ score, fixtureId }: { score: Score; fixtureId: string }) {
   return (

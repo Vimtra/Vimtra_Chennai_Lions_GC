@@ -169,6 +169,74 @@ export function contactConfirmationEmail(input: ContactConfirmationInput): Rende
 }
 
 // ---------------------------------------------------------------------------
+// Welcome email — sent once, the moment a new account is created (never on
+// a routine sign-in — see app/(auth)/actions.ts's signUp for the call site).
+
+export interface WelcomeEmailInput {
+  name: string;
+  email: string;
+  /** Host only (no protocol) — e.g. "vimtralions.com". Used to build the
+   *  two account links; the caller resolves this from NEXT_PUBLIC_SITE_URL
+   *  the same way sitemap.ts/robots.ts already do, so no new env var. */
+  siteHost: string;
+}
+
+export function welcomeEmail(input: WelcomeEmailInput): RenderedEmail {
+  const subject = "Welcome to Vimtra Chennai Lions GC";
+
+  const text = [
+    `Hi ${input.name},`,
+    "",
+    `Your account is set up at ${input.email}. You can now sign in any time to check order status, save a delivery address, and manage your details.`,
+    "",
+    "Browse the shop: https://" + input.siteHost + "/shop",
+    "Your account: https://" + input.siteHost + "/profile",
+    "",
+    "Questions? Reply to this email or reach golfventures@vimtra.com.",
+    "",
+    "— Vimtra Chennai Lions GC",
+    "AM Green IGPL · Season 2026",
+  ].join("\n");
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-family:${FONT};font-size:15px;line-height:1.6;color:${INK};">
+      Hi ${escapeHtml(input.name)},
+    </p>
+    <p style="margin:0 0 24px;font-family:${FONT};font-size:15px;line-height:1.6;color:${INK};">
+      Your account is set up at <strong>${escapeHtml(input.email)}</strong>. You can
+      now sign in any time to check order status, save a delivery address, and
+      manage your details.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="padding-right:10px;">
+          <a href="https://${input.siteHost}/shop"
+             style="display:inline-block;padding:12px 20px;background:${CRIMSON};color:${IVORY};font-family:${FONT};font-weight:700;font-size:13px;letter-spacing:0.4px;text-decoration:none;border-radius:999px;">
+            Visit the shop
+          </a>
+        </td>
+        <td>
+          <a href="https://${input.siteHost}/profile"
+             style="display:inline-block;padding:12px 20px;color:${INK};font-family:${FONT};font-weight:700;font-size:13px;letter-spacing:0.4px;text-decoration:none;border:1px solid rgba(14,11,10,0.16);border-radius:999px;">
+            Your account
+          </a>
+        </td>
+      </tr>
+    </table>
+    <p style="margin:24px 0 0;font-family:${FONT};font-size:13px;line-height:1.6;color:${MUTED};">
+      Questions? Reply to this email or reach us at golfventures@vimtra.com.
+    </p>`;
+
+  const html = emailShell({
+    preview: "Your Vimtra Chennai Lions GC account is ready.",
+    eyebrow: "Account created",
+    bodyHtml,
+  });
+
+  return { subject, text, html };
+}
+
+// ---------------------------------------------------------------------------
 // Email #2 — to the franchise.
 
 export interface ContactNotificationInput {

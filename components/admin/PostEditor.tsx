@@ -200,7 +200,7 @@ export default function PostEditor({ post }: { post: Post }) {
 
         {/* -------- RIGHT: publish sidebar -------- */}
         <aside className="grid gap-4 self-start lg:sticky lg:top-24">
-          <div className="bg-cream-50 border border-black/[0.08] rounded-[16px] p-5">
+          <div className="admin-card">
             <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
               Publish
             </div>
@@ -255,7 +255,8 @@ export default function PostEditor({ post }: { post: Post }) {
       {/* Sibling delete form — HTML disallows nested <form>. */}
       <form
         action={deletePostAction}
-        className="mt-6 bg-white border border-black/[0.06] rounded-[16px] p-5 max-w-[360px]"
+        className="admin-card mt-6 max-w-[360px]"
+        style={{ background: "#fff" }}
       >
         <input type="hidden" name="id" value={post.id} />
         <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">

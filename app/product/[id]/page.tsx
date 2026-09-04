@@ -60,16 +60,14 @@ export default async function ProductPage({
   return (
     <Section surface="ivory" size="tight">
         {/* Breadcrumbs */}
-        <div className="mb-7 font-manrope text-[13px] text-muted font-semibold flex items-center gap-2 flex-wrap">
+        <div className="mb-7 font-manrope text-[12.5px] text-muted font-semibold flex items-center gap-2 flex-wrap uppercase tracking-[0.06em]">
           <Link href="/shop" className="text-inherit no-underline hover:text-crimson-600">
             Shop
           </Link>
-          <span>/</span>
-          <span className="text-crimson-600 uppercase tracking-[0.04em]">
-            {product.cat}
-          </span>
-          <span>/</span>
-          <span className="text-ink">{product.name}</span>
+          <span className="opacity-40">/</span>
+          <span className="text-crimson-600">{product.cat}</span>
+          <span className="opacity-40">/</span>
+          <span className="text-ink normal-case tracking-normal">{product.name}</span>
         </div>
 
         <div className="product-detail-grid">
@@ -97,7 +95,7 @@ export default async function ProductPage({
               {outOfStock && (
                 <div
                   className="absolute top-4 right-4 rounded-[999px] px-3 py-[6px] font-sora font-extrabold text-[10.5px] tracking-[0.16em] uppercase"
-                  style={{ background: "rgba(26,21,19,0.92)", color: "#fff" }}
+                  style={{ background: "rgba(14,11,10,0.92)", color: "var(--hp-ivory)" }}
                 >
                   Out of stock
                 </div>
@@ -105,7 +103,7 @@ export default async function ProductPage({
               {lowStock && (
                 <div
                   className="absolute top-4 right-4 rounded-[999px] px-3 py-[6px] font-sora font-extrabold text-[10.5px] tracking-[0.16em] uppercase"
-                  style={{ background: "#C4202A", color: "#fff" }}
+                  style={{ background: "var(--hp-red)", color: "var(--hp-ivory)" }}
                 >
                   Only {product.stock} left
                 </div>
@@ -137,24 +135,24 @@ export default async function ProductPage({
             <span className="font-manrope font-bold text-[11px] tracking-[0.2em] text-crimson-600 uppercase">
               {product.cat}
             </span>
-            <h1 className="mt-3 mb-[6px] font-sora font-extrabold text-[38px] tracking-[-0.027em] leading-[1.1] text-ink">
+            <h1 className="mt-3 mb-[6px] font-sora font-extrabold text-[clamp(30px,3.6vw,40px)] tracking-[-0.027em] leading-[1.08] text-ink">
               {product.name}
             </h1>
 
-            <div className="font-sora font-extrabold text-[28px] text-crimson-600 mt-[14px]">
+            <div className="font-sora font-extrabold text-[26px] text-crimson-600 mt-[14px]">
               {inr(product.price)}
             </div>
 
             <div className="w-full h-px bg-black/[0.08] my-6" />
 
-            <p className="m-0 font-manrope text-[15.5px] leading-[1.68] text-[#3A1215]/85">
+            <p className="m-0 font-manrope text-[15.5px] leading-[1.68] text-muted">
               {product.desc}
             </p>
 
             {/* Retail spec panel — replaces the old "bulk / corporate
                 gifting" copy with fan-retail-relevant details. Only
                 shows rows that are actually populated. */}
-            <div className="mt-5 p-4 bg-cream-50 border border-black/[0.06] rounded-[16px] flex flex-col gap-2">
+            <div className="hp-panel mt-5 !p-4 flex flex-col gap-2">
               <SpecRow
                 label="Availability"
                 value={
@@ -186,7 +184,10 @@ export default async function ProductPage({
 
         {/* Related */}
         {related.length > 0 && (
-          <div className="mt-[84px]">
+          <div className="mt-[84px] pt-10 border-t border-black/[0.08]">
+            <div className="font-manrope font-bold text-[11px] tracking-[0.2em] text-crimson-600 uppercase mb-2">
+              More from the store
+            </div>
             <h2 className="font-sora font-extrabold text-[26px] tracking-[-0.02em] mb-7 text-ink">
               You May Also Like
             </h2>

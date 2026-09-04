@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
+import { put } from "@vercel/blob";
 import { requireAdmin } from "@/lib/auth";
 import {
   createProduct,
@@ -29,21 +30,37 @@ async function parseInput(formData: FormData): Promise<ProductInput> {
     }
     const extension = upload.type === "image/jpeg" ? "jpg" : upload.type.split("/")[1];
     const fileName = `${randomUUID()}.${extension}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    try {
-      await mkdir(uploadDir, { recursive: true });
-      await writeFile(path.join(uploadDir, fileName), Buffer.from(await upload.arrayBuffer()));
-    } catch (err) {
-      // Surfaces as the form's error state instead of a raw fs code. This is
-      // also what a read-only filesystem looks like — see the deployment note
-      // above `revalidateCatalog`.
-      console.error("[parseInput] image write failed:", err);
-      throw new Error(
-        "The image could not be saved to storage. The product was not changed."
-      );
+    const imageBuffer = Buffer.from(await upload.arrayBuffer());
+
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      try {
+        const blob = await put(`products/${fileName}`, imageBuffer, {
+          access: "public",
+          contentType: upload.type,
+          token: process.env.BLOB_READ_WRITE_TOKEN,
+          addRandomSuffix: false,
+        });
+        img = blob.url;
+      } catch (err) {
+        console.error("[parseInput] blob upload failed:", err);
+        throw new Error(
+          "The image could not be saved to storage. The product was not changed."
+        );
+      }
+    } else {
+      // Keep local development usable when Blob storage is not configured.
+      try {
+        const uploadDir = path.join(process.cwd(), "public", "uploads");
+        await mkdir(uploadDir, { recursive: true });
+        await writeFile(path.join(uploadDir, fileName), imageBuffer);
+        img = `/uploads/${fileName}`;
+      } catch (err) {
+        console.error("[parseInput] local image write failed:", err);
+        throw new Error(
+          "The image could not be saved to storage. The product was not changed."
+        );
+      }
     }
-    // A fresh upload wins over a pending removal.
-    img = `/uploads/${fileName}`;
   }
   return {
     name: String(formData.get("name") ?? "").trim(),
@@ -58,17 +75,8 @@ async function parseInput(formData: FormData): Promise<ProductInput> {
 }
 
 /**
- * IMAGE STORAGE — uses the upload system that already exists here: the file
- * is written to `public/uploads/` (git-ignored) and the product stores the
- * `/uploads/<uuid>.<ext>` path. No new storage architecture was introduced.
- *
- * DEPLOYMENT CAVEAT: this writes to the app's own filesystem, which works in
- * local dev and on a persistent server, but NOT on Vercel — its filesystem is
- * read-only apart from `/tmp`, and `/tmp` does not survive between
- * invocations. CLAUDE.md names Vercel as the target, so uploads will fail
- * there until this is pointed at blob storage (Vercel Blob, S3, Cloudinary).
- * Failures now surface as a clear form error rather than a raw fs code, and
- * the product is left unchanged when a write fails.
+ * Images use Vercel Blob in deployed environments. Local development keeps a
+ * filesystem fallback so the admin flow works without a Blob store.
  */
 
 /** Refresh every surface that reads the catalog. */

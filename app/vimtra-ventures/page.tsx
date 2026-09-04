@@ -147,8 +147,8 @@ export default function VimtraVenturesPage() {
         title={["VIMTRA", "VENTURES"]}
         // Existing approved lead, cut to its opening clause.
         line="The brain behind the team."
-        image="/assets/photo/vv-hero-cliffside-community.jpg"
-        imageAlt="Cliffside homes above a coastal green"
+        image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2400&q=85"
+        imageAlt="Technology circuit board with illuminated processing lines"
         imagePosition="50% 46%"
       />
 

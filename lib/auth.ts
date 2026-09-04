@@ -16,7 +16,14 @@ import type { Role } from "@prisma/client";
  */
 
 const COOKIE = "lions_session";
-const SESSION_DAYS = 30;
+// Was 30 days. A merch/fan account carries no payment-instrument or
+// admin-by-default risk on its own (role is checked separately by
+// requireAdmin() on every request, not cached in the session), so a
+// longer "stay signed in" window trades a little session lifetime for
+// meaningfully fewer forced re-logins — 90 days, not indefinite: it
+// still expires, and getCurrentUser() still rejects an expired row on
+// every read regardless of the cookie's own lifetime.
+const SESSION_DAYS = 90;
 const BCRYPT_ROUNDS = 10;
 
 export interface SafeUser {

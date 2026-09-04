@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { FALLBACK_LOGO, inr } from "@/lib/products";
-import PageMasthead from "@/components/site/PageMasthead";
+import StoryHero from "@/components/site/StoryHero";
 import { Section } from "@/components/site/Section";
 import AccountNav from "@/components/profile/AccountNav";
 import {
@@ -62,7 +62,7 @@ export default async function OrderConfirmationPage({
 
   return (
     <>
-      <PageMasthead
+      <StoryHero
         eyebrow={isFresh ? "Thank you · Order Placed" : "Account · Order"}
         title={[order.orderNumber]}
         line={`Placed on ${formatOrderDate(order.createdAt)} · ${itemCount} ${
@@ -73,10 +73,6 @@ export default async function OrderConfirmationPage({
             ← My Orders
           </Link>
         }
-        stats={[
-          { k: "Items", v: String(itemCount) },
-          { k: "Total", v: inr(order.total) },
-        ]}
       />
 
       <Section surface="ivory" size="tight">

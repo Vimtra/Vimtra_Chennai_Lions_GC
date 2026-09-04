@@ -39,12 +39,17 @@ export default function StoryHero({
   imageAlt,
   imagePosition = "50% 45%",
   cta,
+  above,
 }: {
   eyebrow: string;
   /** Hand-broken lines — each becomes one masked line that slides up. */
   title: string[];
   /** One short supporting line. Deliberately not a paragraph. */
   line?: string;
+  /** Optional element rendered above the eyebrow (e.g. a back link) — same
+   *  slot PageHero/PageMasthead expose, for the rare story hero that needs
+   *  one (e.g. an order confirmation linking back to My Orders). */
+  above?: React.ReactNode;
   /**
    * Optional. Omit it where a stock photograph would stand in for real
    * subject matter that the page itself is about to show — /players opens
@@ -130,6 +135,11 @@ export default function StoryHero({
 
       <div className="hp-wrap cm-track cm-hero-inner">
         <div className="cm-hero-head">
+          {above && (
+            <div className="cm-hero-above" data-sh-eyebrow>
+              {above}
+            </div>
+          )}
           <p className="cm-eyebrow" data-sh-eyebrow>
             {eyebrow}
           </p>

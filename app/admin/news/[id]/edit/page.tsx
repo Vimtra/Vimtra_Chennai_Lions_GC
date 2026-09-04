@@ -32,7 +32,7 @@ export default async function EditPostPage({
       >
         ← Back to News
       </Link>
-      <h1 className="mt-3 font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
+      <h1 className="mt-3 font-sora font-extrabold text-[32px] tracking-[-0.02em] text-ink">
         Edit post
       </h1>
       <p className="font-manrope text-[14px] text-muted mt-1">
@@ -40,11 +40,7 @@ export default async function EditPostPage({
       </p>
 
       {saved === "1" && (
-        <div
-          role="status"
-          className="mt-4 p-[12px] rounded-[12px] font-manrope font-semibold text-[13.5px]"
-          style={{ background: "rgba(14,138,79,0.10)", color: "#0E8A4F" }}
-        >
+        <div role="status" className="admin-banner is-success mt-4">
           Saved.
         </div>
       )}

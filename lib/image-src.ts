@@ -40,13 +40,9 @@ const DERIVATIVES: Record<string, string> = {
   // Product photography
   "/assets/prod-tshirt.png": "/assets/prod-tshirt-web.jpg",
   "/assets/prod-cap.png": "/assets/prod-cap-web.jpg",
-  "/assets/prod-mug.png": "/assets/prod-mug-web.jpg",
   "/assets/prod-pen.png": "/assets/prod-pen-web.jpg",
-  "/assets/prod-earbuds.png": "/assets/prod-earbuds-web.jpg",
-  "/assets/prod-golfballs.png": "/assets/prod-golfballs-web.jpg",
   "/assets/prod-insulatedmug.png": "/assets/prod-insulatedmug-web.jpg",
   "/assets/prod-sunglasses.png": "/assets/prod-sunglasses-web.jpg",
-  "/assets/prod-whiskey.png": "/assets/prod-whiskey-web.jpg",
 };
 
 /** Map a stored path to its optimized derivative when one exists. */

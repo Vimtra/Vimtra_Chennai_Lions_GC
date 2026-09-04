@@ -65,7 +65,10 @@ const OVER_HERO = new Set(FLOATING_HEADER_ROUTES);
 
 export default function Nav({ user }: { user: SafeUser | null }) {
   const pathname = usePathname();
-  const overHero = OVER_HERO.has(pathname);
+  // Every floating-hero route is a fixed string in OVER_HERO except order
+  // detail, which is dynamic (`/orders/<id>`) and so can never equal one —
+  // matched by prefix instead, scoped narrowly to this one route.
+  const overHero = OVER_HERO.has(pathname) || pathname.startsWith("/orders/");
   const isAdmin = pathname.startsWith("/admin");
 
   const [scrolled, setScrolled] = useState(false);

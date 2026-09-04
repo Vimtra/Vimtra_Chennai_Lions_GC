@@ -26,12 +26,10 @@ export default async function AdminMediaPage() {
 
   return (
     <AdminShell email={user.email} active="media">
-      <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div className="admin-head">
         <div>
-          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
-            Media Coverage
-          </h1>
-          <p className="font-manrope text-[14px] text-muted mt-1">
+          <h1>Media Coverage</h1>
+          <p>
             Curated third-party press mentions. {activeCount} of {items.length}{" "}
             visible on the public{" "}
             <Link href="/news" className="text-crimson-600 no-underline">
@@ -45,7 +43,7 @@ export default async function AdminMediaPage() {
         </Link>
       </div>
 
-      <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
+      <div className="admin-card overflow-x-auto">
         <table className="admin-table">
           <thead>
             <tr>
@@ -79,7 +77,7 @@ export default async function AdminMediaPage() {
                               "linear-gradient(135deg,#E1306C,#833AB4)",
                             color: "#fff",
                           }
-                        : { background: "#1A1513", color: "#E9CB8E" }
+                        : { background: "var(--hp-ink)", color: "var(--hp-gold-lt)" }
                     }
                   >
                     {m.kind}
@@ -153,11 +151,8 @@ export default async function AdminMediaPage() {
             ))}
             {items.length === 0 && (
               <tr>
-                <td
-                  colSpan={7}
-                  className="text-center font-manrope text-muted py-10"
-                >
-                  No media coverage entries yet. Add one below.
+                <td colSpan={7} className="admin-empty">
+                  <p>No media coverage entries yet. Add one below.</p>
                 </td>
               </tr>
             )}
@@ -165,11 +160,11 @@ export default async function AdminMediaPage() {
         </table>
       </div>
 
-      <div id="new" className="mt-12 scroll-mt-24">
-        <h2 className="font-sora font-extrabold text-[22px] tracking-[-0.02em] text-ink mb-5">
+      <div id="new" className="mt-10 scroll-mt-24">
+        <h2 className="font-sora font-extrabold text-[20px] tracking-[-0.01em] text-ink mb-4">
           Add coverage
         </h2>
-        <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-7 max-w-[860px]">
+        <div className="admin-card !p-7 max-w-[860px]">
           <MediaCoverageForm
             action={createMediaCoverageAction}
             submitLabel="Add coverage"

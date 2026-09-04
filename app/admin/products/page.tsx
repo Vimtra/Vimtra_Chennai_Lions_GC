@@ -19,12 +19,12 @@ export default async function AdminProductsPage() {
 
   return (
     <AdminShell email={user.email} active="products">
-      <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div className="admin-head">
         <div>
-          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">Products</h1>
-          <p className="font-manrope text-[14px] text-muted mt-1">{products.length} items in the catalog</p>
+          <h1>Products</h1>
+          <p>{products.length} items in the catalog</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="admin-head-actions">
           <Link href="/admin/inventory" className="btn-ghost">
             Manage stock →
           </Link>
@@ -32,7 +32,7 @@ export default async function AdminProductsPage() {
         </div>
       </div>
 
-      <div className="mt-7 border border-black/[0.07] rounded-[4px] p-4 overflow-x-auto" style={{ background: "var(--hp-ivory-2)" }}>
+      <div className="admin-card overflow-x-auto">
         <table className="admin-table">
           <thead>
             <tr>

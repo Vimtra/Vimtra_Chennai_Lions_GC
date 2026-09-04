@@ -17,10 +17,14 @@ export default async function AdminUsersPage() {
 
   return (
     <AdminShell email={admin.email} active="users">
-      <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">Users</h1>
-      <p className="font-manrope text-[14px] text-muted mt-1">{users.length} registered accounts</p>
+      <div className="admin-head">
+        <div>
+          <h1>Users</h1>
+          <p>{users.length} registered accounts</p>
+        </div>
+      </div>
 
-      <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
+      <div className="admin-card overflow-x-auto">
         <table className="admin-table">
           <thead>
             <tr>
@@ -45,8 +49,8 @@ export default async function AdminUsersPage() {
                       className="tier-badge"
                       style={
                         u.role === "ADMIN"
-                          ? { background: "#1A1513", color: "#E9CB8E" }
-                          : { background: "rgba(26,21,19,0.08)", color: "#1A1513" }
+                          ? { background: "var(--hp-ink)", color: "var(--hp-gold-lt)" }
+                          : { background: "rgba(14,11,10,0.08)", color: "var(--hp-ink)" }
                       }
                     >
                       {u.role}

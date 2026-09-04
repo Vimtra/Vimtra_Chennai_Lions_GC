@@ -51,12 +51,10 @@ export default async function AdminNewsPage({
 
   return (
     <AdminShell email={user.email} active="news">
-      <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div className="admin-head">
         <div>
-          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
-            News &amp; Notebook
-          </h1>
-          <p className="font-manrope text-[14px] text-muted mt-1">
+          <h1>News &amp; Notebook</h1>
+          <p>
             Franchise editorial. Draft freely, publish deliberately, archive
             when a piece is out of date. Only <strong>Published</strong> posts
             appear on the public /news feed.
@@ -69,24 +67,19 @@ export default async function AdminNewsPage({
         </form>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="admin-chip-row">
         {FILTER_TABS.map((t) => (
           <Link
             key={t.key}
             href={t.key === "all" ? "/admin/news" : `/admin/news?filter=${t.key}`}
-            className={`px-3 py-[7px] rounded-full font-manrope font-semibold text-[12.5px] transition-colors border ${
-              filter === t.key
-                ? "bg-ink text-white border-ink"
-                : "bg-cream-50 text-ink border-black/[0.08] hover:border-crimson-600 hover:text-crimson-600"
-            }`}
+            className={`admin-chip ${filter === t.key ? "is-active" : ""}`}
           >
-            {t.label}{" "}
-            <span className="opacity-60">({counts[t.key]})</span>
+            {t.label} <span className="opacity-60">({counts[t.key]})</span>
           </Link>
         ))}
       </div>
 
-      <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
+      <div className="admin-card overflow-x-auto">
         <table className="admin-table">
           <thead>
             <tr>
@@ -104,10 +97,12 @@ export default async function AdminNewsPage({
             ))}
             {shown.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center font-manrope text-muted py-10">
-                  {filter === "all"
-                    ? "No posts yet. Create your first draft to get started."
-                    : `No ${filter.toLowerCase()} posts.`}
+                <td colSpan={6} className="admin-empty">
+                  <p>
+                    {filter === "all"
+                      ? "No posts yet. Create your first draft to get started."
+                      : `No ${filter.toLowerCase()} posts.`}
+                  </p>
                 </td>
               </tr>
             )}

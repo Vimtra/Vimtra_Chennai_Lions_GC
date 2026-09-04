@@ -9,6 +9,7 @@ import {
   Activity,
   Trophy,
   Mail,
+  ShoppingBag,
 } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { listProducts } from "@/lib/db";
@@ -34,6 +35,8 @@ export default async function AdminDashboard() {
     mediaActive,
     messageTotal,
     messageNew,
+    orderCount,
+    orderPending,
   ] = await Promise.all([
     listProducts(),
     prisma.user.count(),
@@ -46,16 +49,21 @@ export default async function AdminDashboard() {
     prisma.mediaCoverage.count({ where: { active: true } }),
     prisma.contactMessage.count(),
     prisma.contactMessage.count({ where: { status: "NEW" } }),
+    prisma.order.count(),
+    prisma.order.count({ where: { status: "PENDING" } }),
   ]);
 
   return (
     <AdminShell email={user.email} active="dashboard">
-      <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">Dashboard</h1>
-      <p className="font-manrope text-[15px] text-muted mt-2">
-        Manage the franchise catalog, IGPL data, and content. Changes publish to the live site.
-      </p>
+      <div className="admin-head !mb-0">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Manage the franchise catalog, IGPL data, and content. Changes publish to the live site.</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mt-8">
+        <StatTile n={orderCount} label={`Orders / ${orderPending} pending`} />
         <StatTile n={products.length} label="Products" />
         <StatTile n={fixtureCount} label="Fixtures" />
         <StatTile n={scoreCount} label="Score rows" />
@@ -67,6 +75,16 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-8">
+        <ManagerCard
+          href="/admin/orders"
+          title="Orders"
+          body={
+            orderPending > 0
+              ? `${orderPending} order${orderPending === 1 ? "" : "s"} awaiting action.`
+              : "View placed orders, update status, and manage fulfilment."
+          }
+          icon={<ShoppingBag className="w-5 h-5" />}
+        />
         <ManagerCard
           href="/admin/products"
           title="Product Manager"

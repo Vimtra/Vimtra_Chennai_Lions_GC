@@ -16,12 +16,10 @@ export default async function AdminMessagesPage() {
 
   return (
     <AdminShell email={user.email} active="messages">
-      <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div className="admin-head">
         <div>
-          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
-            Messages
-          </h1>
-          <p className="font-manrope text-[14px] text-muted mt-1">
+          <h1>Messages</h1>
+          <p>
             {messages.length === 0
               ? "Submissions from the /contact form will appear here."
               : `${messages.length} enquir${messages.length === 1 ? "y" : "ies"}, newest first.`}
@@ -30,14 +28,14 @@ export default async function AdminMessagesPage() {
         {newCount > 0 && (
           <span
             className="tier-badge"
-            style={{ background: "rgba(196,32,42,0.10)", color: "#C4202A" }}
+            style={{ background: "rgba(189,34,39,0.10)", color: "var(--hp-red)" }}
           >
             {newCount} NEW
           </span>
         )}
       </div>
 
-      <div className="mt-7 border border-black/[0.07] rounded-[4px] p-4 overflow-x-auto" style={{ background: "var(--hp-ivory-2)" }}>
+      <div className="admin-card overflow-x-auto">
         <table className="admin-table">
           <thead>
             <tr>
@@ -55,13 +53,11 @@ export default async function AdminMessagesPage() {
             ))}
             {messages.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center py-14">
+                <td colSpan={6} className="admin-empty">
                   <div className="font-sora font-bold text-[16px] text-ink mb-1">
                     No enquiries yet
                   </div>
-                  <div className="font-manrope text-[13.5px] text-muted">
-                    Nothing has come through the contact form.
-                  </div>
+                  <p>Nothing has come through the contact form.</p>
                 </td>
               </tr>
             )}

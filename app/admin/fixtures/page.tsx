@@ -25,17 +25,17 @@ export default async function AdminFixturesPage() {
 
   return (
     <AdminShell email={user.email} active="fixtures">
-      <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div className="admin-head">
         <div>
-          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">Fixtures</h1>
-          <p className="font-manrope text-[14px] text-muted mt-1">
+          <h1>Fixtures</h1>
+          <p>
             {fixtures.length} fixture{fixtures.length === 1 ? "" : "s"} · verified against the Chennai Lions IGPL brochure
           </p>
         </div>
         <Link href="#new" className="btn-dark">+ Add fixture</Link>
       </div>
 
-      <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
+      <div className="admin-card overflow-x-auto">
         <table className="admin-table">
           <thead>
             <tr>
@@ -99,8 +99,8 @@ export default async function AdminFixturesPage() {
             ))}
             {fixtures.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center font-manrope text-muted py-8">
-                  No fixtures yet. Add one below.
+                <td colSpan={6} className="admin-empty">
+                  <p>No fixtures yet. Add one below.</p>
                 </td>
               </tr>
             )}
@@ -108,11 +108,11 @@ export default async function AdminFixturesPage() {
         </table>
       </div>
 
-      <div id="new" className="mt-12 scroll-mt-24">
-        <h2 className="font-sora font-extrabold text-[24px] tracking-[-0.02em] text-ink mb-5">
+      <div id="new" className="mt-10 scroll-mt-24">
+        <h2 className="font-sora font-extrabold text-[20px] tracking-[-0.01em] text-ink mb-4">
           Add a fixture
         </h2>
-        <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-7 max-w-[860px]">
+        <div className="admin-card !p-7 max-w-[860px]">
           <FixtureForm action={createFixtureAction} submitLabel="Add fixture" />
         </div>
       </div>

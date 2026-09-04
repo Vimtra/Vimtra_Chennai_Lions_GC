@@ -26,12 +26,10 @@ export default async function AdminInventoryPage() {
 
   return (
     <AdminShell email={user.email} active="inventory">
-      <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div className="admin-head">
         <div>
-          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
-            Inventory
-          </h1>
-          <p className="font-manrope text-[14px] text-muted mt-1">
+          <h1>Inventory</h1>
+          <p>
             {products.length} products · {active} active · {out} out of stock ·{" "}
             {low} low stock
           </p>
@@ -41,9 +39,7 @@ export default async function AdminInventoryPage() {
         </Link>
       </div>
 
-      <div className="mt-7">
-        <InventoryTable products={products} />
-      </div>
+      <InventoryTable products={products} />
     </AdminShell>
   );
 }

@@ -83,7 +83,9 @@ const SECTIONS: { id: string; title: string; body: string[] }[] = [
     id: "cookies",
     title: "Cookies",
     body: [
-      "We use a small number of first-party cookies strictly necessary to keep you signed in and to remember your shopping cart while you browse. We do not use advertising or cross-site tracking cookies.",
+      "We use exactly one cookie: a first-party, strictly-necessary session cookie that keeps you signed in. It is set only when you sign in, cannot be read by any script on this or any other site, and is deleted when you sign out.",
+      "Your shopping cart is kept in your browser's local storage, not a cookie, and never leaves your device unless you check out.",
+      "We do not use advertising, analytics, or cross-site tracking cookies or scripts of any kind, so no cookie consent banner is shown on this site.",
     ],
   },
   {

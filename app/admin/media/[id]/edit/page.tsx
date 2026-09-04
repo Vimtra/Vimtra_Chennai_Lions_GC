@@ -30,14 +30,14 @@ export default async function EditMediaCoveragePage({
       >
         ← Back to Media Coverage
       </Link>
-      <h1 className="mt-3 font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
+      <h1 className="mt-3 font-sora font-extrabold text-[32px] tracking-[-0.02em] text-ink">
         Edit coverage
       </h1>
       <p className="font-manrope text-[14px] text-muted mt-1">
         {item.sourceName} · {item.title}
       </p>
 
-      <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-7 max-w-[860px]">
+      <div className="admin-card mt-7 !p-7 max-w-[860px]">
         <MediaCoverageForm
           action={updateMediaCoverageAction}
           item={item}

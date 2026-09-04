@@ -47,7 +47,7 @@ export default function ProductCard({
           {outOfStock && (
             <div
               className="absolute top-3 right-3 rounded-[999px] px-3 py-[6px] font-sora font-extrabold text-[10.5px] tracking-[0.16em] uppercase"
-              style={{ background: "rgba(26,21,19,0.92)", color: "#fff" }}
+              style={{ background: "rgba(14,11,10,0.92)", color: "var(--hp-ivory)" }}
             >
               Out of stock
             </div>
@@ -55,7 +55,7 @@ export default function ProductCard({
           {lowStock && (
             <div
               className="absolute top-3 right-3 rounded-[999px] px-3 py-[6px] font-sora font-extrabold text-[10.5px] tracking-[0.16em] uppercase"
-              style={{ background: "#C4202A", color: "#fff" }}
+              style={{ background: "var(--hp-red)", color: "var(--hp-ivory)" }}
             >
               Only {product.stock} left
             </div>

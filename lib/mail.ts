@@ -4,8 +4,10 @@ import type { OrderReceiptResult } from "@/lib/orders";
 import {
   contactConfirmationEmail,
   contactNotificationEmail,
+  welcomeEmail,
   type ContactConfirmationInput,
   type ContactNotificationInput,
+  type WelcomeEmailInput,
 } from "@/lib/email-templates";
 
 /**
@@ -26,6 +28,12 @@ import {
  *   sendContact*      — the /contact form. Gmail SMTP via Nodemailer,
  *                      gated by isContactSmtpConfigured() (SMTP_HOST +
  *                      SMTP_USER + SMTP_PASSWORD + MAIL_FROM).
+ *
+ *   sendWelcomeEmail   — new-account welcome. Same transport, same gate,
+ *                      same resolveFromAddress() as sendContact* above —
+ *                      no separate config, no new env vars. Called once,
+ *                      from signUp() in app/(auth)/actions.ts, never from
+ *                      signIn().
  *
  * SMTP_HOST and MAIL_FROM are read by BOTH gates above — unavoidable
  * given sendOrderReceipt predates this file's Gmail wiring and already
@@ -239,4 +247,15 @@ export async function sendContactNotificationToAdmin(
   }
   const { subject, text, html } = contactNotificationEmail(input);
   return sendMail({ to, subject, text, html, replyTo: input.email });
+}
+
+// ---------------------------------------------------------------------------
+// Welcome email — reuses the exact same Gmail SMTP transport, gate and
+// resolveFromAddress() as the contact-form senders above. Called from
+// app/(auth)/actions.ts's signUp only, right after a new account is
+// created — never from signIn, so a routine login never triggers this.
+
+export async function sendWelcomeEmail(input: WelcomeEmailInput): Promise<MailResult> {
+  const { subject, text, html } = welcomeEmail(input);
+  return sendMail({ to: input.email, subject, text, html, replyTo: resolveFromAddress() });
 }

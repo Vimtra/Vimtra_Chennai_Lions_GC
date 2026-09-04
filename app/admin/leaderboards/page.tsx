@@ -66,12 +66,10 @@ export default async function AdminStandingsPage({
 
   return (
     <AdminShell email={user.email} active="leaderboards">
-      <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div className="admin-head !mb-0">
         <div>
-          <h1 className="font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">
-            Standings · Season {SEASON}
-          </h1>
-          <p className="font-manrope text-[14px] text-muted mt-1">
+          <h1>Standings · Season {SEASON}</h1>
+          <p>
             One row per rank, per board. The public{" "}
             <a href="/leaderboards" className="text-crimson-600 no-underline">
               /leaderboards
@@ -81,16 +79,12 @@ export default async function AdminStandingsPage({
         </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="admin-chip-row">
         {TABS.map((t) => (
           <a
             key={t.key}
             href={`/admin/leaderboards?board=${t.key}`}
-            className={`px-3 py-[7px] rounded-full font-manrope font-semibold text-[12.5px] transition-colors border ${
-              board === t.key
-                ? "bg-ink text-white border-ink"
-                : "bg-cream-50 text-ink border-black/[0.08] hover:border-crimson-600 hover:text-crimson-600"
-            }`}
+            className={`admin-chip ${board === t.key ? "is-active" : ""}`}
           >
             {t.label}
           </a>
@@ -98,26 +92,22 @@ export default async function AdminStandingsPage({
       </div>
 
       {saved === "1" && (
-        <div
-          role="status"
-          className="mt-5 p-[12px] rounded-[12px] font-manrope font-semibold text-[13.5px]"
-          style={{ background: "rgba(14,138,79,0.10)", color: "#0E8A4F" }}
-        >
+        <div role="status" className="admin-banner is-success">
           Saved.
         </div>
       )}
 
-      <div className="mt-8 bg-cream-50 border border-black/[0.07] rounded-[18px] p-6">
-        <h2 className="m-0 mb-4 font-sora font-extrabold text-[20px] tracking-[-0.015em] text-ink">
+      <div className="admin-card mt-2">
+        <div className="admin-card-title">
           {BOARD_META[board].label} · {rows.length} row{rows.length === 1 ? "" : "s"}
-        </h2>
+        </div>
 
         {rows.length === 0 ? (
-          <div className="font-manrope text-[13.5px] text-muted py-6">
+          <p className="font-manrope text-[13.5px] text-muted py-2 m-0">
             No rows yet. Add one below.
-          </div>
+          </p>
         ) : (
-          <div className="grid gap-3">
+          <div className="grid gap-3 mt-3">
             {rows.map((r) => (
               <StandingEditForm key={r.id} row={r} board={board} />
             ))}
@@ -126,7 +116,7 @@ export default async function AdminStandingsPage({
       </div>
 
       <div className="mt-8">
-        <h2 className="font-sora font-extrabold text-[22px] tracking-[-0.02em] text-ink mb-4">
+        <h2 className="font-sora font-extrabold text-[20px] tracking-[-0.01em] text-ink mb-4">
           Add a rank row
         </h2>
         <NewStandingForm board={board} />
@@ -138,7 +128,7 @@ export default async function AdminStandingsPage({
 function StandingEditForm({ row, board }: { row: StandingRow; board: StandingBoard }) {
   return (
     // Two sibling forms in one card — HTML doesn't allow nested <form>.
-    <div className="bg-white border border-black/[0.06] rounded-[14px] p-4">
+    <div className="border border-black/[0.07] rounded-[4px] p-4" style={{ background: "#fff" }}>
       <form
         action={upsertStandingAction}
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end"
@@ -195,10 +185,7 @@ function StandingEditForm({ row, board }: { row: StandingRow; board: StandingBoa
 
 function NewStandingForm({ board }: { board: StandingBoard }) {
   return (
-    <form
-      action={upsertStandingAction}
-      className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-6 grid gap-4"
-    >
+    <form action={upsertStandingAction} className="admin-card grid gap-4">
       <input type="hidden" name="seasonYear" value={SEASON} />
       <input type="hidden" name="board" value={board} />
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">

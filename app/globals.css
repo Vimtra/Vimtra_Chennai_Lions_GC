@@ -470,17 +470,27 @@ a {
 /* =====================================================
    STORE — product cards, detail, cart
 ===================================================== */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-5);
+}
 .product {
-  background: #fbf9f4;
-  border: 1px solid rgba(26, 21, 19, 0.07);
-  border-radius: 22px;
+  background: var(--hp-ivory-2);
+  border: 1px solid var(--hp-hair);
+  border-radius: 8px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: border-color 0.25s var(--hp-e), transform 0.25s var(--hp-e), box-shadow 0.25s var(--hp-e);
+}
+.product:hover {
+  border-color: rgba(189, 34, 39, 0.28);
+  transform: translateY(-3px);
 }
 .product .img {
   aspect-ratio: 1 / 1;
-  background: linear-gradient(160deg, #c9242e, #871119);
+  background: linear-gradient(160deg, var(--hp-red), var(--hp-red-deep));
   position: relative;
   display: flex;
   align-items: center;
@@ -493,11 +503,11 @@ a {
   position: absolute;
   top: 0;
   right: 0;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #e6c57e, #c39a52);
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, var(--hp-gold-lt), var(--hp-gold));
   clip-path: polygon(100% 0, 0 0, 100% 100%);
-  opacity: 0.9;
+  opacity: 0.92;
 }
 .product .body {
   padding: 18px 20px 0;
@@ -509,94 +519,93 @@ a {
   margin: 6px 0 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 15.5px;
   letter-spacing: -0.01em;
+  color: var(--hp-ink);
 }
 .product .cat {
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 10px;
   letter-spacing: 0.16em;
-  color: #c4202a;
+  color: var(--hp-red);
   text-transform: uppercase;
 }
 .product .price {
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: 20px;
-  color: #1a1513;
+  font-size: 19px;
+  color: var(--hp-ink);
   margin-top: 8px;
 }
 
 .add-btn {
   padding: 11px 16px;
-  border-radius: 24px;
-  border: none;
-  background: #1a1513;
-  color: #fff;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--hp-ink);
+  color: var(--hp-ivory);
   font-family: var(--font-sora), sans-serif;
   font-weight: 700;
   font-size: 12.5px;
   letter-spacing: 0.06em;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s var(--hp-e), transform 0.15s var(--hp-e);
 }
 .add-btn:hover {
-  background: #c4202a;
+  background: var(--hp-red);
 }
 .add-btn.added {
-  background: linear-gradient(180deg, #e6c57e, #c39a52);
-  color: #3a1a06;
+  background: linear-gradient(180deg, var(--hp-gold-lt), var(--hp-gold));
+  color: var(--hp-ink);
 }
 .add-btn--lg {
-  padding: 13px 22px;
-  border-radius: 30px;
+  padding: 15px 24px;
   font-size: 13.5px;
 }
 
 /* Product detail */
 .product-detail-grid {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 48px;
+  grid-template-columns: 1fr 1.15fr;
+  gap: var(--sp-8);
   align-items: start;
 }
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .product-detail-grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: var(--sp-6);
   }
 }
 .img-card {
-  background: #fbf9f4;
-  border: 1px solid rgba(26, 21, 19, 0.07);
-  border-radius: 24px;
+  background: linear-gradient(160deg, var(--hp-red), var(--hp-red-deep));
+  border: 1px solid var(--hp-hair);
+  border-radius: 10px;
   overflow: hidden;
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  background: linear-gradient(160deg, #c9242e, #871119);
 }
 .img-card::after {
   content: "";
   position: absolute;
   top: 0;
   right: 0;
-  width: 90px;
-  height: 90px;
-  background: linear-gradient(135deg, #e6c57e, #c39a52);
+  width: 84px;
+  height: 84px;
+  background: linear-gradient(135deg, var(--hp-gold-lt), var(--hp-gold));
   clip-path: polygon(100% 0, 0 0, 100% 100%);
-  opacity: 0.9;
+  opacity: 0.92;
 }
 .qty-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(26, 21, 19, 0.15);
+  border: 1px solid var(--hp-hair);
   background: transparent;
-  color: #1a1513;
+  color: var(--hp-ink);
   font-family: var(--font-sora), sans-serif;
   font-weight: 700;
   font-size: 16px;
@@ -604,15 +613,16 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: background 0.2s var(--hp-e), border-color 0.2s var(--hp-e);
 }
 .qty-btn:hover {
-  background: rgba(26, 21, 19, 0.05);
+  background: rgba(189, 34, 39, 0.06);
+  border-color: rgba(189, 34, 39, 0.3);
 }
 .related-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 22px;
+  gap: var(--sp-5);
 }
 
 /* Cart — editorial rows, not boxed cards; shares the .summary panel
@@ -1992,6 +2002,127 @@ a {
   font-size: 13.5px;
   line-height: 1.6;
   color: var(--hp-muted);
+}
+
+/* ---- Shared admin primitives ---------------------------------
+   One vocabulary reused by every admin route (Dashboard/Products/
+   Messages already used the .admin-card look ad-hoc via inline
+   styles; formalized here as real classes so Inventory, Fixtures,
+   Scores, Leaderboards, News, Media and Users can share it too,
+   instead of each hand-rolling its own card/chip/banner Tailwind
+   string). Visual only — no route's CRUD logic changes. */
+.admin-head {
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.admin-head h1 {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  color: var(--hp-ink);
+  margin: 0;
+}
+.admin-head p {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  color: var(--hp-muted);
+  margin: 4px 0 0;
+}
+.admin-head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.admin-card {
+  background: var(--hp-ivory-2);
+  border: 1px solid var(--hp-hair);
+  border-radius: 4px;
+  padding: 20px;
+}
+.admin-card + .admin-card { margin-top: 16px; }
+.admin-card-title {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  color: var(--hp-ink);
+  margin: 0 0 4px;
+}
+.admin-card-sub {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12.5px;
+  color: var(--hp-muted);
+  margin: 0 0 16px;
+}
+
+.admin-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+.admin-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--hp-hair);
+  background: var(--hp-ivory);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--hp-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s var(--hp-e);
+}
+.admin-chip:hover { border-color: rgba(189, 34, 39, 0.32); color: var(--hp-red); }
+.admin-chip.is-active {
+  background: var(--hp-ink);
+  color: var(--hp-ivory);
+  border-color: var(--hp-ink);
+}
+
+.admin-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.admin-banner.is-success { background: rgba(14, 138, 79, 0.1); color: #0e8a4f; }
+.admin-banner.is-error { background: rgba(189, 34, 39, 0.08); color: var(--hp-red); }
+
+.admin-empty {
+  padding: 52px 20px;
+  text-align: center;
+}
+.admin-empty p {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--hp-muted);
+}
+
+.admin-cell-input {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--hp-hair);
+  border-radius: 6px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  background: #fff;
+  color: var(--hp-ink);
+  outline: none;
+  transition: border-color 0.2s var(--hp-e), box-shadow 0.2s var(--hp-e);
+}
+.admin-cell-input:focus {
+  border-color: var(--hp-red);
+  box-shadow: 0 0 0 3px rgba(189, 34, 39, 0.1);
 }
 
 /* =====================================================
@@ -5525,6 +5656,7 @@ a:hover .hp-arrow {
 
 .cm-hero-inner { position: relative; width: 100%; row-gap: var(--sp-6); }
 .cm-hero-head { grid-column: 1 / -1; }
+.cm-hero-above { margin: 0 0 var(--sp-3); }
 .cm-hero-title {
   margin: var(--sp-2) 0 0;
   font-family: var(--font-sora), sans-serif;
@@ -8746,7 +8878,21 @@ a:hover .hp-arrow {
    chapter heads, the official-post list and the empty state.
 ============================================================ */
 
-.nw-sec { overflow-x: clip; }
+/* Vertical rhythm was missing here — .hm-sec (Home's Media chapter,
+   which this page's own header comment says it shares a language
+   with) and .pt-sec (Partners) both carry their own section padding;
+   .nw-sec only had `overflow-x: clip`, so its three sections had zero
+   top/bottom padding and butted straight against the masthead and
+   each other. Matched to .hm-sec's exact values, not a new number. */
+.nw-sec {
+  overflow-x: clip;
+  padding: var(--sp-8) 0;
+}
+@media (min-width: 768px) {
+  .nw-sec { padding: var(--sp-9) 0; }
+}
+.nw-sec.hp-sec-ivory + .nw-sec.hp-sec-ivory,
+.nw-sec.hp-sec-paper + .nw-sec.hp-sec-paper { padding-top: 0; }
 
 .nw-head {
   display: flex;

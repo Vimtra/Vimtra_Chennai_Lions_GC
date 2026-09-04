@@ -200,7 +200,7 @@ export default function InventoryTable({ products }: InventoryTableProps) {
   return (
     <div className="space-y-6">
       {/* Top Action & Summary Bar */}
-      <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-5 shadow-sm">
+      <div className="admin-card">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-2">
@@ -259,17 +259,15 @@ export default function InventoryTable({ products }: InventoryTableProps) {
         {/* Feedback Messages */}
         {feedback && (
           <div
-            className={`mt-4 p-4 rounded-[12px] flex items-center justify-between gap-3 text-[14px] font-manrope ${
-              feedback.type === "success"
-                ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-800"
-                : "bg-crimson-600/10 border border-crimson-600/25 text-crimson-700"
+            className={`admin-banner mt-4 !mb-0 justify-between ${
+              feedback.type === "success" ? "is-success" : "is-error"
             }`}
           >
             <div className="flex items-center gap-2.5 font-medium">
               {feedback.type === "success" ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
               ) : (
-                <AlertCircle className="w-5 h-5 text-crimson-600 flex-shrink-0" />
+                <AlertCircle className="w-5 h-5 flex-shrink-0" />
               )}
               <span>{feedback.message}</span>
             </div>
@@ -367,7 +365,7 @@ export default function InventoryTable({ products }: InventoryTableProps) {
       </div>
 
       {/* Inventory Table */}
-      <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto shadow-sm">
+      <div className="admin-card overflow-x-auto">
         <table className="admin-table inventory-table">
           <thead>
             <tr>
@@ -384,20 +382,18 @@ export default function InventoryTable({ products }: InventoryTableProps) {
           <tbody>
             {filteredProducts.length === 0 ? (
               <tr>
-                <td colSpan={8} className="text-center py-10">
-                  <div className="flex flex-col items-center justify-center gap-2 text-muted">
-                    <Layers className="w-8 h-8 opacity-40" />
-                    <p className="font-manrope text-[14px] font-semibold">No products match your filters</p>
-                    {hasActiveFilters && (
-                      <button
-                        type="button"
-                        onClick={handleResetFilters}
-                        className="btn-ghost text-[12px] py-1 px-3 mt-1"
-                      >
-                        Clear filters
-                      </button>
-                    )}
-                  </div>
+                <td colSpan={8} className="admin-empty">
+                  <Layers className="w-8 h-8 opacity-40 mx-auto mb-2" />
+                  <p>No products match your filters</p>
+                  {hasActiveFilters && (
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      className="btn-ghost text-[12px] py-1 px-3 mt-3"
+                    >
+                      Clear filters
+                    </button>
+                  )}
                 </td>
               </tr>
             ) : (

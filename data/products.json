@@ -155,7 +155,7 @@
     "cat": "Lifestyle",
     "price": 1250,
     "glyph": "GLS",
-    "img": "assets/prod-whiskey.png",
+    "img": "assets/whiskey-glass.png",
     "range": "1000 to 1500 units",
     "desc": "Heavy-bottomed crystal whiskey tumbler featuring an elegant diamond-cut base and the laser-etched team crest."
   },
@@ -195,7 +195,7 @@
     "cat": "Electronics",
     "price": 2450,
     "glyph": "BUD",
-    "img": "assets/prod-earbuds.png",
+    "img": "assets/ear-buds.png",
     "range": "2000 to 2500 units",
     "desc": "True wireless boAt earbuds in white, featuring fast pairing, immersive sound, and the red lion crest on the charging case."
   },
@@ -205,7 +205,7 @@
     "cat": "Accessories",
     "price": 6000,
     "glyph": "BAL",
-    "img": "assets/prod-golfballs.png",
+    "img": "assets/golf-balls-callaway.png",
     "range": "Individual unit sales",
     "desc": "A box of Callaway Chrome Soft golf balls with Triple Track technology, featuring the official Chennai Lions crest logo."
   }

@@ -8,6 +8,7 @@ import {
   createSession,
   destroySession,
 } from "@/lib/auth";
+import { sendWelcomeEmail } from "@/lib/mail";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -70,6 +71,31 @@ export async function signUp(formData: FormData) {
     redirect(urlWith("/sign-up", { error: "Something went wrong. Try again.", next }));
   }
   if (!result.ok) redirect(urlWith("/sign-up", { error: result.error, next }));
+
+  // Welcome email — fires exactly once, right here, only on a row that
+  // registerUser() just actually created. It never runs from signIn()
+  // below, and registerUser() itself only reaches `ok: true` once per
+  // email address (the existing-account check above it, backed by the
+  // User.email unique constraint), so there is no separate "already
+  // welcomed" flag to add or forget: this call site IS the guarantee.
+  // Awaited (same as the contact form's mail) so the send is given a
+  // chance to complete before the function returns — but its outcome is
+  // best-effort and never blocks account creation or sign-in either way.
+  const siteHost = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000")
+    .replace(/\/$/, "")
+    .replace(/^https?:\/\//, "");
+  const welcomeMail = await sendWelcomeEmail({
+    name: result.user.name,
+    email: result.user.email,
+    siteHost,
+  }).catch((err) => ({
+    sent: false as const,
+    reason: "error" as const,
+    detail: err instanceof Error ? err.message : "Unknown error.",
+  }));
+  if (!welcomeMail.sent && welcomeMail.reason === "error") {
+    console.error("[auth] welcome email failed:", welcomeMail.detail);
+  }
 
   await createSession(result.user.id);
   redirect(next ?? "/profile");
