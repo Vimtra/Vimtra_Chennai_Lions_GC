@@ -4,9 +4,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import { requireUser } from "@/lib/auth";
-import Reveal from "@/components/Reveal";
 import { FALLBACK_LOGO, inr } from "@/lib/products";
-import PageHero from "@/components/site/PageHero";
+import PageMasthead from "@/components/site/PageMasthead";
 import { Section } from "@/components/site/Section";
 import AccountNav from "@/components/profile/AccountNav";
 import {
@@ -63,11 +62,10 @@ export default async function OrderConfirmationPage({
 
   return (
     <>
-      <PageHero
-        variant="compact"
+      <PageMasthead
         eyebrow={isFresh ? "Thank you · Order Placed" : "Account · Order"}
         title={[order.orderNumber]}
-        lead={`Placed on ${formatOrderDate(order.createdAt)} · ${itemCount} ${
+        line={`Placed on ${formatOrderDate(order.createdAt)} · ${itemCount} ${
           itemCount === 1 ? "item" : "items"
         }`}
         above={
@@ -75,6 +73,10 @@ export default async function OrderConfirmationPage({
             ← My Orders
           </Link>
         }
+        stats={[
+          { k: "Items", v: String(itemCount) },
+          { k: "Total", v: inr(order.total) },
+        ]}
       />
 
       <Section surface="ivory" size="tight">
@@ -180,15 +182,13 @@ export default async function OrderConfirmationPage({
                 <div className="mt-6 flex flex-col gap-2">
                   <Link
                     href="/profile/orders"
-                    className="cta-gold press w-full py-[13px] text-[13.5px] tracking-[0.06em] justify-center inline-flex"
-                    style={{ textDecoration: "none" }}
+                    className="hp-btn hp-btn-primary w-full justify-center"
                   >
                     MY ORDERS
                   </Link>
                   <Link
                     href="/shop"
-                    className="btn-ghost justify-center"
-                    style={{ textDecoration: "none" }}
+                    className="hp-btn hp-btn-ghost hp-on-dark w-full justify-center"
                   >
                     Keep shopping
                   </Link>
@@ -204,8 +204,8 @@ export default async function OrderConfirmationPage({
 
 function SuccessBanner({ order }: { order: OrderWithItems }) {
   return (
-    <Reveal
-      variant="fade-up"
+    <div
+      data-rise
       className="flex items-center gap-4 border-b border-black/[0.08] pb-5"
     >
       <div
@@ -223,7 +223,7 @@ function SuccessBanner({ order }: { order: OrderWithItems }) {
           updates as it moves through processing.
         </div>
       </div>
-    </Reveal>
+    </div>
   );
 }
 

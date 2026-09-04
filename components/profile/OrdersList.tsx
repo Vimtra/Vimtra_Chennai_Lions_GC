@@ -22,7 +22,7 @@ export default function OrdersList({ orders }: { orders: OrderWithItems[] }) {
           status and details.
         </p>
         <div className="hp-empty-actions">
-          <Link href="/shop" className="cta-gold">
+          <Link href="/shop" className="hp-btn hp-btn-primary">
             GO TO SHOP
           </Link>
         </div>

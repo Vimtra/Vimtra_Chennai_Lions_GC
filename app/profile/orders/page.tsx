@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth";
 import { listOrdersForUser } from "@/lib/orders";
-import PageHero from "@/components/site/PageHero";
+import StoryHero from "@/components/site/StoryHero";
 import { Section } from "@/components/site/Section";
 import AccountNav from "@/components/profile/AccountNav";
 import OrdersList from "@/components/profile/OrdersList";
@@ -23,11 +23,10 @@ export default async function ProfileOrdersPage() {
 
   return (
     <>
-      <PageHero
-        variant="compact"
+      <StoryHero
         eyebrow="Account"
         title={["MY ORDERS"]}
-        lead={
+        line={
           orders.length === 0
             ? "Your shop orders will appear here."
             : `${orders.length} order${orders.length === 1 ? "" : "s"}`

@@ -284,16 +284,16 @@ export default function InventoryTable({ products }: InventoryTableProps) {
         )}
 
         {/* Search & Filter Controls */}
-        <div className="mt-5 pt-5 border-t border-black/[0.06] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="inventory-filters mt-5 pt-5 border-t border-black/[0.06] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search Box */}
-          <div className="relative">
+          <div className="relative min-w-0">
             <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search name, SKU, slug…"
-              className="pl-9.5 pr-8 py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
+              className="w-full pl-10 pr-8 py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
             />
             {search && (
               <button
@@ -307,11 +307,11 @@ export default function InventoryTable({ products }: InventoryTableProps) {
           </div>
 
           {/* Category Filter */}
-          <div>
+          <div className="min-w-0">
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
+              className="w-full min-w-0 py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
             >
               <option value="ALL">All Categories</option>
               {categories.map((c) => (
@@ -323,11 +323,11 @@ export default function InventoryTable({ products }: InventoryTableProps) {
           </div>
 
           {/* Stock Status Filter */}
-          <div>
+          <div className="min-w-0">
             <select
               value={stockFilter}
               onChange={(e) => setStockFilter(e.target.value as any)}
-              className="py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
+              className="w-full min-w-0 py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
             >
               <option value="ALL">All Stock Statuses</option>
               <option value="IN_STOCK">In Stock (&gt; 0)</option>
@@ -337,11 +337,11 @@ export default function InventoryTable({ products }: InventoryTableProps) {
           </div>
 
           {/* Active Status Filter */}
-          <div>
+          <div className="min-w-0">
             <select
               value={activeFilter}
               onChange={(e) => setActiveFilter(e.target.value as any)}
-              className="py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
+              className="w-full min-w-0 py-2 text-[13.5px] rounded-[10px] border-black/[0.12]"
             >
               <option value="ALL">All Visibility (Active &amp; Inactive)</option>
               <option value="ACTIVE">Active Only</option>
@@ -368,7 +368,7 @@ export default function InventoryTable({ products }: InventoryTableProps) {
 
       {/* Inventory Table */}
       <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto shadow-sm">
-        <table className="admin-table">
+        <table className="admin-table inventory-table">
           <thead>
             <tr>
               <th className="min-w-[220px]">Product</th>
@@ -509,15 +509,15 @@ export default function InventoryTable({ products }: InventoryTableProps) {
                     {/* Stock Status Badge */}
                     <td>
                       {isOutOfStock ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-black/80 text-white">
+                          <span className="inline-flex whitespace-nowrap items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-black/80 text-white">
                           Out of stock
                         </span>
                       ) : isLowStock ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-crimson-600/15 text-crimson-700 border border-crimson-600/25">
+                          <span className="inline-flex whitespace-nowrap items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-crimson-600/15 text-crimson-700 border border-crimson-600/25">
                           Low ({currentStockNum})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-emerald-500/15 text-emerald-800 border border-emerald-500/25">
+                          <span className="inline-flex whitespace-nowrap items-center px-2 py-0.5 rounded-full font-sora font-extrabold text-[10px] tracking-[0.06em] uppercase bg-emerald-500/15 text-emerald-800 border border-emerald-500/25">
                           In stock ({currentStockNum})
                         </span>
                       )}
@@ -526,11 +526,11 @@ export default function InventoryTable({ products }: InventoryTableProps) {
                     {/* Active Visibility Badge */}
                     <td>
                       {p.active ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-bold text-[10.5px] tracking-[0.04em] uppercase bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
+                          <span className="inline-flex whitespace-nowrap items-center px-2 py-0.5 rounded-full font-sora font-bold text-[10.5px] tracking-[0.04em] uppercase bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                           Active
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full font-sora font-bold text-[10.5px] tracking-[0.04em] uppercase bg-black/[0.06] text-muted border border-black/[0.1]">
+                          <span className="inline-flex whitespace-nowrap items-center px-2 py-0.5 rounded-full font-sora font-bold text-[10.5px] tracking-[0.04em] uppercase bg-black/[0.06] text-muted border border-black/[0.1]">
                           Hidden
                         </span>
                       )}
@@ -538,7 +538,7 @@ export default function InventoryTable({ products }: InventoryTableProps) {
 
                     {/* Actions */}
                     <td>
-                      <div className="flex items-center gap-2 justify-end">
+                      <div className="inventory-actions flex items-center gap-2 justify-end">
                         <Link
                           href={`/admin/products/${p.id}/edit`}
                           className="btn-ghost text-[12px] py-1 px-2.5"

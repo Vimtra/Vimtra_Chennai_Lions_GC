@@ -2,12 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
 import { useCart, cartCount, useCartHydrated } from "@/store/cart";
 import { FALLBACK_LOGO, inr } from "@/lib/products";
 import { computeTotals, shippingExplainer } from "@/lib/orders-totals";
-import PageHero from "@/components/site/PageHero";
-import { Section } from "@/components/site/Section";
+import StoryHero from "@/components/site/StoryHero";
+import { Section, EmptyState } from "@/components/site/Section";
 
 export default function CartPage() {
   const items = useCart((s) => s.items);
@@ -25,11 +24,10 @@ export default function CartPage() {
 
   return (
     <>
-      <PageHero
-        variant="compact"
+      <StoryHero
         eyebrow="Your Bag"
         title={["YOUR CART"]}
-        lead={
+        line={
           hydrated && count > 0
             ? `${count} item${count === 1 ? "" : "s"} · review and check out below.`
             : undefined
@@ -37,53 +35,60 @@ export default function CartPage() {
       />
 
       <Section surface="ivory" size="tight">
-          <div>
+        <div className="cart-grid">
+          <div data-rise>
             {!hydrated ? null : items.length === 0 ? (
-              <EmptyCart />
+              <EmptyState
+                eyebrow="Your Bag"
+                title="Your cart is empty"
+                body="Pick up Lions match kit, performance polos, and tour accessories at the shop."
+              >
+                <Link href="/shop" className="hp-btn hp-btn-primary">
+                  GO TO SHOP
+                </Link>
+              </EmptyState>
             ) : (
-              items.map((it) => (
-                <div className="cart-row" key={it.id}>
-                  <div className="thumb">
-                    <Image
-                      src={it.img || FALLBACK_LOGO}
-                      alt={it.name}
-                      width={68}
-                      height={68}
-                      className="w-full h-full object-contain"
-                      style={{ filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.15))" }}
-                    />
-                  </div>
-                  <div>
-                    <div className="font-sora font-bold text-[16px]">{it.name}</div>
-                    <div className="font-manrope text-[13px] text-muted mt-1">
-                      {inr(it.price)} each
+              <div className="cart-list">
+                {items.map((it) => (
+                  <div className="cart-row" key={it.id}>
+                    <div className="thumb">
+                      <Image
+                        src={it.img || FALLBACK_LOGO}
+                        alt={it.name}
+                        width={68}
+                        height={68}
+                        className="w-full h-full object-contain"
+                        style={{ filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.15))" }}
+                      />
                     </div>
-                  </div>
-                  <div className="qty">
-                    <button onClick={() => dec(it.id)} aria-label="Decrease">
-                      −
+                    <div>
+                      <div className="cart-row-name">{it.name}</div>
+                      <div className="cart-row-unit">{inr(it.price)} each</div>
+                    </div>
+                    <div className="qty">
+                      <button onClick={() => dec(it.id)} aria-label="Decrease">
+                        −
+                      </button>
+                      <span>{it.qty}</span>
+                      <button onClick={() => inc(it.id)} aria-label="Increase">
+                        +
+                      </button>
+                    </div>
+                    <div className="cart-row-total">{inr(it.price * it.qty)}</div>
+                    <button
+                      className="remove"
+                      onClick={() => remove(it.id)}
+                      aria-label="Remove"
+                    >
+                      ✕
                     </button>
-                    <span>{it.qty}</span>
-                    <button onClick={() => inc(it.id)} aria-label="Increase">
-                      +
-                    </button>
                   </div>
-                  <div className="font-sora font-extrabold text-[18px] text-crimson-600">
-                    {inr(it.price * it.qty)}
-                  </div>
-                  <button
-                    className="remove"
-                    onClick={() => remove(it.id)}
-                    aria-label="Remove"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
 
-          <div className="summary">
+          <div className="summary" data-rise>
             <h3>Order Summary</h3>
             <div className="line">
               <span>Subtotal</span>
@@ -104,8 +109,7 @@ export default function CartPage() {
             {hydrated && items.length > 0 ? (
               <Link
                 href="/checkout"
-                className="cta-gold press w-full mt-[22px] py-[14px] text-[13.5px] tracking-[0.06em] justify-center inline-flex"
-                style={{ textDecoration: "none" }}
+                className="hp-btn hp-btn-primary w-full mt-[22px] justify-center"
               >
                 PROCEED TO CHECKOUT
               </Link>
@@ -114,7 +118,7 @@ export default function CartPage() {
                 type="button"
                 disabled
                 aria-disabled="true"
-                className="cta-gold press w-full mt-[22px] py-[14px] text-[13.5px] tracking-[0.06em] justify-center opacity-60 cursor-not-allowed"
+                className="hp-btn hp-btn-primary w-full mt-[22px] justify-center opacity-60 cursor-not-allowed"
               >
                 CART IS EMPTY
               </button>
@@ -124,25 +128,8 @@ export default function CartPage() {
               confirm delivery details.
             </div>
           </div>
-        </Section>
+        </div>
+      </Section>
     </>
-  );
-}
-
-function EmptyCart() {
-  return (
-    <div className="hp-empty">
-      <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-crimson-600 opacity-70" />
-      <div className="font-sora font-extrabold text-[32px] text-ink tracking-[-0.02em]">
-        Your cart is empty
-      </div>
-      <p className="font-manrope text-[14px] text-muted my-[10px] mb-[22px]">
-        Pick up Lions match kit, performance polos, and tour accessories at the
-        shop.
-      </p>
-      <Link href="/shop" className="cta-gold">
-        GO TO SHOP
-      </Link>
-    </div>
   );
 }

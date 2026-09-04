@@ -11,6 +11,7 @@ import { useCart, cartCount, useCartHydrated } from "@/store/cart";
 import { computeTotals, shippingExplainer } from "@/lib/orders-totals";
 import { FALLBACK_LOGO, inr } from "@/lib/products";
 import { placeOrderAction, type PlaceOrderResult } from "@/app/checkout/actions";
+import { EmptyState } from "@/components/site/Section";
 
 /**
  * Two-step checkout client UI.
@@ -143,24 +144,15 @@ export default function CheckoutFlow({
         {error && <ErrorBanner message={error} />}
 
         {hydrated && items.length === 0 && (
-          <div className="mt-6 rounded-[16px] border border-dashed border-black/[0.18] bg-cream-50 p-8 text-center">
-            <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-              Empty Cart
-            </div>
-            <div className="mt-2 font-sora font-bold text-[22px] text-ink">
-              Nothing to check out yet.
-            </div>
-            <p className="mt-2 font-manrope text-[13.5px] text-muted">
-              Add merchandise to your cart, then come back.
-            </p>
-            <Link
-              href="/shop"
-              className="cta-gold press inline-flex mt-5"
-              style={{ padding: "10px 22px", fontSize: 13 }}
-            >
+          <EmptyState
+            eyebrow="Empty Cart"
+            title="Nothing to check out yet."
+            body="Add merchandise to your cart, then come back."
+          >
+            <Link href="/shop" className="hp-btn hp-btn-primary">
               GO TO SHOP
             </Link>
-          </div>
+          </EmptyState>
         )}
 
         {hydrated && items.length > 0 && step === 1 && (
@@ -263,30 +255,17 @@ function StepBar({ step }: { step: 1 | 2 }) {
     { n: 2, label: "Payment & Review" },
   ] as const;
   return (
-    <ol className="flex items-center gap-3 mb-6">
+    <ol className="co-steps">
       {rows.map((r, i) => {
         const active = step === r.n;
         const done = step > r.n;
         return (
-          <li key={r.n} className="flex items-center gap-3">
-            <span
-              className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-sora font-extrabold text-[13px] ${
-                done
-                  ? "bg-crimson-600 text-white"
-                  : active
-                    ? "bg-ink text-white"
-                    : "bg-cream-50 text-muted border border-black/[0.1]"
-              }`}
-            >
-              {done ? "✓" : r.n}
-            </span>
-            <span
-              className={`font-manrope font-bold text-[12.5px] tracking-[0.12em] uppercase ${
-                active || done ? "text-ink" : "text-muted"
-              }`}
-            >
-              {r.label}
-            </span>
+          <li
+            key={r.n}
+            className={`co-step ${active ? "is-active" : ""} ${done ? "is-done" : ""}`}
+          >
+            <span className="co-step-n">{done ? "✓" : r.n}</span>
+            <span className="co-step-label">{r.label}</span>
             {i < rows.length - 1 && (
               <ChevronRight className="w-4 h-4 text-muted/60" />
             )}
@@ -299,15 +278,7 @@ function StepBar({ step }: { step: 1 | 2 }) {
 
 function ErrorBanner({ message }: { message: string }) {
   return (
-    <div
-      role="alert"
-      className="mb-4 p-4 rounded-[14px] font-manrope text-[13.5px] font-semibold border"
-      style={{
-        background: "rgba(196,32,42,0.08)",
-        color: "#C4202A",
-        borderColor: "rgba(196,32,42,0.35)",
-      }}
-    >
+    <div role="alert" className="co-error">
       {message}
     </div>
   );
@@ -389,11 +360,7 @@ function StepOne({
             {savedAddresses.map((a) => (
               <label
                 key={a.id}
-                className={`flex items-start gap-3 cursor-pointer rounded-[14px] px-4 py-3 border transition-colors ${
-                  addressChoice === a.id
-                    ? "bg-white border-crimson-600"
-                    : "bg-cream-50 border-black/[0.08] hover:border-black/[0.2]"
-                }`}
+                className={`co-radio ${addressChoice === a.id ? "is-checked" : ""}`}
               >
                 <input
                   type="radio"
@@ -428,7 +395,7 @@ function StepOne({
                 </div>
               </label>
             ))}
-            <label className="flex items-center gap-3 cursor-pointer rounded-[14px] px-4 py-3 border border-dashed border-black/[0.14] font-manrope text-[13.5px] text-muted hover:text-ink hover:border-ink">
+            <label className="co-radio-new">
               <input
                 type="radio"
                 name="addressChoice"
@@ -452,15 +419,10 @@ function StepOne({
       </SectionCard>
 
       <div className="flex justify-end gap-3">
-        <Link href="/cart" className="btn-ghost inline-flex items-center gap-1">
+        <Link href="/cart" className="hp-btn hp-btn-ghost">
           <ChevronLeft className="w-[13px] h-[13px]" /> Back to cart
         </Link>
-        <button
-          type="button"
-          onClick={onContinue}
-          className="cta-gold press inline-flex items-center gap-1"
-          style={{ padding: "12px 24px", fontSize: 13.5 }}
-        >
+        <button type="button" onClick={onContinue} className="hp-btn hp-btn-primary">
           CONTINUE TO REVIEW <ChevronRight className="w-[13px] h-[13px]" />
         </button>
       </div>
@@ -625,10 +587,7 @@ function StepTwo({
             checked={paymentMethod === "OFFLINE_INVOICE"}
             onChange={() => setPaymentMethod("OFFLINE_INVOICE")}
           />
-          <div
-            className="opacity-50 select-none rounded-[14px] px-4 py-3 border border-dashed border-black/[0.14] font-manrope text-[13px] text-muted"
-            title="Online payment lands in a future milestone"
-          >
+          <div className="co-radio-soon" title="Online payment lands in a future milestone">
             Online payment · <em>coming soon</em>
           </div>
         </div>
@@ -700,7 +659,7 @@ function StepTwo({
         <button
           type="button"
           onClick={onBack}
-          className="btn-ghost inline-flex items-center gap-1"
+          className="hp-btn hp-btn-ghost"
           disabled={pending}
         >
           <ChevronLeft className="w-[13px] h-[13px]" /> Back to details
@@ -709,8 +668,7 @@ function StepTwo({
           type="button"
           onClick={onConfirm}
           disabled={pending}
-          className="cta-gold press inline-flex items-center gap-2"
-          style={{ padding: "14px 30px", fontSize: 14 }}
+          className="hp-btn hp-btn-primary disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {pending && <Loader2 className="w-4 h-4 animate-spin" />}
           {pending ? "PLACING ORDER…" : `CONFIRM · PAY ${inr(totals.total)} ${paymentMethod === "COD" ? "ON DELIVERY" : "OFFLINE"}`}
@@ -733,16 +691,10 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-cream-50 border border-black/[0.07] rounded-[20px] p-6">
+    <section className="co-card">
       <div className="mb-4">
-        <div className="font-sora font-extrabold text-[18px] tracking-[-0.005em] text-ink">
-          {title}
-        </div>
-        {subtitle && (
-          <div className="font-manrope text-[12.5px] text-muted mt-1">
-            {subtitle}
-          </div>
-        )}
+        <div className="co-card-title">{title}</div>
+        {subtitle && <div className="co-card-subtitle">{subtitle}</div>}
       </div>
       {children}
     </section>
@@ -761,13 +713,7 @@ function PayRadio({
   onChange: () => void;
 }) {
   return (
-    <label
-      className={`flex items-start gap-3 cursor-pointer rounded-[14px] px-4 py-3 border transition-colors ${
-        checked
-          ? "bg-white border-crimson-600"
-          : "bg-cream-50 border-black/[0.08] hover:border-black/[0.2]"
-      }`}
-    >
+    <label className={`co-radio ${checked ? "is-checked" : ""}`}>
       <input
         type="radio"
         name="paymentMethod"
@@ -776,10 +722,8 @@ function PayRadio({
         className="mt-1"
       />
       <div>
-        <div className="font-sora font-bold text-[14px] text-ink">{label}</div>
-        <div className="font-manrope text-[12.5px] text-muted mt-1 leading-[1.5]">
-          {detail}
-        </div>
+        <div className="co-radio-title">{label}</div>
+        <div className="co-radio-detail">{detail}</div>
       </div>
     </label>
   );

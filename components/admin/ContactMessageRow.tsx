@@ -100,7 +100,7 @@ export default function ContactMessageRow({ message }: { message: ContactMessage
       {open && (
         <tr>
           <td colSpan={6} className="!p-0">
-            <div className="bg-white border border-black/[0.07] rounded-[14px] p-5 my-3">
+            <div className="border border-black/[0.07] rounded-[4px] p-5 my-3" style={{ background: "#fff" }}>
               <p className="font-manrope text-[14.5px] leading-[1.7] text-ink whitespace-pre-wrap">
                 {message.message}
               </p>

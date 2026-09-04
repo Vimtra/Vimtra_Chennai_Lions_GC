@@ -5,7 +5,7 @@
     "cat": "Apparel",
     "price": 500,
     "glyph": "TEE",
-    "img": "assets/prod-tshirt.png",
+    "img": "assets/tshirt-pride.png",
     "range": "100 to 500 units",
     "desc": "Official Chennai Lions white polo jersey with dynamic red and yellow brush strokes and the iconic team crest. High-performance, breathable fabric."
   },
@@ -15,7 +15,7 @@
     "cat": "Headwear",
     "price": 500,
     "glyph": "CAP",
-    "img": "assets/prod-cap.png",
+    "img": "assets/cap-pride.png",
     "range": "100 to 500 units",
     "desc": "Premium structured baseball cap featuring the red and gold Chennai Lions crest embroidered on the front. Adjustable strap."
   },
@@ -25,6 +25,7 @@
     "cat": "Accessories",
     "price": 85,
     "glyph": "MGT",
+    "img": "assets/magnet-pride.png",
     "range": "50 to 500 units",
     "desc": "Circular fridge magnet featuring the high-fidelity red lion crest. Available in red, blue, light blue, or black."
   },
@@ -34,6 +35,7 @@
     "cat": "Accessories",
     "price": 220,
     "glyph": "MKR",
+    "img": "assets/marker-pride.jpg",
     "range": "100 to 500 units",
     "desc": "Premium golf ball marker styled like a casino chip. Features a blue-and-white ring with the red lion crest in the center."
   },
@@ -53,7 +55,7 @@
     "cat": "Lifestyle",
     "price": 300,
     "glyph": "CUP",
-    "img": "assets/prod-mug.png",
+    "img": "assets/cup-pride.png",
     "range": "100 to 500 units",
     "desc": "A clean matte-black coffee mug featuring the vibrant red Chennai Lions crest. Ceramic, 11 oz."
   },
@@ -63,6 +65,7 @@
     "cat": "Accessories",
     "price": 300,
     "glyph": "CRD",
+    "img": "assets/cardholder-pride.jpg",
     "range": "100 to 500 units",
     "desc": "Sleek, RFID-blocking silver aluminum card holder featuring the Chennai Lions branding."
   },
@@ -72,6 +75,7 @@
     "cat": "Accessories",
     "price": 300,
     "glyph": "WST",
+    "img": "assets/sweatband-pride.png",
     "range": "100 to 500 units",
     "desc": "Elasticated cotton wrist sweatbands in deep black, featuring the embroidered red lion crest."
   },
@@ -81,6 +85,7 @@
     "cat": "Electronics",
     "price": 500,
     "glyph": "CHG",
+    "img": "assets/carcharger-pride.png",
     "range": "100 to 500 units",
     "desc": "Fast-charging Portronics car charger with dual USB outputs and a subtle illuminated team logo."
   },
@@ -90,6 +95,7 @@
     "cat": "Accessories",
     "price": 500,
     "glyph": "BAG",
+    "img": "assets/mobilebag-pride.png",
     "range": "100 to 500 units",
     "desc": "Dual-compartment zippered travel case for chargers, cables, and power banks. Durable ballistic nylon."
   },
@@ -99,6 +105,7 @@
     "cat": "Accessories",
     "price": 500,
     "glyph": "KEY",
+    "img": "assets/keychain-golf.png",
     "range": "100 to 500 units",
     "desc": "Silver keychain with a detailed miniature golf club and a textured dimpled golf ball carrying the team crest."
   },
@@ -108,6 +115,7 @@
     "cat": "Lifestyle",
     "price": 800,
     "glyph": "WT",
+    "img": "assets/paperweight-golf.png",
     "range": "500 to 1000 units",
     "desc": "A heavy, clear crystal glass paperweight shaped like a golf ball, with an embedded 3D laser-etched lion crest."
   },
@@ -117,6 +125,7 @@
     "cat": "Accessories",
     "price": 600,
     "glyph": "WLT",
+    "img": "assets/wallet-pride.png",
     "range": "100 to 500 units",
     "desc": "Genuine brown leather bifold wallet featuring the debossed Chennai Lions logo, packaged in a premium gift box."
   },
@@ -136,6 +145,7 @@
     "cat": "Lifestyle",
     "price": 1200,
     "glyph": "NCK",
+    "img": "assets/neck-support.png",
     "range": "1000 to 1500 units",
     "desc": "Ergonomic travel neck pillow by COIF, featuring memory foam, curved support, and team branding."
   },
@@ -165,6 +175,7 @@
     "cat": "Electronics",
     "price": 2000,
     "glyph": "PWR",
+    "img": "assets/powerbank-pride.png",
     "range": "1500 to 2000 units",
     "desc": "Magnetic MagSafe compatible 10000mAh wireless power bank with a fold-out kickstand and team branding."
   },
@@ -174,6 +185,7 @@
     "cat": "Lifestyle",
     "price": 2450,
     "glyph": "DRY",
+    "img": "assets/diary-powerbank.png",
     "range": "2000 to 2500 units",
     "desc": "A luxury grey leather organizer notebook diary with integrated wireless charger on the cover and built-in cables."
   },

@@ -32,7 +32,7 @@ export default async function EditProductPage({
         {product.name} · <span className="text-[12.5px]">{product.id}</span>
       </p>
 
-      <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-7 max-w-[760px]">
+      <div className="mt-7 border border-black/[0.07] rounded-[4px] p-7 max-w-[760px]" style={{ background: "var(--hp-ivory-2)" }}>
         <ProductForm
           action={updateProductAction}
           product={product}

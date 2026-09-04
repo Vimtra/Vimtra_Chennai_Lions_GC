@@ -71,49 +71,37 @@ export default async function AdminDashboard() {
           href="/admin/products"
           title="Product Manager"
           body="Add, edit, and remove catalog items. Updates revalidate the shop and product pages."
-          icon={<Package className="w-6 h-6" />}
-          bg="bg-crimson-600"
-          fg="text-white"
+          icon={<Package className="w-5 h-5" />}
         />
         <ManagerCard
           href="/admin/fixtures"
           title="Fixtures"
           body="Manage the AM Green IGPL Season 2026 calendar — status, venue, dates, presenting franchise."
-          icon={<CalendarDays className="w-6 h-6" />}
-          bg="bg-ink"
-          fg="text-[#E9CB8E]"
+          icon={<CalendarDays className="w-5 h-5" />}
         />
         <ManagerCard
           href="/admin/scores"
           title="Scores"
           body="Hand-key round-by-round leaderboard rows per fixture. Public /scores reads directly from these."
-          icon={<Activity className="w-6 h-6" />}
-          bg="bg-gold-500"
-          fg="text-[#3A1A06]"
+          icon={<Activity className="w-5 h-5" />}
         />
         <ManagerCard
           href="/admin/leaderboards"
           title="Season Standings"
           body="Publish Franchise Table, Player of the Season, and Order of Merit rankings for the season."
-          icon={<Trophy className="w-6 h-6" />}
-          bg="bg-crimson-600"
-          fg="text-white"
+          icon={<Trophy className="w-5 h-5" />}
         />
         <ManagerCard
           href="/admin/news"
           title="News"
           body="Draft and publish posts to the /news feed. Rich-text editor coming next."
-          icon={<Newspaper className="w-6 h-6" />}
-          bg="bg-ink"
-          fg="text-[#E9CB8E]"
+          icon={<Newspaper className="w-5 h-5" />}
         />
         <ManagerCard
           href="/admin/users"
           title="Users"
           body="View members, grant or revoke admin access, and remove accounts."
-          icon={<UsersIcon className="w-6 h-6" />}
-          bg="bg-gold-500"
-          fg="text-[#3A1A06]"
+          icon={<UsersIcon className="w-5 h-5" />}
         />
         <ManagerCard
           href="/admin/messages"
@@ -123,9 +111,7 @@ export default async function AdminDashboard() {
               ? `${messageNew} new enquir${messageNew === 1 ? "y" : "ies"} from the contact form.`
               : "Enquiries submitted through /contact — read, mark resolved, or remove."
           }
-          icon={<Mail className="w-6 h-6" />}
-          bg="bg-crimson-600"
-          fg="text-white"
+          icon={<Mail className="w-5 h-5" />}
         />
       </div>
 
@@ -143,11 +129,9 @@ export default async function AdminDashboard() {
 
 function StatTile({ n, label }: { n: number; label: string }) {
   return (
-    <div className="bg-cream-50 border border-black/[0.07] rounded-[18px] p-5">
-      <div className="font-sora font-extrabold text-[32px] text-crimson-600 leading-none">{n}</div>
-      <div className="font-manrope text-[11.5px] text-muted mt-2 uppercase tracking-[0.08em]">
-        {label}
-      </div>
+    <div className="admin-stat">
+      <div className="admin-stat-n">{n}</div>
+      <div className="admin-stat-l">{label}</div>
     </div>
   );
 }
@@ -157,28 +141,17 @@ function ManagerCard({
   title,
   body,
   icon,
-  bg,
-  fg,
 }: {
   href: string;
   title: string;
   body: string;
   icon: React.ReactNode;
-  bg: string;
-  fg: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="lift bg-cream-50 border border-black/[0.07] rounded-[20px] p-7 no-underline text-inherit block"
-    >
-      <div
-        className={`w-12 h-12 rounded-[13px] ${bg} ${fg} flex items-center justify-center`}
-      >
-        {icon}
-      </div>
-      <h2 className="mt-5 font-sora font-bold text-[20px] text-ink">{title}</h2>
-      <p className="mt-2 font-manrope text-[14px] leading-[1.6] text-muted">{body}</p>
+    <Link href={href} className="admin-mgr-card">
+      <div className="admin-mgr-icon">{icon}</div>
+      <h2 className="admin-mgr-title">{title}</h2>
+      <p className="admin-mgr-body">{body}</p>
     </Link>
   );
 }

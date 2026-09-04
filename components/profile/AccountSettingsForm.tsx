@@ -179,8 +179,7 @@ export default function AccountSettingsForm({
         <button
           type="submit"
           disabled={pending}
-          className="cta-gold press min-h-[44px] justify-center disabled:opacity-70"
-          style={{ padding: "13px 22px" }}
+          className="hp-btn hp-btn-primary justify-center disabled:opacity-70"
         >
           {pending ? (
             <>

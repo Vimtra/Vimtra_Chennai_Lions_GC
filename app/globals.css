@@ -615,35 +615,60 @@ a {
   gap: 22px;
 }
 
-/* Cart */
-.cart-row {
-  background: #fbf9f4;
-  border: 1px solid rgba(26, 21, 19, 0.07);
-  border-radius: 18px;
-  padding: 18px;
+/* Cart — editorial rows, not boxed cards; shares the .summary panel
+   with checkout for visual continuity between the two screens. */
+.cart-grid {
   display: grid;
-  grid-template-columns: 80px 1fr 130px 110px 40px;
+  gap: var(--sp-7);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .cart-grid { grid-template-columns: 1.6fr 1fr; gap: var(--sp-8); }
+}
+.cart-list { border-top: 1px solid var(--hp-hair); }
+.cart-row {
+  display: grid;
+  grid-template-columns: 76px 1fr auto auto auto;
   gap: 18px;
   align-items: center;
-  margin-bottom: 12px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--hp-hair);
 }
 .cart-row .thumb {
-  width: 80px;
-  height: 80px;
-  border-radius: 14px;
-  background: linear-gradient(160deg, #c9242e, #871119);
+  width: 76px;
+  height: 76px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--hp-red), var(--hp-red-deep));
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 6px;
+  padding: 8px;
+}
+.cart-row-name {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 15.5px;
+  color: var(--hp-ink);
+}
+.cart-row-unit {
+  margin-top: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12.5px;
+  color: var(--hp-muted);
+}
+.cart-row-total {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--hp-red);
 }
 .qty {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #fff;
-  border: 1px solid rgba(26, 21, 19, 0.08);
+  background: var(--hp-ivory);
+  border: 1px solid var(--hp-hair);
   border-radius: 24px;
   padding: 4px;
 }
@@ -655,11 +680,12 @@ a {
   background: transparent;
   cursor: pointer;
   font-size: 16px;
-  color: #1a1513;
+  color: var(--hp-ink);
+  transition: 0.2s var(--hp-e);
 }
 .qty button:hover {
-  background: rgba(196, 32, 42, 0.1);
-  color: #c4202a;
+  background: rgba(189, 34, 39, 0.1);
+  color: var(--hp-red);
 }
 .qty span {
   font-family: var(--font-sora), sans-serif;
@@ -671,57 +697,177 @@ a {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid rgba(26, 21, 19, 0.12);
-  background: #fff;
+  border: 1px solid var(--hp-hair);
+  background: var(--hp-ivory);
   cursor: pointer;
-  color: #6b635c;
+  color: var(--hp-muted);
+  transition: 0.2s var(--hp-e);
 }
 .remove:hover {
-  background: #c4202a;
+  background: var(--hp-red);
   color: #fff;
-  border-color: #c4202a;
+  border-color: var(--hp-red);
 }
+
+/* Order summary — shared by /cart and /checkout ------------------- */
 .summary {
-  background: #1a1513;
-  color: #fff;
-  border-radius: 22px;
-  padding: 30px;
+  background: var(--hp-ink);
+  color: var(--hp-ivory);
+  border-radius: 18px;
+  padding: 32px;
   position: sticky;
-  top: 90px;
+  top: 100px;
 }
 .summary h3 {
-  margin: 0 0 18px;
+  margin: 0 0 20px;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: 22px;
+  font-size: 20px;
+  letter-spacing: -0.01em;
 }
 .summary .line {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
   font-family: var(--font-manrope), sans-serif;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.78);
+  font-size: 13.5px;
+  color: var(--hp-muted-dark);
+  border-bottom: 1px solid var(--hp-hair-dark);
 }
 .summary .total {
   display: flex;
   justify-content: space-between;
-  padding: 18px 0 6px;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  margin-top: 8px;
+  padding: 18px 0 4px;
+  margin-top: 6px;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: 24px;
-  color: #e9cb8e;
+  font-size: 23px;
+  color: var(--hp-gold-lt);
 }
-@media (max-width: 760px) {
+@media (max-width: 640px) {
   .cart-row {
-    grid-template-columns: 64px 1fr;
-    gap: 14px;
+    grid-template-columns: 60px 1fr;
+    gap: 12px;
   }
-  .cart-row > div:nth-child(n + 3) {
+  .cart-row > *:nth-child(n + 3) {
     grid-column: 1 / -1;
   }
+}
+
+/* Checkout --------------------------------------------------------- */
+.co-steps { display: flex; align-items: center; gap: 12px; margin: 0 0 var(--sp-6); list-style: none; padding: 0; }
+.co-step { display: flex; align-items: center; gap: 12px; }
+.co-step-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  background: var(--hp-ivory-2);
+  color: var(--hp-muted);
+  border: 1px solid var(--hp-hair);
+  transition: 0.2s var(--hp-e);
+}
+.co-step.is-active .co-step-n,
+.co-step.is-done .co-step-n {
+  background: var(--hp-red);
+  color: #fff;
+  border-color: var(--hp-red);
+}
+.co-step-label {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hp-muted);
+}
+.co-step.is-active .co-step-label,
+.co-step.is-done .co-step-label { color: var(--hp-ink); }
+
+.co-card {
+  padding: 30px;
+  background: var(--hp-ivory-2);
+  border: 1px solid var(--hp-hair);
+  border-radius: 16px;
+}
+.co-card-title {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--hp-ink);
+}
+.co-card-subtitle {
+  margin-top: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12.5px;
+  color: var(--hp-muted);
+}
+.co-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--hp-hair);
+  background: var(--hp-ivory);
+  transition: 0.2s var(--hp-e);
+}
+.co-radio:hover { border-color: rgba(189, 34, 39, 0.3); }
+.co-radio.is-checked { background: #fff; border-color: var(--hp-red); }
+.co-radio-title {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--hp-ink);
+}
+.co-radio-detail {
+  margin-top: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12.5px;
+  color: var(--hp-muted);
+  line-height: 1.5;
+}
+.co-radio-new {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--hp-hair);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  color: var(--hp-muted);
+  transition: 0.2s var(--hp-e);
+}
+.co-radio-new:hover { color: var(--hp-ink); border-color: var(--hp-ink); }
+.co-radio-soon {
+  opacity: 0.5;
+  user-select: none;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--hp-hair);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13px;
+  color: var(--hp-muted);
+}
+.co-error {
+  margin-bottom: 16px;
+  padding: 14px;
+  border-radius: 14px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  background: rgba(189, 34, 39, 0.08);
+  color: var(--hp-red);
+  border: 1px solid rgba(189, 34, 39, 0.25);
 }
 
 /* =====================================================
@@ -729,7 +875,9 @@ a {
    Editorial account shell — Profile + My Orders. No SaaS
    dashboard chrome; hairline nav + quiet panels.
 ===================================================== */
-.profile-page label {
+.profile-page label,
+.contact-page label,
+.admin-page label {
   display: block;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
@@ -745,18 +893,18 @@ a {
   width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
-  border: 1px solid rgba(26, 21, 19, 0.12);
-  background: #fff;
+  border: 1px solid var(--hp-hair);
+  background: var(--hp-ivory);
   font-family: var(--font-manrope), sans-serif;
   font-size: 14.5px;
-  color: #1a1513;
+  color: var(--hp-ink);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s var(--hp-e), box-shadow 0.2s var(--hp-e);
 }
 .profile-page input:focus,
 .profile-page select:focus {
-  border-color: #c4202a;
-  box-shadow: 0 0 0 4px rgba(196, 32, 42, 0.1);
+  border-color: var(--hp-red);
+  box-shadow: 0 0 0 4px rgba(189, 34, 39, 0.1);
 }
 
 .acct-shell {
@@ -770,9 +918,9 @@ a {
 }
 
 .acct-nav {
-  margin: 0 0 40px;
+  margin: 0 0 var(--sp-7);
   padding-bottom: 18px;
-  border-bottom: 1px solid rgba(26, 21, 19, 0.1);
+  border-bottom: 1px solid var(--hp-hair);
 }
 .acct-nav-list {
   list-style: none;
@@ -794,31 +942,31 @@ a {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   text-decoration: none;
-  color: #6b635c;
+  color: var(--hp-muted);
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.2s var(--hp-e);
 }
 .acct-nav-link:hover {
-  color: #c4202a;
+  color: var(--hp-red);
 }
 .acct-nav-link.is-active {
-  color: #1a1513;
-  box-shadow: inset 0 -2px 0 #c4202a;
+  color: var(--hp-ink);
+  box-shadow: inset 0 -2px 0 var(--hp-red);
 }
 .acct-nav-signout {
   margin-left: auto;
 }
 .acct-nav-signout-btn {
-  color: #6b635c;
+  color: var(--hp-muted);
 }
 .acct-nav-signout-btn:hover {
-  color: #c4202a;
+  color: var(--hp-red);
 }
 
 .acct-section-head {
-  margin-bottom: 28px;
+  margin-bottom: var(--sp-7);
 }
 .acct-kicker {
   margin: 0 0 8px;
@@ -827,7 +975,7 @@ a {
   font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #c4202a;
+  color: var(--hp-red);
 }
 .acct-section-title {
   margin: 0 0 10px;
@@ -835,7 +983,7 @@ a {
   font-weight: 800;
   font-size: clamp(26px, 3.2vw, 34px);
   letter-spacing: -0.025em;
-  color: #1a1513;
+  color: var(--hp-ink);
   line-height: 1.1;
 }
 .acct-section-lead {
@@ -844,12 +992,12 @@ a {
   font-family: var(--font-manrope), sans-serif;
   font-size: 14.5px;
   line-height: 1.55;
-  color: #6b635c;
+  color: var(--hp-muted);
 }
 
 .acct-panel {
   padding: 0 0 28px;
-  border-bottom: 1px solid rgba(26, 21, 19, 0.08);
+  border-bottom: 1px solid var(--hp-hair);
   margin-bottom: 8px;
 }
 .acct-panel:last-child {
@@ -862,7 +1010,7 @@ a {
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -0.01em;
-  color: #1a1513;
+  color: var(--hp-ink);
 }
 
 /* Order list — editorial rows, not cards */
@@ -870,7 +1018,7 @@ a {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid rgba(26, 21, 19, 0.12);
+  border-top: 1px solid var(--hp-hair);
 }
 .acct-order-row {
   display: grid;
@@ -878,7 +1026,7 @@ a {
   gap: 16px 24px;
   align-items: start;
   padding: 22px 0;
-  border-bottom: 1px solid rgba(26, 21, 19, 0.1);
+  border-bottom: 1px solid var(--hp-hair);
   text-decoration: none;
   color: inherit;
   transition: padding-left 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -892,20 +1040,20 @@ a {
   font-weight: 800;
   font-size: 16px;
   letter-spacing: -0.01em;
-  color: #1a1513;
+  color: var(--hp-ink);
 }
 .acct-order-meta {
   margin-top: 4px;
   font-family: var(--font-manrope), sans-serif;
   font-size: 12.5px;
-  color: #6b635c;
+  color: var(--hp-muted);
 }
 .acct-order-summary {
   margin-top: 8px;
   font-family: var(--font-manrope), sans-serif;
   font-size: 13.5px;
   line-height: 1.45;
-  color: #3a322d;
+  color: var(--hp-muted);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -923,7 +1071,7 @@ a {
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
   font-size: 17px;
-  color: #1a1513;
+  color: var(--hp-ink);
   letter-spacing: -0.02em;
 }
 .acct-status {
@@ -948,7 +1096,7 @@ a {
   align-items: center;
   gap: 14px;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(26, 21, 19, 0.06);
+  border-bottom: 1px solid var(--hp-hair);
   min-width: 0;
 }
 .acct-line-item:last-child {
@@ -960,7 +1108,7 @@ a {
   height: 60px;
   flex-shrink: 0;
   overflow: hidden;
-  background: #f4f0e8;
+  background: var(--hp-ivory-2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -973,7 +1121,7 @@ a {
   .acct-nav-signout {
     margin-left: 0;
     width: 100%;
-    border-top: 1px solid rgba(26, 21, 19, 0.08);
+    border-top: 1px solid var(--hp-hair);
     margin-top: 4px;
     padding-top: 4px;
   }
@@ -1154,37 +1302,62 @@ a {
 
 /* =====================================================
    CONTACT
+   Editorial two-column layout on the same .hp-panel / .hp-btn /
+   --hp-* language as the rest of the redesigned site — see
+   app/contact/page.tsx and components/contact/ContactForm.tsx.
 ===================================================== */
-.contact-page label {
-  display: block;
+.contact-page .cf-grid {
+  display: grid;
+  gap: var(--sp-7);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .contact-page .cf-grid {
+    grid-template-columns: 1.6fr 1fr;
+    gap: var(--sp-8);
+  }
+}
+
+.cf-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
-  font-size: 11.5px;
-  letter-spacing: 0.12em;
+  font-size: 11px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #6b635c;
-  margin: 0 0 8px !important;
-  line-height: 1.2 !important;
+  color: var(--hp-red);
 }
+.cf-heading {
+  margin: 0 0 26px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3vw, 34px);
+  letter-spacing: -0.02em;
+  color: var(--hp-ink);
+}
+
 .contact-page input,
 .contact-page textarea,
 .contact-page select {
   width: 100%;
   padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(26, 21, 19, 0.12);
-  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--hp-hair);
+  background: var(--hp-ivory);
   font-family: var(--font-manrope), sans-serif;
   font-size: 15px;
-  color: #1a1513;
+  color: var(--hp-ink);
   outline: none;
-  transition: 0.2s;
+  transition: 0.2s var(--hp-e);
 }
 .contact-page input:focus,
 .contact-page textarea:focus,
 .contact-page select:focus {
-  border-color: #c4202a;
-  box-shadow: 0 0 0 4px rgba(196, 32, 42, 0.1);
+  border-color: var(--hp-red);
+  box-shadow: 0 0 0 4px rgba(189, 34, 39, 0.1);
 }
 .contact-page textarea {
   resize: vertical;
@@ -1196,25 +1369,153 @@ a {
   gap: 8px;
   padding: 9px 16px;
   border-radius: 20px;
-  background: #fff;
-  border: 1px solid rgba(26, 21, 19, 0.08);
+  background: var(--hp-ivory);
+  border: 1px solid var(--hp-hair);
   font-family: var(--font-manrope), sans-serif;
   font-weight: 600;
   font-size: 12.5px;
-  color: #6b635c;
+  color: var(--hp-muted);
   cursor: pointer;
-  transition: 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: 0.25s var(--hp-e);
 }
 .chip:hover {
-  background: rgba(196, 32, 42, 0.06);
-  color: #c4202a;
-  border-color: rgba(196, 32, 42, 0.25);
+  background: rgba(189, 34, 39, 0.06);
+  color: var(--hp-red);
+  border-color: rgba(189, 34, 39, 0.25);
   transform: translateY(-1px);
 }
 .chip.on {
-  background: #c4202a;
+  background: var(--hp-red);
   color: #fff;
-  border-color: #c4202a;
+  border-color: var(--hp-red);
+}
+
+/* Side channel panels ------------------------------------------ */
+.cf-venue {
+  color: var(--hp-ivory);
+  background: linear-gradient(160deg, var(--hp-red), var(--hp-red-deep));
+  border-radius: 14px;
+  padding: 32px;
+}
+.cf-venue-label {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--hp-gold-lt);
+}
+.cf-venue-name {
+  margin: 10px 0 10px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+.cf-venue-city {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+.cf-panel-label {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--hp-red);
+}
+.cf-channel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+}
+.cf-channel-k {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--hp-ink);
+}
+.cf-channel-v {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  color: var(--hp-red);
+  text-decoration: none;
+}
+.cf-channel-v:hover { text-decoration: underline; }
+.cf-social-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.cf-social-pill {
+  padding: 9px 16px;
+  border-radius: 20px;
+  background: var(--hp-ink);
+  color: var(--hp-ivory);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: transform 0.2s var(--hp-e);
+}
+.cf-social-pill:hover { transform: translateY(-2px); }
+
+/* Success state --------------------------------------------------- */
+.cf-success { text-align: center; padding: 12px 0; }
+.cf-success-icon {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(14, 138, 79, 0.1);
+  color: #0e8a4f;
+}
+.cf-success-title {
+  margin: 20px 0 8px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  color: var(--hp-ink);
+}
+.cf-success-body {
+  margin: 0 auto;
+  max-width: 42ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--hp-muted);
+}
+.cf-success-again {
+  margin-top: 24px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hp-red);
+}
+.cf-error-banner {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(189, 34, 39, 0.08);
+  color: var(--hp-red);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 /* =====================================================
@@ -1455,41 +1756,32 @@ a {
 /* =====================================================
    ADMIN
 ===================================================== */
-.admin-page label {
-  display: block;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 11.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #6b635c;
-  margin: 0 0 8px !important;
-  line-height: 1.2 !important;
-}
 .admin-page input,
 .admin-page textarea,
 .admin-page select {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(26, 21, 19, 0.14);
-  background: #fff;
+  border-radius: 10px;
+  border: 1px solid var(--hp-hair);
+  background: var(--hp-ivory);
   font-family: var(--font-manrope), sans-serif;
   font-size: 14.5px;
-  color: #1a1513;
+  color: var(--hp-ink);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s var(--hp-e), box-shadow 0.2s var(--hp-e);
 }
 .admin-page input:focus,
 .admin-page textarea:focus,
 .admin-page select:focus {
-  border-color: #c4202a;
-  box-shadow: 0 0 0 4px rgba(196, 32, 42, 0.1);
+  border-color: var(--hp-red);
+  box-shadow: 0 0 0 4px rgba(189, 34, 39, 0.1);
 }
 .admin-page textarea {
   resize: vertical;
   min-height: 90px;
 }
+/* Ruled editorial table — replaces the boxed default table look;
+   updates every admin sub-page that renders one. */
 .admin-table {
   width: 100%;
   border-collapse: collapse;
@@ -1497,68 +1789,209 @@ a {
 }
 .admin-table th {
   text-align: left;
+  font-family: var(--font-sora), sans-serif;
   font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #6b635c;
-  padding: 12px 12px;
-  border-bottom: 2px solid rgba(26, 21, 19, 0.08);
+  color: var(--hp-muted);
+  padding: 14px 14px;
+  border-bottom: 1px solid var(--hp-ink);
 }
 .admin-table td {
-  padding: 12px;
-  border-bottom: 1px solid rgba(26, 21, 19, 0.06);
+  padding: 16px 14px;
+  border-bottom: 1px solid var(--hp-hair);
   font-size: 14px;
   vertical-align: middle;
+  color: var(--hp-ink);
+}
+.admin-table tr:hover td { background: rgba(189, 34, 39, 0.03); }
+.inventory-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+.inventory-table th,
+.inventory-table td {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.inventory-table th:nth-child(1),
+.inventory-table td:nth-child(1) { width: 23%; }
+.inventory-table th:nth-child(2),
+.inventory-table td:nth-child(2) { width: 8%; }
+.inventory-table th:nth-child(3),
+.inventory-table td:nth-child(3) { width: 12%; }
+.inventory-table th:nth-child(4),
+.inventory-table td:nth-child(4) { width: 8%; }
+.inventory-table th:nth-child(5),
+.inventory-table td:nth-child(5) { width: 13%; }
+.inventory-table th:nth-child(6),
+.inventory-table td:nth-child(6) { width: 13%; }
+.inventory-table th:nth-child(7),
+.inventory-table td:nth-child(7) { width: 9%; }
+.inventory-table th:nth-child(8),
+.inventory-table td:nth-child(8) { width: 14%; }
+.inventory-table th:nth-child(n + 2),
+.inventory-table td:nth-child(n + 2) {
+  white-space: nowrap;
+}
+.inventory-table td:first-child > div {
+  min-width: 0;
+}
+.inventory-actions {
+  gap: 6px;
+}
+.inventory-actions .btn-ghost {
+  padding: 7px 9px;
+  font-size: 11.5px;
+  gap: 4px;
+}
+.inventory-filters input,
+.inventory-filters select {
+  box-sizing: border-box;
+  min-height: 42px;
+}
+@media (max-width: 640px) {
+  .inventory-table {
+    min-width: 900px;
+    table-layout: auto;
+  }
+  .inventory-table th,
+  .inventory-table td {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 }
 .btn-dark {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #1a1513;
-  color: #fff;
-  border: none;
+  background: var(--hp-ink);
+  color: var(--hp-ivory);
+  border: 1px solid transparent;
   cursor: pointer;
   font-family: var(--font-sora), sans-serif;
   font-weight: 700;
   font-size: 12.5px;
   letter-spacing: 0.04em;
   padding: 11px 18px;
-  border-radius: 24px;
+  border-radius: 999px;
   text-decoration: none;
-  transition: background 0.2s, transform 0.15s;
+  transition: background 0.2s var(--hp-e), transform 0.15s var(--hp-e);
 }
 .btn-dark:hover {
-  background: #c4202a;
+  background: var(--hp-red);
+  transform: translateY(-1px);
 }
 .btn-ghost {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #fff;
-  color: #6b635c;
-  border: 1px solid rgba(26, 21, 19, 0.14);
+  background: var(--hp-ivory);
+  color: var(--hp-muted);
+  border: 1px solid var(--hp-hair);
   cursor: pointer;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 12.5px;
   padding: 8px 14px;
-  border-radius: 22px;
+  border-radius: 999px;
   text-decoration: none;
-  transition: 0.2s;
+  transition: 0.2s var(--hp-e);
 }
 .btn-ghost:hover {
-  border-color: #c4202a;
-  color: #c4202a;
+  border-color: var(--hp-red);
+  color: var(--hp-red);
 }
 .btn-danger {
-  color: #c4202a;
-  border-color: rgba(196, 32, 42, 0.3);
+  color: var(--hp-red);
+  border-color: rgba(189, 34, 39, 0.3);
 }
 .btn-danger:hover {
-  background: #c4202a;
+  background: var(--hp-red);
   color: #fff;
-  border-color: #c4202a;
+  border-color: var(--hp-red);
+}
+
+/* Shell nav ---------------------------------------------------------- */
+.admin-shell-bar { border-bottom: 1px solid var(--hp-hair); background: var(--hp-ivory-2); }
+.admin-brand {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 12.5px;
+  letter-spacing: 0.2em;
+  color: var(--hp-ink);
+}
+.admin-nav-link {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--hp-muted);
+  text-decoration: none;
+  transition: 0.2s var(--hp-e);
+}
+.admin-nav-link:hover { color: var(--hp-red); }
+.admin-nav-link.is-active { color: var(--hp-ivory); background: var(--hp-red); }
+
+/* Dashboard ------------------------------------------------------------ */
+.admin-stat {
+  padding: 20px;
+  border: 1px solid var(--hp-hair);
+  border-radius: 4px;
+  background: var(--hp-ivory-2);
+}
+.admin-stat-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 30px;
+  color: var(--hp-red);
+  line-height: 1;
+}
+.admin-stat-l {
+  margin-top: 8px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hp-muted);
+}
+.admin-mgr-card {
+  display: block;
+  padding: 26px;
+  border: 1px solid var(--hp-hair);
+  border-radius: 4px;
+  background: var(--hp-ivory-2);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s var(--hp-e), transform 0.2s var(--hp-e);
+}
+.admin-mgr-card:hover { border-color: var(--hp-red); transform: translateY(-2px); }
+.admin-mgr-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: var(--hp-ink);
+  color: var(--hp-gold-lt);
+}
+.admin-mgr-title {
+  margin-top: 18px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--hp-ink);
+}
+.admin-mgr-body {
+  margin-top: 8px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--hp-muted);
 }
 
 /* =====================================================
@@ -1704,97 +2137,14 @@ label {
   }
 }
 
-/* =====================================================
-   Container system
-   -----------------------------------------------------
-   Three widths — prose (720), default (1200), wide (1400).
-   Uniform gutters: 20px mobile, 32px tablet+ desktop.
-   Every migrated section uses one of these; nothing else.
-===================================================== */
-
-
-
-/* =====================================================
-   Section rhythm
-   -----------------------------------------------------
-   Three vertical densities. Migrated sections pick one
-   instead of ad-hoc py-[NNpx]. Mobile drops one step.
-===================================================== */
-
-
-
-/* =====================================================
-   Background surfaces (page-level)
-===================================================== */
-
-
-/* =====================================================
-   Cards — four variants, one shape system.
-   Retires the ad-hoc `bg-cream-50 border rounded-[NN]`
-   pattern that recurs 40+ times in the current code.
-===================================================== */
-
-
-
-/* =====================================================
-   Buttons — three tiers, one shape system.
-   -----------------------------------------------------
-   Legacy .cta-gold / .btn-dark / .btn-ghost / .btn-danger
-   remain until pages migrate — no collision because names
-   are namespaced under `.gs-btn-*`.
-===================================================== */
-
-
-/* Primary — gold gradient. One instance per screen. */
-
-
-/* Secondary — ink outline pill. Repeat/adjacent actions. */
-
-
-/* Secondary · danger tone — same shape, crimson tint. */
-
-
-/* Tertiary — link-style with animated underline. */
-
-
-/* Dark-surface variant — swaps text colour so buttons read on charcoal. */
-
-
-/* Size modifiers. */
-
-
-/* =====================================================
-   Inputs (foundation — pages opt in on their `<input>`s)
-   Retains the existing 4px crimson focus halo so migrated
-   forms feel the same as unmigrated ones during rollout.
-===================================================== */
-
-
-/* =====================================================
-   Typography utilities (opt-in — pages migrate to these)
-   -----------------------------------------------------
-   The scale collapses the current 10+ ad-hoc clamp()
-   sizes into a controlled hierarchy. Each utility sets
-   family + size + line height + tracking; colour stays
-   context-driven.
-===================================================== */
-
-/* Reads-in-context: keeps display headings ink on light and inverse on dark. */
-
-
-/* =====================================================
-   Signature devices
-===================================================== */
-/* Hairline gold rule — sits below section eyebrows. */
-
-
-/* =====================================================
-   Focus — two-ring pattern.
-   Reads on any surface (light OR gold OR charcoal).
-   Migrated interactive controls opt in with `.gs-focusable`
-   or by being a `.gs-btn`.
-===================================================== */
-
+/* Container system / Section rhythm / Background surfaces / Cards /
+   Buttons / Inputs / Typography utilities / Signature devices / Focus —
+   nine planned-but-never-built `.gs-*` sections previously stubbed out
+   here as banner comments with zero rules underneath. Removed in the
+   Phase 2A CSS audit (2026) as confirmed-empty dead weight; the tokens
+   they'd have consumed (radius, elevation, motion, spacing — all above)
+   and the two sections that *did* get built (skip link, hero reveal —
+   both below) are untouched. */
 
 /* =====================================================
    Skip link — keyboard-only shortcut to <main>.
@@ -1833,21 +2183,11 @@ label {
   outline: none;
 }
 
-/* =====================================================
-   Grandstand reveal — lighter than the legacy [data-reveal].
-   Shorter duration + no rotate. Opt in with data-gs-reveal.
-===================================================== */
-[data-gs-reveal] {
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity var(--gs-dur-slow) var(--gs-ease-out),
-    transform var(--gs-dur-slow) var(--gs-ease-out);
-  will-change: transform, opacity;
-}
-[data-gs-reveal].is-in {
-  opacity: 1;
-  transform: none;
-}
+/* Grandstand reveal ([data-gs-reveal]/.is-in) removed in the Phase 2B
+   CSS audit (2026): repo-wide search (app/, components/, lib/, data/,
+   every .ts/.tsx/.mdx/.json/.md file) found zero elements ever setting
+   the data-gs-reveal attribute — the legacy [data-reveal] system this
+   was meant to replace was never actually migrated onto it. */
 
 /* =====================================================
    P2 · HOME hero additions
@@ -1857,10 +2197,6 @@ label {
    and the dark glassy hero-info-card variant. All scoped
    under `.gs-*` so they don't collide with legacy classes.
 ===================================================== */
-
-/* Crimson vignette + atmospheric gold glow — reserved for
-   the home hero. Other dark surfaces use .gs-bg-immersive. */
-
 
 /* Hero image reveal — clip-path wipe, left to right, once on mount.
    Respects prefers-reduced-motion via the P0 global block: transition/
@@ -1874,8 +2210,6 @@ label {
     clip-path: inset(0 0 0 0);
   }
 }
-
-/* Dark glassy tile floating on the immersive hero. */
 
 
 /* =====================================================
@@ -1894,19 +2228,36 @@ label {
 ============================================================ */
 
 :root {
-  --hp-red: #bd2227;
-  --hp-red-deep: #6d1418;
-  --hp-gold: #b8904b;
-  --hp-gold-lt: #e4c48b;
-  --hp-ink: #0e0b0a;
-  --hp-ink-2: #16110f;
-  --hp-ivory: #f5efe4;
-  --hp-ivory-2: #fcfaf6;
-  --hp-muted: #4e4842;
-  --hp-muted-dark: rgba(245, 239, 228, 0.68);
-  --hp-hair: rgba(14, 11, 10, 0.14);
-  --hp-hair-dark: rgba(245, 239, 228, 0.16);
-  --hp-e: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Phase 2C token consolidation: the five declarations below are now
+     aliases onto the Art Direction (--v-*) tokens defined further down
+     this file, kept only because their VALUES are byte-identical —
+     verified with a full cross-comparison of every --hp-* value against
+     every --v-* value, not by eye. CSS custom properties resolve
+     against the final cascaded value regardless of source order, so
+     referencing --v-* here even though it's declared later in the file
+     is safe. The --hp-* name is preserved so every existing consumer
+     (PageHero, Section, home, auth, partners, news, …) keeps working
+     unchanged — this is aliasing, not renaming.
+
+     The other eight tokens below are deliberately UNCHANGED literals:
+     each has a close but non-identical --v-* counterpart (different
+     hex, different alpha, or — for --hp-e — a different easing curve
+     entirely) and merging them would be a visual change disguised as
+     a token cleanup. See the Phase 2C report for the full comparison
+     table. */
+  --hp-red: var(--v-red); /* #bd2227 == --v-red */
+  --hp-red-deep: #6d1418; /* --v-red-deep is #5e1114 — different, left alone */
+  --hp-gold: var(--v-gold); /* #b8904b == --v-gold */
+  --hp-gold-lt: #e4c48b; /* --v-gold-lit is #e2c290 — different, left alone */
+  --hp-ink: var(--v-ink); /* #0e0b0a == --v-ink */
+  --hp-ink-2: #16110f; /* --v-ink-2 is #171210 — different, left alone */
+  --hp-ivory: var(--v-ivory); /* #f5efe4 == --v-ivory */
+  --hp-ivory-2: #fcfaf6; /* --v-ivory-2 is #fbf7f0 — different, left alone */
+  --hp-muted: #4e4842; /* --v-on-ivory is #4b443e — different, left alone */
+  --hp-muted-dark: rgba(245, 239, 228, 0.68); /* --v-on-ink is alpha .74 — different, left alone */
+  --hp-hair: rgba(14, 11, 10, 0.14); /* --v-hair-ivory is alpha .13 — different, left alone */
+  --hp-hair-dark: var(--v-hair-ink); /* rgba(245,239,228,.16) == --v-hair-ink */
+  --hp-e: cubic-bezier(0.2, 0.7, 0.2, 1); /* no match among --v- or --ease tokens (closest is --gs-ease, a different family, out of this phase's scope) */
 }
 
 /* Shared shell — see the single .hp-wrap container below. */
@@ -4507,10 +4858,11 @@ a:hover .hp-arrow {
   .media-grid { grid-template-columns: minmax(0,1.15fr) minmax(0,0.85fr); gap: 56px; }
 }
 .story { display: block; text-decoration: none; color: inherit; }
-.story-fig {
-  position: relative; display: block; width: 100%; overflow: hidden;
-  border-radius: 3px; background: var(--hp-ink-2);
-}
+/* .story-fig (the plain positioning rule) removed in the Phase 2B CSS
+   audit — zero className="story-fig" usage found repo-wide. .story
+   and .story-fig-lead are untouched: out of this pass's explicit scope,
+   and .story-fig-lead's own usage wasn't part of the confirmed-dead
+   search, so it stays until it's specifically verified. */
 .story-fig-lead { aspect-ratio: 16 / 10; margin-bottom: 20px; will-change: clip-path; }
 .story-img { object-fit: cover; object-position: 50% 30%; transition: transform 1.1s var(--hp-e); }
 .story:hover .story-img { transform: scale(1.03); }
@@ -4718,12 +5070,18 @@ a:hover .hp-arrow {
 ============================================================ */
 
 /* Header: the actions become a deliberate utility cluster instead of three
-   loose icons; the central nav keeps breathing room at laptop widths. */
-.nv {
-  background: transparent;
-  backdrop-filter: none;
-  border-bottom-color: transparent;
-}
+   loose icons; the central nav keeps breathing room at laptop widths.
+   NOTE: the transparent-by-default treatment belongs to `.nv-over` only
+   (routes with a dark full-bleed hero directly underneath — see
+   FLOATING_HEADER_ROUTES in lib/nav.ts) and is already declared there.
+   A bare `.nv { background: transparent }` used to live here too and,
+   because `.nv` is the base class every header carries, it silently
+   overrode the solid ink header for every OTHER route — on a page with no
+   hero image behind it (Contact, Cart, Checkout, Profile, Shop, …) that
+   left ivory nav text sitting directly on the page's own cream background
+   at scroll position 0, unreadable until the first scroll pixel. Removed;
+   `.nv-over` below already carries the identical values for the routes
+   that actually need them. */
 .nv.nv-scrolled,
 .nv.nv-open {
   background: color-mix(in srgb, var(--v-ink) 92%, transparent);
@@ -7123,14 +7481,16 @@ a:hover .hp-arrow {
 
 /* Editorial figures — chapters, feature frames, portraits.
    Shared across /the-club, /the-pride, /players,
-   /golf-development, /vimtra-ventures and the home chapters. */
+   /golf-development, /vimtra-ventures and the home chapters.
+   .story-fig dropped from this list in the Phase 2B CSS audit — the
+   class it would have shadowed no longer exists (see its own removal
+   note near .media-grid/.story above). */
 .cm-ch-fig,
 .cm-fig-frame,
 .plx-portrait,
 .vv-portrait,
 .gd-fig,
-.hm-fig,
-.story-fig {
+.hm-fig {
   box-shadow: var(--v-lift);
 }
 
@@ -7262,6 +7622,7 @@ a:hover .hp-arrow {
   gap: var(--sp-5);
 }
 
+.tb-mast-above { margin: 0 0 var(--sp-3); }
 .tb-mast-top {
   display: flex;
   flex-wrap: wrap;

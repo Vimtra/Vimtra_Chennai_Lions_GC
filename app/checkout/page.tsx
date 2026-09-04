@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth";
 import { listAddresses } from "@/lib/addresses";
 import CheckoutFlow from "@/components/shop/CheckoutFlow";
-import PageHero from "@/components/site/PageHero";
+import StoryHero from "@/components/site/StoryHero";
 import { Section } from "@/components/site/Section";
 
 export const metadata: Metadata = {
@@ -27,8 +27,7 @@ export default async function CheckoutPage() {
 
   return (
     <>
-      <PageHero
-        variant="compact"
+      <StoryHero
         eyebrow={`Checkout · Signed in as ${user.name}`}
         title={["SECURE", "CHECKOUT"]}
       />

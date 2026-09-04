@@ -53,25 +53,13 @@ export default function ContactForm({
 
   if (result?.ok) {
     return (
-      <div
-        ref={okRef}
-        className="bg-cream-50 border border-black/[0.07] rounded-[24px] p-11 text-center"
-        role="status"
-      >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(14,138,79,0.10)]">
-          <CheckCircle2 className="h-7 w-7" style={{ color: "#0E8A4F" }} aria-hidden />
+      <div ref={okRef} className="hp-panel cf-success" role="status">
+        <div className="cf-success-icon">
+          <CheckCircle2 className="h-7 w-7" aria-hidden />
         </div>
-        <h2 className="mt-5 mb-2 font-sora font-extrabold text-[26px] tracking-[-0.02em]">
-          Message sent.
-        </h2>
-        <p className="font-manrope text-[14.5px] leading-[1.6] text-muted max-w-[42ch] mx-auto">
-          {result.message}
-        </p>
-        <button
-          type="button"
-          onClick={sendAnother}
-          className="mt-6 font-manrope font-bold text-[13px] text-crimson-600 uppercase tracking-[0.08em]"
-        >
+        <h2 className="cf-success-title">Message sent.</h2>
+        <p className="cf-success-body">{result.message}</p>
+        <button type="button" onClick={sendAnother} className="cf-success-again">
           Send another message
         </button>
       </div>
@@ -79,13 +67,9 @@ export default function ContactForm({
   }
 
   return (
-    <div className="bg-cream-50 border border-black/[0.07] rounded-[24px] p-11">
-      <div className="font-manrope font-bold tracking-[0.22em] text-[11.5px] text-crimson-600 uppercase">
-        What&apos;s on your mind?
-      </div>
-      <h2 className="mt-[10px] mb-[22px] font-sora font-extrabold text-[34px] tracking-[-0.02em]">
-        Drop us a line.
-      </h2>
+    <div className="hp-panel">
+      <div className="cf-eyebrow">What&apos;s on your mind?</div>
+      <h2 className="cf-heading">Drop us a line.</h2>
 
       <div className="flex gap-2 flex-wrap mb-[22px]" role="tablist" aria-label="Enquiry topic">
         {CONTACT_TOPICS.map((t) => (
@@ -181,8 +165,7 @@ export default function ContactForm({
         <button
           type="submit"
           disabled={pending}
-          className="cta-gold press justify-self-start disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2"
-          style={{ padding: 14, fontSize: 14, letterSpacing: "0.06em" }}
+          className="hp-btn hp-btn-primary justify-self-start disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
           {pending ? "SENDING…" : "SEND TO THE DEN"}
@@ -190,11 +173,7 @@ export default function ContactForm({
       </form>
 
       {result && !result.ok && (
-        <div
-          className="mt-5 p-[14px] rounded-[14px] font-manrope font-semibold text-[14px]"
-          role="alert"
-          style={{ background: "rgba(196,32,42,0.10)", color: "#C4202A" }}
-        >
+        <div className="cf-error-banner" role="alert">
           {result.message}
         </div>
       )}
@@ -204,7 +183,7 @@ export default function ContactForm({
 
 function FieldError({ id, text }: { id: string; text: string }) {
   return (
-    <p id={id} role="alert" className="mt-[6px] font-manrope text-[12.5px]" style={{ color: "#C4202A" }}>
+    <p id={id} role="alert" className="mt-[6px] font-manrope text-[12.5px]" style={{ color: "var(--hp-red)" }}>
       {text}
     </p>
   );

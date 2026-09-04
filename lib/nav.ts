@@ -73,6 +73,20 @@ export const FLOATING_HEADER_ROUTES = [
   "/partners",
   // Photographic story hero (same terms as the other Club-module routes).
   "/invest",
+  // `StoryHero` (`.cm-hero`) opens each of these too — Shop with a real
+  // photograph, the rest `is-plain` (ink + aurora, no stock subject) on
+  // the same terms /players already established. `.cm-hero` always
+  // reserves header height as its own top padding on the assumption the
+  // header is floating above it; leaving a route off this list while
+  // using `.cm-hero` on it double-reserves that space (sticky header
+  // height *plus* the hero's own padding) — every route below needs to
+  // be here for that reason, not for a visual preference.
+  "/shop",
+  "/contact",
+  "/cart",
+  "/checkout",
+  "/profile",
+  "/profile/orders",
 ];
 
 /**

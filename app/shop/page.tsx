@@ -3,7 +3,7 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/shop/ProductCard";
 import { listProducts } from "@/lib/db";
-import PageHero from "@/components/site/PageHero";
+import StoryHero from "@/components/site/StoryHero";
 import { Section, IndexLabel } from "@/components/site/Section";
 
 export const metadata: Metadata = {
@@ -20,15 +20,13 @@ export default async function ShopPage() {
 
   return (
     <>
-      <PageHero
-        variant="compact"
+      <StoryHero
         eyebrow="Official Chennai Lions Store"
         title={["SHOP"]}
-        lead={
-    <>
-      Match-day kit, performance apparel, and tour-tested accessories — engineered for play, built for the gallery. Fan-priced, single units, shipped across India.
-    </>
-  }
+        line="Match-day kit, performance apparel, and tour-tested accessories — engineered for play, built for the gallery. Fan-priced, single units, shipped across India."
+        image="/assets/photo/gd-perf-putt-hole.jpg"
+        imageAlt="A putter and ball beside the hole on a green"
+        imagePosition="50% 55%"
       />
 
             <Section surface="ivory" size="tight">

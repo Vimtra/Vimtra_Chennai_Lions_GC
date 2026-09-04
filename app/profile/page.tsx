@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth";
-import PageHero from "@/components/site/PageHero";
+import StoryHero from "@/components/site/StoryHero";
 import { Section } from "@/components/site/Section";
 import ProfileClient from "@/components/profile/ProfileClient";
 
@@ -21,11 +21,10 @@ export default async function ProfilePage({
 
   return (
     <>
-      <PageHero
-        variant="compact"
+      <StoryHero
         eyebrow="Account"
         title={["MY ACCOUNT"]}
-        lead={`${user.name} · ${user.email}`}
+        line={`${user.name} · ${user.email}`}
       />
 
       <Section surface="ivory" size="tight">

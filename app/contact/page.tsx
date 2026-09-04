@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import Reveal from "@/components/Reveal";
 import ContactForm from "@/components/contact/ContactForm";
 import { CONTACT_TOPICS } from "@/components/contact/topics";
-import PageHero from "@/components/site/PageHero";
-import { Section, IndexLabel } from "@/components/site/Section";
+import StoryHero from "@/components/site/StoryHero";
+import { Section } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   title: "Contact · Vimtra Chennai Lions GC",
@@ -61,88 +60,61 @@ export default async function ContactPage({
 
   return (
     <div className="contact-page">
-      <PageHero
-        variant="compact"
+      {/* No stock photograph stands in for "talking to the franchise" — same
+          call /players makes for its own roster hero: is-plain keeps the
+          full cinematic ink + aurora frame without a filler image. */}
+      <StoryHero
         eyebrow="To Discuss"
         title={["CONTACT"]}
-        lead={
-    <>
-      Talk to the franchise — for partnerships, sponsorship, media, golf-development, and merchandise support.
-    </>
-  }
+        line="Talk to the franchise — for partnerships, sponsorship, media, golf-development, and merchandise support."
       />
 
-            <Section surface="ivory" size="default">
-          <Reveal variant="fade-up">
+      <Section surface="ivory" size="default">
+        <div className="cf-grid">
+          <div data-rise>
             <ContactForm initialTopic={initialTopic} />
-          </Reveal>
+          </div>
 
           <div className="flex flex-col gap-5">
-            <Reveal
-              variant="fade-up"
-              className="text-white rounded-[24px] p-8"
-              style={{ background: "linear-gradient(160deg,#C9242E,#871119)" }}
-            >
-              <div className="font-manrope font-bold tracking-[0.22em] text-[11px] text-[#E9CB8E] uppercase">
-                {HOME_VENUE.label}
-              </div>
-              <h3 className="mt-[10px] mb-3 font-sora font-extrabold text-[24px] tracking-[-0.02em]">
-                {HOME_VENUE.name}
-              </h3>
-              <p className="m-0 font-manrope text-[14px] leading-[1.6] opacity-85">
-                {HOME_VENUE.city}
-              </p>
-            </Reveal>
+            <div className="cf-venue" data-rise>
+              <div className="cf-venue-label">{HOME_VENUE.label}</div>
+              <h3 className="cf-venue-name">{HOME_VENUE.name}</h3>
+              <p className="cf-venue-city">{HOME_VENUE.city}</p>
+            </div>
 
-            <Reveal
-              variant="fade-up"
-              delay={80}
-              className="hp-panel"
-            >
-              <div className="font-manrope font-bold tracking-[0.18em] text-[11px] text-crimson-600 uppercase">
-                Direct Channels
-              </div>
-              <div className="flex flex-col gap-[14px] mt-[14px]">
+            <div className="hp-panel" data-rise>
+              <div className="cf-panel-label">Direct Channels</div>
+              <div className="cf-channel-list">
                 {CHANNELS.filter((c) => c.kind !== "social").map((c) => (
                   <div key={c.value}>
-                    <div className="font-sora font-bold text-[13.5px]">
-                      {c.label}
-                    </div>
-                    <a
-                      href={c.href}
-                      className="font-manrope text-[13.5px] text-crimson-600 no-underline"
-                    >
+                    <div className="cf-channel-k">{c.label}</div>
+                    <a href={c.href} className="cf-channel-v">
                       {c.value}
                     </a>
                   </div>
                 ))}
               </div>
-            </Reveal>
+            </div>
 
-            <Reveal
-              variant="fade-up"
-              delay={160}
-              className="hp-panel"
-            >
-              <div className="font-manrope font-bold tracking-[0.18em] text-[11px] text-crimson-600 uppercase">
-                Find us elsewhere
-              </div>
-              <div className="flex gap-[10px] flex-wrap mt-[14px]">
+            <div className="hp-panel" data-rise>
+              <div className="cf-panel-label">Find us elsewhere</div>
+              <div className="cf-social-list">
                 {CHANNELS.filter((c) => c.kind === "social").map((c) => (
                   <a
                     key={c.value}
                     href={c.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-4 py-[9px] rounded-[20px] bg-ink text-white font-sora font-bold text-[12px] no-underline tracking-[0.06em]"
+                    className="cf-social-pill"
                   >
                     {c.value}
                   </a>
                 ))}
               </div>
-            </Reveal>
+            </div>
           </div>
-        </Section>
+        </div>
+      </Section>
     </div>
   );
 }

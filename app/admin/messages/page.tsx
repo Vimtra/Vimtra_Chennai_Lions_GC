@@ -37,7 +37,7 @@ export default async function AdminMessagesPage() {
         )}
       </div>
 
-      <div className="mt-7 bg-cream-50 border border-black/[0.07] rounded-[18px] p-4 overflow-x-auto">
+      <div className="mt-7 border border-black/[0.07] rounded-[4px] p-4 overflow-x-auto" style={{ background: "var(--hp-ivory-2)" }}>
         <table className="admin-table">
           <thead>
             <tr>

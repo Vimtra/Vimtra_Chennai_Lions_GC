@@ -40,6 +40,7 @@ export default function PageMasthead({
   stats,
   image,
   imagePosition,
+  above,
   className = "",
 }: {
   eyebrow: string;
@@ -52,6 +53,9 @@ export default function PageMasthead({
   /** Decorative only — see the note above. */
   image?: string;
   imagePosition?: string;
+  /** Optional element rendered above the eyebrow (e.g. a back link) —
+   *  same slot PageHero exposes, for the rare masthead that needs one. */
+  above?: React.ReactNode;
   /**
    * Optional. Omit it to let CSS own the crop — an inline style beats a
    * stylesheet, so a page that needs a different crop per breakpoint must
@@ -105,6 +109,11 @@ export default function PageMasthead({
       <div className="v-grain" aria-hidden />
 
       <div className="hp-wrap tb-mast-inner">
+        {above && (
+          <div className="tb-mast-above" data-tb-eyebrow>
+            {above}
+          </div>
+        )}
         <div className="tb-mast-top">
           <p className="tb-mast-eyebrow" data-tb-eyebrow>
             {eyebrow}
