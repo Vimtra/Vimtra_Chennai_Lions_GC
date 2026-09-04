@@ -8,6 +8,7 @@ import Reveal from "@/components/Reveal";
 import { FALLBACK_LOGO, inr } from "@/lib/products";
 import PageHero from "@/components/site/PageHero";
 import { Section } from "@/components/site/Section";
+import AccountNav from "@/components/profile/AccountNav";
 import {
   getOrderById,
   readShippingSnapshot,
@@ -34,8 +35,8 @@ export const dynamic = "force-dynamic";
  *
  * Ownership is enforced via getOrderById(user.id, id) — another user
  * asking for the same URL sees a 404, not a redirect (avoids leaking
- * that the id exists). Admin uses the separate /admin/orders/[id]
- * route (Phase 5.5) with a different helper.
+ * that the id exists). Admin uses a separate helper when that console
+ * ships.
  *
  * Renders the frozen `shippingSnapshot` (via readShippingSnapshot) —
  * never re-derived from the Address table, so historical orders keep
@@ -58,141 +59,154 @@ export default async function OrderConfirmationPage({
   const shipping = readShippingSnapshot(order);
   const isFresh =
     Date.now() - new Date(order.createdAt).getTime() < 5 * 60 * 1000; // <5 min
+  const itemCount = order.items.reduce((sum, it) => sum + it.qty, 0);
 
   return (
     <>
       <PageHero
         variant="compact"
-        eyebrow={isFresh ? "Thank you · Order Placed" : "Order Details"}
+        eyebrow={isFresh ? "Thank you · Order Placed" : "Account · Order"}
         title={[order.orderNumber]}
-        lead={`Placed on ${formatOrderDate(order.createdAt)}`}
+        lead={`Placed on ${formatOrderDate(order.createdAt)} · ${itemCount} ${
+          itemCount === 1 ? "item" : "items"
+        }`}
+        above={
+          <Link href="/profile/orders" className="hp-pagehero-back">
+            ← My Orders
+          </Link>
+        }
       />
 
       <Section surface="ivory" size="tight">
-          <div className="grid gap-6">
-            {isFresh && <SuccessBanner order={order} />}
+        <div className="profile-page acct-shell is-wide">
+          <AccountNav />
 
-            <SectionCard title="Items">
-              <div className="grid gap-3">
-                {order.items.map((it) => (
-                  <div
-                    key={it.id}
-                    className="flex items-center gap-4 py-2 border-b border-black/[0.06] last:border-b-0"
-                  >
-                    <div className="v-lift-sm relative w-[60px] h-[60px] rounded-[10px] overflow-hidden bg-cream-100 shrink-0 flex items-center justify-center">
-                      <Image
-                        src={it.productImage || FALLBACK_LOGO}
-                        alt={it.productName}
-                        width={60}
-                        height={60}
-                        className="object-contain w-full h-full"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-sora font-bold text-[15px] text-ink">
-                        {it.productName}
+          <div className="acct-order-detail grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 items-start">
+            <div className="grid gap-6 min-w-0">
+              {isFresh && <SuccessBanner order={order} />}
+
+              <section className="acct-panel">
+                <h2 className="acct-panel-title">Items</h2>
+                <ul className="acct-line-items">
+                  {order.items.map((it) => (
+                    <li key={it.id} className="acct-line-item">
+                      <div className="acct-line-thumb">
+                        <Image
+                          src={it.productImage || FALLBACK_LOGO}
+                          alt={it.productName}
+                          width={60}
+                          height={60}
+                          className="object-contain w-full h-full"
+                        />
                       </div>
-                      <div className="font-manrope text-[12.5px] text-muted">
-                        {inr(it.unitPrice)} × {it.qty}
+                      <div className="acct-line-copy min-w-0">
+                        <div className="font-sora font-bold text-[15px] text-ink truncate">
+                          {it.productName}
+                        </div>
+                        <div className="font-manrope text-[12.5px] text-muted mt-0.5">
+                          {inr(it.unitPrice)} × {it.qty}
+                        </div>
                       </div>
-                    </div>
-                    <div className="font-sora font-extrabold text-[15px] text-crimson-600">
-                      {inr(it.lineTotal)}
-                    </div>
+                      <div className="font-sora font-extrabold text-[15px] text-crimson-600 shrink-0">
+                        {inr(it.lineTotal)}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section className="acct-panel">
+                <h2 className="acct-panel-title">Delivery</h2>
+                <div className="font-manrope text-[13.5px] text-ink leading-[1.55]">
+                  <div className="font-bold">{shipping.fullName}</div>
+                  <div className="text-muted">
+                    {shipping.line1}
+                    {shipping.line2 ? `, ${shipping.line2}` : ""}
                   </div>
-                ))}
-              </div>
-            </SectionCard>
+                  <div className="text-muted">
+                    {shipping.city}, {shipping.state} {shipping.postalCode},{" "}
+                    {shipping.country}
+                  </div>
+                  <div className="text-muted mt-1">
+                    {shipping.phone} · {order.contactEmail}
+                  </div>
+                </div>
+              </section>
 
-            <SectionCard title="Delivery">
-              <div className="font-manrope text-[13.5px] text-ink leading-[1.55]">
-                <div className="font-bold">{shipping.fullName}</div>
-                <div className="text-muted">
-                  {shipping.line1}
-                  {shipping.line2 ? `, ${shipping.line2}` : ""}
-                </div>
-                <div className="text-muted">
-                  {shipping.city}, {shipping.state} {shipping.postalCode},{" "}
-                  {shipping.country}
-                </div>
-                <div className="text-muted mt-1">
-                  {shipping.phone} · {order.contactEmail}
-                </div>
-              </div>
-            </SectionCard>
-
-            {order.notes && (
-              <SectionCard title="Notes">
-                <div className="font-manrope text-[13.5px] text-muted whitespace-pre-line">
-                  {order.notes}
-                </div>
-              </SectionCard>
-            )}
-          </div>
-
-          <aside className="lg:sticky lg:top-24">
-            <div className="summary">
-              <h3>Summary</h3>
-              <div className="line">
-                <span>Subtotal</span>
-                <span>{inr(order.subtotal)}</span>
-              </div>
-              <div className="line">
-                <span>Shipping</span>
-                <span>{order.shipping > 0 ? inr(order.shipping) : "Free"}</span>
-              </div>
-              <div className="line">
-                <span>GST</span>
-                <span>{inr(order.tax)}</span>
-              </div>
-              <div className="total">
-                <span>Total</span>
-                <span>{inr(order.total)}</span>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <StatusChip
-                  label={`Order · ${orderStatusLabel(order.status)}`}
-                  style={orderStatusStyle(order.status)}
-                />
-                <StatusChip
-                  label={`Payment · ${paymentStatusLabel(order.paymentStatus)}`}
-                  style={paymentStatusStyle(order.paymentStatus)}
-                />
-              </div>
-              <div className="mt-4 font-manrope text-[12.5px] text-white/70">
-                Payment method: {paymentMethodLabel(order.paymentMethod)}
-              </div>
-              <div className="mt-6 flex flex-col gap-2">
-                <Link
-                  href="/profile/orders"
-                  className="cta-gold press w-full py-[13px] text-[13.5px] tracking-[0.06em] justify-center inline-flex"
-                  style={{ textDecoration: "none" }}
-                >
-                  MY ORDERS
-                </Link>
-                <Link
-                  href="/shop"
-                  className="btn-ghost justify-center"
-                  style={{ textDecoration: "none" }}
-                >
-                  Keep shopping
-                </Link>
-              </div>
+              {order.notes ? (
+                <section className="acct-panel">
+                  <h2 className="acct-panel-title">Notes</h2>
+                  <div className="font-manrope text-[13.5px] text-muted whitespace-pre-line">
+                    {order.notes}
+                  </div>
+                </section>
+              ) : null}
             </div>
-          </aside>
-        </Section>
+
+            <aside className="lg:sticky lg:top-24 min-w-0">
+              <div className="summary">
+                <h3>Summary</h3>
+                <div className="line">
+                  <span>Subtotal</span>
+                  <span>{inr(order.subtotal)}</span>
+                </div>
+                <div className="line">
+                  <span>Shipping</span>
+                  <span>
+                    {order.shipping > 0 ? inr(order.shipping) : "Free"}
+                  </span>
+                </div>
+                <div className="line">
+                  <span>GST</span>
+                  <span>{inr(order.tax)}</span>
+                </div>
+                <div className="total">
+                  <span>Total</span>
+                  <span>{inr(order.total)}</span>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <StatusChip
+                    label={`Order · ${orderStatusLabel(order.status)}`}
+                    style={orderStatusStyle(order.status)}
+                  />
+                  <StatusChip
+                    label={`Payment · ${paymentStatusLabel(order.paymentStatus)}`}
+                    style={paymentStatusStyle(order.paymentStatus)}
+                  />
+                </div>
+                <div className="mt-4 font-manrope text-[12.5px] text-white/70">
+                  Payment method: {paymentMethodLabel(order.paymentMethod)}
+                </div>
+                <div className="mt-6 flex flex-col gap-2">
+                  <Link
+                    href="/profile/orders"
+                    className="cta-gold press w-full py-[13px] text-[13.5px] tracking-[0.06em] justify-center inline-flex"
+                    style={{ textDecoration: "none" }}
+                  >
+                    MY ORDERS
+                  </Link>
+                  <Link
+                    href="/shop"
+                    className="btn-ghost justify-center"
+                    style={{ textDecoration: "none" }}
+                  >
+                    Keep shopping
+                  </Link>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </Section>
     </>
   );
 }
-
-// ---------------------------------------------------------------------------
 
 function SuccessBanner({ order }: { order: OrderWithItems }) {
   return (
     <Reveal
       variant="fade-up"
-      className="flex items-center gap-4 bg-white border border-black/[0.07] rounded-[20px] p-5"
-      style={{ boxShadow: "0 26px 60px -38px rgba(14,138,79,0.35)" }}
+      className="flex items-center gap-4 border-b border-black/[0.08] pb-5"
     >
       <div
         className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
@@ -213,23 +227,6 @@ function SuccessBanner({ order }: { order: OrderWithItems }) {
   );
 }
 
-function SectionCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="hp-panel">
-      <div className="mb-4 font-sora font-extrabold text-[18px] tracking-[-0.005em] text-ink">
-        {title}
-      </div>
-      {children}
-    </section>
-  );
-}
-
 function StatusChip({
   label,
   style,
@@ -238,10 +235,7 @@ function StatusChip({
   style: { background: string; color: string };
 }) {
   return (
-    <span
-      className="tier-badge"
-      style={{ ...style, whiteSpace: "nowrap" }}
-    >
+    <span className="tier-badge" style={{ ...style, whiteSpace: "nowrap" }}>
       {label}
     </span>
   );

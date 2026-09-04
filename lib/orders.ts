@@ -288,10 +288,15 @@ export async function getOrderByIdForAdmin(
   return row;
 }
 
-export async function listOrdersForUser(userId: string): Promise<Order[]> {
+/** Orders for one buyer, newest first, with line items for list summaries.
+ *  Always scoped by userId — never return another account's orders. */
+export async function listOrdersForUser(
+  userId: string
+): Promise<OrderWithItems[]> {
   return prisma.order.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
+    include: { items: true },
   });
 }
 

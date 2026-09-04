@@ -725,47 +725,10 @@ a {
 }
 
 /* =====================================================
-   PROFILE
+   PROFILE / ACCOUNT
+   Editorial account shell — Profile + My Orders. No SaaS
+   dashboard chrome; hairline nav + quiet panels.
 ===================================================== */
-.profile-page .card {
-  background: #fbf9f4;
-  border: 1px solid rgba(26, 21, 19, 0.07);
-  border-radius: 22px;
-  padding: 32px;
-}
-@media (max-width: 760px) {
-  .profile-page .card {
-    padding: 24px;
-  }
-}
-.profile-page .menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 16px;
-  border-radius: 14px;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  color: #3a322d;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.25s, color 0.25s, transform 0.25s;
-}
-.profile-page .menu-item:hover {
-  background: rgba(196, 32, 42, 0.06);
-  color: #c4202a;
-  transform: translateX(2px);
-}
-.profile-page .menu-item.active {
-  background: #c4202a;
-  color: #fff;
-}
-.profile-page .menu-item svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
 .profile-page label {
   display: block;
   font-family: var(--font-manrope), sans-serif;
@@ -795,22 +758,238 @@ a {
   border-color: #c4202a;
   box-shadow: 0 0 0 4px rgba(196, 32, 42, 0.1);
 }
-.profile-page .badge {
+
+.acct-shell {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  min-width: 0;
+}
+.acct-shell.is-wide {
+  max-width: 1200px;
+}
+
+.acct-nav {
+  margin: 0 0 40px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(26, 21, 19, 0.1);
+}
+.acct-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 4px;
+}
+.acct-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 14px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #6b635c;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.acct-nav-link:hover {
+  color: #c4202a;
+}
+.acct-nav-link.is-active {
+  color: #1a1513;
+  box-shadow: inset 0 -2px 0 #c4202a;
+}
+.acct-nav-signout {
+  margin-left: auto;
+}
+.acct-nav-signout-btn {
+  color: #6b635c;
+}
+.acct-nav-signout-btn:hover {
+  color: #c4202a;
+}
+
+.acct-section-head {
+  margin-bottom: 28px;
+}
+.acct-kicker {
+  margin: 0 0 8px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #c4202a;
+}
+.acct-section-title {
+  margin: 0 0 10px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3.2vw, 34px);
+  letter-spacing: -0.025em;
+  color: #1a1513;
+  line-height: 1.1;
+}
+.acct-section-lead {
+  margin: 0;
+  max-width: 52ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #6b635c;
+}
+
+.acct-panel {
+  padding: 0 0 28px;
+  border-bottom: 1px solid rgba(26, 21, 19, 0.08);
+  margin-bottom: 8px;
+}
+.acct-panel:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.acct-panel-title {
+  margin: 0 0 16px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: #1a1513;
+}
+
+/* Order list — editorial rows, not cards */
+.acct-order-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(26, 21, 19, 0.12);
+}
+.acct-order-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px 24px;
+  align-items: start;
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(26, 21, 19, 0.1);
+  text-decoration: none;
+  color: inherit;
+  transition: padding-left 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 0;
+}
+.acct-order-row:hover {
+  padding-left: 8px;
+}
+.acct-order-id {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: #1a1513;
+}
+.acct-order-meta {
+  margin-top: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12.5px;
+  color: #6b635c;
+}
+.acct-order-summary {
+  margin-top: 8px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #3a322d;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.acct-order-side {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.acct-order-total {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  color: #1a1513;
+  letter-spacing: -0.02em;
+}
+.acct-status {
   display: inline-block;
-  padding: 5px 12px;
-  border-radius: 18px;
+  padding: 5px 11px;
+  border-radius: 2px;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 10.5px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
-@media (max-width: 900px) {
-  .profile-page .profile-grid {
-    grid-template-columns: 1fr !important;
+
+.acct-line-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.acct-line-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(26, 21, 19, 0.06);
+  min-width: 0;
+}
+.acct-line-item:last-child {
+  border-bottom: none;
+}
+.acct-line-thumb {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #f4f0e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .acct-nav {
+    margin-bottom: 28px;
   }
-  .profile-page .profile-grid aside {
-    position: static !important;
+  .acct-nav-signout {
+    margin-left: 0;
+    width: 100%;
+    border-top: 1px solid rgba(26, 21, 19, 0.08);
+    margin-top: 4px;
+    padding-top: 4px;
+  }
+  .acct-order-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .acct-order-side {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    width: 100%;
+  }
+  .acct-order-summary {
+    -webkit-line-clamp: 3;
   }
 }
 
