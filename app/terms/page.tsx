@@ -5,7 +5,8 @@ import PageHero from "@/components/site/PageHero";
 import { Section, IndexLabel } from "@/components/site/Section";
 
 export const metadata: Metadata = {
-  title: "Terms of Service · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/terms" },
+  title: "Terms of Service",
   description:
     "The terms under which you may use the Vimtra Chennai Lions GC website, create an account, and purchase official merchandise.",
 };

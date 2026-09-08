@@ -1,12 +1,46 @@
 /**
  * Vimtra Chennai Lions GC — Season 2026 roster.
  *
- * Every fact in this file is sourced from the official Chennai Lions IGPL
- * brochure (Season 2026, "The Roster" and per-player pages). No external or
- * anecdotal facts are included. If a claim is not in the brochure it does
- * not appear here.
+ * SOURCE PRECEDENCE (see DATA INTEGRITY in CLAUDE.md, and the content-audit
+ * decision recorded below).
  *
- * Sources per player are listed in the leading comment of each entry.
+ *   1. OFFICIAL IGPL — `GET https://bknd.theigpl.com/api/players`, the
+ *      league's own player records. This is the primary source for every
+ *      career statistic, ranking, win count and honour on this page.
+ *   2. Chennai Lions IGPL brochure (Season 2026, pp. 06–10) — used for
+ *      franchise framing (squad numbers, marquee/pro designation) and for
+ *      facts the league record does not carry and does not contradict.
+ *
+ * WHY THE ORDER CHANGED. This file previously took every player fact from
+ * the brochure. Checked against the league's own records in September 2026,
+ * several of those facts are out of date or contradicted:
+ *
+ *   · Bhullar — brochure "25 career professional wins ... eleven Asian Tour
+ *     titles"; IGPL records 28 wins and 12 Asian Tour victories.
+ *   · Bhullar — brochure calls the 2018 Fiji International a DP World Tour
+ *     victory; IGPL records it as the first Indian win on the PGA Tour of
+ *     Australasia.
+ *   · Bhullar — brochure home city Amritsar; IGPL records Chandigarh.
+ *   · Sethie — brochure dates the Coimbatore Open win to 2023 and cites a
+ *     rise to 11th on the PGTI standings; IGPL dates the win to 2022 and
+ *     records him at #28 on the IGPL Order of Merit. The brochure's
+ *     ₹1 crore purse and PGTI-rank detail were both tied to "his 2023
+ *     season", so they are not carried over against a contradicted year.
+ *   · Dwivedi — the brochure's "OWGR-ranked" and "T4 at 7-under, 2025 IGPL"
+ *     appear nowhere in the league record. IGPL instead documents a 2023
+ *     Dialogue Sri Lanka Open win and a substantial amateur record, which is
+ *     what is carried here.
+ *   · Yashas Chandra M S — the brochure's "75–68 at the Bharath Classic" and
+ *     "contending at IGPL Chandigarh" are not in the league record; IGPL
+ *     documents National Games gold (2023) and the national amateur team.
+ *
+ * Every conflict above is reported rather than silently reconciled. Nothing
+ * in this file is written from general knowledge: if neither source states
+ * it, it does not appear.
+ *
+ * The four names and the roster size are confirmed by BOTH sources — all
+ * four appear in the official IGPL player list, and the Chennai franchise is
+ * `che` / "Vimtra Ventures" in the official franchise list.
  */
 
 export interface RosterPlayer {
@@ -20,7 +54,7 @@ export interface RosterPlayer {
 }
 
 export const ROSTER: RosterPlayer[] = [
-  // Brochure p. 06 & p. 07 — Marquee.
+  // Marquee designation: brochure p. 06. Statistics: official IGPL record.
   {
     init: "GB",
     anchor: "bhullar",
@@ -28,37 +62,34 @@ export const ROSTER: RosterPlayer[] = [
     badgeName: "Gaganjeet Bhullar",
     badgeSub: "Marquee · #01",
     fullName: "Gaganjeet Bhullar",
-    blurb: "25 pro wins · 11 Asian Tour titles · Paris 2024 Olympics",
+    blurb: "28 pro wins · 12 Asian Tour titles · 3× IGPL winner, 2025",
   },
-  // Brochure p. 06 & p. 08.
   {
     init: "HS",
     anchor: "sethie",
     image: "/players/harshjeet-singh-sethie-web.jpg",
     badgeName: "Harshjeet Singh Sethie",
-    badgeSub: "Pro · Delhi GC",
+    badgeSub: "Pro · Delhi",
     fullName: "Harshjeet Singh Sethie",
-    blurb: "6'7\" · Coimbatore Open 2023 winner · PGTI 11th post-win",
+    blurb: "6'7\" · Coimbatore Open winner · India No. 1 Amateur, 2019",
   },
-  // Brochure p. 06 & p. 09.
   {
     init: "SD",
     anchor: "dwivedi",
     image: "/players/samarth-dwivedi-web.jpg",
     badgeName: "Samarth Dwivedi",
-    badgeSub: "Pro · PGTI / IGPL",
+    badgeSub: "Pro · Gurugram",
     fullName: "Samarth Dwivedi",
-    blurb: "OWGR-ranked · T4 at 7-under, 2025 IGPL",
+    blurb: "Sri Lanka Open winner, 2023 · three course records",
   },
-  // Brochure p. 06 & p. 10.
   {
     init: "YC",
     anchor: "yashas",
     image: "/players/yashas-chandra-web.jpg",
     badgeName: "Yashas Chandra M S",
-    badgeSub: "Pro · Active IGPL",
+    badgeSub: "Pro · Mysore",
     fullName: "Yashas Chandra M S",
-    blurb: "75-68 at IGPL Bharath Classic · In contention at IGPL Chandigarh",
+    blurb: "National Games gold, 2023 · Indian national amateur team",
   },
 ];
 
@@ -95,25 +126,35 @@ export const FEATURES: PlayerFeature[] = [
     image: "/players/gaganjeet-bhullar-web.jpg",
     badgeName: "Gaganjeet Bhullar",
     badgeSub: "Marquee · Asian Tour",
+    // Squad position and marquee designation: brochure p. 06.
     eyebrow: "Marquee Player · #01",
     name: "Gaganjeet Bhullar",
-    // Brochure p. 07 — Amritsar, born 27 April 1988, 6'1".
-    meta: "Born 27 April 1988 · Amritsar · 6 ft 1 in",
+    // City and age: official IGPL record (Chandigarh, 37, turned pro 2006).
+    meta: "Chandigarh · Turned professional 2006",
     paragraphs: [
-      // All facts below are from the brochure p. 07.
-      "Bhullar turned professional in 2006. His ledger runs to <strong>25 career professional wins</strong>, including <strong>eleven Asian Tour titles</strong> — one of the most successful Indian records in the tour's modern era.",
-      "His career-high <strong>Official World Golf Ranking of 85</strong> came in March 2013, and he was honoured with the <strong>Arjuna Award</strong> the same year. His DP World Tour victory arrived at the <strong>2018 Fiji International</strong>.",
-      "He represented India at the <strong>Paris 2024 Olympic Games</strong> — the marquee arrival the Lions were built to be led by.",
+      // Official IGPL player record.
+      "India's most prolific international winner, with <strong>28 professional wins</strong> and <strong>twelve Asian Tour victories</strong>. He won the Asian Tour Order of Merit in 2009 and finished as high as fourth in 2018.",
+      "The first Indian to win on the <strong>PGA Tour of Australasia</strong>, at the 2018 Fiji International, and the holder of a career-best world ranking of <strong>85</strong>. He received the <strong>Arjuna Award</strong> in 2013.",
+      // Official IGPL player record; the Olympic appearance is brochure p. 07.
+      "He represented India at the <strong>2006 Asian Games</strong>, taking silver, and at the 2018 World Cup of Golf, and won <strong>three IGPL events in 2025</strong>. The brochure that announced this roster also records his appearance at the Paris 2024 Olympic Games.",
     ],
     stats: [
-      { v: "25", l: "Pro Wins" },
-      { v: "11", l: "Asian Tour Titles" },
-      { v: "85", l: "Career-High OWGR" },
-      { v: "'13", l: "Arjuna Award" },
+      { v: "28", l: "Pro Wins" },
+      { v: "12", l: "Asian Tour Titles" },
+      { v: "85", l: "Career-Best World Rank" },
+      { v: "3", l: "IGPL Wins, 2025" },
     ],
     sideCards: [
-      { label: "Signature Win", title: "2018 Fiji International", sub: "DP World Tour victory." },
-      { label: "Olympian", title: "Paris 2024", sub: "Representing India at the Olympic Games." },
+      {
+        label: "Honour",
+        title: "Arjuna Award, 2013",
+        sub: "India's national award for outstanding sporting achievement.",
+      },
+      {
+        label: "First",
+        title: "Fiji International, 2018",
+        sub: "First Indian to win on the PGA Tour of Australasia.",
+      },
     ],
     bg: "#FBF9F4",
     topBorder: true,
@@ -123,24 +164,33 @@ export const FEATURES: PlayerFeature[] = [
     init: "HS",
     image: "/players/harshjeet-singh-sethie-web.jpg",
     badgeName: "Harshjeet Singh Sethie",
-    badgeSub: "Pro · Delhi GC",
+    badgeSub: "Pro · Delhi",
     eyebrow: "Pro · #02",
     name: "Harshjeet Singh Sethie",
-    // Brochure p. 08 — Delhi Golf Club, 6'7", 2023 Coimbatore Open winner.
-    meta: "Delhi Golf Club · 6 ft 7 in",
+    // Official IGPL record: Delhi, age 23, turned professional 2020.
+    meta: "Delhi · 6 ft 7 in · Turned professional 2020",
     paragraphs: [
-      // All facts below are from the brochure p. 08.
-      "A Delhi Golf Club product with one of the most distinctive silhouettes on the domestic tour. At <strong>six feet seven inches</strong>, the gallery learns to find him on the practice tee before he ever reaches the first box.",
-      "His 2023 season delivered the breakthrough — a <strong>playoff victory at the Coimbatore Open against Om Prakash Chouhan</strong>, worth <strong>₹1 crore</strong>. The win lifted him <strong>from 81st to 11th on the PGTI standings</strong> in a single week.",
+      // Official IGPL player record.
+      "At <strong>six feet seven inches</strong> he is one of the tallest professionals on tour, and he was <strong>India's No. 1 Junior</strong> at both IGU Sub-Junior and Junior level.",
+      "He won <strong>four IGU amateur tournaments in 2019</strong> to finish the year as <strong>India's No. 1 Amateur</strong>, and has represented India internationally since 2009 — in Scotland, Ireland, South Africa, Thailand, Singapore and Australia.",
     ],
     stats: [
       { v: "6'7\"", l: "Height" },
-      { v: "'23", l: "Coimbatore Open" },
-      { v: "11", l: "PGTI Rank Post-Win" },
-      { v: "DGC", l: "Home Club" },
+      { v: "No. 1", l: "India Amateur, 2019" },
+      { v: "28", l: "IGPL Order of Merit" },
+      { v: "2020", l: "Turned Professional" },
     ],
     sideCards: [
-      { label: "Signature Moment", title: "Coimbatore Open, 2023", sub: "Playoff win over Om Prakash Chouhan." },
+      {
+        label: "Signature Win",
+        title: "Coimbatore Open",
+        sub: "His first professional title. The league record dates the win to 2022; the franchise brochure dates it to 2023.",
+      },
+      {
+        label: "International",
+        title: "Asia Pacific Amateur, 2019",
+        sub: "Representing India since the age of eleven.",
+      },
     ],
     reverse: true,
     bg: "#F4F0E8",
@@ -150,19 +200,28 @@ export const FEATURES: PlayerFeature[] = [
     init: "SD",
     image: "/players/samarth-dwivedi-web.jpg",
     badgeName: "Samarth Dwivedi",
-    badgeSub: "Pro · PGTI / IGPL",
+    badgeSub: "Pro · Gurugram",
     eyebrow: "Pro · #03",
     name: "Samarth Dwivedi",
+    // Official IGPL record: Gurugram, age 32, turned professional 2016.
+    meta: "Gurugram · Turned professional 2016",
     paragraphs: [
-      // All facts below are from the brochure p. 09.
-      "A working touring professional in both the <strong>PGTI</strong> and <strong>IGPL</strong> circuits, and one of the small group of Indian players currently carrying an <strong>Official World Golf Ranking</strong>.",
-      "His <strong>2025 IGPL campaign</strong> included a <strong>T4 finish at 7-under</strong> — the kind of every-week competitiveness that a franchise leans on across a fifteen-event season.",
+      // Official IGPL player record.
+      "Winner of the <strong>2023 Dialogue Sri Lanka Open</strong>, and <strong>India's No. 1 Amateur</strong> from January to August 2015 on the back of <strong>seven national IGU event wins</strong>.",
+      "He was part of India's <strong>2014 Asian Games</strong> contingent in Korea and represented Asia-Pacific in the <strong>2016 Bonallack Trophy</strong>. He holds the course record at Pune Golf Club, Royal Colombo Golf Club and Damai Indah Golf Club.",
     ],
     stats: [
-      { v: "PGTI", l: "Active Circuit" },
-      { v: "IGPL", l: "Active Circuit" },
-      { v: "T4", l: "2025 IGPL Best" },
-      { v: "OWGR", l: "Ranked" },
+      { v: "'23", l: "Sri Lanka Open" },
+      { v: "7", l: "National IGU Wins" },
+      { v: "3", l: "Course Records" },
+      { v: "'14", l: "Asian Games" },
+    ],
+    sideCards: [
+      {
+        label: "Signature Win",
+        title: "Dialogue Sri Lanka Open, 2023",
+        sub: "His first professional title on the international circuit.",
+      },
     ],
     bg: "#FBF9F4",
     topBorder: true,
@@ -172,17 +231,28 @@ export const FEATURES: PlayerFeature[] = [
     init: "YC",
     image: "/players/yashas-chandra-web.jpg",
     badgeName: "Yashas Chandra M S",
-    badgeSub: "Pro · Active IGPL",
+    badgeSub: "Pro · Mysore",
     eyebrow: "Pro · #04",
     name: "Yashas Chandra M S",
+    // Official IGPL record: Mysore, age 30, turned professional 2018.
+    meta: "Mysore · Turned professional 2018",
     paragraphs: [
-      // All facts below are from the brochure p. 10.
-      "A regular on the IGPL competition circuit. Recent showings include a <strong>75-68 opening at the IGPL Bharath Classic</strong> and a <strong>contending week at IGPL Chandigarh</strong>.",
-      "A player still writing his own story — and one of the reasons the Lions roster is built to grow through the season, not just start on top.",
+      // Official IGPL player record.
+      "<strong>National Games gold medallist in 2023</strong> in the individual event for Karnataka, and <strong>Emerging Player of the Year in 2018</strong>.",
+      "He was part of the <strong>Indian national amateur team from 2015 to 2018</strong> and has represented India at the Asia Pacific Amateur, the South African Amateur and the British Amateur championships.",
     ],
     stats: [
-      { v: "75-68", l: "IGPL Bharath Classic" },
-      { v: "IGPL", l: "Active Circuit" },
+      { v: "'23", l: "National Games Gold" },
+      { v: "'18", l: "Emerging Player" },
+      { v: "4 yrs", l: "National Amateur Team" },
+      { v: "2018", l: "Turned Professional" },
+    ],
+    sideCards: [
+      {
+        label: "Honour",
+        title: "National Games gold, 2023",
+        sub: "Individual event, representing Karnataka.",
+      },
     ],
     bg: "#F4F0E8",
   },

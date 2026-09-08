@@ -7061,25 +7061,28 @@ a:hover .hp-arrow {
   .vv-firm-b { grid-column: 8 / span 5; align-self: end; }
 }
 
-/* Credentials — a ruled field, not a band of cards. */
+/* Credentials — a ruled field, not a band of cards.
+
+   The divider is a per-cell TOP rule rather than `div + div {
+   border-left }`. The field carries five credentials as of the Sept 2026
+   content audit, so at most widths it wraps; a left rule strands a stray
+   vertical edge at the start of every wrapped row, while a top rule
+   re-registers correctly however the cells fall. Same fix as `.iv-market`. */
 .vv-creds {
   margin: var(--sp-4) 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
   column-gap: var(--sp-5);
-  border-top: 1px solid var(--v-hair-ivory);
+  border-bottom: 1px solid var(--v-hair-ivory);
 }
 @media (min-width: 768px) {
-  .vv-creds { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--sp-6); }
+  .vv-creds { column-gap: var(--sp-6); }
 }
 .vv-creds > div {
   padding: var(--sp-5) 0;
-  border-bottom: 1px solid var(--v-hair-ivory);
+  border-top: 1px solid var(--v-hair-ivory);
   min-width: 0;
-}
-@media (min-width: 768px) {
-  .vv-creds > div + div { padding-left: var(--sp-6); border-left: 1px solid var(--v-hair-ivory); }
 }
 .vv-creds dt {
   font-family: var(--font-sora), sans-serif;
@@ -9506,11 +9509,16 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 @media (min-width: 768px) {
-  .iv-market { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .iv-market > div + div {
-    padding-left: var(--sp-6);
-    border-left: 1px solid var(--v-hair-ivory);
+  /* auto-fit, not a fixed three: the rail carried three figures until the
+     content audit added two more from the PGA brochure, and a hard-coded
+     track left the fourth and fifth stranded on a row of their own. The
+     divider moved from a left border to a top rule at the same time — with
+     wrapping, `div + div { border-left }` drew a stray edge on the first
+     cell of every new row. */
+  .iv-market {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
   }
+  .iv-market > div { border-top: 1px solid var(--v-hair-ivory); }
 }
 @media (min-width: 1024px) {
   .iv-thesis-h { grid-column: 1 / span 7; }
@@ -9711,4 +9719,3469 @@ a:hover .hp-arrow {
 
 @media (prefers-reduced-motion: reduce) {
   .iv-model-f .gd-fig img { transform: none; }
+}
+
+/* ============================================================
+   SHOP — hero, discovery rail, catalogue grid
+   ------------------------------------------------------------
+   Scoped entirely to `.sp-*`. Nothing in this block touches the
+   store classes the cart, checkout and product-detail pages use
+   (`.product`, `.img-card`, `.shop-catalog`, `.add-btn`), which
+   are left exactly as they were — /shop is the only page being
+   redesigned here.
+
+   The one shared class this block reaches into is `.add-btn`, and
+   only via `.sp-add`, a modifier that exists nowhere else.
+============================================================ */
+
+/* ---- 1 · Hero -------------------------------------------- */
+/* Compact by design. `.cm-hero` reserves 84svh for one word; the
+   store has a catalogue to show, so the opener states the page and
+   hands over. Header height is reserved here because /shop is in
+   FLOATING_HEADER_ROUTES. */
+.sp-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--v-ink);
+  color: var(--v-ivory);
+  padding: calc(76px + var(--sp-7)) 0 var(--sp-7);
+}
+@media (min-width: 768px) {
+  .sp-hero { padding: calc(92px + var(--sp-8)) 0 var(--sp-8); }
+}
+
+/* Brand-only aurora, low alpha, slow — the same device the club
+   module uses, at the same values. */
+.sp-hero-aurora {
+  position: absolute;
+  inset: -28% -16%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 52% at 8% 84%, rgba(189, 34, 39, 0.44), transparent 68%),
+    radial-gradient(36% 44% at 92% 10%, rgba(184, 144, 75, 0.26), transparent 70%),
+    radial-gradient(50% 46% at 68% 98%, rgba(94, 17, 20, 0.4), transparent 74%);
+  filter: blur(56px);
+  mix-blend-mode: screen;
+  animation: cm-aurora 38s var(--ease-io) infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp-hero-aurora { animation: none; }
+}
+
+.sp-hero-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-7);
+  align-items: end;
+}
+@media (min-width: 1024px) {
+  .sp-hero-inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+    column-gap: var(--sp-8);
+  }
+}
+.sp-hero-head { min-width: 0; }
+.sp-hero-title {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  /* Deliberately below `.cm-hero-title`'s 13.2vw: this hero shares the
+     frame with the display case, so the word is a masthead, not the
+     whole picture. */
+  font-size: clamp(52px, 9.4vw, 132px);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  color: var(--v-ivory);
+}
+.sp-hero-line {
+  margin: var(--sp-5) 0 0;
+  max-width: 44ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(15px, 1.25vw, 17.5px);
+  line-height: 1.66;
+  color: rgba(245, 239, 228, 0.82);
+}
+
+/* Counted facts only — product rows, distinct categories, lowest
+   listed price. See the note in ShopHero.tsx. */
+.sp-hero-rail {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: var(--sp-6) 0 0;
+  border-top: 1px solid var(--v-hair-ink);
+}
+.sp-hero-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-4) 0 0;
+}
+@media (min-width: 768px) {
+  .sp-hero-cell { padding: var(--sp-5) var(--sp-5) 0 0; }
+}
+.sp-hero-cell dt {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v-gold);
+}
+.sp-hero-cell dd {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(17px, 1.7vw, 23px);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--v-ivory);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The display case. Real catalogue rows, in catalogue order, each a
+   link to its own product page — the store's own goods carry the
+   hero instead of a borrowed course photograph. */
+.sp-hero-case { min-width: 0; }
+.sp-hero-case-k {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0 0 var(--sp-4);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: rgba(245, 239, 228, 0.56);
+}
+.sp-hero-case-k::before {
+  content: "";
+  width: 32px;
+  height: 1px;
+  background: var(--v-gold);
+  flex: none;
+}
+.sp-hero-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* A cascade rather than three tiles in a straight rank — the second and
+   third step down, so the case reads as a composition. Only from 768px:
+   at phone width the offset would eat the frame's foot. */
+@media (min-width: 768px) {
+  .sp-hero-tiles { gap: var(--sp-4); }
+  .sp-hero-tiles > li:nth-child(2) { transform: translateY(18px); }
+  .sp-hero-tiles > li:nth-child(3) { transform: translateY(36px); }
+  .sp-hero-case { padding-bottom: 36px; }
+}
+/* While the case sits UNDER the type rather than beside it, the tiles are
+   capped: at tablet width three full-bleed squares pushed the opener past
+   880px, which is the tall empty band this hero exists to avoid. */
+@media (max-width: 1023px) {
+  .sp-hero-tiles { max-width: 460px; }
+}
+.sp-hero-tiles > li { display: flex; min-width: 0; }
+.sp-hero-tile {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+.sp-hero-tile-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid rgba(245, 239, 228, 0.18);
+  background: linear-gradient(168deg, var(--v-ivory-2), #ece5d8);
+  transition: border-color var(--mo-fast) var(--hp-e),
+    box-shadow var(--mo-mid) var(--hp-e);
+}
+.sp-hero-tile-img {
+  object-fit: contain;
+  padding: 6%;
+  transition: transform var(--mo-mid) var(--hp-e);
+}
+.sp-hero-tile-img.is-mark { padding: 22%; }
+.sp-hero-tile:hover .sp-hero-tile-frame,
+.sp-hero-tile:focus-visible .sp-hero-tile-frame {
+  border-color: var(--v-gold);
+  box-shadow: var(--v-lift-sm);
+}
+.sp-hero-tile:hover .sp-hero-tile-img { transform: scale(1.04); }
+.sp-hero-tile-name {
+  /* Two lines maximum: a long name must not push one tile's price out of
+     line with the other two. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(11px, 0.9vw, 13px);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--v-ivory);
+}
+.sp-hero-tile-price {
+  display: block;
+  /* Sits on the foot of the tile so the three prices share a baseline
+     however the names above them wrap. */
+  margin-top: auto;
+  padding-top: 3px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--v-gold-lit);
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp-hero-tile-img { transition: none; }
+  .sp-hero-tile:hover .sp-hero-tile-img { transform: none; }
+}
+
+/* ---- 2 · Catalogue section ------------------------------- */
+.sp-sec { padding: var(--sp-7) 0 var(--sp-9); }
+@media (min-width: 768px) {
+  .sp-sec { padding: var(--sp-8) 0 var(--sp-10); }
+}
+
+/* ---- 3 · Discovery rail ---------------------------------- */
+/* Ruled, not chrome: hairlines and micro-caps labels, the same
+   language the fixtures and standings rails use. No pills, no drop
+   shadows, no filter panel. */
+.sp-bar {
+  border-top: 1px solid var(--hp-hair);
+  margin-bottom: var(--sp-7);
+}
+.sp-bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  padding: var(--sp-5) 0;
+}
+@media (min-width: 720px) {
+  .sp-bar-row {
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 264px);
+    gap: var(--sp-6);
+    align-items: end;
+  }
+}
+.sp-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+.sp-field-k {
+  margin: 0 !important;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--hp-muted);
+  line-height: 1.2 !important;
+}
+.sp-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  /* 52 so the 44px clear control inside it keeps a full touch target. */
+  min-height: 52px;
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--hp-hair);
+  border-radius: 2px;
+  background: var(--hp-ivory-2);
+  transition: border-color var(--mo-fast) var(--hp-e),
+    box-shadow var(--mo-fast) var(--hp-e);
+}
+.sp-input:focus-within {
+  border-color: var(--hp-red);
+  box-shadow: inset 0 -2px 0 0 var(--hp-red);
+}
+.sp-input-ico { flex: none; color: var(--hp-muted); }
+.sp-input-el {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--hp-ink);
+  padding: 13px 0;
+}
+/* 0.85 rather than a lighter grey: the placeholder is text, so it is held
+   to the same AA contrast as everything else on the ivory ground. */
+.sp-input-el::placeholder { color: rgba(78, 72, 66, 0.85); }
+/* The native search decorations sit at odds with the rail's own clear
+   control, which is keyboard-reachable and labelled. */
+.sp-input-el::-webkit-search-decoration,
+.sp-input-el::-webkit-search-cancel-button,
+.sp-input-el::-webkit-search-results-button { -webkit-appearance: none; }
+.sp-input-clear {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(14, 11, 10, 0.06);
+  color: var(--hp-ink);
+  cursor: pointer;
+  transition: background var(--mo-fast) var(--hp-e), color var(--mo-fast) var(--hp-e);
+}
+.sp-input-clear:hover { background: var(--hp-red); color: var(--hp-ivory); }
+
+.sp-input-select { padding-right: 0; }
+.sp-select-el {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--hp-ink);
+  padding: 13px 40px 13px 0;
+  cursor: pointer;
+}
+.sp-select-caret {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin-top: -6px;
+  border-right: 1.5px solid var(--hp-ink);
+  border-bottom: 1.5px solid var(--hp-ink);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+/* Category rail. Text, a count and an underline — the active state is a
+   rule, not a filled chip. Scrolls horizontally on narrow screens rather
+   than wrapping into a block of buttons. */
+.sp-cats {
+  display: flex;
+  gap: var(--sp-5);
+  padding: 0 0 var(--sp-3);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.sp-cats::-webkit-scrollbar { display: none; }
+/* Below that width the rail scrolls, and the last item fades at the edge
+   so it reads as "there is more" rather than as a clipped label. */
+.sp-cats {
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 28px), transparent 100%);
+}
+@media (min-width: 720px) {
+  /* From the width the grid goes three-up there is room for the whole set
+     on one or two rows, so it wraps instead of hiding items behind a
+     scroll with no affordance. */
+  .sp-cats {
+    flex-wrap: wrap;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+.sp-cat {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  min-height: 44px;
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+  color: var(--hp-muted);
+  white-space: nowrap;
+  transition: color var(--mo-fast) var(--hp-e);
+}
+.sp-cat::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  height: 2px;
+  background: var(--hp-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--mo-fast) var(--hp-e);
+}
+.sp-cat:hover { color: var(--hp-ink); }
+.sp-cat.is-on { color: var(--hp-ink); }
+.sp-cat.is-on::after { transform: scaleX(1); }
+/* The count is text, so it takes a colour that clears AA on ivory — gold
+   measures 2.6:1 here and was failing. The accent moves to the selected
+   state, where crimson carries it at 5.4:1. */
+.sp-cat-n {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--hp-muted);
+  font-variant-numeric: tabular-nums;
+}
+.sp-cat.is-on .sp-cat-n { color: var(--hp-red); }
+
+.sp-bar-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--hp-hair);
+}
+.sp-count {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+}
+.sp-count-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--hp-ink);
+  font-variant-numeric: tabular-nums;
+}
+.sp-count-l {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--hp-muted);
+}
+.sp-reset {
+  min-height: 44px;
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--hp-red);
+  border-bottom: 1px solid rgba(189, 34, 39, 0.35);
+  transition: color var(--mo-fast) var(--hp-e), border-color var(--mo-fast) var(--hp-e);
+}
+.sp-reset:hover { color: var(--hp-ink); border-bottom-color: var(--hp-ink); }
+
+/* ---- 4 · Catalogue grid ---------------------------------- */
+/* Two up on phones, three from 720, four from 1280. The card keeps its
+   proportion between them — only how many share the row changes — so
+   image presence stays constant across breakpoints. */
+.sp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-6);
+}
+@media (min-width: 560px) {
+  .sp-grid { column-gap: var(--sp-5); row-gap: var(--sp-7); }
+}
+@media (min-width: 720px) {
+  .sp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1280px) {
+  .sp-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    row-gap: var(--sp-8);
+  }
+}
+
+/* No entrance animation on the grid. The house rule is that content is
+   never hidden by CSS alone (see the note on the GSAP primitives), and a
+   grid that re-sorts and re-filters under the reader's hands would have to
+   choose between replaying that animation on every keystroke or leaving
+   half its cards behind. The cards are simply there; the motion budget for
+   this page is spent on the hero. */
+.sp-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.sp-card-link {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+.sp-card-link:focus-visible { outline-offset: 4px; }
+
+/* One well, one ratio, contain-fitted — see the framing note in
+   ShopProductCard.tsx. The mat is warm paper so the light grounds most
+   of the photography is shot on sit inside it rather than against it. */
+.sp-card-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--hp-hair);
+  border-radius: 2px;
+  background:
+    radial-gradient(120% 90% at 50% 8%, #ffffff 0%, var(--hp-ivory-2) 46%, #ece5d8 100%);
+  transition: border-color var(--mo-mid) var(--hp-e),
+    box-shadow var(--mo-mid) var(--hp-e);
+}
+/* A hairline gold rule wipes across the top of the well on hover — the
+   brand touch the old card applied as a permanent foil corner over
+   every photograph. */
+.sp-card-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, var(--hp-gold-lt), var(--hp-gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--mo-mid) var(--hp-e);
+}
+.sp-card-img {
+  object-fit: contain;
+  padding: 7%;
+  transition: transform var(--mo-slow) var(--hp-e);
+}
+.sp-card-img.is-mark { padding: 24%; opacity: 0.9; }
+.sp-card:hover .sp-card-frame,
+.sp-card-link:focus-visible .sp-card-frame {
+  border-color: rgba(189, 34, 39, 0.32);
+  box-shadow: var(--v-lift-sm);
+}
+.sp-card:hover .sp-card-frame::after { transform: scaleX(1); }
+.sp-card:hover .sp-card-img { transform: scale(1.045); }
+@media (prefers-reduced-motion: reduce) {
+  .sp-card-img { transition: none; }
+  .sp-card:hover .sp-card-img { transform: none; }
+}
+
+/* Stock is the only overlay allowed, and only when the row says
+   something. No sale flags, no "new", no rating — no source for any of
+   them. */
+.sp-card-flag {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 7px 11px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--hp-red);
+  color: var(--hp-ivory);
+}
+.sp-card-flag.is-out { background: var(--hp-ink); }
+.sp-card.is-out .sp-card-img { opacity: 0.5; filter: saturate(0.55); }
+
+.sp-card-meta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: var(--sp-4) 0 0;
+  min-width: 0;
+}
+.sp-card-cat {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--hp-muted);
+}
+.sp-card-name {
+  margin: 7px 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(13px, 1.05vw, 15.5px);
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+  color: var(--hp-ink);
+  /* Two lines maximum, so every price in the row lands on the same
+     baseline whatever the name length. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color var(--mo-fast) var(--hp-e);
+}
+.sp-card:hover .sp-card-name { color: var(--hp-red); }
+.sp-card-price {
+  /* Pushed to the foot of the text block — the alignment device that
+     keeps a row of prices reading as one line. */
+  margin-top: auto;
+  padding-top: var(--sp-3);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(15px, 1.25vw, 18px);
+  letter-spacing: -0.02em;
+  color: var(--hp-ink);
+  font-variant-numeric: tabular-nums;
+}
+.sp-card-act { padding-top: var(--sp-3); }
+
+/* Squared, full-width, ink — the pill shape belonged to the old card.
+   Everything else about the control (state, labels, disabled logic) is
+   AddToCartButton's, untouched. */
+.add-btn.sp-add {
+  width: 100%;
+  border-radius: 2px;
+  padding: 13px 14px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---- 5 · Empty state ------------------------------------- */
+/* Branded and honest: it says what was searched and offers the way
+   back. No recommendations, no substitute products. */
+.sp-empty {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--hp-hair);
+  border-radius: 2px;
+  background: var(--hp-ivory-2);
+  padding: var(--sp-7) var(--sp-5);
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .sp-empty { padding: var(--sp-9) var(--sp-7); }
+}
+.sp-empty::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--hp-red), var(--hp-gold));
+}
+.sp-empty-k {
+  margin: 0 0 var(--sp-4);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--hp-red);
+}
+.sp-empty-t {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 3.4vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: var(--hp-ink);
+}
+.sp-empty-b {
+  margin: var(--sp-4) auto 0;
+  max-width: 52ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--hp-muted);
+  overflow-wrap: anywhere;
+}
+.sp-empty-a {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-6);
+}
+
+/* ============================================================
+   SECTION REDESIGNS — eight art-directed compositions
+   ------------------------------------------------------------
+   One brand system, eight deliberately different shapes. Each
+   block below is scoped to its own prefix and none of them
+   redefines a shared token, a shared layout class or anything
+   belonging to /shop, /cart, /checkout or the admin surface.
+
+     cl-id-*   The Club        · Identity        horizontal ink plate, bleeds right
+     pr-city-* The Pride       · The City        full-height photographic column
+     plr-*     Players         · Roster          rank of four + dossier
+     gdf-*     Golf Dev        · The Framework   governing spine + tall frame
+     vv-hero-* Vimtra Ventures · Hero            dissolved image plate on ink
+     vv-principal-* …          · Leadership      crossing name plates
+     vv-minute / vv-wall …     · Governance      minute panel + type field
+     ss-scale-* Fixtures       · Season scale    data-driven season track
+     pt-ladder/pt-lead/pt-rung Partners · Tiers   scale ladder with one image
+     iv-chain / iv-ring        Invest  · Franchise nested containment diagram
+
+   Every one of them sits on the existing `.cm-track` / `.hp-wrap`
+   grid, so heading edges, image edges and gutters stay on the
+   same vertical lines as the rest of the site.
+============================================================ */
+
+/* ============================================================
+   1 · THE CLUB — IDENTITY
+   The display line steps in across three masked lines while an
+   ink plate carrying the franchise's own crest holds the right
+   of the frame and bleeds off the page edge. No photograph:
+   the section is about the mark, so the mark is the image.
+============================================================ */
+.cl-id-sec { overflow: hidden; }
+.cl-id { row-gap: var(--sp-6); }
+.cl-id > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+
+.cl-id-plate {
+  grid-column: 1 / -1;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(148deg, var(--v-ink-2, #16110f), var(--v-ink));
+  border-top: 2px solid var(--v-red);
+  min-height: clamp(190px, 46vw, 260px);
+  /* Bleeds through the container gutter to the page edge. */
+  margin-right: -20px;
+}
+@media (min-width: 768px) { .cl-id-plate { margin-right: -40px; } }
+@media (min-width: 1280px) { .cl-id-plate { margin-right: -64px; } }
+@media (min-width: 1600px) { .cl-id-plate { margin-right: -80px; } }
+.cl-id-crest {
+  position: absolute;
+  top: 50%;
+  right: -8%;
+  width: min(62%, 300px);
+  aspect-ratio: 1000 / 1117;
+  transform: translateY(-50%);
+  opacity: 0.96;
+}
+.cl-id-crest img { object-fit: contain; }
+
+.cl-id-h {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(36px, 7.4vw, 104px);
+  line-height: 0.94;
+  letter-spacing: -0.046em;
+  color: var(--v-ink);
+}
+.cl-id-h em {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--v-red);
+}
+/* The step is the idea: each line starts further in than the one above,
+   so the statement walks across the frame instead of stacking flush. */
+.cl-id-h .mq-line.is-step-1 { padding-left: 5%; }
+.cl-id-h .mq-line.is-step-2 { padding-left: 11%; }
+
+.cl-id-cols {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+}
+.cl-id-col { border-top: 1px solid var(--v-hair-ivory); padding-top: var(--sp-4); }
+.cl-id-col p {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+@media (min-width: 768px) {
+  .cl-id-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-6); }
+}
+@media (min-width: 1024px) {
+  .cl-id { row-gap: var(--sp-7); align-items: start; }
+  .cl-id > .hp-index { grid-row: 1; }
+  .cl-id-h { grid-column: 1 / span 8; grid-row: 2; }
+  .cl-id-cols { grid-column: 1 / span 8; grid-row: 3; }
+  /* Spans both content rows, so the plate is as tall as the statement
+     and its supporting columns together. */
+  /* `align-items: start` on the track would collapse this to its own
+     (zero) content height — the crest inside it is absolutely positioned —
+     so the plate opts back into stretching over both content rows. */
+  .cl-id-plate {
+    grid-column: 9 / -1;
+    grid-row: 2 / span 2;
+    align-self: stretch;
+    min-height: 420px;
+  }
+  .cl-id-crest { width: min(96%, 380px); right: -14%; }
+}
+
+/* ============================================================
+   2 · THE PRIDE — THE CITY
+   Deliberately the opposite axis to The Club's plate: one tall
+   photographic column runs the section's FULL height, top edge
+   to bottom edge, under its own padding, and the type is set
+   against it. The serif counterweight then crosses beneath both.
+============================================================ */
+.pr-city-sec { overflow: hidden; }
+.pr-city { row-gap: var(--sp-6); }
+.pr-city > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+
+.pr-city-col {
+  position: relative;
+  grid-column: 1 / -1;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--v-ink);
+  border: 1px solid var(--v-hair-ivory);
+}
+.pr-city-col img { object-fit: cover; }
+
+.pr-city-h { grid-column: 1 / -1; }
+.pr-city-h .hp-section-title { font-size: clamp(32px, 6.2vw, 84px); }
+.pr-city-body { grid-column: 1 / -1; }
+.pr-city-body p {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+  max-width: 52ch;
+}
+.pr-city-body .hp-btn-text { margin-top: var(--sp-4); }
+.pr-city-pull {
+  grid-column: 1 / -1;
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+
+@media (min-width: 768px) {
+  .pr-city-col { aspect-ratio: 16 / 9; }
+}
+@media (min-width: 1024px) {
+  .pr-city { row-gap: var(--sp-6); align-items: start; }
+  .pr-city > .hp-index { grid-row: 1; grid-column: 1 / span 8; }
+  .pr-city-h { grid-row: 2; grid-column: 1 / span 7; }
+  .pr-city-body { grid-row: 3; grid-column: 1 / span 5; }
+  .pr-city-pull { grid-row: 4; grid-column: 1 / span 8; }
+  /* Full-height column: spans every content row and pulls back through
+     the section's own vertical padding, so it meets both edges. The
+     section clips it. */
+  .pr-city-col {
+    grid-row: 1 / span 4;
+    grid-column: 9 / -1;
+    aspect-ratio: auto;
+    height: auto;
+    align-self: stretch;
+    margin-top: -88px;
+    margin-bottom: -88px;
+    min-height: 520px;
+  }
+}
+@media (min-width: 1280px) {
+  .pr-city-col { margin-top: -96px; margin-bottom: -96px; }
+}
+
+/* ============================================================
+   3 · PLAYERS — THE RANK, THEN THE DOSSIER
+   All four portraits on the page at all times, in one frame
+   ratio, at one crop. Selecting a plate opens the dossier
+   beneath the rank; a crimson notch points into it.
+============================================================ */
+.plr-sec { padding: var(--sp-8) 0; }
+@media (min-width: 768px) { .plr-sec { padding: var(--sp-9) 0; } }
+
+.plr-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-3) var(--sp-5);
+  padding-bottom: var(--sp-4);
+  margin-bottom: var(--sp-6);
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+.plr-head-k {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.plr-head-k::before {
+  content: "";
+  width: 40px;
+  height: 1px;
+  background: var(--v-gold);
+}
+.plr-head-note {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--v-on-ivory);
+}
+
+.plr-rank {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-6);
+}
+@media (min-width: 900px) {
+  .plr-rank { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--sp-5); }
+}
+.plr-rank > li { position: relative; padding-bottom: 20px; min-width: 0; }
+
+.plr-plate {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+/* ONE ratio for every player, no exceptions — the four source files are
+   themselves identical 1333×2000 originals, so with a shared
+   object-position the rank is a single photographed collection. */
+.plr-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--v-ink);
+  border: 1px solid var(--v-hair-ivory);
+  transition: border-color var(--mo-mid) var(--hp-e),
+    box-shadow var(--mo-mid) var(--hp-e);
+}
+.plr-frame img {
+  object-fit: cover;
+  transition: transform var(--mo-slow) var(--hp-e), filter var(--mo-mid) var(--hp-e);
+}
+.plr-plate:hover .plr-frame img { transform: scale(1.035); }
+.plr-n {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 6px 11px 7px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  background: var(--v-ink);
+  color: var(--v-gold-lit);
+  transition: background var(--mo-fast) var(--hp-e), color var(--mo-fast) var(--hp-e);
+}
+.plr-plate.is-on .plr-frame {
+  border-color: var(--v-red);
+  box-shadow: var(--v-lift-sm);
+}
+.plr-plate.is-on .plr-n { background: var(--v-red); color: var(--v-ivory); }
+/* The notch is the tie between the selected plate and the panel it
+   opened — it points down into the dossier. */
+.plr-plate.is-on::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -20px;
+  transform: translateX(-50%);
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top: 11px solid var(--v-red);
+}
+.plr-plate:focus-visible .plr-frame { border-color: var(--v-gold); }
+
+.plr-id { display: block; padding-top: var(--sp-3); }
+.plr-name {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(13.5px, 1.15vw, 16.5px);
+  line-height: 1.28;
+  letter-spacing: -0.018em;
+  color: var(--v-ink);
+  transition: color var(--mo-fast) var(--hp-e);
+}
+.plr-plate:hover .plr-name,
+.plr-plate.is-on .plr-name { color: var(--v-red); }
+.plr-role {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+@media (prefers-reduced-motion: reduce) {
+  .plr-frame img { transition: none; }
+  .plr-plate:hover .plr-frame img { transform: none; }
+}
+
+.plr-dossier {
+  margin-top: var(--sp-7);
+  padding-top: var(--sp-6);
+  border-top: 2px solid var(--v-ink);
+  row-gap: var(--sp-6);
+}
+.plr-dossier-rail { grid-column: 1 / -1; }
+.plr-dossier-body { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .plr-dossier-rail { grid-column: 1 / span 5; }
+  .plr-dossier-body { grid-column: 7 / span 6; }
+}
+.plr-dossier-k {
+  margin: 0 0 var(--sp-3);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.plr-dossier-name {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 4.6vw, 64px);
+  line-height: 0.94;
+  letter-spacing: -0.042em;
+  color: var(--v-ink);
+}
+.plr-dossier-meta {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--v-on-ivory);
+}
+.plr-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin: var(--sp-6) 0 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.plr-stats > div {
+  padding: var(--sp-4) var(--sp-4) var(--sp-4) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+.plr-stats dt {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(20px, 2.2vw, 30px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--v-ink);
+  font-variant-numeric: tabular-nums;
+}
+.plr-stats dd {
+  margin: 6px 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.plr-dossier-body p {
+  margin: 0 0 var(--sp-5);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.78;
+  color: var(--v-on-ivory);
+}
+.plr-dossier-body p:last-child { margin-bottom: 0; }
+.plr-dossier-body strong { font-weight: 700; color: var(--v-ink); }
+.plr-moments { list-style: none; margin: var(--sp-6) 0 0; padding: 0; }
+.plr-moments li {
+  position: relative;
+  padding: var(--sp-4) 0 var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.plr-moments li:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+.plr-moments li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: calc(var(--sp-4) + 7px);
+  width: 9px;
+  height: 9px;
+  background: var(--v-gold);
+  transform: rotate(45deg);
+}
+.plr-moment-k {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.plr-moment-t {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(15px, 1.4vw, 19px);
+  letter-spacing: -0.02em;
+  color: var(--v-ink);
+}
+.plr-moment-s {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+/* ============================================================
+   4 · GOLF DEVELOPMENT — THE FRAMEWORK
+   A governing spine. One rule runs down the column with a node
+   per stratum, and each stratum steps further in than the one
+   above it, so the hierarchy IS the drawing. Beside it, the
+   page's only portrait-format photograph.
+============================================================ */
+.gdf { row-gap: var(--sp-6); }
+.gdf > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.gdf-col {
+  position: relative;
+  grid-column: 1 / -1;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--v-ink);
+  border: 1px solid var(--v-hair-ivory);
+}
+.gdf-col img { object-fit: cover; }
+.gdf-body { grid-column: 1 / -1; min-width: 0; }
+.gdf-h {
+  grid-column: auto !important;
+  font-size: clamp(32px, 4.6vw, 68px) !important;
+}
+@media (min-width: 1024px) {
+  .gdf { row-gap: var(--sp-7); align-items: start; }
+  .gdf > .hp-index { grid-row: 1; grid-column: 1 / -1; }
+  .gdf-col {
+    grid-row: 2;
+    grid-column: 1 / span 4;
+    aspect-ratio: 3 / 4;
+    align-self: stretch;
+    min-height: 560px;
+  }
+  .gdf-body { grid-row: 2; grid-column: 6 / span 7; }
+}
+
+.gdf-strata {
+  list-style: none;
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+  position: relative;
+}
+/* The spine. Gold at the authority end, crimson at the franchise end. */
+.gdf-strata::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 24px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--v-gold), var(--v-red));
+}
+.gdf-stratum {
+  position: relative;
+  padding-left: 34px;
+  padding-bottom: var(--sp-6);
+}
+.gdf-stratum:last-child { padding-bottom: 0; }
+@media (min-width: 768px) {
+  /* The stagger. `--depth` is the row's index, so this follows however
+     many strata the data holds. */
+  .gdf-stratum { padding-left: calc(48px + var(--depth, 0) * 26px); }
+}
+.gdf-node {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--v-gold);
+  background: var(--v-ivory);
+}
+.gdf-stratum:last-child .gdf-node { border-color: var(--v-red); background: var(--v-red); }
+/* The tick that carries the eye from the spine out to the stratum —
+   longer for each step down, which is what makes the descent legible. */
+.gdf-stratum::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  width: 16px;
+  height: 1px;
+  background: rgba(14, 11, 10, 0.28);
+}
+@media (min-width: 768px) {
+  .gdf-stratum::before { width: calc(28px + var(--depth, 0) * 26px); }
+}
+.gdf-stratum-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--v-red);
+}
+.gdf-stratum-k {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.gdf-stratum-t {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+  color: var(--v-ink);
+}
+.gdf-stratum-d {
+  margin: var(--sp-3) 0 0;
+  max-width: 58ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+
+/* ============================================================
+   5a · VIMTRA VENTURES — HERO
+   The photograph is a plate held to the right of the frame, its
+   inner edge dissolved into the ink so there is no seam. Not a
+   full-bleed banner, and no longer a remote image.
+============================================================ */
+.vv-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  background: var(--v-ink);
+  color: var(--v-ivory);
+  min-height: clamp(470px, 66svh, 620px);
+  /* Clears the floating header (see FLOATING_HEADER_ROUTES). */
+  padding-top: calc(76px + var(--sp-7));
+  padding-bottom: var(--sp-7);
+}
+@media (min-width: 768px) {
+  .vv-hero {
+    min-height: clamp(540px, 74svh, 760px);
+    padding-top: calc(92px + var(--sp-8));
+    padding-bottom: var(--sp-8);
+  }
+}
+.vv-hero-plate {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+}
+/* The plate is the full frame at every width and the DISSOLVE is what
+   makes it read as a right-hand plate — an inset image box would leave a
+   visible vertical edge at the point where its ink met the hero's own. */
+.vv-hero-media { position: absolute; inset: -7% 0; }
+.vv-hero-media img { object-fit: cover; }
+/* Vertical scrim while the plate is the whole frame … */
+.vv-hero-dissolve {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(14, 11, 10, 0.62) 0%,
+    rgba(14, 11, 10, 0.28) 34%,
+    rgba(14, 11, 10, 0.78) 72%,
+    rgba(14, 11, 10, 0.95) 100%
+  );
+}
+/* … and a horizontal dissolve once it becomes a plate, so its inner
+   edge disappears into the ink instead of cutting a hard line. */
+@media (min-width: 1024px) {
+  .vv-hero-dissolve {
+    /* The ramp holds near-solid ink across the first third of the plate so
+       the display type stays on a dark ground where it runs into the
+       photograph, then falls away slowly enough that the plate's inner edge
+       never reads as a seam. */
+    background:
+      linear-gradient(
+        90deg,
+        var(--v-ink) 0%,
+        var(--v-ink) 28%,
+        rgba(14, 11, 10, 0.95) 39%,
+        rgba(14, 11, 10, 0.66) 52%,
+        rgba(14, 11, 10, 0.3) 72%,
+        rgba(14, 11, 10, 0.52) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(14, 11, 10, 0.5) 0%,
+        transparent 30%,
+        rgba(14, 11, 10, 0.62) 100%
+      );
+  }
+}
+.vv-hero-aurora {
+  position: absolute;
+  inset: -26% -14%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 50% at 6% 84%, rgba(189, 34, 39, 0.42), transparent 68%),
+    radial-gradient(34% 40% at 84% 12%, rgba(184, 144, 75, 0.22), transparent 70%);
+  filter: blur(58px);
+  mix-blend-mode: screen;
+  animation: cm-aurora 40s var(--ease-io) infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) { .vv-hero-aurora { animation: none; } }
+.vv-hero-inner { position: relative; width: 100%; }
+/* NO max-width here. This wrapper holds the H1 as well as the supporting
+   line, and a `46ch` cap (449px at the clamped 112px display size) was
+   narrower than the word VENTURES needs (583px measured). `.mq-line`
+   carries `overflow: hidden` for its vertical reveal mask, which also
+   clips horizontally, so the last 134px — the "ES" — was cut off the
+   heading. The measure belongs on the line below, which is the only thing
+   that actually wanted one; the title gets the full column. */
+.vv-hero-head { min-width: 0; }
+.vv-hero-title {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(44px, 8.2vw, 112px);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  color: var(--v-ivory);
+}
+.vv-hero-line {
+  margin: var(--sp-5) 0 0;
+  /* The measure that used to sit on the wrapper, now on the element it was
+     meant for. */
+  max-width: 24ch;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(20px, 2.4vw, 34px);
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+  color: var(--v-gold-lit);
+}
+
+/* ============================================================
+   5b · VIMTRA VENTURES — LEADERSHIP
+   Each principal is one spread. The name sits on an ivory plate
+   that CROSSES the portrait's inner edge — the cover-line
+   device — and the second spread mirrors the first.
+============================================================ */
+.vv-lead-head { row-gap: var(--sp-5); }
+.vv-lead-head-a { grid-column: 1 / -1; }
+@media (min-width: 1024px) { .vv-lead-head-a { grid-column: 1 / span 7; } }
+
+.vv-principals { list-style: none; margin: var(--sp-8) 0 0; padding: 0; }
+.vv-principal { padding: var(--sp-7) 0; border-top: 1px solid var(--v-hair-ivory); }
+.vv-principal:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+.vv-principal-in { row-gap: var(--sp-5); align-items: start; }
+.vv-principal-f {
+  position: relative;
+  grid-column: 1 / -1;
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--v-ink);
+}
+.vv-principal-f img { object-fit: cover; }
+.vv-principal-b { grid-column: 1 / -1; position: relative; z-index: 1; min-width: 0; }
+.vv-principal-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 56px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: rgba(14, 11, 10, 0.14);
+}
+.vv-principal-name {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 3.6vw, 50px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--v-ink);
+}
+.vv-principal-role {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.vv-principal-bio {
+  margin: var(--sp-5) 0 0;
+  max-width: 62ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.78;
+  color: var(--v-on-ivory);
+}
+@media (min-width: 1024px) {
+  /* The body starts in the column AFTER the portrait, so no running text
+     is ever behind the photograph. Only the name — and the ghost ordinal
+     above it — pull back across the plate's inner edge. */
+  .vv-principal-f { grid-column: 1 / span 5; grid-row: 1; }
+  .vv-principal-b { grid-column: 6 / span 7; grid-row: 1; padding-top: var(--sp-8); }
+
+  /* The crossing: the name carries the page ground back over the plate,
+     so it reads as a printed caption band laid across the portrait. */
+  .vv-principal-name {
+    display: inline-block;
+    position: relative;
+    margin-left: calc(-1 * var(--sp-9));
+    padding: var(--sp-3) var(--sp-6);
+    background: var(--v-ivory);
+    box-shadow: -6px 0 0 0 var(--v-red);
+  }
+  .vv-principal-n {
+    margin-left: calc(-1 * var(--sp-9) + var(--sp-6));
+    margin-bottom: calc(-1 * var(--sp-2));
+  }
+
+  .vv-principal.is-mirrored .vv-principal-f { grid-column: 8 / span 5; }
+  .vv-principal.is-mirrored .vv-principal-b {
+    grid-column: 1 / span 7;
+    text-align: right;
+  }
+  .vv-principal.is-mirrored .vv-principal-name {
+    margin-left: 0;
+    margin-right: calc(-1 * var(--sp-9));
+    box-shadow: 6px 0 0 0 var(--v-red);
+  }
+  .vv-principal.is-mirrored .vv-principal-n {
+    margin-left: 0;
+    margin-right: calc(-1 * var(--sp-9) + var(--sp-6));
+  }
+  .vv-principal.is-mirrored .vv-principal-bio { margin-left: auto; }
+}
+
+/* ============================================================
+   5c · VIMTRA VENTURES — GOVERNANCE
+   A minute panel for the board seat, and the advisory
+   disciplines as a TYPE FIELD rather than an eight-row list —
+   so the section shows breadth instead of enumerating it.
+============================================================ */
+.vv-gov2 { row-gap: var(--sp-6); }
+.vv-gov2 > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.vv-gov2-h { grid-column: 1 / -1; }
+
+.vv-minute {
+  position: relative;
+  grid-column: 1 / -1;
+  padding: var(--sp-5) var(--sp-5) var(--sp-5) var(--sp-6);
+  background: var(--v-ivory);
+  border: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 768px) {
+  .vv-minute { padding: var(--sp-6) var(--sp-6) var(--sp-6) var(--sp-7); }
+}
+.vv-minute::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--v-gold-lit), var(--v-gold));
+}
+.vv-minute-k {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.vv-minute-name {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(21px, 2.4vw, 32px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--v-ink);
+}
+.vv-minute-body {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.76;
+  color: var(--v-on-ivory);
+}
+
+.vv-wall { grid-column: 1 / -1; }
+.vv-wall-k {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0 0 var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--v-hair-ivory);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.vv-wall-set {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.1em 0.42em;
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(23px, 4.4vw, 58px);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  color: var(--v-ink);
+}
+.vv-wall-w { position: relative; padding-right: 0.56em; }
+/* Gold lozenge between disciplines — the field's only punctuation. */
+.vv-wall-w::after {
+  content: "";
+  position: absolute;
+  right: 0.14em;
+  top: 0.44em;
+  width: 0.15em;
+  height: 0.15em;
+  background: var(--v-gold);
+  transform: rotate(45deg);
+}
+.vv-wall-w:last-child { padding-right: 0; }
+.vv-wall-w:last-child::after { display: none; }
+.vv-wall-w:nth-child(3n) { color: var(--v-red); }
+@media (min-width: 1024px) {
+  .vv-gov2 { align-items: start; }
+  .vv-gov2 > .hp-index { grid-row: 1; }
+  .vv-gov2-h { grid-row: 2; grid-column: 1 / span 5; }
+  .vv-minute { grid-row: 2; grid-column: 7 / span 6; }
+  .vv-wall { grid-row: 3; grid-column: 1 / -1; margin-top: var(--sp-5); }
+}
+
+/* ============================================================
+   6 · FIXTURES — SEASON SCALE
+   The brochure's two season figures drawn to scale against the
+   rows the database actually holds. Every mark is computed; the
+   graphic is aria-hidden and the legend states the same facts.
+============================================================ */
+.ss-scale { row-gap: var(--sp-6); }
+.ss-scale > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.ss-scale-h { grid-column: 1 / -1; }
+.ss-scale-track { grid-column: 1 / -1; }
+.ss-scale-field { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .ss-scale-h { grid-column: 1 / span 7; }
+  .ss-scale-track { grid-column: 1 / span 12; }
+  .ss-scale-field { grid-column: 1 / span 12; }
+}
+.ss-scale-k {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin: 0 0 var(--sp-4);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--v-hair-ink);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold);
+}
+.ss-scale-k span {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--v-ivory);
+  font-variant-numeric: tabular-nums;
+}
+/* Flex, not a 15-column grid: the track has to follow `eventCells`,
+   which grows if more than fifteen events are ever published. */
+.ss-cells { display: flex; gap: 5px; list-style: none; margin: 0; padding: 0; }
+@media (min-width: 768px) { .ss-cells { gap: 8px; } }
+.ss-cell {
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(44px, 7.4vw, 74px);
+  border: 1px solid var(--v-hair-ink);
+  background: transparent;
+}
+.ss-cell.is-done { background: var(--v-gold); border-color: var(--v-gold); }
+.ss-cell.is-live { background: var(--v-red); border-color: var(--v-red); }
+.ss-cell.is-next { background: var(--v-ivory); border-color: var(--v-ivory); }
+.ss-cell.is-void {
+  border-color: rgba(245, 239, 228, 0.34);
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(245, 239, 228, 0.3) 0 2px,
+    transparent 2px 6px
+  );
+}
+.ss-cell.is-mark { border-color: var(--v-gold); }
+.ss-scale-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin: var(--sp-5) 0 0;
+  border-top: 1px solid var(--v-hair-ink);
+}
+@media (min-width: 640px) {
+  .ss-scale-legend { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .ss-scale-legend { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+.ss-scale-legend > div {
+  padding: var(--sp-4) var(--sp-4) var(--sp-4) 0;
+  border-bottom: 1px solid var(--v-hair-ink);
+}
+.ss-scale-legend dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--v-on-ink);
+}
+/* The legend swatch is the same object as a track cell, at chip size. */
+.ss-scale-legend .ss-cell {
+  flex: none;
+  width: 11px;
+  height: 11px;
+}
+.ss-scale-legend dd {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(19px, 2vw, 26px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--v-ivory);
+  font-variant-numeric: tabular-nums;
+}
+.ss-scale-field { margin-top: var(--sp-7); }
+.ss-franchises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+.ss-franchises li {
+  width: 15px;
+  height: 15px;
+  border: 1px solid rgba(245, 239, 228, 0.4);
+  transform: rotate(45deg);
+}
+.ss-franchises li.is-lions {
+  background: var(--v-red);
+  border-color: var(--v-red);
+  box-shadow: 0 0 0 4px rgba(189, 34, 39, 0.22);
+}
+.ss-scale-note {
+  margin: var(--sp-5) 0 0;
+  max-width: 62ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.74;
+  color: var(--v-on-ink);
+}
+
+/* ============================================================
+   7 · PARTNERS — COMMERCIAL TIERS
+   A ladder, not four columns. Hierarchy is scale: the lead tier
+   is a full ink plate with the photograph; the rest are ruled
+   rungs whose numerals shrink as they descend.
+============================================================ */
+.pt-ladder { list-style: none; margin: var(--sp-6) 0 0; padding: 0; }
+
+.pt-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--v-ink);
+  color: var(--v-ivory);
+  overflow: hidden;
+}
+@media (min-width: 900px) {
+  .pt-lead { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+}
+.pt-lead-b { padding: var(--sp-6) var(--sp-5); order: 2; }
+@media (min-width: 768px) { .pt-lead-b { padding: var(--sp-8) var(--sp-7); } }
+@media (min-width: 900px) { .pt-lead-b { order: 0; } }
+.pt-lead-f {
+  position: relative;
+  margin: 0;
+  min-height: clamp(200px, 46vw, 280px);
+  order: 1;
+}
+@media (min-width: 900px) { .pt-lead-f { min-height: 0; order: 0; } }
+.pt-lead-f img { object-fit: cover; }
+/* The plate's ink runs into the photograph rather than butting against it. */
+.pt-lead-f::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(14, 11, 10, 0.5) 0%,
+    transparent 42%,
+    rgba(14, 11, 10, 0.32) 100%
+  );
+}
+@media (min-width: 900px) {
+  .pt-lead-f::after {
+    background: linear-gradient(
+      90deg,
+      var(--v-ink) 0%,
+      rgba(14, 11, 10, 0.45) 22%,
+      transparent 58%
+    );
+  }
+}
+.pt-lead-k {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+}
+.pt-lead-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 4.6vw, 60px);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  color: var(--v-red);
+}
+.pt-lead-name {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3.6vw, 50px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--v-ivory);
+}
+.pt-lead-head {
+  margin: var(--sp-3) 0 0;
+  max-width: 42ch;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(17px, 1.8vw, 24px);
+  line-height: 1.36;
+  color: var(--v-gold-lit);
+}
+
+/* Inclusions run as one inline set — a commercial proposition, not a
+   pricing table. No prices anywhere: the brochure states none. */
+.pt-incl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em 0.9em;
+  list-style: none;
+  margin: var(--sp-5) 0 0;
+  padding: 0;
+}
+.pt-incl li {
+  position: relative;
+  padding-right: 0.95em;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--v-on-ivory);
+}
+.pt-lead .pt-incl li { color: var(--v-on-ink); }
+.pt-incl li::after {
+  content: "";
+  position: absolute;
+  right: 0.16em;
+  top: 0.56em;
+  width: 5px;
+  height: 5px;
+  background: var(--v-gold);
+  transform: rotate(45deg);
+}
+.pt-incl li:last-child { padding-right: 0; }
+.pt-incl li:last-child::after { display: none; }
+
+.pt-rung {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sp-4);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 768px) { .pt-rung { gap: var(--sp-6); } }
+.pt-rung-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  color: rgba(14, 11, 10, 0.16);
+  font-variant-numeric: tabular-nums;
+}
+/* The descent: each rung's numeral is smaller than the one above it. */
+.pt-ladder > li:nth-child(2) .pt-rung-n { font-size: clamp(30px, 4.2vw, 54px); }
+.pt-ladder > li:nth-child(3) .pt-rung-n { font-size: clamp(26px, 3.5vw, 45px); }
+.pt-ladder > li:nth-child(n + 4) .pt-rung-n { font-size: clamp(23px, 2.9vw, 38px); }
+.pt-rung-name {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(19px, 2.3vw, 30px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--v-ink);
+}
+.pt-rung-head {
+  margin: var(--sp-2) 0 0;
+  max-width: 52ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+/* ============================================================
+   8 · INVEST — THE FRANCHISE
+   A containment diagram, not an index. Vimtra Ventures holds
+   the operating framework; the operating framework holds the
+   franchise — so each level is drawn INSIDE the one above,
+   stepping in and intensifying to the crimson plate at the
+   centre. Generated from STRUCTURE, so it follows the data.
+============================================================ */
+.iv-chain { row-gap: var(--sp-6); }
+.iv-chain > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.iv-chain-h { grid-column: 1 / -1; }
+.iv-chain-d { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .iv-chain-h { grid-column: 1 / span 6; }
+  .iv-chain-d { grid-column: 1 / -1; }
+}
+.iv-chain-lede {
+  margin: var(--sp-5) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+
+.iv-ring { list-style: none; margin: 0; padding: 0; }
+.iv-ring > li {
+  position: relative;
+  padding: var(--sp-5) var(--sp-4);
+  border: 1px solid var(--v-hair-ivory);
+}
+@media (min-width: 768px) {
+  .iv-ring > li { padding: var(--sp-6); }
+}
+@media (min-width: 1024px) {
+  .iv-ring > li { padding: var(--sp-7); }
+}
+/* Nested rings step in and are connected to the level that holds them. */
+.iv-ring .iv-ring { position: relative; margin-top: var(--sp-7); }
+.iv-ring .iv-ring::before {
+  content: "";
+  position: absolute;
+  left: var(--sp-5);
+  top: calc(-1 * var(--sp-7));
+  width: 1px;
+  height: var(--sp-7);
+  background: linear-gradient(180deg, transparent, var(--v-gold));
+}
+.iv-ring-0 > li { background: var(--v-ivory); border-color: rgba(14, 11, 10, 0.2); }
+.iv-ring-1 > li {
+  background: rgba(184, 144, 75, 0.07);
+  border-color: rgba(184, 144, 75, 0.55);
+}
+.iv-ring-2 > li {
+  background: linear-gradient(152deg, var(--v-red), #6d1418);
+  border-color: var(--v-red);
+  color: var(--v-ivory);
+  box-shadow: var(--v-lift-sm);
+}
+.iv-ring-k {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.iv-ring-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--v-red);
+}
+.iv-ring-1 > li > .iv-ring-k .iv-ring-n { color: var(--v-gold); }
+.iv-ring-2 > li > .iv-ring-k { color: rgba(245, 239, 228, 0.78); }
+.iv-ring-2 > li > .iv-ring-k .iv-ring-n { color: var(--v-gold-lit); }
+.iv-ring-t {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(20px, 2.6vw, 36px);
+  line-height: 1.08;
+  letter-spacing: -0.032em;
+  color: var(--v-ink);
+}
+.iv-ring-2 > li > .iv-ring-t { color: var(--v-ivory); }
+.iv-ring-d {
+  margin: var(--sp-3) 0 0;
+  max-width: 60ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.74;
+  color: var(--v-on-ivory);
+}
+.iv-ring-2 > li > .iv-ring-d { color: var(--v-on-ink); }
+
+/* ============================================================
+   THE CLUB — five sections, five compositions
+   ------------------------------------------------------------
+   Scoped entirely to `.cl-*`. Nothing in this block redefines a
+   shared class: `.cm-hero`, `.cm-statement`, `.cm-display`,
+   `.cm-ch-*`, `.cm-kit`, `.cm-band`, `.cm-credits` and
+   `.cm-close` are all left exactly as they are, because
+   /the-pride, /players, /golf-development, /invest, /fixtures,
+   /vimtra-ventures and the home page render them.
+
+     cl-hero-*     01 the gate       split frame + gold seam
+     cl-mf-*       02 the manifesto  saturated crimson field
+     cl-build-* /
+       cl-take-*   03 the build      cascading four-column spread
+     cl-kit-* /
+       cl-sp-*     04 the kit        spec column + colour spectrum
+     cl-end-*      05 the sign-off   display lockup + next rail
+
+   Surfaces run ink → crimson → paper → ivory → ink, so no two
+   adjacent sections share a ground.
+============================================================ */
+
+/* ============================================================
+   01 · THE GATE
+   Photograph one side, ink type panel the other, a gold seam
+   between them. The two never overlap, so the picture is never
+   dimmed to make the type legible and the type needs no scrim.
+============================================================ */
+.cl-hero {
+  --band: clamp(300px, 44svh, 440px);
+  --split: 56%;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: clamp(580px, 90svh, 860px);
+  background: var(--v-ink);
+  color: var(--v-ivory);
+}
+@media (min-width: 1024px) {
+  .cl-hero {
+    grid-template-columns: var(--split) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    min-height: clamp(600px, 84svh, 820px);
+  }
+}
+
+.cl-hero-media {
+  position: relative;
+  overflow: hidden;
+  height: var(--band);
+}
+@media (min-width: 1024px) {
+  .cl-hero-media { height: auto; }
+}
+.cl-hero-media img { object-fit: cover; }
+/* Light, and only where it earns its place: enough at the top for the
+   floating header to sit on, enough at the foot to give the frame weight.
+   The middle of the picture is left alone. */
+.cl-hero-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(14, 11, 10, 0.5) 0%,
+    rgba(14, 11, 10, 0.05) 32%,
+    rgba(14, 11, 10, 0.1) 62%,
+    rgba(14, 11, 10, 0.44) 100%
+  );
+}
+
+/* The seam. A gold hairline the full length of the join with a crimson
+   marker set into it — the page's first statement of the two brand
+   colours as a graphic rather than as decoration. Not animated: it is
+   2px of geometry, and content that small should never depend on a
+   tween having run. */
+.cl-hero-seam {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  left: 0;
+  right: 0;
+  top: var(--band);
+  height: 2px;
+  transform: translateY(-1px);
+}
+.cl-hero-seam-rule {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--v-gold) 0%, rgba(184, 144, 75, 0.16) 100%);
+}
+.cl-hero-seam-mark {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  width: 13px;
+  height: 13px;
+  margin-top: -7px;
+  background: var(--v-red);
+  transform: rotate(45deg);
+}
+@media (min-width: 768px) {
+  .cl-hero-seam-mark { left: 40px; }
+}
+@media (min-width: 1024px) {
+  .cl-hero-seam {
+    left: var(--split);
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    height: auto;
+    transform: translateX(-1px);
+  }
+  .cl-hero-seam-rule {
+    background: linear-gradient(180deg, var(--v-gold) 0%, rgba(184, 144, 75, 0.12) 100%);
+  }
+  .cl-hero-seam-mark { left: 50%; top: 44%; margin-left: -7px; margin-top: 0; }
+}
+
+.cl-hero-panel {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-width: 0;
+}
+.cl-hero-inner {
+  width: 100%;
+  padding: var(--sp-7) 20px var(--sp-7);
+}
+@media (min-width: 768px) {
+  .cl-hero-inner { padding: var(--sp-8) 40px var(--sp-8); }
+}
+@media (min-width: 1024px) {
+  /* Clears the floating header itself — /the-club is in
+     FLOATING_HEADER_ROUTES, so nothing above reserves the space. */
+  .cl-hero-inner { padding: calc(92px + var(--sp-8)) 40px var(--sp-8) var(--sp-8); }
+}
+@media (min-width: 1280px) {
+  .cl-hero-inner { padding-right: 64px; padding-left: var(--sp-8); }
+}
+@media (min-width: 1600px) {
+  .cl-hero-inner { padding-right: 80px; padding-left: var(--sp-9); }
+}
+
+.cl-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0 0 var(--sp-5);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+}
+.cl-hero-eyebrow::before {
+  content: "";
+  width: 40px;
+  height: 1px;
+  background: var(--v-gold);
+  flex: none;
+}
+.cl-hero-title {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  /* The type has its own column, so it can run at a scale a full-bleed
+     hero could not carry without colliding with the picture. */
+  font-size: clamp(74px, 17vw, 150px);
+  line-height: 0.84;
+  letter-spacing: -0.052em;
+  color: var(--v-ivory);
+}
+@media (min-width: 1024px) {
+  /* Sized against the panel column, not the viewport: the widest word is
+     four characters, so this can never overrun its own gutter. */
+  .cl-hero-title { font-size: clamp(64px, 10.2vw, 186px); }
+}
+/* Tablet still stacks, so the band and the display size are pulled back.
+   Left at the phone values the gate filled a 768x1024 screen outright and
+   nothing below it was ever glimpsed. Declared AFTER the base size, not
+   beside `.cl-hero`, because both rules carry the same specificity and the
+   later one has to be this one. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cl-hero { --band: clamp(300px, 38svh, 380px); }
+  .cl-hero-title { font-size: clamp(74px, 13.6vw, 122px); }
+}
+.cl-hero-line {
+  margin: var(--sp-5) 0 0;
+  max-width: 38ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(15px, 1.25vw, 17.5px);
+  line-height: 1.68;
+  color: rgba(245, 239, 228, 0.82);
+}
+.cl-hero-cta { margin: var(--sp-6) 0 0; }
+
+/* ============================================================
+   02 · THE MANIFESTO
+   The page's one saturated field. Everywhere else on the site the
+   crimson is an accent; here it is the ground, once, and the
+   franchise mark is bled across it as texture rather than dropped
+   on it as a logo.
+============================================================ */
+.hp-sec.cl-mf-sec {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(148deg, var(--v-red) 0%, #a01a20 54%, #7b1317 100%);
+  color: var(--v-ivory);
+}
+.cl-mf { position: relative; row-gap: var(--sp-6); }
+.cl-mf-crest {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  top: -26%;
+  right: -16%;
+  width: min(86%, 420px);
+  aspect-ratio: 1000 / 1117;
+  opacity: 0.13;
+}
+@media (min-width: 1024px) {
+  .cl-mf-crest { top: -34%; right: -10%; width: min(52%, 620px); opacity: 0.15; }
+}
+/* The mark is crimson artwork; reversed to ivory it reads as a lighter
+   crimson ghost against the field instead of a darker stamp on it. */
+.cl-mf-crest img { object-fit: contain; filter: brightness(0) invert(1); }
+
+.cl-mf-head { grid-column: 1 / -1; }
+.cl-mf-lede { grid-column: 1 / -1; }
+.cl-mf-drop { grid-column: 1 / -1; }
+.cl-mf-h {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(34px, 6.6vw, 98px);
+  line-height: 0.94;
+  letter-spacing: -0.046em;
+  color: var(--v-ivory);
+}
+.cl-mf-h em {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--v-gold-lit);
+}
+.cl-mf-lede {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(16.5px, 1.6vw, 22px);
+  line-height: 1.6;
+  color: rgba(245, 239, 228, 0.95);
+}
+.cl-mf-drop {
+  margin: 0;
+  padding-top: var(--sp-4);
+  border-top: 1px solid rgba(245, 239, 228, 0.3);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.74;
+  color: rgba(245, 239, 228, 0.84);
+}
+@media (min-width: 1024px) {
+  .cl-mf { row-gap: var(--sp-7); }
+  .cl-mf-head { grid-column: 1 / span 9; }
+  .cl-mf-lede { grid-column: 1 / span 6; }
+  /* The drop. The second paragraph is offset right and pushed low — the
+     asymmetry is the composition, and neither paragraph was cut or
+     extended to produce it. */
+  .cl-mf-drop { grid-column: 8 / -1; margin-top: var(--sp-8); }
+}
+
+/* ============================================================
+   03 · THE BUILD
+   "Four names. One team sheet." — so the four takes are drawn as
+   one sheet: four columns in a single band, each dropped by a
+   different amount so the frames cascade instead of sitting in a
+   grid, with the numerals breaking the frame edges.
+============================================================ */
+.cl-build-head { row-gap: var(--sp-4); }
+.cl-build-head > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.cl-build-h {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 5.4vw, 78px);
+  line-height: 0.94;
+  letter-spacing: -0.042em;
+  color: var(--v-ink);
+}
+@media (min-width: 1024px) {
+  .cl-build-h { grid-column: 1 / span 9; }
+}
+.cl-build-reel { margin-top: var(--sp-8); }
+@media (min-width: 1024px) {
+  .cl-build-reel { margin-top: var(--sp-9); }
+}
+
+.cl-reel {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-8);
+}
+@media (min-width: 768px) {
+  .cl-reel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    row-gap: var(--sp-7);
+    align-items: start;
+  }
+}
+@media (min-width: 1024px) {
+  .cl-reel {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+}
+.cl-take { min-width: 0; }
+/* The cascade. `--step` is set per item by the component, so the pattern
+   follows however many takes the data holds. Flat on phones, where a
+   single column has nothing to cascade against. */
+@media (min-width: 768px) {
+  .cl-take { margin-top: calc(var(--step, 0) * 14px); }
+}
+@media (min-width: 1024px) {
+  .cl-take { margin-top: calc(var(--step, 0) * 30px); }
+}
+
+.cl-take-f {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  background: var(--v-ink-2);
+  /* Deliberately unclipped: the numeral below hangs over the bottom edge,
+     and `fill` + object-fit keeps the photograph inside the box anyway. */
+  overflow: visible;
+}
+@media (min-width: 768px) {
+  .cl-take-f { aspect-ratio: 3 / 4; }
+}
+.cl-take-f img {
+  object-fit: cover;
+  transform: scale(1.03);
+  transition: transform var(--mo-cine) var(--ease);
+}
+.cl-take:hover .cl-take-f img { transform: scale(1); }
+@media (prefers-reduced-motion: reduce) {
+  .cl-take-f img { transition: none; transform: none; }
+  .cl-take:hover .cl-take-f img { transform: none; }
+}
+
+/* The device that stops four columns reading as four cards: the numeral
+   straddles the frame's bottom edge, half in the picture and half in the
+   page, at every width. */
+.cl-take-n {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform: translateY(38%);
+  display: inline-block;
+  padding: 5px 15px 7px;
+  background: var(--v-ink);
+  color: var(--v-gold-lit);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3.4vw, 46px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.cl-take-b { padding-top: calc(var(--sp-6) + 14px); }
+.cl-take-t {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(21px, 2.2vw, 30px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: var(--v-ink);
+}
+.cl-take-d {
+  margin: var(--sp-3) 0 0;
+  max-width: 36ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14.5px;
+  line-height: 1.66;
+  color: var(--v-on-ivory);
+}
+
+/* ============================================================
+   04 · THE KIT
+   A specification sheet, not a swatch chart. Hanging labels down
+   the left; the palette as ONE continuous vertical spectrum on the
+   right, no gaps and no borders, bleeding off the page edge, each
+   key set inside its own colour.
+============================================================ */
+.cl-kit-sec { overflow: hidden; }
+.cl-kit { row-gap: var(--sp-7); align-items: start; }
+.cl-kit-a { grid-column: 1 / -1; }
+.cl-kit-b { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .cl-kit-a { grid-column: 1 / span 5; }
+  .cl-kit-b { grid-column: 7 / -1; }
+}
+.cl-kit-h {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 4.1vw, 60px);
+  line-height: 0.98;
+  letter-spacing: -0.036em;
+  color: var(--v-ink);
+}
+.cl-kit-lede {
+  margin: var(--sp-5) 0 0;
+  max-width: 40ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ivory);
+}
+
+.cl-kit-spec { margin: var(--sp-7) 0 0; }
+.cl-kit-spec > div {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.cl-kit-spec > div:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+@media (min-width: 560px) {
+  /* The hanging label — the garment-spec device, and the reason this is
+     not the same ruled two-column list the page used to carry. */
+  .cl-kit-spec > div {
+    grid-template-columns: minmax(0, 116px) minmax(0, 1fr);
+    column-gap: var(--sp-5);
+    align-items: baseline;
+  }
+}
+.cl-kit-spec dt {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.cl-kit-spec dd { margin: 0; }
+.cl-kit-spec-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(19px, 2vw, 26px);
+  letter-spacing: -0.022em;
+  color: var(--v-ink);
+}
+.cl-kit-spec-d {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+.cl-spectrum {
+  list-style: none;
+  padding: 0;
+  /* Bleeds to the true page edge, not just through the gutter. `.hp-wrap`
+     caps at 1560px and centres, so past that width the container's own
+     margin has to be cancelled too or the spectrum stops short of the
+     screen. The scrollbar makes 100vw a few pixels generous; the section
+     clips the overshoot. */
+  --sp-pad: 20px;
+  margin: 0 calc(-1 * (var(--sp-pad) + max(0px, (100vw - 1560px) / 2))) 0 0;
+}
+@media (min-width: 768px) { .cl-spectrum { --sp-pad: 40px; } }
+@media (min-width: 1280px) { .cl-spectrum { --sp-pad: 64px; } }
+@media (min-width: 1600px) { .cl-spectrum { --sp-pad: 80px; } }
+.cl-spectrum > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  min-height: clamp(58px, 7.4vw, 88px);
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--c);
+  /* Keys sit INSIDE the colour, so the text colour follows the colour's
+     own luminance — see isLight() in app/the-club/page.tsx. Measured:
+     ivory on Pride Red 5.1:1, ink on Highlight Gold 7.6:1, ink on Court
+     Yellow 13.7:1, ink on Stadium Cream 15.9:1, ivory on Jet Black
+     16.0:1. Every key clears AA inside its own field. */
+  color: var(--v-ivory);
+  transition: min-height var(--mo-mid) var(--hp-e);
+}
+.cl-spectrum > li.is-light { color: var(--v-ink); }
+.cl-spectrum > li:hover { min-height: clamp(66px, 8.6vw, 102px); }
+@media (prefers-reduced-motion: reduce) {
+  .cl-spectrum > li { transition: none; }
+  .cl-spectrum > li:hover { min-height: clamp(58px, 7.4vw, 88px); }
+}
+.cl-sp-l {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(14px, 1.3vw, 18px);
+  letter-spacing: -0.015em;
+}
+.cl-sp-h {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.86;
+}
+
+/* ============================================================
+   05 · THE SIGN-OFF
+   A two-tone display lockup over a full-width rail of the two
+   places the reader goes next. Deliberately NOT `.cm-close`,
+   which five other surfaces render unchanged.
+============================================================ */
+.cl-end-h {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(46px, 11.4vw, 172px);
+  line-height: 0.88;
+  letter-spacing: -0.052em;
+  color: var(--v-ivory);
+}
+/* The mask box has to grow for the plate below, or the reversed word's
+   own padding is clipped by the line's overflow. */
+.cl-end-h .mq-line {
+  padding-top: 0.12em;
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
+}
+/* The word is reversed out of crimson rather than set in it: ivory on
+   crimson measures 5.4:1, where crimson type on ink would sit at 3.3:1,
+   and a plate is a lockup where coloured type is just a heading. */
+.cl-end-roar {
+  display: inline-block;
+  padding: 0.02em 0.16em 0.08em;
+  margin-left: -0.03em;
+  background: var(--v-red);
+  color: var(--v-ivory);
+}
+
+.cl-end-next {
+  list-style: none;
+  margin: var(--sp-8) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--v-hair-ink);
+}
+@media (min-width: 1024px) {
+  .cl-end-next { margin-top: var(--sp-9); }
+}
+.cl-end-next li { border-bottom: 1px solid var(--v-hair-ink); }
+.cl-end-next a {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "k a"
+    "t a";
+  align-items: center;
+  column-gap: var(--sp-4);
+  row-gap: 6px;
+  min-height: 96px;
+  padding: var(--sp-5) var(--sp-4) var(--sp-5) 0;
+  text-decoration: none;
+  color: var(--v-ivory);
+  overflow: hidden;
+  transition: padding-left var(--mo-mid) var(--hp-e);
+}
+@media (min-width: 768px) {
+  .cl-end-next a {
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr) auto;
+    grid-template-areas: "k t a";
+    row-gap: 0;
+    min-height: 112px;
+  }
+}
+/* The wash. Crimson runs in from the left edge of the row rather than
+   the row filling with a flat colour — the row reads as being entered. */
+.cl-end-next a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(189, 34, 39, 0.92) 0%, rgba(189, 34, 39, 0) 82%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--mo-mid) var(--hp-e);
+}
+.cl-end-next a:hover::before,
+.cl-end-next a:focus-visible::before { transform: scaleX(1); }
+.cl-end-next a:hover { padding-left: var(--sp-5); }
+@media (prefers-reduced-motion: reduce) {
+  .cl-end-next a,
+  .cl-end-next a::before { transition: none; }
+  .cl-end-next a:hover { padding-left: 0; }
+}
+.cl-end-k,
+.cl-end-t,
+.cl-end-a { position: relative; }
+.cl-end-k {
+  grid-area: k;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+}
+.cl-end-t {
+  grid-area: t;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(21px, 2.6vw, 36px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--v-ivory);
+}
+.cl-end-a {
+  grid-area: a;
+  justify-self: end;
+  font-size: clamp(22px, 2.4vw, 32px);
+  line-height: 1;
+  color: var(--v-gold-lit);
+  transition: transform var(--mo-fast) var(--hp-e);
+}
+.cl-end-next a:hover .cl-end-a { transform: translateX(9px); }
+@media (prefers-reduced-motion: reduce) {
+  .cl-end-a { transition: none; }
+  .cl-end-next a:hover .cl-end-a { transform: none; }
+}
+
+/* ============================================================
+   PARTNERS · COMMERCIAL TIERS — the descent
+   ------------------------------------------------------------
+   Replaces `.pt-ladder` / `.pt-lead` / `.pt-rung`, whose lead
+   tier was a filled ink rectangle with the photograph boxed
+   inside it and whose three rungs were identical in height.
+
+   Here the four tiers step INWARD down the page and lose rule
+   weight, rule colour and type scale as they fall, so the
+   hierarchy is the composition. The photograph is a full-height
+   column bled off the left page edge — structural, not a
+   thumbnail. Nothing is boxed or filled.
+
+   Scoped to `.pt-tier-*`, `.pt-descent`, `.pt-step-*`. `.pt-sec`,
+   `.pt-partners`, `.pt-dims` and `.pt-close` are untouched.
+============================================================ */
+.pt-tier-sec { overflow: hidden; }
+.pt-tier-spread { row-gap: var(--sp-7); align-items: start; }
+
+/* The photograph. A column, not a card: it runs the height of the
+   descent and bleeds through the container gutter to the page edge. */
+.pt-tier-col {
+  position: relative;
+  grid-column: 1 / -1;
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--v-ink);
+}
+.pt-tier-col img { object-fit: cover; }
+/* Seats the frame into the paper ground so it does not read as a pasted
+   rectangle — light, and only at the edges. */
+.pt-tier-col::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(14, 11, 10, 0.28) 0%,
+    transparent 34%,
+    rgba(14, 11, 10, 0.34) 100%
+  );
+}
+
+.pt-descent { list-style: none; margin: 0; padding: 0; grid-column: 1 / -1; }
+
+/* The step. `--rung` is the tier's index, so the indent, the rule and the
+   type scale all follow the data rather than being written four times. */
+.pt-step {
+  position: relative;
+  padding: var(--sp-5) 0 var(--sp-6);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.pt-step:first-child { border-top-width: 3px; border-top-color: var(--v-red); }
+.pt-step:nth-child(2) { border-top-width: 2px; border-top-color: var(--v-gold); }
+.pt-step:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+@media (min-width: 768px) {
+  /* The descent itself. Each tier starts further in than the one above it. */
+  .pt-step { margin-left: calc(var(--rung, 0) * 7%); }
+}
+
+.pt-step-k {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin: 0 0 var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.pt-step-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(15px, 1.5vw, 20px);
+  letter-spacing: 0.02em;
+  color: var(--v-gold);
+  font-variant-numeric: tabular-nums;
+}
+.pt-step-name {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.034em;
+  color: var(--v-ink);
+  /* Loses scale as it descends — the lead tier is the biggest thing in the
+     section, the community tier the smallest, with nothing else changed.
+     All THREE clamp slots have to carry `--rung`: with a flat maximum the
+     top three tiers all pinned to the cap and the descent disappeared above
+     about 1200px. Resolves to 56/47/38/29 at 1440 and 23/20/19/18 at 375. */
+  font-size: clamp(
+    calc(21px - var(--rung, 0) * 1px),
+    calc((4.6 - var(--rung, 0) * 0.85) * 1vw + 6px),
+    calc(56px - var(--rung, 0) * 9px)
+  );
+}
+.pt-step-head {
+  margin: var(--sp-3) 0 0;
+  max-width: 46ch;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(16px, 1.6vw, 21px);
+  line-height: 1.4;
+  color: var(--v-red);
+}
+.pt-step:not(:first-child) .pt-step-head {
+  font-family: var(--font-manrope), sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+@media (min-width: 1024px) {
+  .pt-tier-spread { column-gap: var(--sp-8); }
+  /* Full-height column, bled to the page edge. `.hp-wrap` caps at 1560px
+     and centres, so past that width the container's own margin has to be
+     cancelled too or the frame stops short of the screen. */
+  .pt-tier-col {
+    grid-column: 1 / span 4;
+    aspect-ratio: auto;
+    align-self: stretch;
+    min-height: 560px;
+    /* Must track `.hp-wrap`'s padding at each step — 40px here, 64px from
+       1280, 80px from 1600 — or the column over-bleeds and loses its own
+       left edge behind the clip. */
+    --pt-pad: 40px;
+    margin-left: calc(-1 * (var(--pt-pad) + max(0px, (100vw - 1560px) / 2)));
+  }
+  .pt-descent { grid-column: 6 / -1; }
+}
+@media (min-width: 1280px) {
+  .pt-tier-col { --pt-pad: 64px; }
+}
+@media (min-width: 1600px) {
+  .pt-tier-col { --pt-pad: 80px; }
+}
+
+/* ============================================================
+   VIMTRA VENTURES · LEADERSHIP — the ledger
+   ------------------------------------------------------------
+   Replaces `.vv-principals` / `.vv-principal*`, which led with a
+   large alternating portrait and a name plate crossing it —
+   photograph-led, and close in kind to the player spreads on
+   /players.
+
+   This is typography-led and register-ruled: an ordinal and seat
+   in a left rail, the name at display scale with an oversized
+   ghost numeral layered behind it, the biography on a measure,
+   and the portrait as a tall narrow column at the right edge.
+   Both entries are framed identically.
+============================================================ */
+.vv-ledger {
+  list-style: none;
+  margin: var(--sp-8) 0 0;
+  padding: 0;
+  border-top: 3px solid var(--v-red);
+}
+.vv-entry { border-bottom: 1px solid var(--v-hair-ivory); }
+.vv-entry:last-child { border-bottom-width: 2px; border-bottom-color: var(--v-ink); }
+.vv-entry-in {
+  row-gap: var(--sp-5);
+  align-items: start;
+  padding: var(--sp-6) 0 var(--sp-7);
+}
+@media (min-width: 1024px) {
+  .vv-entry-in { padding: var(--sp-7) 0 var(--sp-8); column-gap: var(--sp-6); }
+}
+
+.vv-entry-rail {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+}
+.vv-entry-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--v-red);
+  font-variant-numeric: tabular-nums;
+}
+.vv-entry-seat {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+
+.vv-entry-main { grid-column: 1 / -1; position: relative; min-width: 0; }
+/* Layered typography: the ordinal again, oversized and set behind the name
+   rather than beside it. Decorative only — the readable ordinal is in the
+   rail above. */
+.vv-entry-ghost {
+  position: absolute;
+  right: 0;
+  top: -0.28em;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(80px, 12vw, 190px);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: rgba(14, 11, 10, 0.05);
+  pointer-events: none;
+  user-select: none;
+}
+.vv-entry-name {
+  position: relative;
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.038em;
+  color: var(--v-ink);
+  /* The first entry sits larger because it is first in the firm's own
+     listing — not because the source states a seniority. Same rule as the
+     partner descent: `--rank` has to reach the maximum too, or both entries
+     pin to the cap on a wide screen. Resolves to 64/50 at 1440. */
+  font-size: clamp(
+    calc(27px - var(--rank, 0) * 2px),
+    calc((4.8 - var(--rank, 0) * 1.1) * 1vw + 8px),
+    calc(64px - var(--rank, 0) * 14px)
+  );
+}
+.vv-entry-bio {
+  position: relative;
+  margin: var(--sp-5) 0 0;
+  max-width: 66ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.8;
+  color: var(--v-on-ivory);
+}
+
+.vv-entry-f {
+  position: relative;
+  grid-column: 1 / -1;
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--v-ink);
+  order: -1;
+}
+.vv-entry-f img { object-fit: cover; }
+
+@media (min-width: 768px) {
+  .vv-entry-rail { grid-column: 1 / span 8; }
+  .vv-entry-main { grid-column: 1 / span 8; }
+  .vv-entry-f { grid-column: 1 / span 8; aspect-ratio: 21 / 9; order: 0; }
+}
+@media (min-width: 1024px) {
+  /* The register: rail, then the name and biography, then the portrait held
+     to the right edge as a tall column. Identical framing for both entries
+     — the asymmetry is in the layout, never in the people. */
+  .vv-entry-rail { grid-column: 1 / span 8; }
+  .vv-entry-main { grid-column: 1 / span 7; }
+  .vv-entry-f {
+    /* Four columns, not three. At three the portrait fell to 208px wide at
+       1024 and 300px at 1440 — a thin strip inside a very wide container,
+       which is the failure the brief calls out for large screens. */
+    grid-column: 9 / -1;
+    grid-row: 1 / span 2;
+    aspect-ratio: 3 / 4;
+    order: 0;
+    align-self: start;
+  }
+}
+
+/* ============================================================
+   GOLF DEVELOPMENT · THE PGA PARTNERSHIP
+   ------------------------------------------------------------
+   New section (content audit, Sept 2026). Composition is
+   deliberately unlike the rest of this page: no spine
+   (`.gdf-*`), no ruled numbered index (`.gd-index`), no
+   full-bleed statement. A licence plate of named offices, then
+   the six PGA roles as a capability field divided by VERTICAL
+   hairlines rather than stacked horizontal rules.
+
+   Scoped to `.gdp-*`. Nothing here touches `.gd-*`, `.gdf-*` or
+   any shared class.
+============================================================ */
+.gdp { row-gap: var(--sp-6); align-items: start; }
+.gdp > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.gdp-head { grid-column: 1 / -1; }
+.gdp-body { grid-column: 1 / -1; }
+.gdp-plate { grid-column: 1 / -1; margin: 0; }
+.gdp-roles { grid-column: 1 / -1; }
+
+.gdp-h {
+  grid-column: auto !important;
+  font-size: clamp(30px, 4.4vw, 64px) !important;
+}
+.gdp-body p {
+  margin: 0 0 var(--sp-4);
+  max-width: 54ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.74;
+  color: var(--v-on-ivory);
+}
+.gdp-body p:last-child { margin-bottom: 0; }
+.gdp-body strong { font-weight: 700; color: var(--v-ink); }
+
+/* The licence plate — the two named offices and the PGA's founding year,
+   set as a ruled register rather than three boxes. */
+.gdp-plate > div {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.gdp-plate > div:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+.gdp-plate dt {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.gdp-plate dd { margin: 0; }
+.gdp-plate-v {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(19px, 1.9vw, 25px);
+  letter-spacing: -0.024em;
+  color: var(--v-ink);
+}
+.gdp-plate-d {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--v-on-ivory);
+}
+
+.gdp-roles { margin-top: var(--sp-6); }
+.gdp-roles-k {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0 0 var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 2px solid var(--v-ink);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-ink);
+}
+.gdp-roles-k::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--v-gold);
+}
+.gdp-role-set {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5) 0;
+}
+.gdp-role-set > li { min-width: 0; padding: 0 0 0 var(--sp-5); border-left: 1px solid var(--v-hair-ivory); }
+/* Vertical division, not another stack of horizontal rules — the device
+   that keeps this off the page's two existing ruled indexes. */
+.gdp-role-set > li:first-child { border-left-color: var(--v-red); }
+@media (min-width: 640px) {
+  .gdp-role-set { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--sp-6); }
+}
+@media (min-width: 1024px) {
+  .gdp-role-set { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--sp-6); row-gap: var(--sp-7); }
+}
+.gdp-role-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--v-gold);
+  font-variant-numeric: tabular-nums;
+}
+.gdp-role-t {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(17px, 1.7vw, 22px);
+  line-height: 1.14;
+  letter-spacing: -0.026em;
+  color: var(--v-ink);
+}
+.gdp-role-d {
+  margin: var(--sp-3) 0 0;
+  max-width: 34ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14.5px;
+  line-height: 1.66;
+  color: var(--v-on-ivory);
+}
+
+@media (min-width: 1024px) {
+  .gdp { row-gap: var(--sp-7); }
+  .gdp-head { grid-column: 1 / span 9; }
+  .gdp-body { grid-column: 1 / span 6; }
+  /* The plate sits opposite the copy rather than under it, so the section
+     opens as a spread and not as a column of stacked blocks. */
+  .gdp-plate { grid-column: 8 / -1; }
+  .gdp-roles { grid-column: 1 / -1; }
+}
+
+/* ============================================================
+   VIMTRA VENTURES · THE ROADMAP
+   ------------------------------------------------------------
+   Added with the content audit. A horizontal progression, not a
+   sixth ruled index: five steps read left to right on a single
+   rule, each carrying a status chip whose colour says whether
+   the step is done (crimson) or underway (gold outline).
+   Scoped to `.vv-road-*`.
+============================================================ */
+.vv-road { row-gap: var(--sp-6); align-items: start; }
+.vv-road > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.vv-road-h { grid-column: 1 / -1; }
+.vv-road-set { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .vv-road-h { grid-column: 1 / span 6; }
+  .vv-road-set { grid-column: 1 / -1; margin-top: var(--sp-5); }
+}
+
+.vv-road-set {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-6) 0 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  border-top: 2px solid var(--v-ink);
+}
+@media (min-width: 640px) {
+  .vv-road-set { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-6); }
+}
+@media (min-width: 1024px) {
+  /* Five across, so the sequence reads as a progression rather than a
+     stack. The steps are equal width: the brochure ranks them by order,
+     not by weight. */
+  .vv-road-set { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--sp-5); }
+}
+.vv-road-set > li {
+  position: relative;
+  min-width: 0;
+  padding-top: var(--sp-5);
+}
+/* The marker on the rule above each step. */
+.vv-road-set > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 46px;
+  height: 2px;
+  background: var(--v-gold);
+}
+.vv-road-set > li.is-done::before { background: var(--v-red); }
+.vv-road-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--v-on-ivory);
+  font-variant-numeric: tabular-nums;
+}
+.vv-road-s {
+  display: inline-block;
+  margin-top: var(--sp-3);
+  padding: 4px 10px 5px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.is-done .vv-road-s { background: var(--v-red); color: var(--v-ivory); }
+.is-open .vv-road-s {
+  border: 1px solid var(--v-gold);
+  color: var(--v-ink);
+}
+.vv-road-t {
+  display: block;
+  margin-top: var(--sp-3);
+  max-width: 24ch;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(15px, 1.35vw, 18px);
+  line-height: 1.26;
+  letter-spacing: -0.022em;
+  color: var(--v-ink);
+}
+
+/* ============================================================
+   GOLF DEVELOPMENT · THE PLAN (five strategic moves)
+   ------------------------------------------------------------
+   Content audit, Sept 2026. Vimtra x PGA brochure p. 03.
+
+   Composition has to stay clear of everything already on this
+   page: the `.gdf-*` framework spine, the `.gdp-*` PGA licence
+   plate + vertical-hairline capability field, and the two
+   `.gd-index` ruled registers. The device here is a HANGING
+   NUMERAL — the ordinal sits in its own gutter to the left of
+   the rule, oversized and gold, so the eye reads a numbered
+   descent rather than a list of cards or another ruled table.
+   Nothing is boxed and nothing is filled.
+
+   Scoped to `.gdm-*`. Touches no shared class.
+============================================================ */
+.gdm { row-gap: var(--sp-6); align-items: start; }
+.gdm > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.gdm-head { grid-column: 1 / -1; }
+.gdm-set { grid-column: 1 / -1; }
+
+.gdm-h {
+  grid-column: auto !important;
+  max-width: 17ch;
+  font-size: clamp(30px, 4.6vw, 68px) !important;
+}
+.gdm-h em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--v-gold-lit);
+}
+
+.gdm-set {
+  list-style: none;
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+}
+.gdm-set > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-2);
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--v-hair-ink);
+}
+.gdm-set > li:first-child { border-top-color: var(--v-gold); }
+.gdm-set > li:last-child { border-bottom: 1px solid var(--v-hair-ink); }
+
+/* The numeral. On narrow screens it sits above the move as a
+   small gold ordinal; from 768 up it moves out into its own
+   gutter and takes the display size. */
+.gdm-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--v-gold);
+  font-variant-numeric: tabular-nums;
+}
+.gdm-b { min-width: 0; }
+.gdm-t {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(19px, 2.3vw, 31px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--v-ivory);
+}
+.gdm-d {
+  margin: var(--sp-3) 0 0;
+  max-width: 62ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.74;
+  color: var(--v-on-ink);
+}
+
+@media (min-width: 768px) {
+  .gdm-set > li {
+    grid-template-columns: clamp(72px, 9vw, 132px) minmax(0, 1fr);
+    column-gap: var(--sp-5);
+    align-items: start;
+  }
+  .gdm-n {
+    /* Optically aligned to the cap-height of the move title rather
+       than to its own box, so the numeral hangs off the rule. */
+    margin-top: -0.1em;
+    font-size: clamp(38px, 5.4vw, 78px);
+    letter-spacing: -0.05em;
+    color: rgba(184, 144, 75, 0.9);
+  }
+}
+
+@media (min-width: 1024px) {
+  .gdm { row-gap: var(--sp-7); }
+  .gdm-head { grid-column: 1 / span 8; }
+  .gdm-set > li { padding: var(--sp-6) 0; column-gap: var(--sp-6); }
+  .gdm-d { max-width: 54ch; }
+}
+
+/* ============================================================
+   INVEST · THE THREE PILLARS
+   ------------------------------------------------------------
+   Content audit, Sept 2026. Vimtra x PGA brochure pp. 05, 06, 08.
+
+   Must not repeat the devices already on this page: the
+   `.iv-chain` nested containment rings, the `.iv-market` figure
+   register, or the numbered reasons below. This is a LEDGER —
+   each pillar is one full-width ruled row with its statement on
+   the left and its own figures grouped hard right, so the
+   figures read as accompanying evidence rather than as a
+   headline rail. The destination circuits under pillar 01 are
+   an inline register, the only nested level in the section.
+
+   Scoped to `.iv-pillar*` / `.iv-circuit-*`.
+============================================================ */
+.iv-pillars { row-gap: var(--sp-6); align-items: start; }
+.iv-pillars > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+.iv-pillars-h { grid-column: 1 / -1; }
+.iv-pillars-h .cm-display {
+  grid-column: auto !important;
+  max-width: 16ch;
+  font-size: clamp(30px, 4.4vw, 64px) !important;
+}
+.iv-pillars-h em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--v-red);
+}
+
+.iv-pillar-set {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+}
+.iv-pillar-set > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  padding: var(--sp-6) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.iv-pillar-set > li:first-child { border-top: 2px solid var(--v-ink); }
+.iv-pillar-set > li:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
+.iv-pillar-a { min-width: 0; }
+
+.iv-pillar-k {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-muted);
+}
+.iv-pillar-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  color: var(--v-red);
+  font-variant-numeric: tabular-nums;
+}
+.iv-pillar-t {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.034em;
+  color: var(--v-ink);
+}
+.iv-pillar-d {
+  margin: var(--sp-3) 0 0;
+  max-width: 58ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.74;
+  color: var(--v-on-ivory);
+}
+
+/* The destination circuits — the only nested register here. */
+.iv-pillar-circuit {
+  list-style: none;
+  margin: var(--sp-5) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  max-width: 720px;
+}
+.iv-pillar-circuit > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  padding: var(--sp-3) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.iv-circuit-k {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold);
+}
+.iv-circuit-v {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(16px, 1.6vw, 19px);
+  letter-spacing: -0.022em;
+  color: var(--v-ink);
+}
+.iv-circuit-d {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+
+/* Figures. Grouped, not spread — each carries the label of the
+   metric it measures, per the data-integrity rule. */
+.iv-pillar-f {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
+  gap: var(--sp-4) var(--sp-5);
+  align-content: start;
+}
+.iv-pillar-f > div { min-width: 0; }
+.iv-pillar-f dt {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  /* Deliberately capped below `.iv-pillar-t` (max 40px). The statement leads
+     this ledger and the figures are its evidence; at the previous 42px max
+     the numeral outsized the pillar name at >=1024 and inverted that order. */
+  font-size: clamp(24px, 2.6vw, 34px);
+  line-height: 1;
+  letter-spacing: -0.038em;
+  color: var(--v-red);
+  font-variant-numeric: tabular-nums;
+}
+.iv-pillar-f dd {
+  margin: 8px 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-muted);
+}
+
+@media (min-width: 640px) {
+  .iv-pillar-circuit > li {
+    grid-template-columns: 130px minmax(0, 1fr);
+    column-gap: var(--sp-4);
+    align-items: baseline;
+  }
+  .iv-circuit-k { grid-row: 1; }
+  .iv-circuit-v { grid-row: 1; grid-column: 2; }
+  .iv-circuit-d { grid-column: 2; }
+}
+
+@media (min-width: 1024px) {
+  .iv-pillars { row-gap: var(--sp-7); }
+  .iv-pillars-h { grid-column: 1 / span 8; }
+  /* Statement left, evidence hard right — the ledger reading. */
+  .iv-pillar-set > li {
+    grid-template-columns: minmax(0, 1fr) clamp(220px, 24vw, 320px);
+    column-gap: var(--sp-7);
+    padding: var(--sp-7) 0;
+  }
+  /* A pillar whose figure is stated in the market rail above carries no
+     figure group of its own, so it takes the full measure rather than
+     leaving an empty right column. */
+  .iv-pillar-set > li.is-solo { grid-template-columns: minmax(0, 1fr); }
+  .iv-pillar-f { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
 }

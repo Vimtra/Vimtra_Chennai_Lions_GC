@@ -4,7 +4,8 @@ import Image from "next/image";
 import PageMasthead from "@/components/site/PageMasthead";
 
 export const metadata: Metadata = {
-  title: "Partners · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/partners" },
+  title: "Partners",
   description:
     "Partner with the Vimtra Chennai Lions GC — the partners on record, what a partnership carries, and the four commercial tiers.",
 };
@@ -238,8 +239,38 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      {/* ---- 03 · The tiers ---- */}
-      <section className="hp-sec hp-sec-paper pt-sec" aria-labelledby="pt-c">
+      {/* ---- 03 · The tiers ----
+          RECONSTRUCTED. The previous version drew the lead tier as a filled
+          ink rectangle with the photograph boxed inside it, followed by
+          three rungs of identical height — so the photograph read as a card
+          thumbnail and the "descent" existed only in the size of a numeral.
+
+          This is a descent you can see. The four tiers step progressively
+          INWARD down the page (`--rung`, 0 → 3), each opening on a rule that
+          loses weight and colour as it falls — crimson, then gold, then two
+          hairlines — while the tier name loses scale with it. Nothing is
+          boxed, nothing is filled, nothing repeats a shape.
+
+          The photograph is structural rather than decorative: it is a
+          full-height column pinned to the ladder and bled off the left page
+          edge, so the tiers are read against it rather than beside a
+          thumbnail.
+
+          Every tier name, headline and inclusion is TIERS above, verbatim
+          from brochure p. 19. No tier, benefit, price, audience figure or
+          commercial claim has been added — the brochure states no prices, so
+          the section carries none. "Lead tier" is the only editorial label
+          and it describes position in the brochure's own ordering.
+
+          The photograph carries no readable third-party mark — see the
+          rejected candidates in public/assets/photo/CREDITS.md, where every
+          strong tournament-hospitality frame turned out to carry sponsors'
+          logos, which on the page about who sponsors the Lions would read as
+          Lions partners. */}
+      <section
+        className="hp-sec hp-sec-paper pt-sec pt-tier-sec"
+        aria-labelledby="pt-c"
+      >
         <div className="hp-wrap">
           <div className="nw-head">
             <div>
@@ -252,28 +283,41 @@ export default function PartnersPage() {
             </div>
           </div>
 
-          {/* Four columns, not a ladder of four rows — see the note on
-              `.pt-tiers` in globals.css. Ordered left to right, so the
-              numeral still carries the hierarchy; no colour badges, no
-              four identical cards. */}
-          <ol className="pt-tiers">
-            {TIERS.map((t) => (
-              <li key={t.code}>
-                <div className="pt-tier-id">
-                  <span className="pt-tier-n" aria-hidden>
-                    {t.code}
-                  </span>
-                  <h3 className="pt-tier-name">{t.name}</h3>
-                  <p className="pt-tier-head">{t.headline}</p>
-                </div>
-                <ul className="pt-tier-list">
-                  {t.bullets.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ol>
+          <div className="cm-track pt-tier-spread">
+            <figure className="pt-tier-col">
+              <Image
+                src="/assets/photo/pt-tiers-golden-fairway.jpg"
+                alt=""
+                fill
+                sizes="(max-width: 1023px) 100vw, 32vw"
+                style={{ objectPosition: "54% 44%" }}
+              />
+            </figure>
+
+            <ol className="pt-descent">
+              {TIERS.map((t, i) => (
+                <li
+                  className="pt-step"
+                  key={t.code}
+                  style={{ ["--rung" as string]: i }}
+                >
+                  <p className="pt-step-k">
+                    <span className="pt-step-n" aria-hidden>
+                      {t.code}
+                    </span>
+                    {i === 0 ? "Lead tier" : null}
+                  </p>
+                  <h3 className="pt-step-name">{t.name}</h3>
+                  <p className="pt-step-head">{t.headline}</p>
+                  <ul className="pt-incl">
+                    {t.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
 

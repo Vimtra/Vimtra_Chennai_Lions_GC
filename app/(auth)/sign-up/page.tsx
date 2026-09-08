@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/auth";
 import PasswordField from "@/components/auth/PasswordField";
 
 export const metadata: Metadata = {
-  title: "Create Account · Vimtra Chennai Lions GC",
+  title: "Create Account",
   robots: { index: false, follow: false },
 };
 

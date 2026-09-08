@@ -7,7 +7,7 @@ import AccountNav from "@/components/profile/AccountNav";
 import OrdersList from "@/components/profile/OrdersList";
 
 export const metadata: Metadata = {
-  title: "My Orders · Vimtra Chennai Lions GC",
+  title: "My Orders",
   robots: { index: false, follow: false },
 };
 

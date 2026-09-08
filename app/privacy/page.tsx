@@ -5,7 +5,8 @@ import PageHero from "@/components/site/PageHero";
 import { Section, IndexLabel } from "@/components/site/Section";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/privacy" },
+  title: "Privacy Policy",
   description:
     "How the Vimtra Chennai Lions GC website collects, uses, and safeguards personal data provided by visitors and customers.",
 };

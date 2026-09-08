@@ -6,7 +6,7 @@ import StoryHero from "@/components/site/StoryHero";
 import { Section } from "@/components/site/Section";
 
 export const metadata: Metadata = {
-  title: "Checkout · Vimtra Chennai Lions GC",
+  title: "Checkout",
   robots: { index: false, follow: false },
 };
 

@@ -22,7 +22,7 @@ export async function generateMetadata({
   }
   const description = post.excerpt ?? `${post.title} — Vimtra Chennai Lions GC`;
   return {
-    title: `${post.title} · Vimtra Chennai Lions GC`,
+    title: post.title,
     description,
     openGraph: {
       type: "article",

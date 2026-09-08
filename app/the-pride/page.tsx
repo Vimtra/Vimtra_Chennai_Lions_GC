@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import FullBleedStatement from "@/components/site/FullBleedStatement";
 import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
-  title: "The Pride · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/the-pride" },
+  title: "The Pride",
   description:
     "Chennai's roar on the world's newest stage — the emotional charter of the Vimtra Chennai Lions and the fifteen-event AM Green IGPL Season 2026.",
 };
@@ -47,20 +49,40 @@ export default function ThePridePage() {
       />
 
       {/* 01 — THE CITY.
-          Asymmetric split: the display statement across the upper columns,
-          the documented body on the left edge, and the brochure's own line
-          set as a serif counterweight in the right columns. */}
-      <Section surface="ivory">
-        <div className="cm-track cm-city">
+          A vertical composition, deliberately unlike The Club's Identity
+          plate (a horizontal ink field bleeding off the right edge). Here a
+          single tall photographic column runs the FULL height of the
+          section — top edge to bottom edge, under the section's own padding
+          — and the type is set against it in the left columns. The serif
+          counterweight then crosses the whole width beneath both.
+
+          THE PHOTOGRAPH is a lighthouse on an open beachfront, cropped to
+          the tower alone. It is here because it is architecture rather than
+          scenery: it gives the section a vertical, urban subject in the
+          franchise's own crimson and white, and it is the one frame on this
+          page that is not the sea. Per public/assets/photo/CREDITS.md the
+          alt text describes the scene and does not assert a location. */}
+      <Section surface="ivory" className="pr-city-sec">
+        <div className="cm-track pr-city">
           <IndexLabel n="01">The City</IndexLabel>
 
-          <div className="cm-city-title">
+          <figure className="pr-city-col">
+            <Image
+              src="/assets/photo/pride-city-lighthouse.jpg"
+              alt="A red and white lighthouse tower against a clear sky"
+              fill
+              sizes="(max-width: 1023px) 100vw, 26vw"
+              style={{ objectPosition: "50% 40%" }}
+            />
+          </figure>
+
+          <div className="pr-city-h">
             <SectionTitle
               lines={["CHENNAI’S ROAR", "ON THE WORLD’S", "NEWEST STAGE."]}
             />
           </div>
 
-          <div className="cm-city-body">
+          <div className="pr-city-body">
             <p data-rise>
               The Bay of Bengal at our back, a deep amateur golf base at our
               feet, and one of the country&apos;s most consistent pipelines of
@@ -77,7 +99,7 @@ export default function ThePridePage() {
           </div>
 
           {/* Brochure p. 06 — "A team built for the long game." */}
-          <p className="cm-pull cm-city-pull" data-rise>
+          <p className="cm-pull pr-city-pull" data-rise>
             A team built for the long game.
           </p>
         </div>

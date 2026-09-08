@@ -11,7 +11,8 @@ import type { Post, MediaCoverage } from "@prisma/client";
 import { webSrc } from "@/lib/image-src";
 
 export const metadata: Metadata = {
-  title: "News · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/news" },
+  title: "News",
   description:
     "From the Den — official franchise news, third-party press coverage, and social updates about the Vimtra Chennai Lions.",
 };

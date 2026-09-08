@@ -20,7 +20,7 @@ export async function generateMetadata({
   const product = await getProductById(id);
   if (!product) return { title: "Product · Vimtra Chennai Lions GC" };
   return {
-    title: `${product.name} · Vimtra Chennai Lions GC`,
+    title: product.name,
     description: product.desc,
   };
 }

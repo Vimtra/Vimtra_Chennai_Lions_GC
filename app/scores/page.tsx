@@ -12,7 +12,8 @@ import { ROSTER } from "@/data/players";
 import type { Fixture } from "@prisma/client";
 
 export const metadata: Metadata = {
-  title: "Scores · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/scores" },
+  title: "Scores",
   description:
     "Round scoring for the Vimtra Chennai Lions across the AM Green IGPL Season 2026 — each event's board, lit as verified cards are published.",
 };

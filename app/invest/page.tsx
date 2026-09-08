@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import FullBleedStatement from "@/components/site/FullBleedStatement";
 import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
-  title: "Invest · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/invest" },
+  title: "Invest",
   description:
     "The Vimtra Chennai Lions GC franchise opportunity — owned outright by Vimtra Ventures, entered at the formation of Indian franchise golf.",
 };
@@ -27,11 +27,65 @@ export const metadata: Metadata = {
    describes the scene only — none of these is a Lions venue.
 --------------------------------------------------------------------------- */
 
-// Brochure p. 17 — the market case, verbatim numbers.
+/* The market case — Chennai Lions IGPL brochure p. 17, verbatim. Three
+   top-line figures about the MARKET, and nothing about this franchise's own
+   performance.
+
+   The franchise-commitment and real-estate-premium figures briefly lived
+   here too. They were moved into "The three pillars" below, where each sits
+   with the pillar it actually measures: a figure repeated in two places on
+   one page is duplication, not emphasis. */
 const MARKET = [
   { v: "$1B+", l: "India Golf Market Today" },
   { v: "17.1%", l: "Sports Tourism CAGR" },
   { v: "10", l: "IGPL Franchises · Chennai is one" },
+];
+
+/* ---------------------------------------------------------------------------
+   THE THREE PILLARS — Vimtra x PGA of America brochure, pp. 05, 06 and 08
+   ("BUSINESS PILLAR 1/2/3 OF 3"). Statements and figures are verbatim.
+
+   Every figure is labelled with the thing it measures. None is a projection,
+   a target, a yield or a return, and nothing here says or implies what an
+   investor would receive — the sources make no such statement and neither
+   does this page.
+--------------------------------------------------------------------------- */
+const PILLARS = [
+  {
+    n: "01",
+    t: "Sports Tourism",
+    d: "Golf tourists spend more per capita and stay longer than any other visitor segment — making golf resorts and destination tournaments highly profitable anchors for India's growing travel economy.",
+    /* No figure group. The pillar's own number — 17.1% sports-tourism CAGR —
+       is already the second figure in the market rail above, and the source
+       for both is the same statistic. It is stated once on this page, in the
+       rail, and the pillar carries the argument instead. */
+    figures: [],
+    // p. 05 — the three destination circuits, with the source's own labels.
+    set: [
+      { k: "Coastal", v: "Goa", d: "Resort golf paired with a mature beach-leisure circuit." },
+      { k: "Backwaters", v: "Kerala", d: "Wellness-forward golf tourism through the year." },
+      { k: "Heritage", v: "Rajasthan", d: "Palace-resort golf that anchors premium international tours." },
+    ],
+  },
+  {
+    n: "02",
+    t: "Franchise Leagues",
+    d: "The Indian Golf Premier League (IGPL), launched in 2025, has attracted $100M in franchise commitments — the largest private investment in Indian golf history. Compact 8–10-acre courses in Tier 2/3 cities expand accessibility and anchor integrated golf communities.",
+    figures: [
+      // "10 city franchises" is in the market rail above — not repeated here.
+      { v: "$100M", l: "Franchise commitments" },
+      { v: "8–10 ac", l: "Compact course footprint" },
+    ],
+  },
+  {
+    n: "03",
+    t: "Real Estate Integration",
+    d: "Golf-facing homes command 5–12% price premiums — up to 25% in metros like Gurugram. Mixed-use sports townships combining residential, academies, and leisure are more resilient than single-purpose mega projects.",
+    figures: [
+      { v: "5–12%", l: "Golf-facing home premium" },
+      { v: "25%", l: "Up to, in metros" },
+    ],
+  },
 ];
 
 // Brochure p. 03 + Vimtra Ventures profile — the documented chain of
@@ -40,7 +94,11 @@ const STRUCTURE = [
   {
     tag: "Parent",
     name: "Vimtra Ventures",
-    body: "A US-based venture capital and investment firm founded in 1995. Operates as principal, not intermediary, across six verticals — San Francisco and Chennai.",
+    // Deliberately short. The firm's full description — founding, the six
+    // verticals, "principal, not intermediary", the credential figures —
+    // belongs to /vimtra-ventures and is not restated here; this card only
+    // needs to establish who sits at the top of the chain.
+    body: "The San Francisco and Chennai investment firm that owns the franchise outright, operating as principal since 1995. Sports is one of its six verticals.",
   },
   {
     tag: "Operating Framework",
@@ -64,7 +122,11 @@ const REASONS = [
   {
     k: "02",
     t: "Owned outright.",
-    d: "The Chennai Lions are owned outright by Vimtra Ventures, a firm operating as principal across six verticals since 1995.",
+    // Deliberately no firm profile here — the ownership chain is the
+    // structure diagram above, and the firm itself is /vimtra-ventures.
+    // This reason has to say why sole ownership matters, not repeat who
+    // the owner is for the third time on one page.
+    d: "A single owner, not a syndicate. Decisions on the squad, the academy and the course sit with one principal, on one timeline.",
   },
   {
     k: "03",
@@ -149,41 +211,132 @@ export default function InvestPage() {
         imagePosition="50% 48%"
       />
 
-      {/* 02 — THE BUSINESS / FRANCHISE MODEL.
-          Parent → operating entity → franchise. Documented names only. */}
-      <Section surface="paper">
-        <div className="cm-track iv-model">
+      {/* 02 — THE FRANCHISE.
+          REBUILT to remove a duplication. This section used to render the
+          `gd-index` component with `gd-framework-facility.jpg` beside it —
+          the exact pattern and the exact photograph that /golf-development
+          used for its own "The Framework" section, so a reader moving
+          between the two pages met the same layout with the same picture
+          twice. Both are gone from here: no shared photograph, no numbered
+          index, no two-column split.
+
+          What replaces it is a containment diagram, which is what the
+          documented structure actually is. Vimtra Ventures holds the
+          operating framework; the operating framework holds the franchise.
+          So each level is drawn INSIDE the one above it, stepping in and
+          intensifying from a hairline outline to the crimson plate at the
+          centre — the franchise being invested in. The nesting is generated
+          from STRUCTURE, so it follows however many levels that array
+          holds, and it carries no number, valuation or mechanic of any kind
+          because the brochure states none.
+
+          The list is a nested <ol> so the containment is real in the
+          document, not just drawn. */}
+      <Section surface="paper" className="iv-chain-sec">
+        <div className="cm-track iv-chain">
           <IndexLabel n="02">The Franchise</IndexLabel>
 
-          <div className="iv-model-h">
+          <div className="iv-chain-h">
             <h2 className="cm-display" data-rise>
               PARENT. PLATFORM. <em>franchise</em>.
             </h2>
+            <p className="iv-chain-lede" data-rise>
+              Each holds the next. Read it from the outside in.
+            </p>
           </div>
 
-          <div className="iv-model-f" data-rise>
-            <div className="gd-fig">
-              <Image
-                src="/assets/photo/gd-framework-facility.jpg"
-                alt="A clubhouse, practice range and course seen from the air"
-                fill
-                sizes="(max-width: 1023px) 100vw, 40vw"
-                style={{ objectPosition: "46% 52%" }}
-              />
-            </div>
+          <div className="iv-chain-d" data-rise>
+            {(function nest(level: number): React.ReactNode {
+              const s = STRUCTURE[level];
+              if (!s) return null;
+              const inner = nest(level + 1);
+              return (
+                <ol className={`iv-ring iv-ring-${level}`}>
+                  <li>
+                    <p className="iv-ring-k">
+                      <span className="iv-ring-n" aria-hidden>
+                        {String(level + 1).padStart(2, "0")}
+                      </span>
+                      {s.tag}
+                    </p>
+                    <h3 className="iv-ring-t">{s.name}</h3>
+                    <p className="iv-ring-d">{s.body}</p>
+                    {inner}
+                  </li>
+                </ol>
+              );
+            })(0)}
+          </div>
+        </div>
+      </Section>
+
+      {/* THE THREE PILLARS.
+          The business case, from the Vimtra x PGA brochure pp. 05, 06 and
+          08. It sits between the franchise structure and the reasons because
+          it is the bridge: structure explains what the thing IS, the pillars
+          explain where the value is said to come from, and the reasons argue
+          the timing.
+
+          Composition is a ledger, not three cards and not another numbered
+          index: each pillar is a full-width  ruled row carrying its
+          statement on the left and its own figures as a data group on the
+          right, with the destination circuits set as an inline register
+          under the first. Distinct from the nested rings above it and the
+          numbered reasons below it.
+
+          No figure here is a projection or a return. Each is labelled with
+          the metric it measures and is stated exactly as the source states
+          it. */}
+      <Section surface="ivory" className="iv-pillar-sec">
+        <div className="cm-track iv-pillars">
+          <IndexLabel n="03">The Three Pillars</IndexLabel>
+
+          <div className="iv-pillars-h">
+            <h2 className="cm-display" data-rise>
+              WHERE THE VALUE IS <em>said to sit</em>.
+            </h2>
           </div>
 
-          <ol className="gd-index">
-            {STRUCTURE.map((s, i) => (
-              <li key={s.name} data-rise>
-                <span className="gd-index-n">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span>
-                  <span className="gd-index-k">{s.tag}</span>
-                  <span className="gd-index-t">{s.name}</span>
-                </span>
-                <p className="gd-index-d">{s.body}</p>
+          <ol className="iv-pillar-set">
+            {PILLARS.map((p) => (
+              <li
+                key={p.n}
+                data-rise
+                className={p.figures.length ? undefined : "is-solo"}
+              >
+                <div className="iv-pillar-a">
+                  <p className="iv-pillar-k">
+                    <span className="iv-pillar-n" aria-hidden>
+                      {p.n}
+                    </span>
+                    Pillar {p.n} of 03
+                  </p>
+                  <h3 className="iv-pillar-t">{p.t}</h3>
+                  <p className="iv-pillar-d">{p.d}</p>
+
+                  {p.set && (
+                    <ul className="iv-pillar-circuit">
+                      {p.set.map((c) => (
+                        <li key={c.v}>
+                          <span className="iv-circuit-k">{c.k}</span>
+                          <span className="iv-circuit-v">{c.v}</span>
+                          <span className="iv-circuit-d">{c.d}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {p.figures.length > 0 && (
+                  <dl className="iv-pillar-f">
+                    {p.figures.map((f) => (
+                      <div key={f.l}>
+                        <dt>{f.v}</dt>
+                        <dd>{f.l}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
               </li>
             ))}
           </ol>
@@ -196,7 +349,7 @@ export default function InvestPage() {
       <Section surface="ink">
         <div className="cm-track iv-why">
           <div className="iv-why-rail">
-            <IndexLabel n="03" tone="dark">
+            <IndexLabel n="04" tone="dark">
               Why This Opportunity
             </IndexLabel>
             <SectionTitle lines={["THE CASE,", "AS WRITTEN."]} />
@@ -231,16 +384,16 @@ export default function InvestPage() {
           the firm page. No founder bios, no six-vertical index. */}
       <Section surface="ivory">
         <div className="cm-track iv-owner">
-          <IndexLabel n="04">Vimtra Ventures</IndexLabel>
+          <IndexLabel n="05">Vimtra Ventures</IndexLabel>
           <h2 className="cm-display iv-owner-h" data-rise>
             THE FIRM BEHIND THE <em>franchise</em>.
           </h2>
           <div className="iv-owner-b" data-rise>
             <p>
-              The Chennai Lions are owned outright by Vimtra Ventures — a San
-              Francisco and Chennai investment firm founded in 1995. Sports
-              franchises is one of six verticals: this team, and an ownership
-              position in the Dallas Sidekicks.
+              Alongside the Chennai Lions, Vimtra holds an ownership position
+              in the <strong>Dallas Sidekicks</strong> — the second franchise
+              in its sports vertical. The firm&rsquo;s full profile, its
+              verticals and its credentials are set out on its own page.
             </p>
             <Link href="/vimtra-ventures" className="hp-btn hp-btn-text">
               The firm
@@ -257,7 +410,7 @@ export default function InvestPage() {
           published on /contact. No embedded lead form. */}
       <Section surface="ink" size="tight" className="hp-sec-atmos">
         <div className="cm-track iv-enquire">
-          <IndexLabel n="05" tone="dark">
+          <IndexLabel n="06" tone="dark">
             Enquiries
           </IndexLabel>
           <div className="iv-enquire-h">

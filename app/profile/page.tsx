@@ -5,7 +5,7 @@ import { Section } from "@/components/site/Section";
 import ProfileClient from "@/components/profile/ProfileClient";
 
 export const metadata: Metadata = {
-  title: "My Account · Vimtra Chennai Lions GC",
+  title: "My Account",
   robots: { index: false, follow: false },
 };
 

@@ -50,10 +50,54 @@ face.** Keep that rule if these are ever swapped out.
 | `ss-standings-hero-green-marsh.jpg` | [pexels 8454463](https://www.pexels.com/photo/grass-golf-field-beside-river-8454463/) | Championship green, bunker and marsh in low light, no people | `/leaderboards` masthead |
 | `pt-hero-pavilion-golden.jpg` | [pexels 6216840](https://www.pexels.com/photo/gazebo-overlooking-golf-course-at-sunset-6216840/) | Hospitality pavilion looking over a course at golden hour, no people | `/partners` masthead |
 | `gd-hero-clubhouse-lake.jpg` | [pexels 6048946](https://www.pexels.com/photo/photo-of-a-golf-course-during-daytime-6048946/) | Clubhouse across a lake from the fairway | `/golf-development` hero |
-| `gd-framework-facility.jpg` | [pexels 29276528](https://www.pexels.com/photo/aerial-view-of-golf-course-in-setubal-portugal-29276528/) | Clubhouse, practice range and course from the air | `/golf-development` 01 The Framework; `/invest` 02 The Franchise |
+| `gd-framework-facility.jpg` | [pexels 29276528](https://www.pexels.com/photo/aerial-view-of-golf-course-in-setubal-portugal-29276528/) | Clubhouse, practice range and course from the air | **Currently unused** — see "The 2026-09 section redesigns" below |
 | `gd-thesis-villas-aerial.jpg` | [pexels 34823930](https://www.pexels.com/photo/aerial-view-of-sheikh-zayed-luxury-villas-and-golf-course-34823930/) | Villas woven through a golf course, straight down | `/golf-development` Signature Thesis |
-| `vv-hero-cliffside-community.jpg` | [pexels 37727309](https://www.pexels.com/photo/coastal-golf-course-with-luxurious-cliffside-homes-37727309/) | Cliffside homes above a coastal green | `/vimtra-ventures` hero |
+| `vv-hero-cliffside-community.jpg` | [pexels 37727309](https://www.pexels.com/photo/coastal-golf-course-with-luxurious-cliffside-homes-37727309/) | Cliffside homes above a coastal green | `/vimtra-ventures` hero (now actually wired — see below) |
 | `gd-perf-putt-hole.jpg` | [pexels 6573259](https://www.pexels.com/photo/a-golf-putter-and-ball-near-the-green-hole-6573259/) | Putter and ball beside the hole | `/golf-development` 03 High Performance |
+
+### Added 2026-09 — the section redesigns
+
+Three frames were sourced under the same rules as everything above (Pexels
+Licence, self-hosted, no identifiable face, no readable third-party mark),
+plus one derivative of the franchise's own artwork.
+
+| File | Source | Depicts | Used on |
+|---|---|---|---|
+| `gd-framework-dawn-green.jpg` | [pexels 31508581](https://www.pexels.com/photo/misty-golf-course-with-lush-greenery-31508581/) | A cut green and pin flag on rising ground in dawn mist, no people | `/golf-development` 01 The Framework |
+| `pride-city-lighthouse.jpg` | [pexels 31653799](https://www.pexels.com/photo/chennai-lighthouse-on-scenic-beachfront-31653799/) | A red and white lighthouse tower against a clear sky | `/the-pride` 01 The City |
+| `pt-tiers-golden-fairway.jpg` | [pexels 26050563](https://www.pexels.com/photo/green-golf-course-at-sunset-26050563/) | Sun breaking through a tree over a fairway and green at sunset, no people | `/partners` 03 Commercial tiers |
+| `../logo-crest-mono.png` | Franchise artwork — a crop of `public/assets/Monotone-01.png` | The Lions crest, monotone crimson, transparent | `/the-club` 01 Identity |
+
+Notes on each:
+
+- **`gd-framework-dawn-green.jpg`** replaces `gd-framework-facility.jpg` on
+  The Framework. The old frame was rendered on **two** pages —
+  `/golf-development` 01 and `/invest` 02 — beside the same `gd-index`
+  layout, so a reader moving between them met the same picture twice.
+  `/invest` no longer carries a photograph in that section at all (it is a
+  containment diagram now), and The Framework took a new frame. Portrait
+  format was the point: the section is drawn as a vertical spine, and this
+  is the only portrait-format landscape frame in the directory.
+- **`pride-city-lighthouse.jpg`** is cropped to the tower. The original
+  frame's lower third is a cluttered beach with litter, stalls and distant
+  people; the published crop keeps only the tower against sky. It is used
+  because The Pride's "The City" needed an *architectural*, vertical,
+  crimson-and-white subject — the page's other two frames are both the sea.
+  Per the location rule at the foot of this file its alt text describes the
+  scene and does **not** assert that it is Chennai, even though the
+  photographer labels it so.
+- **`pt-tiers-golden-fairway.jpg`** is atmosphere for the commercial
+  proposition, never a venue or event claim. See the two new rejections
+  below for why nothing closer to the subject could be used.
+- **`logo-crest-mono.png`** is not photography. It is a trimmed crop of the
+  franchise's own monotone lockup, produced so The Club's Identity section
+  could be carried by the mark itself rather than by a fifth stock
+  photograph on that page.
+
+The removal of `/the-club`'s "Leadership · Vimtra Ventures" section also
+removed the second appearance of both founder portraits
+(`subash-yammada-web.jpg`, `thimmaji-rao-yammada-web.jpg`). They now render
+on `/vimtra-ventures` only.
 
 ## Rejected candidates — and why
 
@@ -65,6 +109,9 @@ Kept here so the same mistakes are not re-made on the next swap.
 - **Every golf-coaching result on Pexels** — the search returns almost exclusively photographs of children being taught. Identifiable minors do not go on a commercial franchise page. The academy and grassroots initiatives are therefore set typographically, with no stand-in photography.
 - **Chennai beach scenes with people in the foreground** — good for "community", but they put private individuals' faces on a commercial page for no editorial gain. Passed over in favour of frames without them.
 - **[pexels 35454862](https://www.pexels.com/photo/large-crowd-gathers-on-multi-level-viewing-structure-at-a-golf-event-35454862/)** — the best frame found for `/partners` on subject (tournament grandstand, hospitality decks, golden hour) and rejected outright: the structure and the boards around the green carry FedEx and other sponsors' marks. On the one page about who sponsors the Chennai Lions, a visitor could read those as Lions partners.
+- **[pexels 35428479](https://www.pexels.com/photo/colorful-outdoor-golf-target-practice-range-35428479/)** — on subject and clean (a structured target range, no people, no marks), and rejected on PALETTE. Its targets are pink, cyan and magenta; dropped into a crimson/gold/ivory system it would have been the one image on the site fighting the brand.
+- **[pexels 27309420](https://www.pexels.com/photo/a-man-is-mowing-the-grass-on-a-golf-course-27309420/)** — the best frame found for "course-operating standards" (a greenkeeper cutting a green at dawn, face not readable). Downloaded, inspected at 2x, and discarded: the mower deck carries a legible **TORO** wordmark. Same rule as the TopGolf and NOCTA frames above.
+- **[pexels 35454864](https://www.pexels.com/photo/scenic-golf-course-with-empty-bleachers-35454864/)** and **[pexels 35048316](https://www.pexels.com/photo/scenic-golf-course-under-clear-blue-sky-35048316/)** — both sought for `/partners` "Commercial tiers", both from the same event as the already-rejected 35454862, and both rejected for the same reason at higher resolution: the greenside scoreboard carries **Rolex, Mitsubishi, Mastercard and Reef Capital Partners**. On the page about who sponsors the Chennai Lions those read as Lions partners. The tournament-hospitality category on Pexels is systematically branded; the section took an unbranded golden-hour course frame instead.
 - **[pexels 32988401](https://www.pexels.com/photo/scenic-golf-course-with-mountain-view-32988401/)** — a strong mountain-course frame, but the pin flag carries a legible golf-estate name and logo. Downloaded, inspected at 2x, and discarded for the same reason as the TopGolf and NOCTA frames above.
 
 ## Season module — why these two exist

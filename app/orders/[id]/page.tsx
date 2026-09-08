@@ -23,7 +23,7 @@ import {
 } from "@/lib/orders-format";
 
 export const metadata: Metadata = {
-  title: "Order · Vimtra Chennai Lions GC",
+  title: "Order",
   robots: { index: false, follow: false },
 };
 

@@ -17,7 +17,7 @@ import { prisma } from "@/lib/prisma";
 import AdminShell from "@/components/admin/AdminShell";
 
 export const metadata: Metadata = {
-  title: "Admin · Vimtra Chennai Lions GC",
+  title: "Admin",
   robots: { index: false, follow: false },
 };
 

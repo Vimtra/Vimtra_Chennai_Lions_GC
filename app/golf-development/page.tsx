@@ -6,9 +6,10 @@ import FullBleedStatement from "@/components/site/FullBleedStatement";
 import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
-  title: "Golf Development · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/golf-development" },
+  title: "Golf Development",
   description:
-    "Vimtra's Indian golf platform — coaching, academies, event standards, and course operations to international championship level, alongside Golf on Wheels and a Chennai course + academy under development.",
+    "Vimtra's Indian golf platform, built on a licensed partnership with the PGA of America — coaching curriculum, instructor accreditation, event and course standards, alongside Golf on Wheels and a Chennai course + academy under development.",
 };
 
 /* ---------------------------------------------------------------------------
@@ -24,7 +25,17 @@ export const metadata: Metadata = {
    with minimal support; High Performance is a filling figure beside a ruled
    field. No cards anywhere.
 
-   ADDED SECTION — INITIATIVES (04): "Golf on Wheels" and the Chennai
+   ADDED SECTION — THE PGA PARTNERSHIP (02): sourced entirely from the
+   "VIMTRA VENTURES LLC x PGA OF AMERICA - Building India's Golf Future"
+   brochure (Company Profile 2026, p. 01). Before the September 2026 content
+   audit the partnership appeared NOWHERE on this site, even though "The
+   Framework" above already claimed coaching curriculum, coach certification,
+   event standards and course-operating standards as the platform's remit —
+   the section that explains where those standards come from was simply
+   missing. It sits second for that reason. No PGA logo or mark is used; the
+   repository holds no PGA artwork and none was sourced.
+
+   ADDED SECTION — INITIATIVES (05): "Golf on Wheels" and the Chennai
    "Course & Academy" are promised by this page's own <meta description> and
    are approved copy already live on the home page, but the page itself never
    rendered them. That gap is now closed with the existing wording and its
@@ -50,6 +61,88 @@ const FRAMEWORK = [
     name: "Chennai Lions GC · IGPL Season 2026",
     body:
       "Vimtra's Indian golf platform expressed as a competitive team — anchored by a proven marquee, built around a rising domestic core.",
+  },
+];
+
+/* ---------------------------------------------------------------------------
+   THE PGA PARTNERSHIP — every string below is verbatim from the
+   "VIMTRA VENTURES LLC × PGA OF AMERICA — Building India's Golf Future"
+   brochure (Company Profile 2026), page 01, "THE PARTNERSHIP".
+
+   This is a licensed partnership, not a sponsorship or an endorsement, and
+   the copy says only what that page says. No PGA mark or logo is used: the
+   repository holds no PGA artwork and none was sourced.
+--------------------------------------------------------------------------- */
+const PGA_ROLE = [
+  {
+    name: "Coaching curriculum",
+    body: "PGA-certified methodology brought into Indian academies.",
+  },
+  {
+    name: "Instructor accreditation",
+    body: "Indian coaches trained and certified to international standards.",
+  },
+  {
+    name: "Event & tournament standards",
+    body: "Championship-format operations for events hosted in India.",
+  },
+  {
+    name: "Course & club standards",
+    body: "PGA-informed design and operating standards for new venues.",
+  },
+  {
+    name: "Brand credibility",
+    body: "A century-old name that draws players, sponsors, partners, and media.",
+  },
+  {
+    name: "Player pathway",
+    body: "A pipeline to international pro tours for the next generation of Indian pros.",
+  },
+];
+
+// PGA brochure p. 01 — the two offices named on the partnership page.
+const PGA_OFFICES = [
+  { k: "Registered office", v: "Fremont, CA", d: "Vimtra Ventures LLC" },
+  { k: "Primary office", v: "Frisco, TX", d: "PGA of America" },
+  { k: "PGA of America heritage", v: "Since 1916", d: "Championship courses · Academies · Communities" },
+];
+
+/* ---------------------------------------------------------------------------
+   THE FIVE MOVES — verbatim from the Vimtra x PGA of America brochure
+   (Company Profile 2026, p. 03, "STRATEGIC VISION — Five moves to grow the
+   game"). Order and wording are the source's own.
+
+   Move 05 names Khelo India and the Ahmedabad 2036 Olympics bid. The source
+   sentence is "Align with initiatives like Khelo India and the upcoming
+   Ahmedabad 2036 Olympics bid" — an intention to align, not a relationship,
+   an endorsement or a selection. It is reproduced as written and nothing is
+   added to it.
+--------------------------------------------------------------------------- */
+const MOVES = [
+  {
+    n: "01",
+    t: "Grassroots development",
+    d: "Introduce golf at the school and academy level, building awareness of the game among younger generations.",
+  },
+  {
+    n: "02",
+    t: "Championship facilities in metros",
+    d: "Build 18-hole championship courses that host international tournaments, attract tourism, and elevate India's presence in global golf.",
+  },
+  {
+    n: "03",
+    t: "Par-3 courses in Tier 2/3 cities",
+    d: "Democratize access and nurture grassroots talent — smaller, more accessible courses are perfect for beginners and urban areas with limited space.",
+  },
+  {
+    n: "04",
+    t: "Golf-led communities",
+    d: "Partner with real estate developers to create golf-led residential communities, leveraging exclusivity premiums.",
+  },
+  {
+    n: "05",
+    t: "Government alignment",
+    d: "Align with initiatives like Khelo India and the upcoming Ahmedabad 2036 Olympics bid.",
   },
 ];
 
@@ -91,7 +184,21 @@ const HIGH_PERFORMANCE = [
   },
 ];
 
-// Wording and status tags exactly as already published on the home page.
+/* Initiatives. The first two are the wording and status tags already
+   published on the home page (Vimtra Ventures profile, "Golf & Sports
+   Development"). The second two were added in the content audit from the
+   Vimtra x PGA brochure p. 04, which carries the grassroots roadmap the site
+   did not have; their tags are that page's own labels — "TALKS UNDERWAY" and
+   "ON THE ROADMAP" — and are not upgraded to anything firmer.
+
+   That page also names Delhi Golf Club, the Karnataka Golf Association,
+   Bombay Presidency and the Tamil Nadu Golf Federation. Those are named
+   there as where India's certified academies already CONCENTRATE, not as
+   Vimtra partners — the partnership sentence says only "select existing
+   academies" and names none. They are therefore deliberately NOT reproduced
+   here: printing four real institutions on a commercial franchise page
+   beside a partnership claim would imply a relationship the source does not
+   state. */
 const INITIATIVES = [
   {
     tag: "Grassroots · with IGPL",
@@ -104,6 +211,18 @@ const INITIATIVES = [
     name: "Course & Academy",
     body:
       "A world-class course and academy under development in Chennai — professional training, youth development and community engagement.",
+  },
+  {
+    tag: "Talks underway",
+    name: "Partnering with established academies",
+    body:
+      "Active conversations with select existing academies to become PGA-affiliated partners under the Vimtra platform — extending their reach, curriculum, and instructor standards.",
+  },
+  {
+    tag: "On the roadmap",
+    name: "New academies & Par-3 access in Tier 2/3",
+    body:
+      "Identifying high-potential Tier 2 and Tier 3 cities to open new PGA-certified academies and compact Par-3 courses that lower the barrier to entry — city by city.",
   },
 ];
 
@@ -119,40 +238,173 @@ export default function GolfDevelopmentPage() {
         imagePosition="50% 44%"
       />
 
-      {/* 01 — THE FRAMEWORK */}
-      <Section surface="ivory">
-        <div className="cm-track gd-framework">
+      {/* 01 — THE FRAMEWORK.
+          A governing spine, not a statement beside a figure.
+
+          The two rows of FRAMEWORK are not a list of equals — the first is
+          the institutional authority and the second is what that authority
+          produces. The section is drawn that way: a single vertical rule
+          runs down the column with a node on it for each stratum, and each
+          stratum steps further in than the one above, so the structure of
+          the framework is the composition rather than something the copy
+          has to assert. It adapts to however many rows FRAMEWORK holds.
+
+          The photograph is a tall column pinned to the left of the section
+          and is the page's only portrait-format frame — chosen so it reads
+          as a core sample through the platform rather than as an
+          illustration beside a paragraph. See the note in
+          public/assets/photo/CREDITS.md on why this frame replaced the
+          aerial that /invest was also using. */}
+      <Section surface="ivory" className="gdf-sec">
+        <div className="cm-track gdf">
           <IndexLabel n="01">The Framework</IndexLabel>
 
-          <div className="gd-framework-h">
-            <h2 className="cm-display" data-rise>
+          <figure className="gdf-col">
+            <Image
+              src="/assets/photo/gd-framework-dawn-green.jpg"
+              alt="A cut green and pin flag on rising ground in dawn mist"
+              fill
+              sizes="(max-width: 1023px) 100vw, 30vw"
+              style={{ objectPosition: "56% 50%" }}
+            />
+          </figure>
+
+          <div className="gdf-body">
+            <h2 className="cm-display gdf-h" data-rise>
               A PLATFORM, NOT A <em>portfolio bet</em>.
+            </h2>
+
+            <ol className="gdf-strata">
+              {FRAMEWORK.map((f, i) => (
+                <li
+                  key={f.name}
+                  className="gdf-stratum"
+                  style={{ ["--depth" as string]: i }}
+                  data-rise
+                >
+                  <span className="gdf-node" aria-hidden />
+                  <span className="gdf-stratum-n" aria-hidden>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="gdf-stratum-k">{f.tag}</span>
+                  <h3 className="gdf-stratum-t">{f.name}</h3>
+                  <p className="gdf-stratum-d">{f.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </Section>
+
+      {/* 02 — THE PGA PARTNERSHIP.
+          The institutional authority the section above refers to. "The
+          Framework" names coaching curriculum, coach certification, event
+          standards and course-operating standards as the platform's remit;
+          this section is where those standards actually come from, so it
+          sits immediately after it rather than being bolted on at the end.
+
+          Composition is deliberately unlike anything else on this page — no
+          spine, no `gd-index`, no full-bleed statement. A licence plate
+          carrying the two named offices and the PGA's founding year, then
+          the six roles as a capability field divided by vertical hairlines
+          rather than stacked rules.
+
+          Every word is the PGA brochure's own (p. 01). Nothing about the
+          partnership's scope, value or exclusivity is characterised beyond
+          what that page states. */}
+      <Section surface="paper" className="gdp-sec">
+        <div className="cm-track gdp">
+          <IndexLabel n="02">The Partnership · PGA of America</IndexLabel>
+
+          <div className="gdp-head">
+            <h2 className="cm-display gdp-h" data-rise>
+              AN AMERICAN LICENSE. AN INDIAN <em>ambition</em>.
             </h2>
           </div>
 
-          <div className="gd-framework-f" data-rise>
-            <div className="gd-fig">
-              <Image
-                src="/assets/photo/gd-framework-facility.jpg"
-                alt="A clubhouse, practice range and course seen from the air"
-                fill
-                sizes="(max-width: 1023px) 100vw, 40vw"
-                style={{ objectPosition: "46% 52%" }}
-              />
-            </div>
+          <div className="gdp-body" data-rise>
+            <p>
+              Vimtra Ventures LLC, with its registered office in{" "}
+              <strong>Fremont, California</strong>, has signed a license
+              agreement with the Professional Golfers&rsquo; Association of
+              America (PGA of America), headquartered in{" "}
+              <strong>Frisco, Texas</strong>.
+            </p>
+            <p>
+              The partnership brings the PGA&rsquo;s century of golf expertise
+              to a market entering its defining decade — combining
+              championship facilities, grassroots academies, and integrated
+              real estate under one platform.
+            </p>
           </div>
 
-          <ol className="gd-index">
-            {FRAMEWORK.map((f, i) => (
-              <li key={f.name} data-rise>
-                <span className="gd-index-n">
-                  {String(i + 1).padStart(2, "0")}
+          <dl className="gdp-plate" data-rise>
+            {PGA_OFFICES.map((o) => (
+              <div key={o.k}>
+                <dt>{o.k}</dt>
+                <dd>
+                  <span className="gdp-plate-v">{o.v}</span>
+                  <span className="gdp-plate-d">{o.d}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="gdp-roles">
+            <p className="gdp-roles-k" data-rise>
+              The PGA&rsquo;s role in the plan
+            </p>
+            <ol className="gdp-role-set">
+              {PGA_ROLE.map((r, i) => (
+                <li key={r.name} data-rise>
+                  <span className="gdp-role-n" aria-hidden>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="gdp-role-t">{r.name}</h3>
+                  <p className="gdp-role-d">{r.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </Section>
+
+      {/* 03 — THE PLAN.
+          The five moves the platform is built on (PGA brochure p. 03). It
+          follows the partnership because the partnership is what makes the
+          moves credible; it precedes the thesis because the thesis is one of
+          the five, not the whole plan.
+
+          Composition: a hanging-numeral plan. The ordinals sit OUTSIDE the
+          text column, in the gutter, which is a device none of the other
+          sections on this page uses — the framework hangs its numerals on a
+          spine, the partnership sets them above each role, and the two
+          `gd-index` lists set them inline. Set on ink so the page alternates
+          rather than running three light sections together.
+
+          No figure is attached to any move: the source attaches none. */}
+      <Section surface="ink" className="gdm-sec hp-sec-atmos">
+        <div className="cm-track gdm">
+          <IndexLabel n="03" tone="dark">
+            The Plan
+          </IndexLabel>
+
+          <div className="gdm-head">
+            <h2 className="cm-display gdm-h" data-rise>
+              FIVE MOVES TO GROW THE <em>game</em>.
+            </h2>
+          </div>
+
+          <ol className="gdm-set">
+            {MOVES.map((m) => (
+              <li key={m.n} data-rise>
+                <span className="gdm-n" aria-hidden>
+                  {m.n}
                 </span>
-                <span>
-                  <span className="gd-index-k">{f.tag}</span>
-                  <span className="gd-index-t">{f.name}</span>
-                </span>
-                <p className="gd-index-d">{f.body}</p>
+                <div className="gdm-b">
+                  <h3 className="gdm-t">{m.t}</h3>
+                  <p className="gdm-d">{m.d}</p>
+                </div>
               </li>
             ))}
           </ol>
@@ -163,7 +415,7 @@ export default function GolfDevelopmentPage() {
           The major typographic moment: one approved statement, edge to
           edge, over the one photograph that actually depicts it. */}
       <FullBleedStatement
-        eyebrow="02 · Signature Thesis"
+        eyebrow="04 · Signature Thesis"
         line={["GOLF-LED", "HNI", "COMMUNITIES."]}
         image="/assets/photo/gd-thesis-villas-aerial.jpg"
         imageAlt="Villas laid out through a golf course, photographed straight down"
@@ -215,7 +467,7 @@ export default function GolfDevelopmentPage() {
           </div>
 
           <div className="gd-perf-t">
-            <IndexLabel n="03">High Performance</IndexLabel>
+            <IndexLabel n="05">High Performance</IndexLabel>
             <SectionTitle lines={["TALENT,", "PATHWAYS,", "ECOSYSTEM."]} />
             <ul className="gd-pillars">
               {HIGH_PERFORMANCE.map((h) => (
@@ -232,15 +484,23 @@ export default function GolfDevelopmentPage() {
       {/* 04 — INITIATIVES. See the note at the top of this file. */}
       <Section surface="ivory">
         <div className="cm-track gd-framework">
-          <IndexLabel n="04">Initiatives</IndexLabel>
+          <IndexLabel n="06">Initiatives</IndexLabel>
 
           <div className="gd-framework-h">
             <h2 className="cm-display" data-rise>
               CURRENT, AND <em>under way</em>.
             </h2>
+            {/* The awareness gap, stated as the source states it — Vimtra x PGA
+                brochure p. 04. It is the reason the roadmap below exists, and
+                without it the roadmap reads as ambition rather than response.
+                The four named metro academies on that page are deliberately
+                not reproduced: the source names them as where certified
+                academies concentrate, not as Vimtra partners. */}
             <p className="gd-lede" data-rise>
-              What the platform is running today, and what is being built next
-              in Chennai.
+              Golf remains a niche pursuit in India, and certified academies
+              concentrate in the metros — beyond them, awareness in Tier 2 and
+              Tier 3 cities is low. The platform is built for that reality, not
+              around it.
             </p>
           </div>
 

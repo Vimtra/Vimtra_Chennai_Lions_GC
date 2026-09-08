@@ -7,7 +7,8 @@ import { listStandings } from "@/lib/standings";
 import { listFixtures } from "@/lib/fixtures";
 
 export const metadata: Metadata = {
-  title: "Leaderboards · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/leaderboards" },
+  title: "Leaderboards",
   description:
     "AM Green IGPL Season 2026 standings — the Franchise Table, the Player of the Season race and the Order of Merit, published from verified season data.",
 };

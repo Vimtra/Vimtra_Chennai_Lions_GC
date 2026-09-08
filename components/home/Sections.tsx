@@ -285,9 +285,13 @@ export function Development() {
               <span>NOT A BET.</span>
             </span>
           </h2>
+          {/* One clause on the PGA licence and no more: Home is a gateway,
+              and the partnership itself belongs on /golf-development.
+              Source: Vimtra x PGA of America brochure, p. 01. */}
           <p className="hm-body" data-rise>
             Coaching, academies, event standards and course operations to
-            international championship level — built as an institution, not a
+            international championship level — under a licensed partnership
+            with the PGA of America, and built as an institution, not a
             single season.
           </p>
           <Link href="/golf-development" className="hp-btn hp-btn-text" data-rise>

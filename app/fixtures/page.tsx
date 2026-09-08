@@ -7,7 +7,8 @@ import { formatFixtureDate, fixtureDay, fixtureMon } from "@/lib/fixtures-format
 import type { Fixture } from "@prisma/client";
 
 export const metadata: Metadata = {
-  title: "Fixtures · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/fixtures" },
+  title: "Fixtures",
   description:
     "The Season 2026 calendar — Am Green IGPL Invitationals, the completed African swing, and the Chennai Lions season opener at Al Hamra.",
 };
@@ -41,6 +42,12 @@ export const dynamic = "force-dynamic";
    row. Nothing is hard-coded and nothing is invented. The season-scale
    figures are the brochure's (p. 05).
 --------------------------------------------------------------------------- */
+
+// Brochure p. 05 — "15 EVENTS / SEASON · 10 FRANCHISES", verbatim. These
+// two are the ONLY hard-coded numbers on this page; everything else is a
+// count of database rows.
+const SEASON_EVENTS = 15;
+const SEASON_FRANCHISES = 10;
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -91,6 +98,50 @@ export default async function FixturesPage() {
     fixtures.find((f) => f.status === "UPCOMING") ??
     null;
   const groups = byMonth(fixtures);
+
+  /* ---- Season scale, computed from the rows above --------------------
+     SEASON_EVENTS / SEASON_FRANCHISES are the brochure's (p. 05). Every
+     other number here is a count of Fixture rows — nothing is estimated,
+     and the track never claims more than the database holds. */
+  const published = fixtures.length;
+  const eventCells = Math.max(SEASON_EVENTS, published);
+  const countBy = (s: Fixture["status"]) =>
+    fixtures.filter((f) => f.status === s).length;
+  const countries = new Set(fixtures.map((f) => f.country)).size;
+
+  const SCALE_LEGEND: { k: string; v: string; cls: string }[] = [];
+  if (countBy("COMPLETED"))
+    SCALE_LEGEND.push({
+      k: "Played",
+      v: String(countBy("COMPLETED")),
+      cls: "is-done",
+    });
+  if (countBy("LIVE"))
+    SCALE_LEGEND.push({ k: "In play", v: String(countBy("LIVE")), cls: "is-live" });
+  if (countBy("UPCOMING"))
+    SCALE_LEGEND.push({
+      k: "Upcoming",
+      v: String(countBy("UPCOMING")),
+      cls: "is-next",
+    });
+  if (countBy("CANCELLED"))
+    SCALE_LEGEND.push({
+      k: "Cancelled",
+      v: String(countBy("CANCELLED")),
+      cls: "is-void",
+    });
+  if (eventCells - published > 0)
+    SCALE_LEGEND.push({
+      k: "To be announced",
+      v: String(eventCells - published),
+      cls: "is-open",
+    });
+  if (countries)
+    SCALE_LEGEND.push({
+      k: countries === 1 ? "Country" : "Countries",
+      v: String(countries),
+      cls: "is-mark",
+    });
 
   return (
     <>
@@ -207,19 +258,82 @@ export default async function FixturesPage() {
         </div>
       </Section>
 
-      {/* Season scale — brochure p. 05, stated rather than tabulated. */}
-      <Section surface="ink" className="hp-sec-atmos">
-        <div className="cm-track cm-statement">
+      {/* SEASON SCALE.
+          The brochure's two season figures (p. 05 — 15 events, 10
+          franchises) drawn to scale against what the database actually
+          holds, instead of asserted in a sentence.
+
+          Every mark below is computed at the top of this component from the
+          Fixture rows this page already renders: how many events are
+          published, how many are complete, in play or upcoming, and how many
+          countries the published card touches. The fifteen cells are the
+          brochure's season size; the filled ones are the rows that exist.
+          When the AM Green IGPL announces more events and they are entered,
+          more cells fill — with no code change and nothing invented in the
+          meantime. If more than fifteen are ever published the track grows
+          to match, so the graphic can never contradict the data.
+
+          The graphic itself is aria-hidden and the same facts are stated in
+          the ruled legend underneath, so nothing is available only as a
+          picture. */}
+      <Section surface="ink" className="hp-sec-atmos ss-scale-sec">
+        <div className="cm-track ss-scale">
           <IndexLabel n={featured ? "03" : "02"} tone="dark">
             Season scale
           </IndexLabel>
-          <h2 className="cm-display" data-rise>
+
+          <h2 className="cm-display ss-scale-h" data-rise>
             FIFTEEN EVENTS.
             <br />
             TEN <em>franchises</em>.
           </h2>
-          <div className="cm-statement-support" data-rise>
-            <p>
+
+          <div className="ss-scale-track" data-rise>
+            <p className="ss-scale-k">
+              The season card
+              <span>
+                {published} of {eventCells} published
+              </span>
+            </p>
+            <ol className="ss-cells" aria-hidden>
+              {Array.from({ length: eventCells }, (_, i) => {
+                const f = fixtures[i];
+                const state = !f
+                  ? "is-open"
+                  : f.status === "LIVE"
+                    ? "is-live"
+                    : f.status === "COMPLETED"
+                      ? "is-done"
+                      : f.status === "CANCELLED"
+                        ? "is-void"
+                        : "is-next";
+                return <li className={`ss-cell ${state}`} key={i} />;
+              })}
+            </ol>
+            <dl className="ss-scale-legend">
+              {SCALE_LEGEND.map((l) => (
+                <div key={l.k}>
+                  <dt>
+                    <span className={`ss-cell ${l.cls}`} aria-hidden />
+                    {l.k}
+                  </dt>
+                  <dd>{l.v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div className="ss-scale-field" data-rise>
+            <p className="ss-scale-k">
+              The league
+              <span>Chennai is one of ten</span>
+            </p>
+            <ol className="ss-franchises" aria-hidden>
+              {Array.from({ length: SEASON_FRANCHISES }, (_, i) => (
+                <li className={i === 0 ? "is-lions" : ""} key={i} />
+              ))}
+            </ol>
+            <p className="ss-scale-note">
               Season 2026 spans fifteen events across ten franchises — ten in
               India and five international. The calendar above is the subset
               the Chennai Lions IGPL brochure publishes today; further events

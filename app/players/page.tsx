@@ -6,7 +6,8 @@ import { Section, SectionTitle } from "@/components/site/Section";
 import { FEATURES } from "@/data/players";
 
 export const metadata: Metadata = {
-  title: "Players · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/players" },
+  title: "Players",
   description:
     "Season 2026 — Gaganjeet Bhullar (marquee), Harshjeet Singh Sethie, Samarth Dwivedi, and Yashas Chandra M S.",
 };

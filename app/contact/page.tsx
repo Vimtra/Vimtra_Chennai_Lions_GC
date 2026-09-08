@@ -5,7 +5,8 @@ import StoryHero from "@/components/site/StoryHero";
 import { Section } from "@/components/site/Section";
 
 export const metadata: Metadata = {
-  title: "Contact · Vimtra Chennai Lions GC",
+  alternates: { canonical: "/contact" },
+  title: "Contact",
   description:
     "Talk to the franchise — partnerships, sponsorship, media, golf-development, and merchandise support for the Vimtra Chennai Lions.",
 };
