@@ -85,8 +85,8 @@ export function Statement() {
           <div className="hm-statement-s" data-rise>
             <p>
               Chennai&rsquo;s franchise in the AM Green Indian Golf Premier
-              League — owned outright by Vimtra Ventures, a San Francisco
-              &amp; Chennai investment firm founded in 1995. The commitment is
+              League — owned by Vimtra Ventures, a San Francisco
+              &amp; Chennai investment firm founded in 2014. The commitment is
               not to a single season. It is to the decade of Indian franchise
               golf that begins now.
             </p>

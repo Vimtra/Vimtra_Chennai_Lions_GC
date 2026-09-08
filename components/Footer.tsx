@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, ArrowUpRight, Mail, Phone } from "lucide-react";
 import { SITE_SECTIONS } from "@/lib/nav";
 
 /**
@@ -86,10 +86,6 @@ export default function Footer() {
             </li>
           </ul>
           <div className="ft-contact-meta">
-            <p className="ft-place">
-              <MapPin aria-hidden />
-              <span>TNGF Cosmo · Chennai, India</span>
-            </p>
             <a
               href="https://www.instagram.com/chennailionsgc/"
               target="_blank"

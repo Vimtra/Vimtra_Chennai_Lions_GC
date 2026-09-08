@@ -240,21 +240,26 @@ export default function PartnersPage() {
       </section>
 
       {/* ---- 03 · The tiers ----
-          RECONSTRUCTED. The previous version drew the lead tier as a filled
-          ink rectangle with the photograph boxed inside it, followed by
-          three rungs of identical height — so the photograph read as a card
-          thumbnail and the "descent" existed only in the size of a numeral.
+          REDESIGNED, third pass — a modern card layout, structurally
+          unlike either earlier version. Pass one was a filled ink block
+          with the photograph boxed inside it; pass two was a descending
+          list separated by an oversized outlined numeral standing in for
+          a rule. Both were still, at bottom, a single vertical column.
 
-          This is a descent you can see. The four tiers step progressively
-          INWARD down the page (`--rung`, 0 → 3), each opening on a rule that
-          loses weight and colour as it falls — crimson, then gold, then two
-          hairlines — while the tier name loses scale with it. Nothing is
-          boxed, nothing is filled, nothing repeats a shape.
-
-          The photograph is structural rather than decorative: it is a
-          full-height column pinned to the ladder and bled off the left page
-          edge, so the tiers are read against it rather than beside a
-          thumbnail.
+          This is a bento grid: the photograph and the lead tier sit side
+          by side as one hero row (`.pt-tier-hero`), then the remaining
+          three tiers run as an even card row beneath it
+          (`.pt-tier-rest`, `repeat(auto-fit, minmax(...))` — it reflows
+          3 → 2 → 1 columns on its own as the viewport narrows, no
+          per-breakpoint span math to maintain). Every tier is a distinct
+          filled card (`.pt-card`) on its own soft dark surface, picked out
+          by background tint and shadow-based elevation rather than a
+          border — there is still no ruled line anywhere in this section.
+          The lead tier's card carries a filled gold "Lead tier" pill and a
+          warmer surface tint instead of a border to read as featured.
+          Inclusions render as small pill tags (`.pt-card-incl li`), the
+          contemporary equivalent of the diamond-bulleted list from pass
+          two, without its divider mark.
 
           Every tier name, headline and inclusion is TIERS above, verbatim
           from brochure p. 19. No tier, benefit, price, audience figure or
@@ -268,13 +273,13 @@ export default function PartnersPage() {
           logos, which on the page about who sponsors the Lions would read as
           Lions partners. */}
       <section
-        className="hp-sec hp-sec-paper pt-sec pt-tier-sec"
+        className="hp-sec hp-sec-ink hp-sec-atmos pt-sec pt-tier-sec"
         aria-labelledby="pt-c"
       >
         <div className="hp-wrap">
           <div className="nw-head">
             <div>
-              <p className="hp-index">
+              <p className="hp-index hp-index-dark">
                 03 <span>Commercial tiers</span>
               </p>
               <h2 id="pt-c" className="nw-h">
@@ -283,40 +288,49 @@ export default function PartnersPage() {
             </div>
           </div>
 
-          <div className="cm-track pt-tier-spread">
-            <figure className="pt-tier-col">
-              <Image
-                src="/assets/photo/pt-tiers-golden-fairway.jpg"
-                alt=""
-                fill
-                sizes="(max-width: 1023px) 100vw, 32vw"
-                style={{ objectPosition: "54% 44%" }}
-              />
-            </figure>
+          <div className="pt-tier-modern">
+            <div className="pt-tier-hero">
+              <figure className="pt-tier-photo">
+                <Image
+                  src="/assets/photo/pt-tiers-golden-fairway.jpg"
+                  alt=""
+                  fill
+                  sizes="(max-width: 899px) 100vw, 38vw"
+                  style={{ objectPosition: "54% 44%" }}
+                />
+              </figure>
 
-            <ol className="pt-descent">
-              {TIERS.map((t, i) => (
-                <li
-                  className="pt-step"
-                  key={t.code}
-                  style={{ ["--rung" as string]: i }}
-                >
-                  <p className="pt-step-k">
-                    <span className="pt-step-n" aria-hidden>
-                      {t.code}
-                    </span>
-                    {i === 0 ? "Lead tier" : null}
-                  </p>
-                  <h3 className="pt-step-name">{t.name}</h3>
-                  <p className="pt-step-head">{t.headline}</p>
-                  <ul className="pt-incl">
+              <article className="pt-card pt-card-lead">
+                <div className="pt-card-top">
+                  <span className="pt-card-n">{TIERS[0].code}</span>
+                  <span className="pt-card-badge">Lead tier</span>
+                </div>
+                <h3 className="pt-card-name">{TIERS[0].name}</h3>
+                <p className="pt-card-head">{TIERS[0].headline}</p>
+                <ul className="pt-card-incl">
+                  {TIERS[0].bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </article>
+            </div>
+
+            <div className="pt-tier-rest">
+              {TIERS.slice(1).map((t) => (
+                <article className="pt-card" key={t.code}>
+                  <div className="pt-card-top">
+                    <span className="pt-card-n">{t.code}</span>
+                  </div>
+                  <h3 className="pt-card-name">{t.name}</h3>
+                  <p className="pt-card-head">{t.headline}</p>
+                  <ul className="pt-card-incl">
                     {t.bullets.map((b) => (
                       <li key={b}>{b}</li>
                     ))}
                   </ul>
-                </li>
+                </article>
               ))}
-            </ol>
+            </div>
           </div>
         </div>
       </section>

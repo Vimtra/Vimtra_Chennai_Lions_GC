@@ -5,9 +5,13 @@ import {
   contactConfirmationEmail,
   contactNotificationEmail,
   welcomeEmail,
+  codOrderConfirmationEmail,
+  codOrderNotificationEmail,
   type ContactConfirmationInput,
   type ContactNotificationInput,
   type WelcomeEmailInput,
+  type CodOrderConfirmationInput,
+  type CodOrderNotificationInput,
 } from "@/lib/email-templates";
 
 /**
@@ -34,6 +38,21 @@ import {
  *                      no separate config, no new env vars. Called once,
  *                      from signUp() in app/(auth)/actions.ts, never from
  *                      signIn().
+ *
+ *   sendCodOrder*      — Cash on Delivery order emails (confirmation to
+ *                      the buyer, notification to the admin). Same
+ *                      transport and gate as sendContact* and
+ *                      sendWelcomeEmail above; the admin recipient
+ *                      additionally reads
+ *                      ORDER_NOTIFY_EMAIL, falling back to ADMIN_EMAIL —
+ *                      same shape as sendContactNotificationToAdmin's
+ *                      CONTACT_NOTIFY_EMAIL fallback. Called only from
+ *                      placeOrderAction() in app/checkout/actions.ts, only
+ *                      when the order's paymentMethod is "COD", once per
+ *                      order row — see that call site's own comment for
+ *                      why this can't double-send. Non-COD orders
+ *                      (OFFLINE_INVOICE, ONLINE_TBD) still go through
+ *                      sendOrderReceipt below, unchanged.
  *
  * SMTP_HOST and MAIL_FROM are read by BOTH gates above — unavoidable
  * given sendOrderReceipt predates this file's Gmail wiring and already
@@ -258,4 +277,43 @@ export async function sendContactNotificationToAdmin(
 export async function sendWelcomeEmail(input: WelcomeEmailInput): Promise<MailResult> {
   const { subject, text, html } = welcomeEmail(input);
   return sendMail({ to: input.email, subject, text, html, replyTo: resolveFromAddress() });
+}
+
+// ---------------------------------------------------------------------------
+// Cash on Delivery order emails — same transport, gate and
+// resolveFromAddress() as everything above. Called from
+// app/checkout/actions.ts's placeOrderAction, ONLY when the order's
+// paymentMethod is "COD", once per successfully created order (there is no
+// retry path that re-enters placeOrderAction for an order that already
+// exists — see that file's own comment for why this can't double-send).
+// Every value in `input` comes from the Order/OrderItem rows placeOrder()
+// just wrote, not from the client's cart submission.
+
+/** Email #1 — to the buyer. States the payment method as Cash on Delivery,
+ *  never as a payment success (there is no payment yet). */
+export async function sendCodOrderConfirmationToUser(
+  input: CodOrderConfirmationInput
+): Promise<MailResult> {
+  const { subject, text, html } = codOrderConfirmationEmail(input);
+  return sendMail({ to: input.customerEmail, subject, text, html, replyTo: resolveFromAddress() });
+}
+
+/** Email #2 — to the admin. Recipient is ORDER_NOTIFY_EMAIL, falling back
+ *  to ADMIN_EMAIL when unset — the same fallback shape
+ *  sendContactNotificationToAdmin already uses for CONTACT_NOTIFY_EMAIL,
+ *  so an operator who has only ever set ADMIN_EMAIL still receives these
+ *  without configuring anything new. */
+export async function sendCodOrderNotificationToAdmin(
+  input: CodOrderNotificationInput
+): Promise<MailResult> {
+  const to = (process.env.ORDER_NOTIFY_EMAIL ?? process.env.ADMIN_EMAIL ?? "").trim();
+  if (!to) {
+    return {
+      sent: false,
+      reason: "not-configured",
+      detail: "Neither ORDER_NOTIFY_EMAIL nor ADMIN_EMAIL is set.",
+    };
+  }
+  const { subject, text, html } = codOrderNotificationEmail(input);
+  return sendMail({ to, subject, text, html, replyTo: input.customerEmail });
 }

@@ -37,14 +37,6 @@ const CHANNELS = [
   },
 ];
 
-// Home practice venue — brochure p. 04. Not an HQ; it is the team's
-// home practice venue in Chennai.
-const HOME_VENUE = {
-  label: "Home Practice Venue",
-  name: "TNGF Cosmo",
-  city: "Chennai · South India",
-};
-
 export default async function ContactPage({
   searchParams,
 }: {
@@ -77,12 +69,6 @@ export default async function ContactPage({
           </div>
 
           <div className="flex flex-col gap-5">
-            <div className="cf-venue" data-rise>
-              <div className="cf-venue-label">{HOME_VENUE.label}</div>
-              <h3 className="cf-venue-name">{HOME_VENUE.name}</h3>
-              <p className="cf-venue-city">{HOME_VENUE.city}</p>
-            </div>
-
             <div className="hp-panel" data-rise>
               <div className="cf-panel-label">Direct Channels</div>
               <div className="cf-channel-list">

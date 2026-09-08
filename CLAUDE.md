@@ -12,8 +12,9 @@ This file provides comprehensive guidelines for development, styling, and the in
 
 **This section outranks any design brief.** It applies to every public page —
 Home, The Club, The Pride, Players, Golf Development, Vimtra Ventures,
-Fixtures, Scores, Leaderboards, News, Gallery, Partners, Invest, Contact,
-Shop, and anything added later.
+Fixtures, Scores, Leaderboards, News, Partners, Invest, Contact,
+Shop, and anything added later. (`/gallery` was removed from the site; it no
+longer exists as a route and is not part of this list.)
 
 ### 1. Never invent data
 
@@ -220,7 +221,7 @@ If a product has no custom image (`img` is omitted or empty `""`), all rendering
 
 > **Hosting:** Targets **Vercel** (dynamic Next.js — Server Actions, the admin area, middleware, and the IGPL cron all need a Node/serverless runtime). A GoDaddy domain can later point its DNS at Vercel. Copy `.env.example` → `.env.local` and set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `AUTH_SECRET`, `CRON_SECRET` before deploying.
 
-### Current Directory Layout — all 18 pages ported ✅
+### Current Directory Layout — 42 routes and growing
 ```text
 Vimtra Chennai Lions Golf/
 ├── app/
@@ -229,7 +230,7 @@ Vimtra Chennai Lions Golf/
 │   ├── page.tsx                # Home (index.html) incl. hero carousel
 │   ├── shop, product/[id], cart, profile          # Commerce flow + member dashboard
 │   ├── players, fixtures, scores, leaderboards     # Roster + IGPL data pages
-│   ├── the-club, the-pride, news, gallery, partners, contact   # Content pages
+│   ├── the-club, the-pride, news, partners, contact   # Content pages
 │   ├── contact/actions.ts      # "use server" submitContact
 │   ├── api/sync/igpl/route.ts  # IGPL sync endpoint (scaffold; Vercel cron)
 │   └── admin/                  # 🔒 Protected console (see Admin Console below)
@@ -244,7 +245,7 @@ Vimtra Chennai Lions Golf/
 ├── components/
 │   ├── Nav (auth-aware), Footer, Loader, ToastHost, ComingSoon
 │   ├── Reveal.tsx, AeText.tsx
-│   ├── shop/, contact/, players/, fixtures/, gallery/, leaderboards/
+│   ├── shop/, contact/, players/, fixtures/, leaderboards/
 │   ├── profile/ProfileClient
 │   └── admin/ (AdminShell, ProductForm)
 ├── prisma/

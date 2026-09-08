@@ -82,6 +82,15 @@ export default function Nav({ user }: { user: SafeUser | null }) {
   const hydrated = useCartHydrated();
   const count = hydrated ? cartCount(items) : 0;
 
+  // The one label used everywhere this header shows "who is signed in" —
+  // real session data only (SafeUser, read server-side in app/layout.tsx
+  // from the DB-backed session), never hardcoded. Falls back to the
+  // account's email if name is ever empty, per the brief; User.name is a
+  // required DB column today, so this is a defensive fallback rather than
+  // a normally-exercised path.
+  const accountLabel = user ? user.name.trim() || user.email : null;
+  const isAdminUser = user?.role === "ADMIN";
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
@@ -195,6 +204,28 @@ export default function Nav({ user }: { user: SafeUser | null }) {
             ))}
           </nav>
 
+          {/* Admin quick-switch — a labelled destination, not another
+              circular icon, so it reads as "go to a different area" rather
+              than blending into the account/cart icon row. Server-rendered
+              from the same SafeUser the rest of this header already has
+              (app/layout.tsx's getCurrentUser()) — this is presentation
+              only; /admin's own requireAdmin() is still what actually
+              gates the route (see that layout/page's own auth check).
+              Desktop only (≥1024px, see globals.css) — the mobile overlay
+              already carries its own Admin entry below. */}
+          {isAdminUser && (
+            <Link
+              href="/admin"
+              className="nv-admin-link"
+              aria-label="Go to Admin Dashboard"
+              title="Admin Dashboard"
+              onMouseEnter={closeMega}
+            >
+              <ShieldCheck aria-hidden />
+              <span className="nv-admin-link-text">Admin Dashboard</span>
+            </Link>
+          )}
+
           <div className="nv-actions">
             <Link href="/cart" className="nv-icon" aria-label="Cart" onMouseEnter={closeMega}>
               <ShoppingBag aria-hidden />
@@ -203,11 +234,15 @@ export default function Nav({ user }: { user: SafeUser | null }) {
             </Link>
             <Link
               href={user ? "/profile" : "/sign-in"}
-              className="nv-icon"
-              aria-label={user ? `Account · ${user.name}` : "Sign in"}
+              className="nv-icon nv-account"
+              aria-label={user ? `Account · ${accountLabel}` : "Sign in"}
               onMouseEnter={closeMega}
             >
               <UserRound aria-hidden />
+              {/* Visible only from 1024px up (globals.css) — the compact
+                  bar below that already carries the name in the mobile
+                  overlay once it's opened. */}
+              {accountLabel && <span className="nv-account-name">{accountLabel}</span>}
             </Link>
             {user && (
               <form action={signOut} className="nv-desktop-signout">
@@ -329,9 +364,9 @@ export default function Nav({ user }: { user: SafeUser | null }) {
           <div className="nv-ov-foot">
             {user ? (
               <div className="nv-ov-acct">
-                <div className="nv-ov-avatar" aria-hidden>{(user.name.charAt(0) || "L").toUpperCase()}</div>
+                <div className="nv-ov-avatar" aria-hidden>{(accountLabel!.charAt(0) || "L").toUpperCase()}</div>
                 <div className="nv-ov-acct-b">
-                  <span className="nv-ov-acct-n">{user.name}</span>
+                  <span className="nv-ov-acct-n">{accountLabel}</span>
                   <span className="nv-ov-acct-r">{user.role} · Member</span>
                 </div>
                 <form action={signOut}>

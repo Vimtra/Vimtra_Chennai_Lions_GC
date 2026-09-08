@@ -63,6 +63,18 @@ export class InvalidAddressError extends Error {
   }
 }
 
+/** Internal signal only — thrown when a `clientRequestId` collides inside
+ *  the write transaction (a true concurrent race, not the common
+ *  sequential-retry case the pre-transaction check already handles).
+ *  Never escapes placeOrder(): caught immediately below and turned into a
+ *  lookup of the row that won the race. */
+class DuplicateClientRequestError extends Error {
+  constructor() {
+    super("clientRequestId already used by another order");
+    this.name = "DuplicateClientRequestError";
+  }
+}
+
 export interface PlaceOrderInput {
   userId: string;
   contactEmail: string;
@@ -85,6 +97,16 @@ export interface PlaceOrderInput {
   } | null;
   /** Cart items — quantities are trusted, prices are re-read from DB. */
   items: { productId: string; qty: number }[];
+  /**
+   * Idempotency key for this checkout attempt — generated once on the
+   * client (CheckoutFlow) and resubmitted unchanged on every retry of the
+   * SAME attempt (double-click, browser retry, a resumed request after a
+   * timeout). Optional and backward compatible: omitted, placeOrder()
+   * behaves exactly as before (every call creates a new order) — this is
+   * what the test harness and any other future caller that doesn't pass
+   * one still gets.
+   */
+  clientRequestId?: string | null;
 }
 
 export interface PlacedOrder {
@@ -110,7 +132,27 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlacedOrder> {
   }
   if (merged.size === 0) throw new EmptyCartError();
 
-  return prisma.$transaction(async (tx) => {
+  // ---- Idempotency short-circuit ----------------------------------------
+  // A plain read, outside any transaction, done BEFORE touching stock. This
+  // is what makes a double-click, a browser-level retry, or a resumed
+  // request after a client-side timeout return the order that was already
+  // created instead of placing a second one — the common case is two
+  // requests that arrive sequentially (even "simultaneous" clicks are
+  // milliseconds apart over the network), and this check alone resolves
+  // all of those without ever starting a second transaction. The @unique
+  // constraint on clientRequestId (see the catch below) is what still
+  // makes this correct for a genuine concurrent race, not just the
+  // sequential case this read covers.
+  const requestId = input.clientRequestId?.trim() || null;
+  if (requestId) {
+    const existing = await prisma.order.findUnique({ where: { clientRequestId: requestId } });
+    if (existing && existing.userId === input.userId) {
+      return { id: existing.id, orderNumber: existing.orderNumber };
+    }
+  }
+
+  try {
+    return await prisma.$transaction(async (tx) => {
     // Resolve the shipping address (either saved-book id or inline block).
     // Frozen snapshot lands on the Order row; the FK, when set, is a soft
     // pointer that ON DELETE SET NULLs.
@@ -219,6 +261,7 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlacedOrder> {
         const created = await tx.order.create({
           data: {
             orderNumber,
+            clientRequestId: requestId,
             userId: input.userId,
             shippingAddressId,
             // Prisma Json field accepts a plain object.
@@ -246,18 +289,42 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlacedOrder> {
         });
         return { id: created.id, orderNumber: created.orderNumber };
       } catch (e) {
-        // P2002 = unique-constraint violation on orderNumber. Retry.
         if (
           e instanceof Prisma.PrismaClientKnownRequestError &&
           e.code === "P2002"
         ) {
+          // P2002 = unique-constraint violation. Which column decides what
+          // "retry" means:
+          const target = Array.isArray(e.meta?.target)
+            ? (e.meta!.target as string[])
+            : typeof e.meta?.target === "string"
+              ? [e.meta!.target as string]
+              : [];
+          if (target.some((t) => t.includes("clientRequestId"))) {
+            // Lost a genuine concurrent race against another request
+            // carrying the SAME idempotency key. A fresh orderNumber does
+            // not fix this — the correct move is to stop, let this
+            // transaction roll back (including the stock decrement above,
+            // which must not double-apply), and hand back whichever order
+            // actually won. Caught just outside the transaction, below.
+            throw new DuplicateClientRequestError();
+          }
+          // Otherwise: an orderNumber collision — vanishingly rare (5-char
+          // alphanumeric per day). Retry with a freshly generated one.
           continue;
         }
         throw e;
       }
     }
     throw new Error("Failed to allocate a unique order number after 5 attempts");
-  });
+    });
+  } catch (e) {
+    if (e instanceof DuplicateClientRequestError && requestId) {
+      const winner = await prisma.order.findUnique({ where: { clientRequestId: requestId } });
+      if (winner) return { id: winner.id, orderNumber: winner.orderNumber };
+    }
+    throw e;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -311,6 +378,44 @@ export async function listOrdersForAdmin(filters?: {
     },
     orderBy: { createdAt: "desc" },
   });
+}
+
+// ---------------------------------------------------------------------------
+// Cash on Delivery email delivery tracking.
+//
+// Database-backed rather than an in-memory flag, deliberately: an
+// in-process flag is gone the moment the server restarts or the request
+// runs on a different serverless instance, which is exactly when a retry
+// is most likely to happen. A column on the Order row itself survives all
+// of that, and reads back correctly no matter which instance handles the
+// retry.
+
+export type CodEmailKind = "user" | "admin";
+
+/** Marks one of the two COD emails as sent for this order — called only
+ *  after the real send has returned `{ sent: true }` (see
+ *  placeOrderAction). Best-effort by design: if this write itself fails,
+ *  the worst outcome is a possible resend on a future retry, which is
+ *  still strictly better than the pre-fix behaviour of always resending.
+ *  Never throws. */
+export async function recordCodEmailSent(
+  orderId: string,
+  kind: CodEmailKind
+): Promise<void> {
+  try {
+    await prisma.order.update({
+      where: { id: orderId },
+      data:
+        kind === "user"
+          ? { codUserEmailSentAt: new Date() }
+          : { codAdminEmailSentAt: new Date() },
+    });
+  } catch (err) {
+    console.error(
+      `[orders] failed to record COD ${kind} email as sent for order ${orderId}:`,
+      err instanceof Error ? err.message : "Unknown error."
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

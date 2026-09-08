@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import ClubHero from "@/components/club/ClubHero";
+import StoryHero from "@/components/site/StoryHero";
 import ClubBuild, { type Take } from "@/components/club/ClubBuild";
 import { Section, IndexLabel } from "@/components/site/Section";
 
@@ -130,34 +130,28 @@ const KIT_CREDITS = [
   },
 ];
 
-/**
- * Relative luminance of a #rrggbb value, per WCAG. Used only to decide
- * whether a spectrum stripe carries its key in ink or in ivory — the keys sit
- * INSIDE the colour, so the choice has to follow the colour rather than be
- * hard-coded beside it. Presentation only; it reads nothing and stores
- * nothing.
- *
- * The 0.18 threshold is the crossover where ink beats ivory on this palette,
- * not a round number: Highlight Gold sits at L=0.355, and a naive 0.5 (or
- * even 0.36) split would hand it ivory type at 2.3:1, under AA. Below the
- * threshold ivory wins, above it ink does. Measured on all five —
- * Pride Red 5.1:1 (ivory), Highlight Gold 7.6:1 (ink), Court Yellow 13.7:1
- * (ink), Stadium Cream 15.9:1 (ink), Jet Black 16.0:1 (ivory).
- */
-function isLight(hex: string): boolean {
-  const v = hex.replace("#", "");
-  const ch = [0, 2, 4].map((i) => {
-    const c = parseInt(v.slice(i, i + 2), 16) / 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-  });
-  return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2] > 0.18;
-}
-
 export default function TheClubPage() {
   return (
     <>
-      {/* 01 — THE GATE. See components/club/ClubHero.tsx. */}
-      <ClubHero />
+      {/* 01 — THE GATE.
+          REDESIGNED — now the same `StoryHero` every other chapter page
+          (/the-pride, /players, /golf-development, /invest, /fixtures, and
+          the rest of the eleven routes that already share it) uses, for
+          the same visual language across the site. `.cl-hero-full` below
+          is the one page-specific rule: it makes THIS instance of the
+          shared hero exactly 100vh (100svh where supported) — `StoryHero`
+          itself is untouched, so no other page's hero height changes. */}
+      <div className="cl-hero-full">
+        <StoryHero
+          eyebrow="AM Green IGPL · Season 2026"
+          title={["THE", "CLUB"]}
+          line="Chennai's franchise in the AM Green Indian Golf Premier League. Owned outright by Vimtra Ventures."
+          image="/assets/photo/club-hero-fairway-dusk.jpg"
+          imageAlt="A championship fairway and treeline under a dusk sky"
+          imagePosition="58% 46%"
+          cta={{ href: "/players", label: "MEET THE PRIDE" }}
+        />
+      </div>
 
       {/* 02 — THE MANIFESTO.
           The page's one saturated crimson field. The franchise's own mark is
@@ -234,62 +228,78 @@ export default function TheClubPage() {
       </Section>
 
       {/* 04 — THE KIT.
-          A specification sheet, not a swatch chart. The left column hangs its
-          labels in a narrow gutter — season, palette count, and the two
-          verified kit credits — the way a garment spec is set. The right is
-          the palette as ONE continuous vertical spectrum, no gaps and no
-          borders, bleeding off the page edge, with each key set inside its
-          own colour (ink or ivory chosen from that colour's luminance).
+          REDESIGNED. The palette used to render as five stacked flat-colour
+          rows in a right-hand column — a swatch chart standing next to a
+          spec sheet, two unrelated shapes side by side. It's now one
+          full-bleed composition: the statement runs the width of the page
+          first, then a single blended gradient strip beneath it — the
+          actual visual referent for "a white-to-court-yellow gradient" —
+          bleeding to both true page edges, with each brand colour called
+          out by a tick and a label hanging below its own position on the
+          strip rather than boxed inside it. The two kit credits close the
+          section as a pair of plates, not a hairline-divided list.
 
-          The palette count is a count of the rows above it, not a claim. */}
+          The gradient's colour STOPS are exactly the five verified hex
+          values, evenly spaced (0/25/50/75/100%) — nothing added, nothing
+          reordered from the brochure's own sequence. */}
       <Section surface="ivory" className="cl-kit-sec">
         <div className="cm-track cl-kit">
-          <div className="cl-kit-a">
-            <IndexLabel n="04">The Kit · Season 2026</IndexLabel>
-            <h2 className="cl-kit-h">
-              <span className="mq-line" data-line>
-                <span>A WHITE-TO-</span>
-              </span>
-              <span className="mq-line" data-line>
-                <span>COURT-YELLOW</span>
-              </span>
-              <span className="mq-line" data-line>
-                <span>GRADIENT.</span>
-              </span>
-            </h2>
-            <p className="cl-kit-lede" data-rise>
-              Designed to travel from Chennai heat to floodlit international
-              venues without losing the team&apos;s visual identity.
-            </p>
+          <IndexLabel n="04">The Kit · Season 2026</IndexLabel>
 
-            <dl className="cl-kit-spec">
-              {KIT_CREDITS.map((k) => (
-                <div key={k.name} data-rise>
-                  <dt>{k.tag}</dt>
-                  <dd>
-                    <span className="cl-kit-spec-n">{k.name}</span>
-                    <span className="cl-kit-spec-d">{k.detail}</span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
+          <h2 className="cl-kit-h">
+            <span className="mq-line" data-line>
+              <span>A WHITE-TO-</span>
+            </span>
+            <span className="mq-line" data-line>
+              <span>COURT-YELLOW</span>
+            </span>
+            <span className="mq-line" data-line>
+              <span>GRADIENT.</span>
+            </span>
+          </h2>
+          <p className="cl-kit-lede" data-rise>
+            Designed to travel from Chennai heat to floodlit international
+            venues without losing the team&apos;s visual identity.
+          </p>
+        </div>
 
-          <div className="cl-kit-b">
-            <ol className="cl-spectrum">
-              {PALETTE.map((p) => (
-                <li
-                  key={p.label}
-                  className={isLight(p.hex) ? "is-light" : ""}
-                  style={{ ["--c" as string]: p.hex }}
-                  data-rise
-                >
-                  <span className="cl-sp-l">{p.label}</span>
-                  <span className="cl-sp-h">{p.hex}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
+        <div className="cl-kit-strip-wrap" data-rise>
+          <div
+            className="cl-kit-strip"
+            style={{
+              ["--stops" as string]: PALETTE.map(
+                (p, i) => `${p.hex} ${(i / (PALETTE.length - 1)) * 100}%`
+              ).join(", "),
+            }}
+          />
+          <ol className="cl-kit-ticks">
+            {PALETTE.map((p, i) => (
+              <li
+                key={p.label}
+                style={{
+                  ["--pos" as string]: `${(i / (PALETTE.length - 1)) * 100}%`,
+                }}
+              >
+                <span className="cl-kit-tick" aria-hidden />
+                <span className="cl-kit-tick-l">{p.label}</span>
+                <span className="cl-kit-tick-h">{p.hex}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="cm-track cl-kit-credits-track">
+          <dl className="cl-kit-credits">
+            {KIT_CREDITS.map((k) => (
+              <div key={k.name} data-rise>
+                <dt>{k.tag}</dt>
+                <dd>
+                  <span className="cl-kit-spec-n">{k.name}</span>
+                  <span className="cl-kit-spec-d">{k.detail}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </Section>
 

@@ -4,13 +4,20 @@ import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import {
   placeOrder,
+  getOrderByIdForAdmin,
+  readShippingSnapshot,
+  recordCodEmailSent,
   EmptyCartError,
   InsufficientStockError,
   InvalidAddressError,
   type PlaceOrderInput,
 } from "@/lib/orders";
 import { createAddress } from "@/lib/addresses";
-import { sendOrderReceipt } from "@/lib/mail";
+import {
+  sendOrderReceipt,
+  sendCodOrderConfirmationToUser,
+  sendCodOrderNotificationToAdmin,
+} from "@/lib/mail";
 import type { PaymentMethod } from "@prisma/client";
 
 /**
@@ -107,6 +114,11 @@ export async function placeOrderAction(formData: FormData): Promise<PlaceOrderRe
   const contactPhone = req(formData.get("contactPhone"));
   const paymentMethod = toPaymentMethod(formData.get("paymentMethod"));
   const notes = opt(formData.get("notes"));
+  // Idempotency key — CheckoutFlow generates this once per checkout attempt
+  // and resubmits the same value on every retry of that attempt (see its
+  // own comment). Absent for any caller that doesn't send one; placeOrder()
+  // treats that exactly as it always has (every call creates a new order).
+  const clientRequestId = opt(formData.get("clientRequestId"));
 
   if (!contactEmail || !/^\S+@\S+\.\S+$/.test(contactEmail)) {
     return { ok: false, code: "INVALID_ADDRESS", error: "A valid contact email is required." };
@@ -176,6 +188,7 @@ export async function placeOrderAction(formData: FormData): Promise<PlaceOrderRe
       shippingAddressId,
       shippingAddressInline,
       items,
+      clientRequestId,
     });
   } catch (e) {
     if (e instanceof EmptyCartError) {
@@ -216,20 +229,114 @@ export async function placeOrderAction(formData: FormData): Promise<PlaceOrderRe
     };
   }
 
-  // ---- Best-effort receipt (must not abort) -----------------------------
-  // Deliberately not `await`ed inside a hard try/catch that could bubble —
-  // any thrown inside sendOrderReceipt is contained by the function's own
-  // try/catch pattern; we just log the typed result.
-  try {
-    await sendOrderReceipt({
-      to: contactEmail,
-      orderNumber: placed.orderNumber,
-      totalRupees: 0, // populated in Phase 5.5 email template; today we only care that the call doesn't throw
-      itemCount: items.reduce((n, i) => n + i.qty, 0),
-      contactName: user.name,
-    });
-  } catch {
-    // Absolutely never abort the order because of receipt failure.
+  // ---- Best-effort order emails (must not abort) -------------------------
+  // The order row already exists at this point — nothing below can undo
+  // it, and nothing below is allowed to try.
+  //
+  // IMPORTANT: this action CAN now run more than once for the same order.
+  // placeOrder() is idempotent on clientRequestId (double-click, browser
+  // retry, or a resumed request after a client-side timeout all resolve to
+  // the SAME `placed.id`, not a new row) — see that function's own
+  // comment. So this block cannot assume "a fresh order ⇒ emails never
+  // sent"; each email is individually gated on the order's own
+  // codUserEmailSentAt / codAdminEmailSentAt column, set only after that
+  // specific send actually reports `sent: true`. That is what stops a
+  // retry that lands here a second time from re-sending an email that
+  // already went out — a crash between the two sends (scenario: user
+  // email sent, then the process dies before the admin email or before
+  // the response reaches the client) means a retry sends only the one
+  // that is still missing, never both again.
+  if (paymentMethod === "COD") {
+    // Cash on Delivery — real buyer confirmation + admin notification.
+    // Every figure below is re-read from the Order/OrderItem rows
+    // placeOrder() just wrote (getOrderByIdForAdmin), never recomputed
+    // from the client's cart submission, so the email can never disagree
+    // with what is actually stored.
+    try {
+      const full = await getOrderByIdForAdmin(placed.id);
+      if (full) {
+        const shippingAddress = readShippingSnapshot(full);
+        const siteHost = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000")
+          .replace(/\/$/, "")
+          .replace(/^https?:\/\//, "");
+        const lines = full.items.map((it) => ({
+          productName: it.productName,
+          qty: it.qty,
+          unitPrice: it.unitPrice,
+          lineTotal: it.lineTotal,
+        }));
+
+        if (!full.codUserEmailSentAt) {
+          const userMail = await sendCodOrderConfirmationToUser({
+            customerName: user.name,
+            customerEmail: full.contactEmail,
+            orderNumber: full.orderNumber,
+            orderId: full.id,
+            items: lines,
+            subtotal: full.subtotal,
+            shipping: full.shipping,
+            tax: full.tax,
+            total: full.total,
+            shippingAddress,
+            siteHost,
+          }).catch((err) => ({
+            sent: false as const,
+            reason: "error" as const,
+            detail: err instanceof Error ? err.message : "Unknown error.",
+          }));
+          if (userMail.sent) {
+            await recordCodEmailSent(full.id, "user");
+          } else if (userMail.reason === "error") {
+            console.error("[placeOrderAction] COD confirmation email failed:", userMail.detail);
+          }
+        }
+
+        if (!full.codAdminEmailSentAt) {
+          const adminMail = await sendCodOrderNotificationToAdmin({
+            customerName: user.name,
+            customerEmail: full.contactEmail,
+            customerPhone: full.contactPhone,
+            orderNumber: full.orderNumber,
+            orderId: full.id,
+            items: lines,
+            total: full.total,
+            shippingAddress,
+            siteHost,
+          }).catch((err) => ({
+            sent: false as const,
+            reason: "error" as const,
+            detail: err instanceof Error ? err.message : "Unknown error.",
+          }));
+          if (adminMail.sent) {
+            await recordCodEmailSent(full.id, "admin");
+          } else if (adminMail.reason === "error") {
+            console.error("[placeOrderAction] COD admin notification failed:", adminMail.detail);
+          }
+        }
+      }
+    } catch (err) {
+      // Absolutely never abort the order because of email failure.
+      console.error(
+        "[placeOrderAction] COD order email step failed:",
+        err instanceof Error ? err.message : "Unknown error."
+      );
+    }
+  } else {
+    // OFFLINE_INVOICE / ONLINE_TBD — unchanged from before this pass:
+    // sendOrderReceipt remains the dormant stub it already was (both of
+    // its branches return `sent: false`), so non-COD order-email
+    // behaviour is untouched. Not in scope for this change.
+    try {
+      await sendOrderReceipt({
+        to: contactEmail,
+        orderNumber: placed.orderNumber,
+        totalRupees: 0,
+        itemCount: items.reduce((n, i) => n + i.qty, 0),
+        contactName: user.name,
+      });
+    } catch {
+      // Absolutely never abort the order because of receipt failure.
+    }
   }
 
   // Revalidate the paths that reflect this order.

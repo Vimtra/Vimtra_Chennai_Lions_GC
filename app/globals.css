@@ -3821,6 +3821,12 @@ a:hover .hp-arrow {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  /* Added when the account pill grew a visible name: at the narrow end
+     of the desktop range there is now less spare width in this row, and
+     without this the two-word labels ("The Club", "The Season") were
+     wrapping onto a second line mid-phrase. Single-word labels were
+     never affected — this only stops a break that shouldn't happen. */
+  white-space: nowrap;
 }
 .nv-link-label::after {
   content: "";
@@ -3874,6 +3880,11 @@ a:hover .hp-arrow {
 }
 .nv-icon:hover { color: var(--v-ivory); }
 .nv-icon svg { width: 19px; height: 19px; }
+/* Signed-in name — visible only from 1024px up (see the media query
+   below). The account icon already links to /profile and already
+   carries the name in its aria-label; this is that same name made
+   visible for a sighted desktop visitor, not a new source of truth. */
+.nv-account-name { display: none; }
 .nv-badge {
   position: absolute;
   top: 6px;
@@ -3893,6 +3904,79 @@ a:hover .hp-arrow {
 .nv-burger { display: inline-flex; }
 @media (min-width: 1024px) {
   .nv-burger { display: none; }
+}
+
+/* ---- Admin quick-switch (desktop only) -----------------------
+   Two sizes, not one, because the header genuinely has no spare width
+   at the narrow end of "desktop": measured directly, the existing
+   icon-only pill (cart/account/sign-out, nothing new) already left only
+   ~45px of slack at exactly 1024px — the same pixel where the mega-nav
+   first appears and the mobile hamburger (which carries this same
+   destination in its own overlay) disappears. A full text button does
+   not fit there without pushing something else off-screen (this
+   project's global `overflow-x: hidden` would have hidden that
+   overflow silently rather than scrolling, which is worse, not
+   better).
+
+   So: 1024–1439px gets a compact circle matching every OTHER icon in
+   the pill exactly (same 38px, same shape) — still a distinct,
+   recognisable, always-present admin affordance, just icon-led rather
+   than label-led at this width. 1440px+ (confirmed via direct
+   measurement to have real spare width even with the account name also
+   shown — see .nv-account-name below) expands it to the full labelled
+   pill. Hidden entirely below 1024px on purpose: the mobile overlay
+   already carries its own Admin entry (`.nv-ov-direct.is-admin`).
+
+   Presentation only, at both sizes — /admin's own requireAdmin()
+   remains the actual security boundary regardless of whether this link
+   renders, or which size it renders at. */
+.nv-admin-link {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--v-gold-lit);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-decoration: none;
+  flex: none;
+  transition: background var(--mo-mid) var(--ease), color var(--mo-mid) var(--ease);
+}
+.nv-admin-link svg { width: 16px; height: 16px; flex: none; }
+.nv-admin-link:hover,
+.nv-admin-link:focus-visible {
+  background: var(--v-gold);
+  color: var(--v-ink);
+  outline: none;
+}
+@media (min-width: 1024px) {
+  /* Compact tier — an icon circle, no visible label (still named for
+     assistive tech via the link's own aria-label/title). */
+  .nv-admin-link {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    margin-right: var(--sp-2);
+    border: 1px solid rgba(184, 144, 75, 0.5);
+    border-radius: 50%;
+    background: rgba(184, 144, 75, 0.1);
+  }
+  .nv-admin-link-text { display: none; }
+}
+@media (min-width: 1440px) {
+  /* Full tier — the labelled pill, confirmed to fit alongside the
+     visible account name at this width (see .nv-account-name). */
+  .nv-admin-link {
+    width: auto;
+    height: 38px;
+    padding: 0 14px;
+    margin-right: var(--sp-3);
+    border-radius: 999px;
+  }
+  .nv-admin-link-text { display: inline; }
 }
 
 /* ---- Mega panel: a magazine spread -------------------------- */
@@ -5262,6 +5346,42 @@ a:hover .hp-arrow {
     outline: none;
   }
   .nv-badge { top: -2px; right: -2px; }
+  /* The visible account name is deliberately NOT revealed at this
+     breakpoint — see the .nv-admin-link comment above for the measured
+     reason (only ~45px of slack existed here even before either
+     addition). It appears at 1440px instead, in its own media query
+     below, once there's room confirmed by measurement. */
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  /* Adding even the compact icon-only admin button (above) still
+     measured ~20px over at exactly 1024px — the narrowest point, where
+     `.nv-links`' own gap (clamp(16px, 2vw, 32px) ⇒ ~20px here) was the
+     cheapest thing left to trim without touching type size or removing
+     a destination. Reclaimed only in this narrow band; 1280px and up
+     already had room and keep the original gap. */
+  .nv-links { gap: 12px; }
+}
+@media (min-width: 1440px) {
+  /* The account icon widens to fit its name — every OTHER `.nv-icon` in
+     the pill (cart, sign-out) keeps the plain 38px circle from the
+     1024px block above. */
+  .nv-icon.nv-account {
+    width: auto;
+    padding: 0 14px 0 11px;
+    gap: 8px;
+    border-radius: 999px;
+  }
+  .nv-account-name {
+    display: inline-block;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-manrope), sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: inherit;
+  }
 }
 @media (max-width: 1023px) {
   .nv-actions { gap: 0; }
@@ -6132,6 +6252,66 @@ a:hover .hp-arrow {
   color: var(--v-red);
 }
 .hp-sec-ink .cm-pull { color: var(--v-gold-lit); }
+
+/* Attribution line under a `.cm-pull` used as a quoted statement (rather
+   than brand copy) — a name/source credit, not body text. */
+.cm-pull-by {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: var(--t-micro);
+  letter-spacing: 0.01em;
+  color: var(--v-on-ivory);
+}
+.hp-sec-ink .cm-pull-by { color: var(--v-on-ink); }
+
+/* ---- The Values statement --------------------------------------
+   Scoped to The Pride's "Values" section only. REDESIGNED a second
+   time: the four-cell ruled grid (a hairline on every edge) read as a
+   spec sheet, not a statement of what the franchise stands for. No
+   rule of any kind appears anywhere in this block now — colour, scale
+   and whitespace carry the hierarchy instead, on the page's ink
+   ground rather than ivory.
+
+   Each word is sized off the longest ("Excellence") so nothing has to
+   shrink to share a slot with it. The 2nd and 4th words step in from
+   the edge — desktop only, where the measurement below confirmed the
+   room exists; phones stay flush-left, never risking an indent pushing
+   "Excellence" past its own column. */
+.pr-values { row-gap: var(--sp-8); }
+.pr-values > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
+
+.pr-values-list {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pr-values-list li {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(46px, 10vw, 138px);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--v-ivory);
+}
+.pr-values-list li:nth-child(odd) { color: var(--v-gold-lit); }
+@media (min-width: 1024px) {
+  .pr-values-list li:nth-child(2) { padding-left: clamp(24px, 6vw, 90px); }
+  .pr-values-list li:nth-child(4) { padding-left: clamp(48px, 11vw, 170px); }
+}
+
+.pr-values-quote {
+  grid-column: 1 / -1;
+  max-width: 62ch;
+  margin-top: var(--sp-9);
+}
+.pr-values-quote > .cm-pull { margin: 0; }
+.pr-values-quote > .cm-pull-by { margin-top: var(--sp-3); }
+@media (min-width: 1024px) {
+  .cm-place > .cm-pull,
+  .cm-place > .cm-pull-by { grid-column: 1 / span 8; }
+}
 
 /* ---- The city ----------------------------------------------
    Asymmetric split: display statement across the upper eight columns,
@@ -9068,6 +9248,14 @@ a:hover .hp-arrow {
    two chapters are not mistaken for one another. */
 .nw-social .hm-press-src { color: var(--v-gold); }
 
+/* ---- Official-news row: an IGPL-sourced item --------------------
+   `.nw-date` already carries the plain-post date in `.nw-posts`; this row
+   is not authored by the franchise, so its date line is replaced with
+   "Official · <source> · <date>" and given the accent colour rather than
+   the neutral one, so it reads as a distinct source at a glance without
+   a second list, a second heading, or any change to `.nw-posts` itself. */
+.nw-date-official { color: var(--v-red); }
+
 
 /* ============================================================
    PARTNERS — /partners
@@ -11747,12 +11935,11 @@ a:hover .hp-arrow {
    /the-pride, /players, /golf-development, /invest, /fixtures,
    /vimtra-ventures and the home page render them.
 
-     cl-hero-*     01 the gate       split frame + gold seam
+     cl-hero-full  01 the gate       shared StoryHero, scoped to 100vh
      cl-mf-*       02 the manifesto  saturated crimson field
      cl-build-* /
        cl-take-*   03 the build      cascading four-column spread
-     cl-kit-* /
-       cl-sp-*     04 the kit        spec column + colour spectrum
+     cl-kit-*      04 the kit        full-bleed gradient strip + tick labels
      cl-end-*      05 the sign-off   display lockup + next rail
 
    Surfaces run ink → crimson → paper → ivory → ink, so no two
@@ -11761,184 +11948,18 @@ a:hover .hp-arrow {
 
 /* ============================================================
    01 · THE GATE
-   Photograph one side, ink type panel the other, a gold seam
-   between them. The two never overlap, so the picture is never
-   dimmed to make the type legible and the type needs no scrim.
+   REDESIGNED — this page now opens on the same `StoryHero` every
+   other chapter page shares (see app/the-club/page.tsx's own comment
+   for the full reasoning), so the only rule this page still owns is
+   the one thing it needs that the shared component doesn't provide by
+   default: exactly 100vh. Scoped to `.cl-hero-full` — a wrapper only
+   this page renders — so `.cm-hero` itself, and every other route that
+   uses it, is completely untouched.
 ============================================================ */
-.cl-hero {
-  --band: clamp(300px, 44svh, 440px);
-  --split: 56%;
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  min-height: clamp(580px, 90svh, 860px);
-  background: var(--v-ink);
-  color: var(--v-ivory);
+.cl-hero-full .cm-hero {
+  min-height: 100vh;
+  min-height: 100svh; /* mobile browser chrome doesn't shrink the frame mid-scroll */
 }
-@media (min-width: 1024px) {
-  .cl-hero {
-    grid-template-columns: var(--split) minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr);
-    min-height: clamp(600px, 84svh, 820px);
-  }
-}
-
-.cl-hero-media {
-  position: relative;
-  overflow: hidden;
-  height: var(--band);
-}
-@media (min-width: 1024px) {
-  .cl-hero-media { height: auto; }
-}
-.cl-hero-media img { object-fit: cover; }
-/* Light, and only where it earns its place: enough at the top for the
-   floating header to sit on, enough at the foot to give the frame weight.
-   The middle of the picture is left alone. */
-.cl-hero-veil {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(14, 11, 10, 0.5) 0%,
-    rgba(14, 11, 10, 0.05) 32%,
-    rgba(14, 11, 10, 0.1) 62%,
-    rgba(14, 11, 10, 0.44) 100%
-  );
-}
-
-/* The seam. A gold hairline the full length of the join with a crimson
-   marker set into it — the page's first statement of the two brand
-   colours as a graphic rather than as decoration. Not animated: it is
-   2px of geometry, and content that small should never depend on a
-   tween having run. */
-.cl-hero-seam {
-  position: absolute;
-  z-index: 3;
-  pointer-events: none;
-  left: 0;
-  right: 0;
-  top: var(--band);
-  height: 2px;
-  transform: translateY(-1px);
-}
-.cl-hero-seam-rule {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, var(--v-gold) 0%, rgba(184, 144, 75, 0.16) 100%);
-}
-.cl-hero-seam-mark {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  width: 13px;
-  height: 13px;
-  margin-top: -7px;
-  background: var(--v-red);
-  transform: rotate(45deg);
-}
-@media (min-width: 768px) {
-  .cl-hero-seam-mark { left: 40px; }
-}
-@media (min-width: 1024px) {
-  .cl-hero-seam {
-    left: var(--split);
-    right: auto;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    height: auto;
-    transform: translateX(-1px);
-  }
-  .cl-hero-seam-rule {
-    background: linear-gradient(180deg, var(--v-gold) 0%, rgba(184, 144, 75, 0.12) 100%);
-  }
-  .cl-hero-seam-mark { left: 50%; top: 44%; margin-left: -7px; margin-top: 0; }
-}
-
-.cl-hero-panel {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  min-width: 0;
-}
-.cl-hero-inner {
-  width: 100%;
-  padding: var(--sp-7) 20px var(--sp-7);
-}
-@media (min-width: 768px) {
-  .cl-hero-inner { padding: var(--sp-8) 40px var(--sp-8); }
-}
-@media (min-width: 1024px) {
-  /* Clears the floating header itself — /the-club is in
-     FLOATING_HEADER_ROUTES, so nothing above reserves the space. */
-  .cl-hero-inner { padding: calc(92px + var(--sp-8)) 40px var(--sp-8) var(--sp-8); }
-}
-@media (min-width: 1280px) {
-  .cl-hero-inner { padding-right: 64px; padding-left: var(--sp-8); }
-}
-@media (min-width: 1600px) {
-  .cl-hero-inner { padding-right: 80px; padding-left: var(--sp-9); }
-}
-
-.cl-hero-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  margin: 0 0 var(--sp-5);
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-gold-lit);
-}
-.cl-hero-eyebrow::before {
-  content: "";
-  width: 40px;
-  height: 1px;
-  background: var(--v-gold);
-  flex: none;
-}
-.cl-hero-title {
-  margin: 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  /* The type has its own column, so it can run at a scale a full-bleed
-     hero could not carry without colliding with the picture. */
-  font-size: clamp(74px, 17vw, 150px);
-  line-height: 0.84;
-  letter-spacing: -0.052em;
-  color: var(--v-ivory);
-}
-@media (min-width: 1024px) {
-  /* Sized against the panel column, not the viewport: the widest word is
-     four characters, so this can never overrun its own gutter. */
-  .cl-hero-title { font-size: clamp(64px, 10.2vw, 186px); }
-}
-/* Tablet still stacks, so the band and the display size are pulled back.
-   Left at the phone values the gate filled a 768x1024 screen outright and
-   nothing below it was ever glimpsed. Declared AFTER the base size, not
-   beside `.cl-hero`, because both rules carry the same specificity and the
-   later one has to be this one. */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .cl-hero { --band: clamp(300px, 38svh, 380px); }
-  .cl-hero-title { font-size: clamp(74px, 13.6vw, 122px); }
-}
-.cl-hero-line {
-  margin: var(--sp-5) 0 0;
-  max-width: 38ch;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: clamp(15px, 1.25vw, 17.5px);
-  line-height: 1.68;
-  color: rgba(245, 239, 228, 0.82);
-}
-.cl-hero-cta { margin: var(--sp-6) 0 0; }
 
 /* ============================================================
    02 · THE MANIFESTO
@@ -12146,50 +12167,159 @@ a:hover .hp-arrow {
    key set inside its own colour.
 ============================================================ */
 .cl-kit-sec { overflow: hidden; }
-.cl-kit { row-gap: var(--sp-7); align-items: start; }
-.cl-kit-a { grid-column: 1 / -1; }
-.cl-kit-b { grid-column: 1 / -1; }
-@media (min-width: 1024px) {
-  .cl-kit-a { grid-column: 1 / span 5; }
-  .cl-kit-b { grid-column: 7 / -1; }
-}
+.cl-kit { row-gap: var(--sp-4); }
+.cl-kit > * { grid-column: 1 / -1; }
 .cl-kit-h {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(30px, 4.1vw, 60px);
+  font-size: clamp(34px, 5.6vw, 78px);
   line-height: 0.98;
   letter-spacing: -0.036em;
   color: var(--v-ink);
 }
 .cl-kit-lede {
   margin: var(--sp-5) 0 0;
-  max-width: 40ch;
+  max-width: 46ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
   line-height: 1.72;
   color: var(--v-on-ivory);
 }
 
-.cl-kit-spec { margin: var(--sp-7) 0 0; }
-.cl-kit-spec > div {
-  display: grid;
-  gap: var(--sp-2);
-  padding: var(--sp-5) 0;
-  border-top: 1px solid var(--v-hair-ivory);
+/* ---- The strip ------------------------------------------------
+   The actual visual referent for "a white-to-court-yellow gradient" —
+   a single blended band, not five flat rows standing next to a spec
+   sheet. Bleeds to the true page edge on BOTH sides: `.hp-wrap` caps at
+   1560px and centres, so past that width its own margin has to be
+   cancelled too or the strip stops short of the screen. Same technique
+   the old `.cl-spectrum` used, just symmetric now that nothing shares
+   the row with it. */
+.cl-kit-strip-wrap {
+  position: relative;
+  margin-top: var(--sp-8);
+  --kw-pad: 20px;
+  margin-left: calc(-1 * (var(--kw-pad) + max(0px, (100vw - 1560px) / 2)));
+  margin-right: calc(-1 * (var(--kw-pad) + max(0px, (100vw - 1560px) / 2)));
 }
-.cl-kit-spec > div:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
-@media (min-width: 560px) {
-  /* The hanging label — the garment-spec device, and the reason this is
-     not the same ruled two-column list the page used to carry. */
-  .cl-kit-spec > div {
-    grid-template-columns: minmax(0, 116px) minmax(0, 1fr);
-    column-gap: var(--sp-5);
-    align-items: baseline;
+@media (min-width: 768px) { .cl-kit-strip-wrap { --kw-pad: 40px; } }
+@media (min-width: 1280px) { .cl-kit-strip-wrap { --kw-pad: 64px; } }
+@media (min-width: 1600px) { .cl-kit-strip-wrap { --kw-pad: 80px; } }
+
+.cl-kit-strip {
+  height: clamp(96px, 15vw, 220px);
+  /* --stops is built in the page from the exact five verified hex
+     values, evenly spaced — see the component's own comment. */
+  background: linear-gradient(90deg, var(--stops));
+}
+
+/* Ticks hang below the strip rather than sitting inside it, so no
+   per-swatch ink/ivory contrast decision is needed — every label reads
+   on the page's own ivory ground. Each `<li>` is positioned at its
+   colour's exact stop via `--pos`; the first and last are pinned to
+   their own edges rather than centred, so neither one is ever pushed
+   half off the page. */
+.cl-kit-ticks {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--kw-pad);
+  height: clamp(64px, 9vw, 84px);
+}
+.cl-kit-ticks > li {
+  position: absolute;
+  top: 0;
+  left: var(--pos);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 108px;
+  padding-top: 13px;
+  text-align: center;
+}
+.cl-kit-ticks > li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 11px;
+  background: rgba(14, 11, 10, 0.32);
+  transform: translateX(-50%);
+}
+.cl-kit-ticks > li:first-child {
+  left: 0;
+  align-items: flex-start;
+  text-align: left;
+  transform: none;
+}
+.cl-kit-ticks > li:first-child::before { left: 0; transform: none; }
+.cl-kit-ticks > li:last-child {
+  left: auto;
+  right: 0;
+  align-items: flex-end;
+  text-align: right;
+  transform: none;
+}
+.cl-kit-ticks > li:last-child::before { left: auto; right: 0; transform: none; }
+/* Five evenly-spaced labels collide at phone widths — measured directly:
+   at 375px "Pride Red" and "Highlight Gold" overlap by ~6px, and the last
+   pair does too. Staggering the 2nd/4th down (a zigzag) resolves it with
+   vertical space instead of shrinking text past a comfortable size or
+   dropping the hex value. Only needed below the credits' own two-column
+   breakpoint. */
+@media (max-width: 639px) {
+  .cl-kit-ticks { height: clamp(96px, 24vw, 118px); }
+  .cl-kit-ticks > li:nth-child(2),
+  .cl-kit-ticks > li:nth-child(4) {
+    padding-top: 39px;
+  }
+  .cl-kit-ticks > li:nth-child(2)::before,
+  .cl-kit-ticks > li:nth-child(4)::before {
+    height: 37px;
   }
 }
-.cl-kit-spec dt {
+.cl-kit-tick-l {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(11.5px, 1.15vw, 13.5px);
+  letter-spacing: -0.008em;
+  line-height: 1.3;
+  color: var(--v-ink);
+}
+.cl-kit-tick-h {
+  margin-top: 3px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-on-ivory);
+}
+
+/* ---- The credits ------------------------------------------------
+   Two plates, not a hairline-divided list — the pairing that a ruled
+   dt/dd list used to flatten into "two rows of the same shape" now
+   reads as two distinct cards doing the same job side by side. */
+.cl-kit-credits-track { margin-top: var(--sp-8); }
+.cl-kit-credits {
+  grid-column: 1 / -1;
   margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+}
+@media (min-width: 640px) {
+  .cl-kit-credits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.cl-kit-credits > div {
+  padding: var(--sp-6) var(--sp-6) var(--sp-5);
+  border: 1px solid var(--v-hair-ivory);
+  border-top: 2px solid var(--v-gold);
+}
+.cl-kit-credits dt {
+  margin: 0 0 var(--sp-3);
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: var(--t-micro);
@@ -12197,7 +12327,7 @@ a:hover .hp-arrow {
   text-transform: uppercase;
   color: var(--v-red);
 }
-.cl-kit-spec dd { margin: 0; }
+.cl-kit-credits dd { margin: 0; }
 .cl-kit-spec-n {
   display: block;
   font-family: var(--font-sora), sans-serif;
@@ -12213,57 +12343,6 @@ a:hover .hp-arrow {
   font-size: 13px;
   line-height: 1.6;
   color: var(--v-on-ivory);
-}
-
-.cl-spectrum {
-  list-style: none;
-  padding: 0;
-  /* Bleeds to the true page edge, not just through the gutter. `.hp-wrap`
-     caps at 1560px and centres, so past that width the container's own
-     margin has to be cancelled too or the spectrum stops short of the
-     screen. The scrollbar makes 100vw a few pixels generous; the section
-     clips the overshoot. */
-  --sp-pad: 20px;
-  margin: 0 calc(-1 * (var(--sp-pad) + max(0px, (100vw - 1560px) / 2))) 0 0;
-}
-@media (min-width: 768px) { .cl-spectrum { --sp-pad: 40px; } }
-@media (min-width: 1280px) { .cl-spectrum { --sp-pad: 64px; } }
-@media (min-width: 1600px) { .cl-spectrum { --sp-pad: 80px; } }
-.cl-spectrum > li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  min-height: clamp(58px, 7.4vw, 88px);
-  padding: var(--sp-3) var(--sp-5);
-  background: var(--c);
-  /* Keys sit INSIDE the colour, so the text colour follows the colour's
-     own luminance — see isLight() in app/the-club/page.tsx. Measured:
-     ivory on Pride Red 5.1:1, ink on Highlight Gold 7.6:1, ink on Court
-     Yellow 13.7:1, ink on Stadium Cream 15.9:1, ivory on Jet Black
-     16.0:1. Every key clears AA inside its own field. */
-  color: var(--v-ivory);
-  transition: min-height var(--mo-mid) var(--hp-e);
-}
-.cl-spectrum > li.is-light { color: var(--v-ink); }
-.cl-spectrum > li:hover { min-height: clamp(66px, 8.6vw, 102px); }
-@media (prefers-reduced-motion: reduce) {
-  .cl-spectrum > li { transition: none; }
-  .cl-spectrum > li:hover { min-height: clamp(58px, 7.4vw, 88px); }
-}
-.cl-sp-l {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(14px, 1.3vw, 18px);
-  letter-spacing: -0.015em;
-}
-.cl-sp-h {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 11.5px;
-  letter-spacing: 0.14em;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.86;
 }
 
 /* ============================================================
@@ -12389,146 +12468,175 @@ a:hover .hp-arrow {
 }
 
 /* ============================================================
-   PARTNERS · COMMERCIAL TIERS — the descent
+   PARTNERS · COMMERCIAL TIERS — the bento card grid
    ------------------------------------------------------------
-   Replaces `.pt-ladder` / `.pt-lead` / `.pt-rung`, whose lead
-   tier was a filled ink rectangle with the photograph boxed
-   inside it and whose three rungs were identical in height.
+   REDESIGNED, third pass — see the JSX comment above this section
+   in app/partners/page.tsx for the full reasoning. In short: both
+   earlier passes were a single vertical column (a filled block,
+   then a descending list). This is a grid: the photograph and the
+   lead tier form one hero row (`.pt-tier-hero`), the remaining
+   three tiers run beneath as a self-reflowing card row
+   (`.pt-tier-rest`). Every card is picked out by a filled dark
+   surface and a soft shadow — never a border — and there is still
+   no ruled line anywhere in this section.
 
-   Here the four tiers step INWARD down the page and lose rule
-   weight, rule colour and type scale as they fall, so the
-   hierarchy is the composition. The photograph is a full-height
-   column bled off the left page edge — structural, not a
-   thumbnail. Nothing is boxed or filled.
-
-   Scoped to `.pt-tier-*`, `.pt-descent`, `.pt-step-*`. `.pt-sec`,
-   `.pt-partners`, `.pt-dims` and `.pt-close` are untouched.
+   Scoped to `.pt-tier-*`, `.pt-card*`. `.pt-sec`, `.pt-partners`
+   and `.pt-dims` are untouched.
 ============================================================ */
 .pt-tier-sec { overflow: hidden; }
-.pt-tier-spread { row-gap: var(--sp-7); align-items: start; }
 
-/* The photograph. A column, not a card: it runs the height of the
-   descent and bleeds through the container gutter to the page edge. */
-.pt-tier-col {
+.pt-tier-modern { display: flex; flex-direction: column; gap: var(--sp-6); }
+
+/* Hero row — photograph + lead tier, stacked on mobile, side by side from
+   900px. `minmax(0, ...)` on both tracks keeps a very long tier name or a
+   very wide viewport from stretching one side at the other's expense. */
+.pt-tier-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+}
+@media (min-width: 900px) {
+  .pt-tier-hero {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--sp-6);
+    align-items: stretch;
+  }
+}
+
+.pt-tier-photo {
   position: relative;
-  grid-column: 1 / -1;
   margin: 0;
   aspect-ratio: 16 / 10;
+  border-radius: 22px;
   overflow: hidden;
   background: var(--v-ink);
 }
-.pt-tier-col img { object-fit: cover; }
-/* Seats the frame into the paper ground so it does not read as a pasted
-   rectangle — light, and only at the edges. */
-.pt-tier-col::after {
+.pt-tier-photo img { object-fit: cover; }
+/* A soft wash, not an edge — keeps the frame from reading as a pasted
+   rectangle against the card surfaces beside it. */
+.pt-tier-photo::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(14, 11, 10, 0.28) 0%,
-    transparent 34%,
-    rgba(14, 11, 10, 0.34) 100%
+    rgba(14, 11, 10, 0.35) 0%,
+    transparent 40%,
+    rgba(14, 11, 10, 0.4) 100%
   );
 }
+@media (min-width: 900px) {
+  .pt-tier-photo { aspect-ratio: auto; min-height: 100%; }
+}
 
-.pt-descent { list-style: none; margin: 0; padding: 0; grid-column: 1 / -1; }
-
-/* The step. `--rung` is the tier's index, so the indent, the rule and the
-   type scale all follow the data rather than being written four times. */
-.pt-step {
+/* The card. A filled surface picked out by tint and shadow-based
+   elevation — the "modern" unit this whole redesign is built from. */
+.pt-card {
   position: relative;
-  padding: var(--sp-5) 0 var(--sp-6);
-  border-top: 1px solid var(--v-hair-ivory);
+  padding: var(--sp-6) var(--sp-5);
+  border-radius: 22px;
+  background: rgba(245, 239, 228, 0.05);
+  box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.6);
 }
-.pt-step:first-child { border-top-width: 3px; border-top-color: var(--v-red); }
-.pt-step:nth-child(2) { border-top-width: 2px; border-top-color: var(--v-gold); }
-.pt-step:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
-@media (min-width: 768px) {
-  /* The descent itself. Each tier starts further in than the one above it. */
-  .pt-step { margin-left: calc(var(--rung, 0) * 7%); }
+.pt-card-lead {
+  padding: var(--sp-7) var(--sp-6);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(227, 178, 105, 0.16) 0%, transparent 60%),
+    rgba(245, 239, 228, 0.06);
 }
 
-.pt-step-k {
+.pt-card-top {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--sp-3);
-  margin: 0 0 var(--sp-2);
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-red);
+  margin-bottom: var(--sp-4);
 }
-.pt-step-n {
+.pt-card-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(15px, 1.5vw, 20px);
-  letter-spacing: 0.02em;
-  color: var(--v-gold);
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
+  background: rgba(245, 239, 228, 0.08);
+  color: var(--v-gold-lit);
 }
-.pt-step-name {
+.pt-card-lead .pt-card-n { background: var(--v-gold); color: var(--v-ink); }
+.pt-card-badge {
+  padding: 0.4em 0.9em;
+  border-radius: 999px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  background: var(--v-gold);
+  color: var(--v-ink);
+}
+
+.pt-card-name {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -0.034em;
-  color: var(--v-ink);
-  /* Loses scale as it descends — the lead tier is the biggest thing in the
-     section, the community tier the smallest, with nothing else changed.
-     All THREE clamp slots have to carry `--rung`: with a flat maximum the
-     top three tiers all pinned to the cap and the descent disappeared above
-     about 1200px. Resolves to 56/47/38/29 at 1440 and 23/20/19/18 at 375. */
-  font-size: clamp(
-    calc(21px - var(--rung, 0) * 1px),
-    calc((4.6 - var(--rung, 0) * 0.85) * 1vw + 6px),
-    calc(56px - var(--rung, 0) * 9px)
-  );
+  font-size: clamp(21px, 1.9vw, 28px);
+  line-height: 1.05;
+  letter-spacing: -0.028em;
+  color: var(--v-ivory);
 }
-.pt-step-head {
-  margin: var(--sp-3) 0 0;
-  max-width: 46ch;
+.pt-card-lead .pt-card-name { font-size: clamp(26px, 2.6vw, 38px); }
+
+.pt-card-head {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--v-on-ink);
+}
+.pt-card-lead .pt-card-head {
   font-family: var(--font-fraunces), Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(16px, 1.6vw, 21px);
-  line-height: 1.4;
-  color: var(--v-red);
-}
-.pt-step:not(:first-child) .pt-step-head {
-  font-family: var(--font-manrope), sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: var(--t-body);
-  line-height: 1.6;
-  color: var(--v-on-ivory);
+  font-size: clamp(16px, 1.5vw, 19px);
+  color: var(--v-gold-lit);
 }
 
-@media (min-width: 1024px) {
-  .pt-tier-spread { column-gap: var(--sp-8); }
-  /* Full-height column, bled to the page edge. `.hp-wrap` caps at 1560px
-     and centres, so past that width the container's own margin has to be
-     cancelled too or the frame stops short of the screen. */
-  .pt-tier-col {
-    grid-column: 1 / span 4;
-    aspect-ratio: auto;
-    align-self: stretch;
-    min-height: 560px;
-    /* Must track `.hp-wrap`'s padding at each step — 40px here, 64px from
-       1280, 80px from 1600 — or the column over-bleeds and loses its own
-       left edge behind the clip. */
-    --pt-pad: 40px;
-    margin-left: calc(-1 * (var(--pt-pad) + max(0px, (100vw - 1560px) / 2)));
-  }
-  .pt-descent { grid-column: 6 / -1; }
+/* Inclusions as pill tags — the modern equivalent of the earlier
+   diamond-bulleted list, with no divider mark between items. */
+.pt-card-incl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
 }
-@media (min-width: 1280px) {
-  .pt-tier-col { --pt-pad: 64px; }
+.pt-card-incl li {
+  padding: 0.5em 0.85em;
+  border-radius: 999px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 12.5px;
+  line-height: 1.3;
+  background: rgba(245, 239, 228, 0.07);
+  color: var(--v-on-ink);
 }
-@media (min-width: 1600px) {
-  .pt-tier-col { --pt-pad: 80px; }
+.pt-card-lead .pt-card-incl li {
+  background: rgba(245, 239, 228, 0.1);
+  color: rgba(245, 239, 228, 0.92);
+}
+
+/* Card row — reflows on its own; no per-breakpoint span math to keep in
+   sync as tiers are added or removed. */
+.pt-tier-rest {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-5);
 }
 
 /* ============================================================

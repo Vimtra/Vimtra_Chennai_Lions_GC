@@ -42,6 +42,22 @@ export default function CheckoutFlow({
   const [step, setStep] = useState<1 | 2>(1);
   const [error, setError] = useState<string | null>(null);
 
+  // Idempotency key for this checkout attempt — generated exactly once
+  // when this component mounts, and resubmitted UNCHANGED on every
+  // onConfirm() call for as long as it stays mounted (a double-click, an
+  // error-then-retry within the same visit, or a browser-level resend of
+  // the same request all carry this same value). placeOrderAction /
+  // placeOrder() use it to recognise a retry of the same attempt and
+  // return the order already created instead of placing a second one. A
+  // genuinely new checkout (fresh page load, after this one navigates
+  // away on success) gets a fresh key, so it is never mistaken for a
+  // repeat of a previous, unrelated order.
+  const [clientRequestId] = useState(() =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  );
+
   // Address state --------------------------------------------------------
   const defaultSaved =
     savedAddresses.find((a) => a.isDefault) ?? savedAddresses[0] ?? null;
@@ -107,6 +123,7 @@ export default function CheckoutFlow({
     fd.set("contactEmail", contactEmail);
     fd.set("contactPhone", contactPhone);
     fd.set("paymentMethod", paymentMethod);
+    fd.set("clientRequestId", clientRequestId);
     if (notes) fd.set("notes", notes);
     if (addressChoice === "new") {
       fd.set("addr_label", inline.label);

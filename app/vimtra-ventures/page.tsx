@@ -35,6 +35,23 @@ export const metadata: Metadata = {
    PHOTOGRAPHY: one licensed frame in the hero, plus the two real
    franchise-supplied founder portraits. Nothing else — a firm cannot be
    honestly photographed, and stock offices would cheapen the page.
+
+   DEDUP PASS (targeted, September 2026). "The Firm" prose used to restate
+   every figure in CREDENTIALS in full sentences immediately above the
+   credential rail itself — founded 1995, 60+ technology acquisitions, 55+
+   real-estate assets, and the $1.1B+ Frisco/PGA District cluster all
+   appeared twice on one screen. The rail is the stronger presentation for
+   a number (this file's own comment above already argues that), so the
+   prose was trimmed to the surrounding narrative that isn't already a
+   card: the operating-model description, the same-principals continuity
+   claim, and the PGA brochure's four-country acquisition geography (which
+   the rail doesn't carry). No fact was removed from the page — each one
+   now appears exactly once instead of twice. Checked at the same time and
+   left alone: "Vimtra Chennai Lions GC" is named in the Six Verticals list,
+   the dedicated Sports Franchises section, and the Roadmap — three
+   different jobs (an index entry, a detail card with a link, and a
+   timeline milestone), not three repeats of the same sentence, so none of
+   those three was touched.
 --------------------------------------------------------------------------- */
 
 /* Headline credentials.
@@ -119,6 +136,13 @@ const FOUNDERS = [
   },
 ];
 
+// Brochure p. 17 / Vimtra Ventures profile — verbatim, and identical between
+// the two sources. Added in the September 2026 content audit: the statement
+// exists word-for-word in both documents but was not rendered anywhere on
+// the site before now.
+const VISION_STATEMENT =
+  "To identify opportunities where capital, strategic vision, and operational expertise can transform underperforming assets into high-value enterprises — while creating world-class destinations that bring together investment, lifestyle, sport, real estate, and community — generating enduring value for investors, partners, athletes, and future generations.";
+
 // Brochure p. 16 — verbatim.
 const BOARD_MEMBER = {
   name: "Ravi Babu Mannam",
@@ -191,21 +215,17 @@ export default function VimtraVenturesPage() {
 
           <div className="vv-firm-b" data-rise>
             <p>
-              Vimtra Ventures is a US-based venture capital and investment firm
-              founded in 1995, with a track record that includes more than{" "}
-              <strong>60 technology acquisitions</strong>. The firm operates as
-              principal, not intermediary, across six verticals — with an
-              operating footprint spanning North America and India and{" "}
-              <strong>55+ premium real-estate assets</strong> across the United
-              States.
+              Vimtra Ventures is a US-based venture capital and investment
+              firm operating as principal, not intermediary, across six
+              verticals, with an operating footprint spanning North America
+              and India.
             </p>
             <p>
               The firm has been run by the{" "}
               <strong>same principals since day one</strong>, and the brochure
               published with the PGA of America partnership describes its
               acquisitions as spanning the <strong>United States, India, the
-              UAE and Australia</strong>, alongside a{" "}
-              <strong>$1.1B+ Frisco / PGA District cluster of 30+ assets</strong>.
+              UAE and Australia</strong>.
             </p>
             <p>
               By combining capital, strategic vision, and hands-on execution,
@@ -215,6 +235,13 @@ export default function VimtraVenturesPage() {
             </p>
           </div>
 
+          {/* The numbers this prose used to restate in full sentences
+              (founded 1995, 60+ technology acquisitions, 55+ real-estate
+              assets, the $1.1B+ Frisco/PGA District cluster) now live here
+              exactly once — removed from the paragraphs above in the
+              September 2026 dedup pass rather than said twice on the same
+              screen. Nothing here is a new figure; every value was already
+              verbatim-sourced before this edit. */}
           <dl className="vv-creds" data-rise>
             {CREDENTIALS.map((c) => (
               <div key={c.l}>
@@ -345,6 +372,14 @@ export default function VimtraVenturesPage() {
           <div className="vv-gov2-h">
             <SectionTitle lines={["BOARD &", "ADVISORY."]} />
           </div>
+
+          {/* The Vision statement — brochure p. 17 pairs it with Board &
+              Advisory on the same page, so it sits here rather than in
+              "The Firm" above. Verbatim, identical in both DOC2 and DOC3. */}
+          <article className="vv-minute" data-rise>
+            <p className="vv-minute-k">Vision</p>
+            <p className="vv-minute-body">{VISION_STATEMENT}</p>
+          </article>
 
           <article className="vv-minute" data-rise>
             <p className="vv-minute-k">{BOARD_MEMBER.role}</p>

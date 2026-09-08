@@ -22,12 +22,25 @@ model User {
   name         String
   passwordHash String
   role         Role      @default(USER)
+  // ------- Email / phone verification (M6) -------
+  // Both null on every pre-existing account — accurate, not backfilled:
+  // no account verified under this system before it existed. Neither
+  // gates sign-in, checkout, or admin access (see the actions/routes
+  // that read them for exactly where they DO matter).
+  emailVerifiedAt DateTime?
+  phone           String? // E.164-ish, set when an OTP is requested for it
+  phoneVerifiedAt DateTime? // cleared whenever a new OTP is requested for a
+  //                            different/changed number — see lib/verification.ts
+  // ------- end M6 additions -------
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   sessions     Session[]
   // M5 commerce back-relations (see Address, Order below).
   addresses    Address[]
   orders       Order[]
+  // M6 back-relations (see EmailVerificationToken, PhoneOtp below).
+  emailVerificationTokens EmailVerificationToken[]
+  phoneOtps               PhoneOtp[]
 }
 
 model Session {
@@ -39,6 +52,44 @@ model Session {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+// ---------------------------------------------------------------
+// M6 — Email + phone verification.
+//
+// Dedicated, single-purpose tables rather than raw token/OTP columns on
+// User: neither is queried outside lib/verification.ts, and keeping them
+// off User means a leaked/dumped User row never carries a live secret.
+// Only a SHA-256 hash of the token/code is ever stored — see
+// lib/verification.ts for why a keyed hash isn't used (no extra secret
+// to manage) and for the cooldown/attempt-limit logic built on top of
+// these rows.
+// ---------------------------------------------------------------
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique // sha256(raw token); the raw token only ever exists in the emailed link
+  expiresAt DateTime
+  usedAt    DateTime? // set once, on first successful consumption — makes the token single-use
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model PhoneOtp {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone      String // the number this code was issued for
+  codeHash   String // sha256(raw 6-digit code)
+  attempts   Int       @default(0) // failed verify attempts against this row; capped in lib/verification.ts
+  expiresAt  DateTime
+  consumedAt DateTime? // set once, on first successful verification — makes the code single-use
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model Product {
@@ -322,6 +373,21 @@ model Order {
   paymentMethod     PaymentMethod
   paymentRef        String? // future: gateway reference / bank txn id
   notes             String? // free-text admin/customer notes
+  // Idempotency key generated once per checkout attempt on the client
+  // (CheckoutFlow) and resubmitted unchanged on every retry of that same
+  // attempt (double-click, browser retry, resumed request after a
+  // timeout). NULL for any order placed before this column existed, and
+  // for anything created outside placeOrderAction (e.g. the test
+  // harness), which never sets it. The @unique constraint is what makes
+  // placeOrder()'s idempotency check race-safe, not just best-effort.
+  clientRequestId     String?   @unique
+  // Set once each Cash on Delivery email has actually sent for this
+  // order, so a retried placeOrderAction call (same clientRequestId,
+  // same order) never re-sends one that already went out — see
+  // placeOrderAction's own comment. NULL for non-COD orders, which never
+  // touch these columns.
+  codUserEmailSentAt  DateTime?
+  codAdminEmailSentAt DateTime?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   items             OrderItem[]

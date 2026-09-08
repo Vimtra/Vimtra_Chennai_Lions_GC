@@ -26,12 +26,6 @@ export const metadata: Metadata = {
    the no-identifiable-face rule. Two frames on this page, both new: neither is
    used on /the-club or in the header panel.
 
-   NO PHOTOGRAPH ON "HOME GROUND": TNGF Cosmo is a real, documented venue
-   (brochure p. 04; it is also the footer address and the /contact venue). The
-   previous design placed an AI-generated stock image beside that heading and
-   captioned it as the venue, which asserted something untrue about a named
-   real place. The section is set typographically instead. Add a photograph
-   only when the franchise supplies one actually taken there.
 --------------------------------------------------------------------------- */
 
 export default function ThePridePage() {
@@ -115,33 +109,60 @@ export default function ThePridePage() {
         imagePosition="52% 58%"
       />
 
-      {/* 02 — HOME GROUND.
-          Typographic only — see the note at the top of this file. */}
-      <Section surface="paper">
-        <div className="cm-track cm-place">
-          <IndexLabel n="02">Home Ground</IndexLabel>
+      {/* 02 — THE FOUR PILLARS.
+          Added in the September 2026 content audit; REDESIGNED as its own
+          composition in a follow-up pass. Source: AM Green IGPL's own news
+          article on theigpl.com, "Vimtra Chennai Lions GC Unveils Squad,
+          Sets Sights On Building Chennai's Golfing Legacy" (Chennai,
+          14 August 2026) — attributed on the record to Thimmaji Rao Yammada,
+          Founder & Managing Director, Vimtra Ventures. Not in any of the
+          three brochures; verified directly against the live article before
+          being added here. Quoted, not paraphrased.
 
-          <div className="cm-place-name">
-            <SectionTitle lines={["TNGF COSMO,", "CHENNAI."]} />
+          WHY A NEW COMPOSITION. The first pass reused the venue-name treatment
+          above it. At that same oversized clamp,
+          "PRIDE. EXCELLENCE." / "HERITAGE. LEGACY." is nearly twice the
+          glyph count per line and clipped against the section edge. Rather
+          than shrink the type or clip it, this is a dedicated four-part
+          plate (`.pr-values-*`, scoped to this section only): each word gets
+          its own cell, its own ordinal, and its own accent rule, sized off
+          the longest word ("Excellence") rather than off a heading built for
+          a different string. No wording changed; only the frame around it.
+
+          REDESIGNED AGAIN, second pass — the ruled grid (four bordered
+          cells, hairlines on every edge) read as a spec sheet, not a
+          statement of what the franchise stands for. This is now a single
+          typographic column on the page's ink ground — the four words
+          stack at full display scale with NO rules anywhere, each one
+          colour-alternated (gold-lit / ivory) and the middle two stepped in
+          from the edge, so the rhythm comes from scale, colour and
+          whitespace rather than ruled boxes. The quote sits below at a
+          generous distance — again space, not a border, doing the
+          separating — still `.cm-pull`/`.cm-pull-by` exactly as sourced,
+          just without the gold rule that used to cap it. */}
+      <Section surface="ink" className="hp-sec-atmos">
+        <div className="cm-track pr-values">
+          <IndexLabel n="02" tone="dark">Values</IndexLabel>
+
+          <ul className="pr-values-list">
+            {["Pride", "Excellence", "Heritage", "Legacy"].map((w) => (
+              <li key={w} data-rise>
+                {w}
+              </li>
+            ))}
+          </ul>
+
+          <div className="pr-values-quote">
+            <blockquote className="cm-pull" data-rise>
+              &ldquo;Vimtra Chennai Lions GC is built on four core pillars —
+              Pride, Excellence, Heritage and Legacy. We want the Lions to
+              embody the spirit of Chennai.&rdquo;
+            </blockquote>
+            <p className="cm-pull-by" data-rise>
+              Thimmaji Rao Yammada, Founder &amp; Managing Director, Vimtra
+              Ventures — AM Green IGPL, 14 August 2026
+            </p>
           </div>
-
-          {/* Both rows are the franchise's own venue details, as used by
-              /contact and the site footer. */}
-          <dl className="cm-place-meta" data-rise>
-            <div>
-              <dt>Home Practice Venue</dt>
-              <dd>TNGF Cosmo</dd>
-            </div>
-            <div>
-              <dt>Location</dt>
-              <dd>Chennai · South India</dd>
-            </div>
-          </dl>
-
-          <p className="cm-place-note" data-rise>
-            The franchise&apos;s home practice venue — where the season is
-            prepared before it travels.
-          </p>
         </div>
       </Section>
 
