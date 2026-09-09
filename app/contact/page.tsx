@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import ContactForm from "@/components/contact/ContactForm";
 import { CONTACT_TOPICS } from "@/components/contact/topics";
 import StoryHero from "@/components/site/StoryHero";
@@ -100,6 +101,29 @@ export default async function ContactPage({
               </div>
             </div>
           </div>
+        </div>
+      </Section>
+
+      {/* This was the one major page that just stopped after its form —
+          every other chapter page closes on a considered sign-off. Rather
+          than invent closing copy, this reuses /news's own end-of-page
+          pattern verbatim (`.ss-links`, a plain 3-up compact list, no
+          claims) pointed at the three topics the hero itself already
+          names: partnerships/sponsorship, golf development, merchandise. */}
+      <Section surface="paper" size="tight">
+        <div className="cm-track ss-links">
+          <Link href="/partners" className="ss-link">
+            <span className="ss-link-k">Partnerships &amp; sponsorship</span>
+            <span className="ss-link-t">Partner with the Lions</span>
+          </Link>
+          <Link href="/golf-development" className="ss-link">
+            <span className="ss-link-k">Golf development</span>
+            <span className="ss-link-t">Explore the platform</span>
+          </Link>
+          <Link href="/shop" className="ss-link">
+            <span className="ss-link-k">Merchandise support</span>
+            <span className="ss-link-t">Visit the store</span>
+          </Link>
         </div>
       </Section>
     </div>

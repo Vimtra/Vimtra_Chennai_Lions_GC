@@ -110,47 +110,53 @@ export default function ThePridePage() {
       />
 
       {/* 02 — THE FOUR PILLARS.
-          Added in the September 2026 content audit; REDESIGNED as its own
-          composition in a follow-up pass. Source: AM Green IGPL's own news
-          article on theigpl.com, "Vimtra Chennai Lions GC Unveils Squad,
-          Sets Sights On Building Chennai's Golfing Legacy" (Chennai,
-          14 August 2026) — attributed on the record to Thimmaji Rao Yammada,
-          Founder & Managing Director, Vimtra Ventures. Not in any of the
-          three brochures; verified directly against the live article before
-          being added here. Quoted, not paraphrased.
+          Added in the September 2026 content audit. Source: AM Green
+          IGPL's own news article on theigpl.com, "Vimtra Chennai Lions GC
+          Unveils Squad, Sets Sights On Building Chennai's Golfing Legacy"
+          (Chennai, 14 August 2026) — attributed on the record to Thimmaji
+          Rao Yammada, Founder & Managing Director, Vimtra Ventures. Not in
+          any of the three brochures; verified directly against the live
+          article before being added here. Quoted, not paraphrased.
 
-          WHY A NEW COMPOSITION. The first pass reused the venue-name treatment
-          above it. At that same oversized clamp,
-          "PRIDE. EXCELLENCE." / "HERITAGE. LEGACY." is nearly twice the
-          glyph count per line and clipped against the section edge. Rather
-          than shrink the type or clip it, this is a dedicated four-part
-          plate (`.pr-values-*`, scoped to this section only): each word gets
-          its own cell, its own ordinal, and its own accent rule, sized off
-          the longest word ("Excellence") rather than off a heading built for
-          a different string. No wording changed; only the frame around it.
+          REDESIGNED A THIRD TIME. The first pass reused the venue-name
+          heading treatment above it and clipped. The second replaced that
+          with a single typographic column — four words at full display
+          scale, colour-alternated, the middle two indented — which solved
+          the clipping but read as a poster: four huge, diagonally-offset
+          lines with nothing structural connecting them, and a lot of
+          unclaimed space around each one.
 
-          REDESIGNED AGAIN, second pass — the ruled grid (four bordered
-          cells, hairlines on every edge) read as a spec sheet, not a
-          statement of what the franchise stands for. This is now a single
-          typographic column on the page's ink ground — the four words
-          stack at full display scale with NO rules anywhere, each one
-          colour-alternated (gold-lit / ivory) and the middle two stepped in
-          from the edge, so the rhythm comes from scale, colour and
-          whitespace rather than ruled boxes. The quote sits below at a
-          generous distance — again space, not a border, doing the
-          separating — still `.cm-pull`/`.cm-pull-by` exactly as sourced,
-          just without the gold rule that used to cap it. */}
+          THIS PASS keeps the same ink ground and the same restraint on
+          invented content — nothing quoted below changed a single word —
+          but replaces the stacked poster with an architectural four-up
+          register (`.pr-pillars`), the same numbered-and-ruled idiom the
+          rest of the module already uses for a list of things (`.cal`,
+          `.gd-index`, `.iv-pillar-set`), rather than a one-off. Each value
+          gets an ordinal, a short gold rule and a controlled (not
+          maximal) display word; thin hairlines between them do the
+          structural work the old version asked pure whitespace to do.
+          The quote moves to its own quieter register below — a gold
+          spine on its left edge, like a pull-quote in print, so it reads
+          as an attributed statement rather than a fifth headline. */}
       <Section surface="ink" className="hp-sec-atmos">
         <div className="cm-track pr-values">
           <IndexLabel n="02" tone="dark">Values</IndexLabel>
 
-          <ul className="pr-values-list">
-            {["Pride", "Excellence", "Heritage", "Legacy"].map((w) => (
-              <li key={w} data-rise>
-                {w}
+          <div className="pr-values-head">
+            <SectionTitle lines={["THE FOUR", "PILLARS."]} className="pr-values-h" />
+          </div>
+
+          <ol className="pr-pillars">
+            {["Pride", "Excellence", "Heritage", "Legacy"].map((w, i) => (
+              <li className="pr-pillar" key={w} data-rise>
+                <span className="pr-pillar-n" aria-hidden>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="pr-pillar-rule" aria-hidden />
+                <span className="pr-pillar-w">{w}</span>
               </li>
             ))}
-          </ul>
+          </ol>
 
           <div className="pr-values-quote">
             <blockquote className="cm-pull" data-rise>

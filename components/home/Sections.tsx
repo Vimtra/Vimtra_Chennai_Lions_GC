@@ -191,6 +191,12 @@ export function Season({ rows }: { rows: SeasonRow[] }) {
       aria-labelledby="se-h"
     >
       <div className="hp-wrap">
+        {/* The Club (ink) hands over to this ivory chapter with nothing
+            but a colour cut. The brand already owns a device for exactly
+            this handover (see .hp-chapter-mark in globals.css) — it was
+            never wired into a page. Used once here, not on every section,
+            per that class's own comment. */}
+        <span className="hp-chapter-mark" aria-hidden />
         <div className="cm-track hm-head">
           <div className="hm-head-t">
             <p className="hp-index" data-rise>
@@ -354,6 +360,11 @@ export function Media({ stories }: { stories: StoryRow[] }) {
       aria-labelledby="md-h"
     >
       <div className="hp-wrap">
+        {/* Golf Development closes on a dark, full-bleed photograph; this
+            chapter opens on flat paper right after it — the starkest cut
+            on the page. Same chapter-mark device as the Season entry
+            above, not layered on every section. */}
+        <span className="hp-chapter-mark" aria-hidden />
         {/* Head and the route out share one baseline — the right half of
             this row was empty in the previous layout. */}
         <div className="hm-press-head">
@@ -544,14 +555,44 @@ export function Shop({ facts }: { facts: StoreFacts }) {
   );
 }
 
+/**
+ * 07 — Closing.
+ *
+ * REDESIGNED — this was type alone on a flat ink field with only the
+ * `.hp-sec-atmos` glow behind it: the one moment on the page with no
+ * photograph at all, closing a story that opened on a full-bleed sunset.
+ * The franchise's last word deserves the same weight as its first.
+ *
+ * `gd-framework-facility.jpg` is a real licensed frame already in the
+ * repository and, per public/assets/photo/CREDITS.md, explicitly UNUSED —
+ * it was retired from /golf-development in the September redesign and
+ * never appeared anywhere else, so nothing on the site repeats it. An
+ * aerial course-and-clubhouse establishing shot reads as a wide, settled
+ * "the whole picture" note under a closing line, not a scene-specific
+ * claim — same rule FullBleedStatement's own images already follow.
+ * `.hp-sec-atmos`'s gold/crimson glow stays layered above it for warmth
+ * at the corners, exactly as it already sits above `.cm-close` today.
+ */
 export function Closing() {
-  const root = useSectionMotion();
+  const root = useSectionMotion(true);
   return (
     <section
       ref={root}
-      className="hp-sec hp-sec-ink hm-sec hm-sec-tight hp-sec-atmos"
+      className="hp-sec hp-sec-ink hm-sec hm-sec-tight hp-sec-atmos hm-close"
       aria-labelledby="cs-h"
     >
+      <div className="hm-close-media" data-bleed>
+        <Image
+          src="/assets/photo/gd-framework-facility.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+          style={{ objectPosition: "38% 42%" }}
+        />
+      </div>
+      <div className="hm-close-veil" aria-hidden />
+      <div className="v-grain" aria-hidden />
+
       <div className="hp-wrap">
         <div className="cm-track cm-close">
           <div className="cm-close-title">

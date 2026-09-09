@@ -6270,53 +6270,140 @@ a:hover .hp-arrow {
 }
 .hp-sec-ink .cm-pull-by { color: var(--v-on-ink); }
 
-/* ---- The Values statement --------------------------------------
-   Scoped to The Pride's "Values" section only. REDESIGNED a second
-   time: the four-cell ruled grid (a hairline on every edge) read as a
-   spec sheet, not a statement of what the franchise stands for. No
-   rule of any kind appears anywhere in this block now — colour, scale
-   and whitespace carry the hierarchy instead, on the page's ink
-   ground rather than ivory.
+/* ---- The Four Pillars -------------------------------------------
+   Scoped to The Pride's "Values" section only. THIRD PASS: the
+   previous version (four huge display words, colour-alternated, two
+   of them indented) read as a poster rather than a statement of what
+   the franchise stands for — a diagonal stack with a lot of unclaimed
+   space around each line and nothing structural tying the four words
+   together. This replaces it with the numbered/ruled register the
+   rest of the module already uses for a set of things (`.cal`,
+   `.gd-index`), so "the four pillars" reads as one built system
+   instead of four independent headlines.
 
-   Each word is sized off the longest ("Excellence") so nothing has to
-   shrink to share a slot with it. The 2nd and 4th words step in from
-   the edge — desktop only, where the measurement below confirmed the
-   room exists; phones stay flush-left, never risking an indent pushing
-   "Excellence" past its own column. */
-.pr-values { row-gap: var(--sp-8); }
+   `.pr-values-head` is deliberately NOT another full-scale display
+   heading — `max-width` on the title keeps it a compact, secondary
+   line above the register it introduces, per the same idiom already
+   used on /invest (`.iv-pillars-h .cm-display`). */
+.pr-values { row-gap: var(--sp-7); }
 .pr-values > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
 
-.pr-values-list {
+.pr-values-head { grid-column: 1 / -1; }
+.pr-values-head .hp-section-title {
+  max-width: 11ch;
+  font-size: clamp(28px, 4.4vw, 52px);
+}
+
+/* Mobile: a plain ruled list, one pillar per row — the same compact-list
+   rhythm as `.cal`/`.ss-link` elsewhere on the site, so "stacked on a
+   phone" still looks like a considered composition rather than a
+   shrunken desktop grid.
+   Tablet (640px+): two columns, one rule spanning the pair, a single
+   vertical divider between them.
+   Desktop (1024px+): all four side by side, hairlines between every
+   pillar — an architectural row rather than a ledger. The middle two
+   step down a fixed, restrained amount (not a diagonal jumble) so the
+   four units still read as one system with a little rhythm, echoing
+   the previous design's alternation without its clipping risk. */
+.pr-pillars {
   grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr;
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.pr-values-list li {
+.pr-pillar {
+  min-width: 0;
+  padding: var(--sp-6) 0;
+  border-top: 1px solid var(--v-hair-ink);
+}
+.pr-pillar:last-child { border-bottom: 1px solid var(--v-hair-ink); }
+
+@media (min-width: 640px) {
+  .pr-pillars {
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid var(--v-hair-ink);
+  }
+  .pr-pillar {
+    padding: var(--sp-6) var(--sp-6) var(--sp-2) 0;
+    border-top: 0;
+  }
+  .pr-pillar:last-child { border-bottom: 0; }
+  .pr-pillar:nth-child(even) { padding-left: var(--sp-6); border-left: 1px solid var(--v-hair-ink); }
+}
+
+@media (min-width: 1024px) {
+  .pr-pillars { grid-template-columns: repeat(4, 1fr); }
+  .pr-pillar {
+    padding: 0 var(--sp-6);
+    border-left: 1px solid var(--v-hair-ink);
+  }
+  .pr-pillar:nth-child(even) { padding-left: var(--sp-6); }
+  .pr-pillar:first-child { padding-left: 0; border-left: 0; }
+  .pr-pillar:last-child { padding-right: 0; }
+  /* The restrained stagger: pillars 2 and 3 (Excellence, Heritage) drop
+     a fixed step below 1 and 4, so the row has quiet rhythm rather than
+     four numbers pinned to one baseline — without reintroducing the old
+     design's diagonal, unstructured offsets. */
+  .pr-pillar:nth-child(2), .pr-pillar:nth-child(3) { padding-top: var(--sp-7); }
+}
+
+.pr-pillar-n {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.09em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold-lit);
+}
+.pr-pillar-rule {
+  display: block;
+  width: 32px;
+  height: 1px;
+  margin: var(--sp-4) 0;
+  background: var(--v-gold);
+  transition: width var(--mo-mid) var(--ease), background-color var(--mo-mid) var(--ease);
+}
+.pr-pillar:hover .pr-pillar-rule,
+.pr-pillar:focus-within .pr-pillar-rule {
+  width: 56px;
+  background: var(--v-gold-lit);
+}
+.pr-pillar-w {
+  display: block;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(46px, 10vw, 138px);
+  font-size: clamp(38px, 5.4vw, 68px);
   line-height: 0.98;
   letter-spacing: -0.03em;
   color: var(--v-ivory);
+  transition: color var(--mo-mid) var(--ease);
 }
-.pr-values-list li:nth-child(odd) { color: var(--v-gold-lit); }
-@media (min-width: 1024px) {
-  .pr-values-list li:nth-child(2) { padding-left: clamp(24px, 6vw, 90px); }
-  .pr-values-list li:nth-child(4) { padding-left: clamp(48px, 11vw, 170px); }
+.pr-pillar:hover .pr-pillar-w,
+.pr-pillar:focus-within .pr-pillar-w { color: var(--v-gold-lit); }
+@media (prefers-reduced-motion: reduce) {
+  .pr-pillar-rule,
+  .pr-pillar-w { transition: none; }
 }
 
+/* The quote drops to its own quieter register — a gold spine on the
+   left edge, like a pull-quote set in print, so it reads as one
+   attributed statement rather than a fifth pillar competing with the
+   four above it. */
 .pr-values-quote {
   grid-column: 1 / -1;
-  max-width: 62ch;
-  margin-top: var(--sp-9);
+  max-width: 60ch;
+  margin-top: var(--sp-2);
+  padding-left: var(--sp-5);
+  border-left: 2px solid var(--v-gold);
+}
+@media (min-width: 1024px) {
+  .pr-values-quote { grid-column: 1 / span 8; }
 }
 .pr-values-quote > .cm-pull { margin: 0; }
 .pr-values-quote > .cm-pull-by { margin-top: var(--sp-3); }
-@media (min-width: 1024px) {
-  .cm-place > .cm-pull,
-  .cm-place > .cm-pull-by { grid-column: 1 / span 8; }
-}
 
 /* ---- The city ----------------------------------------------
    Asymmetric split: display statement across the upper eight columns,
@@ -6612,6 +6699,25 @@ a:hover .hp-arrow {
 .hm-dev .hm-body { color: var(--v-on-ink); }
 .hm-dev .hp-btn-text { color: var(--v-ivory); }
 .hm-dev .hp-btn-text::after { background: currentColor; }
+
+/* ---- 07 Closing: the same full-bleed idiom as 04 Golf Development,
+   for the same reason — the site's last word gets its first word's
+   weight. `.hp-sec-atmos`'s own glow (::before, z-index -1) keeps
+   painting above this photograph and below `.hp-wrap`, unchanged. */
+.hm-close-media { position: absolute; inset: -6% 0; z-index: -2; overflow: hidden; }
+.hm-close-media img { object-fit: cover; }
+.hm-close-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Lighter than `.hm-dev-veil`: that photo is already a dusk
+     silhouette and can take a heavy scrim; this one is a bright
+     golden-hour aerial and goes flat black under the same weight. */
+  background:
+    linear-gradient(180deg, rgba(14, 11, 10, 0.62) 0%, rgba(14, 11, 10, 0.38) 40%, rgba(14, 11, 10, 0.82) 100%),
+    radial-gradient(72% 68% at 18% 22%, rgba(189, 34, 39, 0.16), transparent 62%);
+}
 
 .hm-dev-inner { position: relative; row-gap: var(--sp-6); }
 .hm-dev-head { grid-column: 1 / -1; }
@@ -12795,7 +12901,6 @@ a:hover .hp-arrow {
 .gdp-head { grid-column: 1 / -1; }
 .gdp-body { grid-column: 1 / -1; }
 .gdp-plate { grid-column: 1 / -1; margin: 0; }
-.gdp-roles { grid-column: 1 / -1; }
 
 .gdp-h {
   grid-column: auto !important;
@@ -12848,72 +12953,6 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 
-.gdp-roles { margin-top: var(--sp-6); }
-.gdp-roles-k {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  margin: 0 0 var(--sp-5);
-  padding-top: var(--sp-5);
-  border-top: 2px solid var(--v-ink);
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-ink);
-}
-.gdp-roles-k::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--v-gold);
-}
-.gdp-role-set {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-5) 0;
-}
-.gdp-role-set > li { min-width: 0; padding: 0 0 0 var(--sp-5); border-left: 1px solid var(--v-hair-ivory); }
-/* Vertical division, not another stack of horizontal rules — the device
-   that keeps this off the page's two existing ruled indexes. */
-.gdp-role-set > li:first-child { border-left-color: var(--v-red); }
-@media (min-width: 640px) {
-  .gdp-role-set { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--sp-6); }
-}
-@media (min-width: 1024px) {
-  .gdp-role-set { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--sp-6); row-gap: var(--sp-7); }
-}
-.gdp-role-n {
-  display: block;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  color: var(--v-gold);
-  font-variant-numeric: tabular-nums;
-}
-.gdp-role-t {
-  margin: var(--sp-2) 0 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(17px, 1.7vw, 22px);
-  line-height: 1.14;
-  letter-spacing: -0.026em;
-  color: var(--v-ink);
-}
-.gdp-role-d {
-  margin: var(--sp-3) 0 0;
-  max-width: 34ch;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 14.5px;
-  line-height: 1.66;
-  color: var(--v-on-ivory);
-}
-
 @media (min-width: 1024px) {
   .gdp { row-gap: var(--sp-7); }
   .gdp-head { grid-column: 1 / span 9; }
@@ -12921,7 +12960,6 @@ a:hover .hp-arrow {
   /* The plate sits opposite the copy rather than under it, so the section
      opens as a spread and not as a column of stacked blocks. */
   .gdp-plate { grid-column: 8 / -1; }
-  .gdp-roles { grid-column: 1 / -1; }
 }
 
 /* ============================================================
@@ -13015,16 +13053,28 @@ a:hover .hp-arrow {
 /* ============================================================
    GOLF DEVELOPMENT · THE PLAN (five strategic moves)
    ------------------------------------------------------------
-   Content audit, Sept 2026. Vimtra x PGA brochure p. 03.
+   Content audit, Sept 2026; REDESIGNED again, this sub-section only.
+   Vimtra x PGA brochure p. 03 — wording of all five moves unchanged.
 
-   Composition has to stay clear of everything already on this
-   page: the `.gdf-*` framework spine, the `.gdp-*` PGA licence
-   plate + vertical-hairline capability field, and the two
-   `.gd-index` ruled registers. The device here is a HANGING
-   NUMERAL — the ordinal sits in its own gutter to the left of
-   the rule, oversized and gold, so the eye reads a numbered
-   descent rather than a list of cards or another ruled table.
-   Nothing is boxed and nothing is filled.
+   The previous version was a single hanging-numeral list at every
+   width: legible, but the same vertical list at 1600px as at 375px,
+   and generic next to section 02's connected register one chapter up.
+
+   Below 1024px this stays a vertical roadmap — a left-hand spine
+   (`.gdm-set::before`, clipped to run only between the first and
+   last node) rather than a list of bordered cells. At 1024px+ it
+   becomes a genuinely different device: ONE horizontal track the
+   width of the section (`.gdm-set::before` repositioned, not a
+   second element), with the five moves as nodes on it — odd moves
+   (01/03/05) stated above the line, even moves (02/04) below, via
+   `.gdm-zone-top` / `.gdm-zone-bottom` in the markup. Both zones are
+   given the SAME fixed height (not sized to their own content) so
+   every node lands on the line at exactly the same height regardless
+   of which move's description happens to be longest — the one thing
+   that has to hold for five independent text blocks to read as one
+   continuous track. Below 1024px the zones collapse to `display:
+   contents`, so the phone/tablet reading order is simply numeral,
+   title, description, in that order, once per move.
 
    Scoped to `.gdm-*`. Touches no shared class.
 ============================================================ */
@@ -13044,74 +13094,192 @@ a:hover .hp-arrow {
   color: var(--v-gold-lit);
 }
 
+/* ---- Below 1024px: a vertical roadmap ---------------------------- */
 .gdm-set {
+  position: relative;
   list-style: none;
-  margin: var(--sp-2) 0 0;
+  margin: var(--sp-6) 0 0;
   padding: 0;
 }
-.gdm-set > li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-2);
-  padding: var(--sp-5) 0;
-  border-top: 1px solid var(--v-hair-ink);
+.gdm-set::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--v-hair-ink);
 }
-.gdm-set > li:first-child { border-top-color: var(--v-gold); }
-.gdm-set > li:last-child { border-bottom: 1px solid var(--v-hair-ink); }
+.gdm-set > li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-5) 0 var(--sp-5) var(--sp-6);
+}
+.gdm-set > li:first-child { padding-top: 0; }
+.gdm-set > li:last-child { padding-bottom: 0; }
 
-/* The numeral. On narrow screens it sits above the move as a
-   small gold ordinal; from 768 up it moves out into its own
-   gutter and takes the display size. */
+/* The numeral is always visually first below 1024px, whichever zone
+   it happens to sit between in the markup (order is CSS-only; the
+   numeral is `aria-hidden` and the `<ol>` already carries the real
+   ordinal, so this never affects reading order). */
+.gdm-node { order: -1; }
 .gdm-n {
-  display: block;
+  display: inline-block;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.08em;
+  font-size: clamp(21px, 2.6vw, 28px);
+  letter-spacing: -0.02em;
   line-height: 1;
   color: var(--v-gold);
   font-variant-numeric: tabular-nums;
 }
+.gdm-set > li:first-child .gdm-n { color: var(--v-red); }
+
+/* Below 1024px the two zones are pure placement plumbing — unwrap
+   them so whichever one holds this move's title/description just
+   flows after the numeral like a normal block. */
+.gdm-zone { display: contents; }
 .gdm-b { min-width: 0; }
 .gdm-t {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(19px, 2.3vw, 31px);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  font-size: clamp(19px, 2.3vw, 27px);
+  line-height: 1.14;
+  letter-spacing: -0.028em;
   color: var(--v-ivory);
 }
 .gdm-d {
-  margin: var(--sp-3) 0 0;
+  margin: var(--sp-2) 0 0;
   max-width: 62ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
-  line-height: 1.74;
+  line-height: 1.72;
   color: var(--v-on-ink);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
+  .gdm { row-gap: var(--sp-8); }
+  .gdm-head { grid-column: 1 / span 8; }
+
+  /* ---- 1024px+: one horizontal strategy track -------------------- */
+  .gdm-set {
+    margin-top: var(--sp-9);
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+  .gdm-set::before {
+    left: 0;
+    right: 0;
+    top: 50%;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+    background: var(--v-hair-ink);
+  }
+
   .gdm-set > li {
-    grid-template-columns: clamp(72px, 9vw, 132px) minmax(0, 1fr);
-    column-gap: var(--sp-5);
-    align-items: start;
+    padding: 0;
+    align-items: center;
+    text-align: center;
   }
+  .gdm-set > li:first-child,
+  .gdm-set > li:last-child { padding: 0; }
+
+  /* The node sits ON the line: a small dot, order reset to its
+     natural DOM position (top zone, node, bottom zone) so the
+     alternation in the markup actually renders where it says. */
+  .gdm-node {
+    order: 0;
+    position: relative;
+    z-index: 1;
+    flex: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--v-gold);
+    /* The section's own ink background — punches a small notch in the
+       line so the dot reads as a marker on it, not a bead threaded
+       through it. */
+    border: 2px solid var(--v-ink);
+    transition: transform var(--mo-mid) var(--ease), background-color var(--mo-mid) var(--ease);
+  }
+  .gdm-set > li:first-child .gdm-node { background: var(--v-red); }
+  .gdm-set > li:hover .gdm-node,
+  .gdm-set > li:focus-within .gdm-node {
+    background: var(--v-gold-lit);
+    transform: scale(1.3);
+  }
+
+  /* The numeral becomes a small caption hung off the node itself —
+     below the dot for an "above the line" move (nothing else is
+     using that space), above the dot for a "below the line" one —
+     so the node and its numeral still read as one mile-marker. */
   .gdm-n {
-    /* Optically aligned to the cap-height of the move title rather
-       than to its own box, so the numeral hangs off the rule. */
-    margin-top: -0.1em;
-    font-size: clamp(38px, 5.4vw, 78px);
-    letter-spacing: -0.05em;
-    color: rgba(184, 144, 75, 0.9);
+    position: absolute;
+    left: 50%;
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    transform: translateX(-50%);
+    white-space: nowrap;
   }
+  .gdm-set > li:nth-child(odd) .gdm-n { top: 100%; margin-top: var(--sp-3); }
+  .gdm-set > li:nth-child(even) .gdm-n { bottom: 100%; margin-bottom: var(--sp-3); }
+
+  /* Fixed, NOT content-sized: every li needs the same total height so
+     every node lands on the shared line, regardless of which move's
+     description is longest. Content aligns to the edge nearest the
+     line and simply extends outward if it needs more room. */
+  .gdm-zone {
+    display: flex;
+    flex: 0 0 clamp(150px, 11vw, 190px);
+    /* Flex items default to min-height:auto, which lets a flex-basis be
+       overridden upward by tall content even with flex-shrink:0 — the
+       one thing that cannot happen here, or the five nodes stop landing
+       on the same line. Content that needs more room overflows this
+       box's edge visibly instead of growing it. */
+    min-height: 0;
+    flex-direction: column;
+    width: 100%;
+    overflow: visible;
+  }
+  .gdm-zone-top { justify-content: flex-end; padding-bottom: var(--sp-5); }
+  .gdm-zone-bottom { justify-content: flex-start; padding-top: var(--sp-5); }
+
+  .gdm-b {
+    max-width: 232px;
+    margin: 0 auto;
+    transition: transform var(--mo-mid) var(--ease);
+  }
+  /* Above-the-line content lifts a little further from the track;
+     below-the-line content drops a little further from it — each
+     moves away from the line, not toward it. */
+  .gdm-set > li:hover .gdm-zone-top .gdm-b,
+  .gdm-set > li:focus-within .gdm-zone-top .gdm-b { transform: translateY(-3px); }
+  .gdm-set > li:hover .gdm-zone-bottom .gdm-b,
+  .gdm-set > li:focus-within .gdm-zone-bottom .gdm-b { transform: translateY(3px); }
+  .gdm-t { font-size: clamp(17px, 1.4vw, 21px); }
+  .gdm-d { font-size: 13.5px; line-height: 1.62; max-width: 232px; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  .gdm-node,
+  .gdm-b { transition: none; }
+  .gdm-set > li:hover .gdm-node,
+  .gdm-set > li:focus-within .gdm-node { transform: none; }
+  .gdm-set > li:hover .gdm-zone-top .gdm-b,
+  .gdm-set > li:focus-within .gdm-zone-top .gdm-b,
+  .gdm-set > li:hover .gdm-zone-bottom .gdm-b,
+  .gdm-set > li:focus-within .gdm-zone-bottom .gdm-b { transform: none; }
 }
 
-@media (min-width: 1024px) {
-  .gdm { row-gap: var(--sp-7); }
-  .gdm-head { grid-column: 1 / span 8; }
-  .gdm-set > li { padding: var(--sp-6) 0; column-gap: var(--sp-6); }
-  .gdm-d { max-width: 54ch; }
+@media (min-width: 1280px) {
+  .gdm-zone { flex-basis: clamp(160px, 9vw, 180px); }
+  .gdm-b { max-width: 250px; }
+  .gdm-d { max-width: 250px; }
 }
 
 /* ============================================================

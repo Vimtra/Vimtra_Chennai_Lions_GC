@@ -64,42 +64,6 @@ const FRAMEWORK = [
   },
 ];
 
-/* ---------------------------------------------------------------------------
-   THE PGA PARTNERSHIP — every string below is verbatim from the
-   "VIMTRA VENTURES LLC × PGA OF AMERICA — Building India's Golf Future"
-   brochure (Company Profile 2026), page 01, "THE PARTNERSHIP".
-
-   This is a licensed partnership, not a sponsorship or an endorsement, and
-   the copy says only what that page says. No PGA mark or logo is used: the
-   repository holds no PGA artwork and none was sourced.
---------------------------------------------------------------------------- */
-const PGA_ROLE = [
-  {
-    name: "Coaching curriculum",
-    body: "PGA-certified methodology brought into Indian academies.",
-  },
-  {
-    name: "Instructor accreditation",
-    body: "Indian coaches trained and certified to international standards.",
-  },
-  {
-    name: "Event & tournament standards",
-    body: "Championship-format operations for events hosted in India.",
-  },
-  {
-    name: "Course & club standards",
-    body: "PGA-informed design and operating standards for new venues.",
-  },
-  {
-    name: "Brand credibility",
-    body: "A century-old name that draws players, sponsors, partners, and media.",
-  },
-  {
-    name: "Player pathway",
-    body: "A pipeline to international pro tours for the next generation of Indian pros.",
-  },
-];
-
 // PGA brochure p. 01 — the two offices named on the partnership page.
 const PGA_OFFICES = [
   { k: "Registered office", v: "Fremont, CA", d: "Vimtra Ventures LLC" },
@@ -304,14 +268,18 @@ export default function GolfDevelopmentPage() {
           sits immediately after it rather than being bolted on at the end.
 
           Composition is deliberately unlike anything else on this page — no
-          spine, no `gd-index`, no full-bleed statement. A licence plate
-          carrying the two named offices and the PGA's founding year, then
-          the six roles as a capability field divided by vertical hairlines
-          rather than stacked rules.
+          `gd-index`, no full-bleed statement. A licence plate carrying the
+          two named offices and the PGA's founding year.
 
           Every word is the PGA brochure's own (p. 01). Nothing about the
           partnership's scope, value or exclusivity is characterised beyond
-          what that page states. */}
+          what that page states.
+
+          REMOVED — the "PGA's role in the plan" six-item sub-block (the
+          PGA_ROLE data, and the `.gdp-roles`/`.gdp-role-*` rail-and-register
+          CSS it alone used) was deleted whole at the requester's direction.
+          Nothing replaces it; the section now ends at the licence plate
+          above. */}
       <Section surface="paper" className="gdp-sec">
         <div className="cm-track gdp">
           <IndexLabel n="02">The Partnership · PGA of America</IndexLabel>
@@ -349,23 +317,6 @@ export default function GolfDevelopmentPage() {
               </div>
             ))}
           </dl>
-
-          <div className="gdp-roles">
-            <p className="gdp-roles-k" data-rise>
-              The PGA&rsquo;s role in the plan
-            </p>
-            <ol className="gdp-role-set">
-              {PGA_ROLE.map((r, i) => (
-                <li key={r.name} data-rise>
-                  <span className="gdp-role-n" aria-hidden>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="gdp-role-t">{r.name}</h3>
-                  <p className="gdp-role-d">{r.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
         </div>
       </Section>
 
@@ -373,14 +324,22 @@ export default function GolfDevelopmentPage() {
           The five moves the platform is built on (PGA brochure p. 03). It
           follows the partnership because the partnership is what makes the
           moves credible; it precedes the thesis because the thesis is one of
-          the five, not the whole plan.
-
-          Composition: a hanging-numeral plan. The ordinals sit OUTSIDE the
-          text column, in the gutter, which is a device none of the other
-          sections on this page uses — the framework hangs its numerals on a
-          spine, the partnership sets them above each role, and the two
-          `gd-index` lists set them inline. Set on ink so the page alternates
+          the five, not the whole plan. Set on ink so the page alternates
           rather than running three light sections together.
+
+          REDESIGNED — this sub-section only; wording of all five moves is
+          untouched. The previous version was a hanging-numeral list at
+          every width: legible, but the exact same vertical-list shape at
+          1600px as at 375px, and a plain list next to section 02's
+          connected register one chapter up. Below 1024px it is still a
+          vertical roadmap (a left-hand spine — `.gdm-set::before` — not a
+          bordered-cell list). At 1024px+ it becomes a genuinely different
+          device: one horizontal track the width of the section, with the
+          five moves as nodes on it, odd moves (01/03/05) stated above the
+          line and even moves (02/04) below — five parts of one strategy,
+          not five columns. This does not reuse section 02's rail +
+          vertical-spine pattern: no rail, and the device changes shape by
+          width instead of staying fixed.
 
           No figure is attached to any move: the source attaches none. */}
       <Section surface="ink" className="gdm-sec hp-sec-atmos">
@@ -395,18 +354,35 @@ export default function GolfDevelopmentPage() {
             </h2>
           </div>
 
+          {/* Odd moves (01, 03, 05) sit above the shared track line at
+              1024px+; even moves (02, 04) sit below it — the alternation
+              the redesign asks for. `.gdm-zone-top`/`-bottom` collapse to
+              nothing below 1024px (see globals.css), so on a phone or
+              tablet this is just numeral-then-title-then-description in
+              document order, same as before. */}
           <ol className="gdm-set">
-            {MOVES.map((m) => (
-              <li key={m.n} data-rise>
-                <span className="gdm-n" aria-hidden>
-                  {m.n}
-                </span>
+            {MOVES.map((m, i) => {
+              const above = i % 2 === 0;
+              const body = (
                 <div className="gdm-b">
                   <h3 className="gdm-t">{m.t}</h3>
                   <p className="gdm-d">{m.d}</p>
                 </div>
-              </li>
-            ))}
+              );
+              return (
+                <li key={m.n} data-rise>
+                  <span className="gdm-zone gdm-zone-top">
+                    {above ? body : null}
+                  </span>
+                  <span className="gdm-node" aria-hidden>
+                    <span className="gdm-n">{m.n}</span>
+                  </span>
+                  <span className="gdm-zone gdm-zone-bottom">
+                    {above ? null : body}
+                  </span>
+                </li>
+              );
+            })}
           </ol>
         </div>
       </Section>
