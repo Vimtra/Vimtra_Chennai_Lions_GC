@@ -7,11 +7,13 @@ import {
   welcomeEmail,
   codOrderConfirmationEmail,
   codOrderNotificationEmail,
+  emailVerificationEmail,
   type ContactConfirmationInput,
   type ContactNotificationInput,
   type WelcomeEmailInput,
   type CodOrderConfirmationInput,
   type CodOrderNotificationInput,
+  type VerificationEmailInput,
 } from "@/lib/email-templates";
 
 /**
@@ -316,4 +318,33 @@ export async function sendCodOrderNotificationToAdmin(
   }
   const { subject, text, html } = codOrderNotificationEmail(input);
   return sendMail({ to, subject, text, html, replyTo: input.customerEmail });
+}
+
+// ---------------------------------------------------------------------------
+// Email verification (M6) — same Gmail SMTP transport, same gate, same
+// resolveFromAddress() as every sender above. No new env var: the
+// verification link's origin comes from NEXT_PUBLIC_SITE_URL, which
+// app/robots.ts already establishes as this project's single source of
+// truth for the site origin (with its localhost dev fallback), so the link
+// is correct in every environment without anything being hardcoded here.
+//
+// Called from signUp() and from the profile's resend action. Never from
+// signIn() — a routine login must not trigger mail.
+
+/** Build the absolute verification URL for a raw token. */
+export function verificationUrl(token: string): string {
+  const origin = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+  return `${origin}/verify-email?token=${encodeURIComponent(token)}`;
+}
+
+export async function sendVerificationEmail(
+  input: Omit<VerificationEmailInput, "verifyUrl"> & { token: string }
+): Promise<MailResult> {
+  const { subject, text, html } = emailVerificationEmail({
+    name: input.name,
+    email: input.email,
+    expiresInLabel: input.expiresInLabel,
+    verifyUrl: verificationUrl(input.token),
+  });
+  return sendMail({ to: input.email, subject, text, html, replyTo: resolveFromAddress() });
 }

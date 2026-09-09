@@ -13293,3 +13293,212 @@ a:hover .hp-arrow {
   .iv-pillar-set > li.is-solo { grid-template-columns: minmax(0, 1fr); }
   .iv-pillar-f { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
 }
+
+/* ============================================================
+   VERIFICATION (M6) — account panel + /verify-email landing
+   ------------------------------------------------------------
+   Scoped to `.vfy-*`. Sits inside the existing `.acct-panel`
+   on /profile and inside `.cm-track` on /verify-email; borrows
+   the account surface's own rhythm rather than introducing a
+   second visual language. Nothing here touches a shared class.
+============================================================ */
+.vfy-card { margin-top: var(--sp-5); }
+
+.vfy-row {
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.vfy-row:first-of-type { border-top: none; padding-top: var(--sp-3); }
+
+.vfy-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+.vfy-row-label {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-muted);
+}
+.vfy-row-value {
+  margin: 6px 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 1.7vw, 19px);
+  letter-spacing: -0.02em;
+  color: var(--v-ink);
+  word-break: break-word;
+}
+.vfy-row-note {
+  margin: 10px 0 0;
+  max-width: 60ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--v-on-ivory);
+}
+.vfy-unavailable {
+  padding: 12px 14px;
+  border-left: 2px solid var(--v-gold);
+  background: rgba(184, 144, 75, 0.07);
+}
+
+/* Status pill */
+.vfy-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.vfy-badge.is-ok {
+  color: #1c6b3f;
+  background: rgba(28, 107, 63, 0.1);
+  border: 1px solid rgba(28, 107, 63, 0.28);
+}
+.vfy-badge.is-pending {
+  color: var(--v-red);
+  background: rgba(189, 34, 39, 0.08);
+  border: 1px solid rgba(189, 34, 39, 0.26);
+}
+
+/* Inline result message */
+.vfy-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0 0 var(--sp-4);
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.vfy-msg.is-ok {
+  color: #1c6b3f;
+  background: rgba(28, 107, 63, 0.08);
+  border: 1px solid rgba(28, 107, 63, 0.22);
+}
+.vfy-msg.is-bad {
+  color: var(--v-red);
+  background: rgba(189, 34, 39, 0.07);
+  border: 1px solid rgba(189, 34, 39, 0.22);
+}
+.vfy-msg svg { flex: none; margin-top: 1px; }
+
+.vfy-btn {
+  margin-top: var(--sp-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.vfy-form { margin-top: var(--sp-4); }
+.vfy-label {
+  display: block;
+  margin-bottom: 8px !important;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--v-muted);
+}
+.vfy-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.vfy-inline input {
+  flex: 1 1 200px;
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid rgba(14, 11, 10, 0.16);
+  border-radius: 10px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14.5px;
+  color: var(--v-ink);
+  background: #fff;
+}
+.vfy-inline input:focus {
+  outline: none;
+  border-color: var(--v-gold);
+}
+.vfy-inline .vfy-btn { margin-top: 0; flex: none; }
+.vfy-code-input {
+  font-family: var(--font-sora), sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.36em !important;
+  text-align: center;
+  max-width: 190px;
+  flex: 0 1 190px !important;
+}
+
+.vfy-spin { animation: vfy-rot 0.9s linear infinite; }
+@keyframes vfy-rot { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .vfy-spin { animation: none; }
+}
+
+/* ---------- /verify-email landing panel ---------- */
+.vfy-panel {
+  grid-column: 1 / -1;
+  max-width: 640px;
+  padding: var(--sp-6);
+  background: #fff;
+  border: 1px solid var(--v-hair-ivory);
+  border-top: 3px solid var(--v-gold);
+  border-radius: 14px;
+}
+.vfy-panel.vfy-ok { border-top-color: #1c6b3f; }
+.vfy-panel.vfy-bad { border-top-color: var(--v-red); }
+.vfy-icon { width: 34px; height: 34px; }
+.vfy-icon-ok { color: #1c6b3f; }
+.vfy-icon-warn { color: var(--v-gold); }
+.vfy-icon-bad { color: var(--v-red); }
+.vfy-eyebrow {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-muted);
+}
+.vfy-heading {
+  margin: 8px 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(22px, 2.8vw, 32px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--v-ink);
+}
+.vfy-body {
+  margin: var(--sp-3) 0 0;
+  max-width: 54ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--v-on-ivory);
+}
+.vfy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-top: var(--sp-5);
+}
+@media (min-width: 1024px) {
+  .vfy-panel { grid-column: 1 / span 7; }
+}

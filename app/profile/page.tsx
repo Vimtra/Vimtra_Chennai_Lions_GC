@@ -3,6 +3,8 @@ import { requireUser } from "@/lib/auth";
 import StoryHero from "@/components/site/StoryHero";
 import { Section } from "@/components/site/Section";
 import ProfileClient from "@/components/profile/ProfileClient";
+import { getVerificationStatus } from "@/lib/verification";
+import { isSmsConfigured } from "@/lib/sms";
 
 export const metadata: Metadata = {
   title: "My Account",
@@ -19,6 +21,12 @@ export default async function ProfilePage({
   const user = await requireUser("/profile");
   const { saved, error } = await searchParams;
 
+  // Verification state is read here rather than folded into the session:
+  // getCurrentUser()/SafeUser stay exactly as they are, so nothing about
+  // sign-in, middleware or the admin gate changes shape.
+  const verification = await getVerificationStatus(user.id);
+  const smsAvailable = isSmsConfigured();
+
   return (
     <>
       <StoryHero
@@ -28,7 +36,13 @@ export default async function ProfilePage({
       />
 
       <Section surface="ivory" size="tight">
-        <ProfileClient user={user} saved={saved === "1"} error={error} />
+        <ProfileClient
+          user={user}
+          saved={saved === "1"}
+          error={error}
+          verification={verification}
+          smsAvailable={smsAvailable}
+        />
       </Section>
     </>
   );

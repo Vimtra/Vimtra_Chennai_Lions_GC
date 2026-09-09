@@ -231,18 +231,59 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlacedOrder> {
 
     const totals = computeTotals(lines.map((l) => ({ price: l.unitPrice, qty: l.qty })));
 
-    // Decrement stock atomically per row (conditional WHERE to make the
-    // race-safety belt-and-braces even inside the transaction).
-    for (const l of lines) {
-      const upd = await tx.product.updateMany({
-        where: { id: l.productId, stock: { gte: l.qty }, active: true },
-        data: { stock: { decrement: l.qty } },
+    // Decrement stock atomically, in ONE statement (conditional WHERE to
+    // make the race-safety belt-and-braces even inside the transaction).
+    //
+    // WHY ONE STATEMENT AND NOT A LOOP. This used to issue one
+    // `tx.product.updateMany` per cart line. Each of those is a separate
+    // network round-trip held open inside the interactive transaction, so
+    // the transaction's wall-clock cost grew linearly with cart size. On
+    // this deployment (app in India, Neon in us-east-2) a single round-trip
+    // measures ~290ms and BEGIN/COMMIT alone ~1.2s, so Prisma's default
+    // 5000ms interactive-transaction budget is exhausted at roughly nine
+    // round-trips — a cart of about six lines. Past that the transaction
+    // expired mid-flight and the *next* statement, `tx.order.create`,
+    // failed with P2028 "Transaction already closed".
+    //
+    // Collapsing the loop makes the round-trip count constant (one) for
+    // any cart size. The semantics are deliberately unchanged: the same
+    // `active = true AND stock >= qty` guard is applied per row by the
+    // database, so a row whose stock moved underneath us still refuses to
+    // update and still cannot oversell. RETURNING tells us exactly which
+    // rows applied.
+    const stockUpdates = Prisma.join(
+      lines.map((l) => Prisma.sql`(${l.productId}::text, ${l.qty}::int)`)
+    );
+    const applied = await tx.$queryRaw<{ id: string }[]>`
+      UPDATE "Product" AS p
+         SET stock = p.stock - v.qty,
+             "updatedAt" = NOW()
+        FROM (VALUES ${stockUpdates}) AS v(id, qty)
+       WHERE p.id = v.id
+         AND p.active = true
+         AND p.stock >= v.qty
+      RETURNING p.id
+    `;
+
+    if (applied.length !== lines.length) {
+      // Snapshot went stale between the read and the write — abort. One
+      // extra read on the failure path only; the transaction rolls back
+      // either way, so nothing has been decremented.
+      const appliedIds = new Set(applied.map((r) => r.id));
+      const failed = lines.filter((l) => !appliedIds.has(l.productId));
+      const fresh = await tx.product.findMany({
+        where: { id: { in: failed.map((f) => f.productId) } },
+        select: { id: true, stock: true },
       });
-      if (upd.count !== 1) {
-        // Snapshot went stale between the read and the write — abort.
-        const fresh = await tx.product.findUnique({ where: { id: l.productId } });
-        throw new InsufficientStockError(l.productId, l.qty, fresh?.stock ?? 0);
-      }
+      const freshById = new Map(fresh.map((p) => [p.id, p.stock] as const));
+      // `lines` order is preserved by filter, so this reports the same
+      // product the old per-line loop would have failed on first.
+      const first = failed[0];
+      throw new InsufficientStockError(
+        first.productId,
+        first.qty,
+        freshById.get(first.productId) ?? 0
+      );
     }
 
     // Try to produce a unique orderNumber; collisions on a 5-char

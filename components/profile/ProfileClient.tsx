@@ -2,6 +2,15 @@
 
 import AccountSettingsForm from "@/components/profile/AccountSettingsForm";
 import AccountNav from "@/components/profile/AccountNav";
+import VerificationPanel from "@/components/profile/VerificationPanel";
+
+export interface VerificationView {
+  email: string;
+  emailVerified: boolean;
+  phone: string | null;
+  phoneVerified: boolean;
+  pendingPhone: string | null;
+}
 
 /**
  * Authenticated account home — personal details and password change only.
@@ -10,8 +19,14 @@ import AccountNav from "@/components/profile/AccountNav";
  */
 export default function ProfileClient({
   user,
+  verification,
+  smsAvailable = false,
 }: {
   user: { name: string; email: string; role: string };
+  /** Verification status, read server-side in app/profile/page.tsx. Null only
+   *  if the user row vanished between the session check and the read. */
+  verification?: VerificationView | null;
+  smsAvailable?: boolean;
   /** Retained so /profile's existing ?saved / ?error links keep type-checking.
    *  Status is now reported inline by the form itself. */
   saved?: boolean;
@@ -34,6 +49,10 @@ export default function ProfileClient({
         <div className="acct-panel">
           <AccountSettingsForm user={{ name: user.name, email: user.email }} />
         </div>
+
+        {verification && (
+          <VerificationPanel status={verification} smsAvailable={smsAvailable} />
+        )}
       </div>
     </div>
   );

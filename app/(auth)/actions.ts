@@ -8,7 +8,8 @@ import {
   createSession,
   destroySession,
 } from "@/lib/auth";
-import { sendWelcomeEmail } from "@/lib/mail";
+import { sendWelcomeEmail, sendVerificationEmail } from "@/lib/mail";
+import { issueEmailVerificationToken } from "@/lib/verification";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -95,6 +96,40 @@ export async function signUp(formData: FormData) {
   }));
   if (!welcomeMail.sent && welcomeMail.reason === "error") {
     console.error("[auth] welcome email failed:", welcomeMail.detail);
+  }
+
+  // Email verification (M6). Issued and sent here, at account creation, and
+  // never from signIn() below.
+  //
+  // Best-effort exactly like the welcome mail above, and for the same
+  // reason: the account row already exists and is usable, so a mail
+  // failure must not fail signup or leave the person without an account.
+  // If the send fails, the token simply goes unused and expires — the
+  // profile page offers a resend, so there is no state here that can get
+  // stuck. Nothing about the User row is written by this block.
+  try {
+    const issued = await issueEmailVerificationToken(result.user.id);
+    if (issued.ok) {
+      const verifyMail = await sendVerificationEmail({
+        name: result.user.name,
+        email: result.user.email,
+        token: issued.token,
+        expiresInLabel: "24 hours",
+      }).catch((err) => ({
+        sent: false as const,
+        reason: "error" as const,
+        detail: err instanceof Error ? err.message : "Unknown error.",
+      }));
+      if (!verifyMail.sent && verifyMail.reason === "error") {
+        console.error("[auth] verification email failed:", verifyMail.detail);
+      }
+    }
+  } catch (err) {
+    // Never block account creation on verification plumbing.
+    console.error(
+      "[auth] could not issue verification token:",
+      err instanceof Error ? err.message : "Unknown error."
+    );
   }
 
   await createSession(result.user.id);

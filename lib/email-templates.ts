@@ -605,3 +605,78 @@ export function codOrderNotificationEmail(input: CodOrderNotificationInput): Ren
 
   return { subject, text, html };
 }
+
+// ---------------------------------------------------------------------------
+// Email verification (M6).
+//
+// Unlike welcomeEmail above, this template takes a fully-formed absolute
+// `verifyUrl` rather than a bare host. The link has to be followed from an
+// external mail client, so it cannot be rebuilt here from a host fragment
+// and an assumed protocol — the caller resolves it once from
+// NEXT_PUBLIC_SITE_URL (see lib/mail.ts) and passes the finished URL in.
+// Nothing about localhost or any production domain is written here.
+
+export interface VerificationEmailInput {
+  name: string;
+  email: string;
+  /** Absolute, already-built verification URL including the token. */
+  verifyUrl: string;
+  /** Human-readable lifetime, e.g. "24 hours". */
+  expiresInLabel: string;
+}
+
+export function emailVerificationEmail(input: VerificationEmailInput): RenderedEmail {
+  const subject = "Verify your email · Vimtra Chennai Lions GC";
+
+  const text = [
+    `Hi ${input.name},`,
+    "",
+    `Confirm that ${input.email} is your address by opening the link below.`,
+    "",
+    input.verifyUrl,
+    "",
+    `This link expires in ${input.expiresInLabel} and can only be used once.`,
+    "",
+    "If you did not create an account with us, you can ignore this email — nothing will change.",
+    "",
+    "— Vimtra Chennai Lions GC",
+    "AM Green IGPL · Season 2026",
+  ].join("\n");
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-family:${FONT};font-size:15px;line-height:1.6;color:${INK};">
+      Hi ${escapeHtml(input.name)},
+    </p>
+    <p style="margin:0 0 24px;font-family:${FONT};font-size:15px;line-height:1.6;color:${INK};">
+      Confirm that <strong>${escapeHtml(input.email)}</strong> is your address so we
+      can reach you about orders and account changes.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>
+          <a href="${escapeHtml(input.verifyUrl)}"
+             style="display:inline-block;padding:13px 24px;background:${CRIMSON};color:${IVORY};font-family:${FONT};font-weight:700;font-size:13px;letter-spacing:0.4px;text-decoration:none;border-radius:999px;">
+            Verify my email
+          </a>
+        </td>
+      </tr>
+    </table>
+    <p style="margin:24px 0 0;font-family:${FONT};font-size:13px;line-height:1.6;color:${MUTED};">
+      This link expires in ${escapeHtml(input.expiresInLabel)} and can only be used once.
+    </p>
+    <p style="margin:12px 0 0;font-family:${FONT};font-size:13px;line-height:1.6;color:${MUTED};">
+      If the button does not work, paste this address into your browser:<br />
+      <span style="color:${GOLD};word-break:break-all;">${escapeHtml(input.verifyUrl)}</span>
+    </p>
+    <p style="margin:20px 0 0;font-family:${FONT};font-size:13px;line-height:1.6;color:${MUTED};">
+      If you did not create an account with us, ignore this email — nothing will change.
+    </p>`;
+
+  const html = emailShell({
+    preview: "Confirm your email address for Vimtra Chennai Lions GC.",
+    eyebrow: "Verify your email",
+    bodyHtml,
+  });
+
+  return { subject, text, html };
+}
