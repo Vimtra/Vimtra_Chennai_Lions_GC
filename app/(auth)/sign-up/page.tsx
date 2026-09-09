@@ -22,7 +22,7 @@ export default async function SignUpPage({
 
   return (
     <div className="admin-page hp-auth">
-      <div className="w-full max-w-[440px] bg-cream-50 border border-black/[0.08] rounded-[24px] p-10">
+      <div className="hp-auth-card">
         <div className="flex items-center gap-3 mb-7">
           <Image src="/assets/logo-lion.png" alt="" width={40} height={40} className="w-10 h-10 object-contain" />
           <div>

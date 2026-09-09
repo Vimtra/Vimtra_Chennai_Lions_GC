@@ -5387,7 +5387,12 @@ a:hover .hp-arrow {
   .nv-actions { gap: 0; }
   .nv-icon { width: 42px; height: 42px; }
   .nv-brand { min-width: 0; }
-  .nv-word-1 { overflow: hidden; text-overflow: ellipsis; max-width: min(205px, 48vw); }
+  /* "VIMTRA CHENNAI LIONS GC" measures ~216px at this range's 12px/13.5px
+     step — 205px was clipping "GC" into an ellipsis with ~295px of free
+     bar space on either side (measured at 768px). 236px clears the full
+     wordmark at every width where the fixed cap is the binding term; the
+     48vw side still guards true phone widths, where it binds instead. */
+  .nv-word-1 { overflow: hidden; text-overflow: ellipsis; max-width: min(236px, 48vw); }
 }
 
 /* Footer: a branded closing panel rather than a plain set of columns. */
