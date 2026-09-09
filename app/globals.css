@@ -13053,28 +13053,33 @@ a:hover .hp-arrow {
 /* ============================================================
    GOLF DEVELOPMENT · THE PLAN (five strategic moves)
    ------------------------------------------------------------
-   Content audit, Sept 2026; REDESIGNED again, this sub-section only.
+   Content audit, Sept 2026; REDESIGNED, this sub-section only.
    Vimtra x PGA brochure p. 03 — wording of all five moves unchanged.
 
-   The previous version was a single hanging-numeral list at every
-   width: legible, but the same vertical list at 1600px as at 375px,
-   and generic next to section 02's connected register one chapter up.
+   The version before this one pinned the five moves to a single
+   horizontal track, alternating above and below it. It was legible
+   and it aligned perfectly, and that was the problem: a symmetrical
+   line with five equal columns hung off it reads as a stock timeline
+   widget, not as this franchise's own plan.
 
-   Below 1024px this stays a vertical roadmap — a left-hand spine
-   (`.gdm-set::before`, clipped to run only between the first and
-   last node) rather than a list of bordered cells. At 1024px+ it
-   becomes a genuinely different device: ONE horizontal track the
-   width of the section (`.gdm-set::before` repositioned, not a
-   second element), with the five moves as nodes on it — odd moves
-   (01/03/05) stated above the line, even moves (02/04) below, via
-   `.gdm-zone-top` / `.gdm-zone-bottom` in the markup. Both zones are
-   given the SAME fixed height (not sized to their own content) so
-   every node lands on the line at exactly the same height regardless
-   of which move's description happens to be longest — the one thing
-   that has to hold for five independent text blocks to read as one
-   continuous track. Below 1024px the zones collapse to `display:
-   contents`, so the phone/tablet reading order is simply numeral,
-   title, description, in that order, once per move.
+   This is a STEPPED FIELD instead. Every move opens on the same
+   mark — an oversized gold numeral with a hairline running off it to
+   the far edge of that move's own span — and the marks are then
+   DISTRIBUTED across the 12-column track rather than threaded onto
+   one line:
+
+     01  cols 1–5    the left edge, opening
+     02  cols 7–12   right half, dropped
+     03  cols 2–6    stepped one column in from 01
+     04  cols 7–11   right half, dropped, narrower than 02
+     05  cols 1–12   closing band, the field's longest rule
+
+   Span, indent and vertical drop all vary by position, so the
+   sequence is carried by composition rather than by a track, and no
+   two moves are the same size. Below 768px the field folds to one
+   column against a single hairline; 768–1023px runs it as a
+   two-track spread. There is no spine at any width above 768px and
+   no card at any width at all.
 
    Scoped to `.gdm-*`. Touches no shared class.
 ============================================================ */
@@ -13094,192 +13099,170 @@ a:hover .hp-arrow {
   color: var(--v-gold-lit);
 }
 
-/* ---- Below 1024px: a vertical roadmap ---------------------------- */
+/* ---- Below 768px: one column against a single hairline ----------- */
 .gdm-set {
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-6);
+  align-items: start;
   list-style: none;
   margin: var(--sp-6) 0 0;
-  padding: 0;
+  padding: 0 0 0 var(--sp-6);
 }
+/* Fades in and out rather than stopping hard, so it reads as depth
+   behind the marks and not as a rule the moves are hung on. */
 .gdm-set::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 6px;
-  bottom: 6px;
+  top: 4px;
+  bottom: 4px;
   width: 1px;
-  background: var(--v-hair-ink);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--v-hair-ink) 12%,
+    var(--v-hair-ink) 88%,
+    transparent 100%
+  );
 }
-.gdm-set > li {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  padding: var(--sp-5) 0 var(--sp-5) var(--sp-6);
-}
-.gdm-set > li:first-child { padding-top: 0; }
-.gdm-set > li:last-child { padding-bottom: 0; }
+.gdm-set > li { position: relative; min-width: 0; }
 
-/* The numeral is always visually first below 1024px, whichever zone
-   it happens to sit between in the markup (order is CSS-only; the
-   numeral is `aria-hidden` and the `<ol>` already carries the real
-   ordinal, so this never affects reading order). */
-.gdm-node { order: -1; }
+/* ---- The mark: numeral + its rule -------------------------------- */
+.gdm-mark {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-3);
+}
 .gdm-n {
-  display: inline-block;
+  flex: none;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(21px, 2.6vw, 28px);
-  letter-spacing: -0.02em;
-  line-height: 1;
+  font-size: clamp(30px, 7.4vw, 44px);
+  line-height: 0.86;
+  letter-spacing: -0.045em;
   color: var(--v-gold);
   font-variant-numeric: tabular-nums;
+  transition: color var(--mo-mid) var(--ease);
 }
+/* Move 01 opens the plan — the one crimson accent in the field. The
+   ordinal itself is what carries the order (and the `<ol>` carries it
+   for assistive tech), so nothing here depends on colour alone. */
 .gdm-set > li:first-child .gdm-n { color: var(--v-red); }
+/* The rule is the structural device of this field, not a flourish, so
+   it holds gold well past the numeral and only thins toward its far
+   end — enough to read as drawn structure at a glance. Its LENGTH is
+   set by that move's column span, which is what makes the five marks
+   measure differently against each other. */
+.gdm-rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--v-gold) 0%,
+    rgba(184, 144, 75, 0.62) 58%,
+    rgba(184, 144, 75, 0.2) 100%
+  );
+  opacity: 0.9;
+  transition: opacity var(--mo-mid) var(--ease);
+}
 
-/* Below 1024px the two zones are pure placement plumbing — unwrap
-   them so whichever one holds this move's title/description just
-   flows after the numeral like a normal block. */
-.gdm-zone { display: contents; }
-.gdm-b { min-width: 0; }
 .gdm-t {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(19px, 2.3vw, 27px);
+  font-size: clamp(19px, 2.3vw, 26px);
   line-height: 1.14;
   letter-spacing: -0.028em;
   color: var(--v-ivory);
+  transition: transform var(--mo-mid) var(--ease);
 }
 .gdm-d {
   margin: var(--sp-2) 0 0;
-  max-width: 62ch;
+  max-width: 52ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
-  line-height: 1.72;
+  line-height: 1.7;
   color: var(--v-on-ink);
 }
 
+.gdm-set > li:hover .gdm-n,
+.gdm-set > li:focus-within .gdm-n { color: var(--v-gold-lit); }
+.gdm-set > li:hover .gdm-rule,
+.gdm-set > li:focus-within .gdm-rule { opacity: 1; }
+.gdm-set > li:hover .gdm-t,
+.gdm-set > li:focus-within .gdm-t { transform: translateX(4px); }
+@media (prefers-reduced-motion: reduce) {
+  .gdm-n,
+  .gdm-rule,
+  .gdm-t { transition: none; }
+  .gdm-set > li:hover .gdm-t,
+  .gdm-set > li:focus-within .gdm-t { transform: none; }
+}
+
+/* ---- 768px+: two tracks, the right one dropped ------------------- */
+@media (min-width: 768px) {
+  .gdm-set {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    row-gap: var(--sp-7);
+    padding-left: 0;
+  }
+  /* The field's own geometry takes over from the hairline here. */
+  .gdm-set::before { content: none; }
+
+  .gdm-set > li:nth-child(1) { grid-column: 1 / span 6; }
+  .gdm-set > li:nth-child(2) { grid-column: 7 / span 6; margin-top: var(--sp-6); }
+  .gdm-set > li:nth-child(3) { grid-column: 1 / span 6; }
+  .gdm-set > li:nth-child(4) { grid-column: 7 / span 6; margin-top: var(--sp-6); }
+  .gdm-set > li:nth-child(5) { grid-column: 1 / -1; }
+
+  .gdm-n { font-size: clamp(38px, 5vw, 52px); }
+  .gdm-d { font-size: 14.5px; line-height: 1.66; max-width: 46ch; }
+}
+
+/* ---- 1024px+: the stepped field ----------------------------------
+   Held deliberately tight. The drop that breaks the two tracks off a
+   shared baseline is the smallest one that still reads as intentional
+   (~37px at 1440), because every pixel of it is section height, and
+   the asymmetry here is meant to come from span and indent — which
+   cost nothing vertically — not from pushing blocks down the page. */
 @media (min-width: 1024px) {
-  .gdm { row-gap: var(--sp-8); }
+  .gdm { row-gap: var(--sp-6); }
   .gdm-head { grid-column: 1 / span 8; }
 
-  /* ---- 1024px+: one horizontal strategy track -------------------- */
   .gdm-set {
-    margin-top: var(--sp-9);
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    column-gap: var(--sp-6);
-  }
-  .gdm-set::before {
-    left: 0;
-    right: 0;
-    top: 50%;
-    bottom: auto;
-    width: auto;
-    height: 1px;
-    background: var(--v-hair-ink);
+    margin-top: var(--sp-6);
+    row-gap: var(--sp-7);
   }
 
-  .gdm-set > li {
-    padding: 0;
-    align-items: center;
-    text-align: center;
+  /* Spans and indents differ per position — this is the composition,
+     not decoration. 03 steps one column in from 01; 04 is narrower
+     than 02; 05 runs the full field and closes it. */
+  .gdm-set > li:nth-child(1) { grid-column: 1 / span 5; }
+  .gdm-set > li:nth-child(2) {
+    grid-column: 7 / span 6;
+    margin-top: clamp(32px, 2.6vw, 44px);
   }
-  .gdm-set > li:first-child,
-  .gdm-set > li:last-child { padding: 0; }
+  .gdm-set > li:nth-child(3) { grid-column: 2 / span 5; }
+  .gdm-set > li:nth-child(4) {
+    grid-column: 7 / span 5;
+    margin-top: clamp(32px, 2.6vw, 44px);
+  }
+  .gdm-set > li:nth-child(5) { grid-column: 1 / -1; }
 
-  /* The node sits ON the line: a small dot, order reset to its
-     natural DOM position (top zone, node, bottom zone) so the
-     alternation in the markup actually renders where it says. */
-  .gdm-node {
-    order: 0;
-    position: relative;
-    z-index: 1;
-    flex: none;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: var(--v-gold);
-    /* The section's own ink background — punches a small notch in the
-       line so the dot reads as a marker on it, not a bead threaded
-       through it. */
-    border: 2px solid var(--v-ink);
-    transition: transform var(--mo-mid) var(--ease), background-color var(--mo-mid) var(--ease);
-  }
-  .gdm-set > li:first-child .gdm-node { background: var(--v-red); }
-  .gdm-set > li:hover .gdm-node,
-  .gdm-set > li:focus-within .gdm-node {
-    background: var(--v-gold-lit);
-    transform: scale(1.3);
-  }
+  .gdm-n { font-size: clamp(48px, 4vw, 62px); }
+  .gdm-mark { gap: var(--sp-5); margin-bottom: var(--sp-3); }
+  .gdm-t { font-size: clamp(21px, 1.8vw, 28px); }
+  .gdm-d { max-width: 52ch; }
 
-  /* The numeral becomes a small caption hung off the node itself —
-     below the dot for an "above the line" move (nothing else is
-     using that space), above the dot for a "below the line" one —
-     so the node and its numeral still read as one mile-marker. */
-  .gdm-n {
-    position: absolute;
-    left: 50%;
-    display: block;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    transform: translateX(-50%);
-    white-space: nowrap;
-  }
-  .gdm-set > li:nth-child(odd) .gdm-n { top: 100%; margin-top: var(--sp-3); }
-  .gdm-set > li:nth-child(even) .gdm-n { bottom: 100%; margin-bottom: var(--sp-3); }
-
-  /* Fixed, NOT content-sized: every li needs the same total height so
-     every node lands on the shared line, regardless of which move's
-     description is longest. Content aligns to the edge nearest the
-     line and simply extends outward if it needs more room. */
-  .gdm-zone {
-    display: flex;
-    flex: 0 0 clamp(150px, 11vw, 190px);
-    /* Flex items default to min-height:auto, which lets a flex-basis be
-       overridden upward by tall content even with flex-shrink:0 — the
-       one thing that cannot happen here, or the five nodes stop landing
-       on the same line. Content that needs more room overflows this
-       box's edge visibly instead of growing it. */
-    min-height: 0;
-    flex-direction: column;
-    width: 100%;
-    overflow: visible;
-  }
-  .gdm-zone-top { justify-content: flex-end; padding-bottom: var(--sp-5); }
-  .gdm-zone-bottom { justify-content: flex-start; padding-top: var(--sp-5); }
-
-  .gdm-b {
-    max-width: 232px;
-    margin: 0 auto;
-    transition: transform var(--mo-mid) var(--ease);
-  }
-  /* Above-the-line content lifts a little further from the track;
-     below-the-line content drops a little further from it — each
-     moves away from the line, not toward it. */
-  .gdm-set > li:hover .gdm-zone-top .gdm-b,
-  .gdm-set > li:focus-within .gdm-zone-top .gdm-b { transform: translateY(-3px); }
-  .gdm-set > li:hover .gdm-zone-bottom .gdm-b,
-  .gdm-set > li:focus-within .gdm-zone-bottom .gdm-b { transform: translateY(3px); }
-  .gdm-t { font-size: clamp(17px, 1.4vw, 21px); }
-  .gdm-d { font-size: 13.5px; line-height: 1.62; max-width: 232px; }
-}
-@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
-  .gdm-node,
-  .gdm-b { transition: none; }
-  .gdm-set > li:hover .gdm-node,
-  .gdm-set > li:focus-within .gdm-node { transform: none; }
-  .gdm-set > li:hover .gdm-zone-top .gdm-b,
-  .gdm-set > li:focus-within .gdm-zone-top .gdm-b,
-  .gdm-set > li:hover .gdm-zone-bottom .gdm-b,
-  .gdm-set > li:focus-within .gdm-zone-bottom .gdm-b { transform: none; }
-}
-
-@media (min-width: 1280px) {
-  .gdm-zone { flex-basis: clamp(160px, 9vw, 180px); }
-  .gdm-b { max-width: 250px; }
-  .gdm-d { max-width: 250px; }
+  /* The closing band carries the longest rule in the field, so its
+     text is held to a measure rather than running the full width
+     under it. */
+  .gdm-set > li:nth-child(5) .gdm-t,
+  .gdm-set > li:nth-child(5) .gdm-d { max-width: 40ch; }
 }
 
 /* ============================================================

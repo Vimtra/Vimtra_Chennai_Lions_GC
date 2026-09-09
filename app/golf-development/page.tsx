@@ -328,18 +328,22 @@ export default function GolfDevelopmentPage() {
           rather than running three light sections together.
 
           REDESIGNED — this sub-section only; wording of all five moves is
-          untouched. The previous version was a hanging-numeral list at
-          every width: legible, but the exact same vertical-list shape at
-          1600px as at 375px, and a plain list next to section 02's
-          connected register one chapter up. Below 1024px it is still a
-          vertical roadmap (a left-hand spine — `.gdm-set::before` — not a
-          bordered-cell list). At 1024px+ it becomes a genuinely different
-          device: one horizontal track the width of the section, with the
-          five moves as nodes on it, odd moves (01/03/05) stated above the
-          line and even moves (02/04) below — five parts of one strategy,
-          not five columns. This does not reuse section 02's rail +
-          vertical-spine pattern: no rail, and the device changes shape by
-          width instead of staying fixed.
+          untouched. The version before this one was a single horizontal
+          track with the moves floating above and below it: symmetrical,
+          predictable, and read as a stock timeline rather than as this
+          franchise's own plan.
+
+          It is now a STEPPED FIELD. Each move opens on a mark — an
+          oversized gold numeral with a hairline running off it to the far
+          edge of that move's own column span — and the five marks are
+          distributed across a 12-column field rather than pinned to one
+          line: 01 at the left edge, 02 dropped into the right half, 03
+          stepped one column in from 01, 04 dropped again, and 05 closing
+          the field on a rule that runs its full width. Widths, indents and
+          vertical drops all differ by position, so the sequence is carried
+          by composition instead of by a track. Below 768px the field folds
+          to one column against a single hairline; 768–1023px runs it as a
+          two-track editorial spread.
 
           No figure is attached to any move: the source attaches none. */}
       <Section surface="ink" className="gdm-sec hp-sec-atmos">
@@ -354,35 +358,22 @@ export default function GolfDevelopmentPage() {
             </h2>
           </div>
 
-          {/* Odd moves (01, 03, 05) sit above the shared track line at
-              1024px+; even moves (02, 04) sit below it — the alternation
-              the redesign asks for. `.gdm-zone-top`/`-bottom` collapse to
-              nothing below 1024px (see globals.css), so on a phone or
-              tablet this is just numeral-then-title-then-description in
-              document order, same as before. */}
+          {/* One markup shape at every width; the field is built entirely
+              in CSS from `grid-column` / offset per `:nth-child`. The mark
+              (numeral + rule) is decorative in full: the `<ol>` already
+              carries the ordinal for assistive tech, so repeating "01" to a
+              screen reader would only double it. */}
           <ol className="gdm-set">
-            {MOVES.map((m, i) => {
-              const above = i % 2 === 0;
-              const body = (
-                <div className="gdm-b">
-                  <h3 className="gdm-t">{m.t}</h3>
-                  <p className="gdm-d">{m.d}</p>
-                </div>
-              );
-              return (
-                <li key={m.n} data-rise>
-                  <span className="gdm-zone gdm-zone-top">
-                    {above ? body : null}
-                  </span>
-                  <span className="gdm-node" aria-hidden>
-                    <span className="gdm-n">{m.n}</span>
-                  </span>
-                  <span className="gdm-zone gdm-zone-bottom">
-                    {above ? null : body}
-                  </span>
-                </li>
-              );
-            })}
+            {MOVES.map((m) => (
+              <li key={m.n} data-rise>
+                <span className="gdm-mark" aria-hidden>
+                  <span className="gdm-n">{m.n}</span>
+                  <span className="gdm-rule" />
+                </span>
+                <h3 className="gdm-t">{m.t}</h3>
+                <p className="gdm-d">{m.d}</p>
+              </li>
+            ))}
           </ol>
         </div>
       </Section>
