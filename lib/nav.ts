@@ -73,6 +73,11 @@ export const FLOATING_HEADER_ROUTES = [
   "/partners",
   // Photographic story hero (same terms as the other Club-module routes).
   "/invest",
+  // The news desk opens on the cover story's own photograph inside the
+  // shared `.cm-hero` frame, which reserves header height itself — see the
+  // note below. `/news/<slug>` is deliberately NOT here: article pages open
+  // on `PageHero`, and this list is matched exactly, not by prefix.
+  "/news",
   // `StoryHero` (`.cm-hero`) opens each of these too — Shop with a real
   // photograph, the rest `is-plain` (ink + aurora, no stock subject) on
   // the same terms /players already established. `.cm-hero` always

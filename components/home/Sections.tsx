@@ -345,7 +345,7 @@ export interface StoryRow {
  */
 export function Media({ stories }: { stories: StoryRow[] }) {
   const root = useSectionMotion();
-  const [lead, ...rest] = stories;
+  const lead = stories[0];
 
   return (
     <section
@@ -407,25 +407,6 @@ export function Media({ stories }: { stories: StoryRow[] }) {
               </span>
             </a>
 
-            {rest.length > 0 && (
-              <ul className="hm-press-rows">
-                {rest.map((m) => (
-                  <li key={m.id} data-rise>
-                    <a
-                      href={m.href}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      <span className="hm-press-src">{m.source}</span>
-                      <span className="hm-press-rt">{m.title}</span>
-                      <span className="hp-arrow" aria-hidden>
-                        →
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
         ) : (
           <p className="hm-body hp-mt-lg" data-rise>

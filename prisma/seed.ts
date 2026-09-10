@@ -149,6 +149,8 @@ async function main() {
   // no AI, no scraped publisher images.
   const BHULLAR = "/players/gaganjeet-bhullar-web.jpg";
   const SQUAD = "/assets/car-2-web.jpg";
+  const AL_HAMRA = "/assets/photo/club-hero-fairway-dusk.jpg";
+  const CHENNAI = "/assets/photo/club-01-marquee-swing.jpg";
   const MEDIA: {
     sourceName: string;
     sourceUrl: string;
@@ -208,6 +210,24 @@ async function main() {
         "Breathe Golf covers the Vimtra Chennai Lions squad reveal and the franchise's long-term vision for Chennai golf.",
       coverImage: SQUAD,
       sortOrder: 10,
+    },
+    {
+      sourceName: "AM Green IGPL",
+      sourceUrl: "https://theigpl.com/news/igpl-season-2-ras-al-khaimah",
+      title: "IGPL brings first franchisee event of the season to Al Hamra, Ras Al Khaimah",
+      summary:
+        "The official AM Green IGPL news desk announces the September 23–25 franchisee event at Al Hamra Golf Club, presented by Vimtra Chennai Lions GC.",
+      coverImage: AL_HAMRA,
+      sortOrder: 60,
+    },
+    {
+      sourceName: "AM Green IGPL",
+      sourceUrl: "https://theigpl.com/news/vimtra-chennai-sit-down-dinner",
+      title: "Vimtra Chennai Lions GC unveils squad, sets sights on building Chennai’s golfing legacy",
+      summary:
+        "The official AM Green IGPL news desk covers the Chennai Lions squad introduction and the franchise’s long-term vision for golf in Chennai.",
+      coverImage: CHENNAI,
+      sortOrder: 55,
     },
   ];
   for (const m of MEDIA) {

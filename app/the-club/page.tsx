@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/the-club" },
   title: "The Club",
   description:
-    "Chennai's franchise in the AM Green IGPL — founded 2026, owned outright by Vimtra Ventures, built for the decade of franchise golf.",
+    "Chennai's franchise in the AM Green IGPL — founded 2026, owned by Vimtra Ventures, a San Francisco & Chennai investment firm founded in 2014, built for the decade of franchise golf.",
 };
 
 /* ---------------------------------------------------------------------------
@@ -145,7 +145,7 @@ export default function TheClubPage() {
         <StoryHero
           eyebrow="AM Green IGPL · Season 2026"
           title={["THE", "CLUB"]}
-          line="Chennai's franchise in the AM Green Indian Golf Premier League. Owned outright by Vimtra Ventures."
+          line="Chennai's franchise in the AM Green Indian Golf Premier League. Owned by Vimtra Ventures, a San Francisco & Chennai investment firm founded in 2014."
           image="/assets/photo/club-hero-fairway-dusk.jpg"
           imageAlt="A championship fairway and treeline under a dusk sky"
           imagePosition="58% 46%"

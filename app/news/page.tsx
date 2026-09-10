@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
-import PageMasthead from "@/components/site/PageMasthead";
-import { listPublishedPosts, formatPublishedDate } from "@/lib/posts";
-import {
-  listActiveMediaCoverage,
-  formatCoverageDate,
-} from "@/lib/media-coverage";
-import type { Post, MediaCoverage } from "@prisma/client";
+import StoryHero from "@/components/site/StoryHero";
+import NewsHero from "@/components/news/NewsHero";
+import Newsroom from "@/components/news/Newsroom";
+import { listPublishedPosts } from "@/lib/posts";
+import { listActiveMediaCoverage } from "@/lib/media-coverage";
+import { buildNewsDesk } from "@/lib/news-desk";
 import { webSrc } from "@/lib/image-src";
 
 export const metadata: Metadata = {
@@ -22,371 +20,130 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 /* ---------------------------------------------------------------------------
-   The news desk.
+   The news desk — a newsroom front page.
 
-   Three chapters, kept visibly apart because they have different authors:
-   what's official (the franchise's own editorial AND, in the same chapter,
-   official reporting FROM the league itself), what third-party press wrote,
-   and what the franchise posted socially.
+   Redesigned from three stacked chapters (official list → press wall →
+   social rows) into one continuous editorial flow: a cover story, an
+   editorial index, then the rest of the desk ranked by weight. What did NOT
+   change is the thing that matters most here — who wrote what. Every row
+   still declares its own authorship, official league reporting is still
+   never mixed into the third-party wall by accident, and the classification
+   is still decided by table, kind and source host rather than by anything
+   the redesign found convenient.
 
-   OFFICIAL NEWS (chapter 01) is a single merged list rather than two
-   sections — per the October 2026 revision, an "Official IGPL News" section
-   was tried and rejected: one section per real item was reading as one
-   section per row. The first AM Green IGPL item (theigpl.com) now renders
-   inside THIS list, labelled per-row as official league coverage rather
-   than in a section of its own, so the chapter still reads as "official
-   news" as a whole while never implying the item was written by the
-   Chennai Lions newsroom. `isOfficialIgpl` below is what keeps a
-   theigpl.com row out of the third-party "Media coverage" wall — nothing
-   is reclassified by title-matching or guesswork, only by source host.
+   All of that now lives in lib/news-desk.ts, which this page calls once and
+   hands to the client index. Read the comments there for the ordering,
+   syndication and cover-image rules.
 
-   Every row is a real database row. Counts in the masthead rail are
-   computed here. Nothing is padded: a chapter with no rows is absent
-   entirely (press, social) except Official news, which always has a
-   heading — the franchise's own empty state only shows if there is
-   truly nothing official to report at all.
+   Every item is a real database row. Nothing is padded: with no rows at all
+   the page keeps its own opener and says the desk is quiet, rather than
+   showing an example story.
 --------------------------------------------------------------------------- */
 
-// The single project-owned fallback, for an item an admin creates without a
-// cover. Never shown for the currently seeded rows.
-const FRANCHISE_FALLBACK = "/assets/car-2-web.jpg";
-
-// The official AM Green IGPL website. A `MediaCoverage` row sourced from
-// this exact host is the league reporting on itself — official news, not
-// third-party press and not Chennai Lions editorial. Matching on host
-// rather than a free-text flag keeps this deterministic and avoids adding a
-// schema field for what is, right now, a single confirmed source.
-const OFFICIAL_IGPL_HOST = "theigpl.com";
-
-function isOfficialIgpl(sourceUrl: string): boolean {
-  try {
-    return new URL(sourceUrl).hostname.replace(/^www\./, "") === OFFICIAL_IGPL_HOST;
-  } catch {
-    return false;
-  }
-}
-
-// One merged, date-ordered feed for chapter 01 — the franchise's own posts
-// plus official AM Green IGPL items — so "Official news" is one list a
-// reader scans once, not two headings for the same chapter.
-type OfficialEntry =
-  | { kind: "post"; date: Date | null; post: Post }
-  | { kind: "igpl"; date: Date | null; item: MediaCoverage };
-
-function toTime(d: Date | string | null): number {
-  if (!d) return 0;
-  const t = new Date(d).getTime();
-  return Number.isNaN(t) ? 0 : t;
-}
-
 export default async function NewsPage() {
-  const [posts, allArticles, social] = await Promise.all([
+  const [posts, articles, social] = await Promise.all([
     listPublishedPosts(),
     listActiveMediaCoverage("ARTICLE"),
     listActiveMediaCoverage("SOCIAL"),
   ]);
 
-  // Split once, render each list in exactly one place — an official-IGPL
-  // row never also appears in the third-party "Media coverage" wall below.
-  const igplOfficial = allArticles.filter((a) => isOfficialIgpl(a.sourceUrl));
-  const pressArticles = allArticles.filter((a) => !isOfficialIgpl(a.sourceUrl));
+  const desk = buildNewsDesk({
+    posts,
+    articles,
+    social,
+    // Stored paths resolve to their optimized `-web` derivative at render
+    // time — the project's existing image strategy, not a new one.
+    resolveImage: (src) => webSrc(src) ?? null,
+  });
 
-  const officialEntries: OfficialEntry[] = [
-    ...posts.map(
-      (post): OfficialEntry => ({ kind: "post", date: post.publishedAt, post })
-    ),
-    ...igplOfficial.map(
-      (item): OfficialEntry => ({ kind: "igpl", date: item.publishedAt, item })
-    ),
-  ].sort((a, b) => toTime(b.date) - toTime(a.date));
+  const closing = (
+    <section className="hp-sec hp-sec-ink hp-sec-tight nwr-close">
+      <div className="hp-wrap">
+        <p className="hp-index hp-index-dark">
+          — <span>The record continues</span>
+        </p>
+        <h2 className="nwr-close-t">The story continues.</h2>
+        <div className="cm-track ss-links nwr-close-links">
+          <Link href="/fixtures" className="ss-link">
+            <span className="ss-link-k">Season 2026</span>
+            <span className="ss-link-t">The season</span>
+          </Link>
+          <Link href="/players" className="ss-link">
+            <span className="ss-link-k">The roster</span>
+            <span className="ss-link-t">Players</span>
+          </Link>
+          <Link href="/the-club" className="ss-link">
+            <span className="ss-link-k">The franchise</span>
+            <span className="ss-link-t">The Club</span>
+          </Link>
+          <Link href="/contact" className="ss-link">
+            <span className="ss-link-k">Press desk</span>
+            <span className="ss-link-t">Contact</span>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+
+  // No rows at all. The page keeps the site's own hero language (ink and
+  // aurora, no photograph standing in for a story that does not exist) and
+  // states the position plainly.
+  if (!desk.featured) {
+    return (
+      <>
+        <StoryHero
+          eyebrow="From the Den · Vimtra Chennai Lions GC"
+          title={["News"]}
+          line="Franchise editorial, official league reporting and press coverage — filed as it is published."
+        />
+        <section className="hp-sec hp-sec-ivory nw-sec">
+          <div className="hp-wrap">
+            <div className="nwr-empty nwr-empty-page">
+              <p className="nwr-empty-k">The desk is quiet</p>
+              <p className="nwr-empty-t">Nothing published yet.</p>
+              <p className="nwr-empty-d">
+                Franchise editorial, official AM Green IGPL reporting and press
+                coverage all publish here once confirmed. Nothing is listed
+                until it is.
+              </p>
+            </div>
+          </div>
+        </section>
+        {closing}
+      </>
+    );
+  }
 
   return (
     <>
-      <PageMasthead
-        eyebrow="From the Den · Vimtra Chennai Lions GC"
-        title={["NEWS"]}
-        line="What we publish, what the press publishes, and what we post — kept apart."
-        stats={[
-          { k: "Official", v: String(officialEntries.length) },
-          { k: "Press", v: String(pressArticles.length) },
-          { k: "Social", v: String(social.length) },
-        ]}
-      />
+      <NewsHero story={desk.featured} counts={desk.counts} />
 
-      {/* ---- 01 · Official news ----
-          A single list: the franchise's own editorial (when published) and
-          official AM Green IGPL reporting, together — because both are
-          official, and splitting them into two sections read as one
-          section per item. Each row is labelled by its own source, so
-          nothing here is ever mistaken for something the Chennai Lions
-          newsroom wrote itself.
-
-          Single-column: the old `.nw-note` explanatory line that used to
-          sit to the right of the heading at desktop width is gone. It said
-          "Written and published by the Chennai Lions editorial team",
-          which stopped being true for every row the moment an item this
-          chapter doesn't write itself lives in the same list — rather than
-          leave a claim that's now only sometimes accurate, it's removed
-          outright and the per-row label carries that distinction instead. */}
-      <section className="hp-sec hp-sec-ivory nw-sec" aria-labelledby="nw-a">
+      <section
+        className="hp-sec hp-sec-ivory nw-sec nwr-sec"
+        aria-labelledby="nwr-latest"
+      >
         <div className="hp-wrap">
           <div className="nw-head">
             <div>
               <p className="hp-index">
-                01 <span>Official news</span>
+                01 <span>Latest coverage</span>
               </p>
-              <h2 id="nw-a" className="nw-h">
-                From the newsroom.
+              <h2 id="nwr-latest" className="nw-h">
+                The rest of the record.
               </h2>
             </div>
+            <p className="nw-note">
+              Every entry names its own author — what we publish, what the
+              league publishes, and what the press publishes are never merged
+              into one voice.
+            </p>
           </div>
 
-          {officialEntries.length === 0 ? (
-            <div className="nw-empty">
-              <p className="nw-empty-k">Nothing published yet</p>
-              <p className="nw-empty-t">
-                The newsroom opens with the season.
-              </p>
-              <p className="nw-empty-d">
-                Franchise editorial and official league coverage publish here
-                once confirmed. Until then the press coverage below is the
-                record — reported by others, linked to the source.
-              </p>
-            </div>
-          ) : (
-            <ol className="nw-posts">
-              {officialEntries.map((entry, i) => {
-                const n = String(i + 1).padStart(2, "0");
-
-                if (entry.kind === "post") {
-                  const post = entry.post;
-                  return (
-                    <li key={`post-${post.id}`}>
-                      <Link href={`/news/${post.slug}`}>
-                        <span className="nw-n" aria-hidden>
-                          {n}
-                        </span>
-                        {post.coverImage && (
-                          <span className="nw-fig">
-                            <Image
-                              src={webSrc(post.coverImage) ?? FRANCHISE_FALLBACK}
-                              alt=""
-                              fill
-                              sizes="(max-width: 767px) 100vw, 22vw"
-                            />
-                          </span>
-                        )}
-                        <span className="nw-post-b">
-                          <span className="nw-post-t">{post.title}</span>
-                          {post.publishedAt && (
-                            <span className="nw-date">
-                              {formatPublishedDate(post.publishedAt)}
-                            </span>
-                          )}
-                        </span>
-                        <span className="hp-arrow" aria-hidden>
-                          →
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                }
-
-                // entry.kind === "igpl" — official AM Green IGPL reporting.
-                // Verbatim title, verbatim date, linked straight to the
-                // official source. Labelled "Official · AM Green IGPL ·
-                // <date>" rather than a plain date, so this specific row
-                // reads as league reporting even inside the shared list —
-                // never as something the franchise itself wrote.
-                const item = entry.item;
-                const date = item.publishedAt
-                  ? formatCoverageDate(item.publishedAt)
-                  : null;
-                return (
-                  <li key={`igpl-${item.id}`}>
-                    <a
-                      href={item.sourceUrl}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      <span className="nw-n" aria-hidden>
-                        {n}
-                      </span>
-                      <span className="nw-post-b">
-                        <span className="nw-post-t">{item.title}</span>
-                        <span className="nw-date nw-date-official">
-                          Official · {item.sourceName}
-                          {date && <i className="nw-sep">·</i>}
-                          {date}
-                        </span>
-                      </span>
-                      <span className="hp-arrow" aria-hidden>
-                        →
-                      </span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ol>
-          )}
+          <Newsroom entries={desk.entries} />
         </div>
       </section>
 
-      {/* ---- 02 · Third-party press ---- */}
-      {pressArticles.length > 0 && (
-        <section className="hp-sec hp-sec-paper nw-sec" aria-labelledby="nw-b">
-          <div className="hp-wrap">
-            <div className="nw-head">
-              <div>
-                <p className="hp-index">
-                  02 <span>Media coverage</span>
-                </p>
-                <h2 id="nw-b" className="nw-h">
-                  What the press is writing.
-                </h2>
-              </div>
-              <p className="nw-note">
-                Curated by us, published by others. Each headline opens at its
-                source.
-              </p>
-            </div>
-            <PressWall items={pressArticles} />
-          </div>
-        </section>
-      )}
-
-      {/* ---- 03 · Franchise social ---- */}
-      {social.length > 0 && (
-        <section className="hp-sec hp-sec-ivory nw-sec" aria-labelledby="nw-c">
-          <div className="hp-wrap">
-            <div className="nw-head">
-              <div>
-                <p className="hp-index">
-                  03 <span>Social</span>
-                </p>
-                <h2 id="nw-c" className="nw-h">
-                  Straight from the feed.
-                </h2>
-              </div>
-              <p className="nw-note">
-                Posts from the franchise channels. Tap through to the platform.
-              </p>
-            </div>
-            <ul className="hm-press-rows nw-social">
-              {social.map((item) => (
-                <li key={item.id}>
-                  <a
-                    href={item.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    <span className="hm-press-src">{item.sourceName}</span>
-                    <span className="hm-press-rt">{item.title}</span>
-                    <span className="hp-arrow" aria-hidden>
-                      →
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )}
-
-      <section className="hp-sec hp-sec-paper hp-sec-tight">
-        <div className="hp-wrap cm-track ss-links">
-          <Link href="/the-pride" className="ss-link">
-            <span className="ss-link-k">The franchise</span>
-            <span className="ss-link-t">The Pride</span>
-          </Link>
-          <Link href="/fixtures" className="ss-link">
-            <span className="ss-link-k">Season 2026</span>
-            <span className="ss-link-t">Fixtures</span>
-          </Link>
-          <Link href="/scores" className="ss-link">
-            <span className="ss-link-k">Live board</span>
-            <span className="ss-link-t">Scores</span>
-          </Link>
-        </div>
-      </section>
+      {closing}
     </>
   );
 }
-
-/**
- * Press wall — one lead carrying its cover, the rest as ruled rows.
- *
- * Shares `.hm-press-*` with the home page's Media chapter. Several of these
- * articles are about the same subject and point at the same portrait, so a
- * grid of identical thumbnails read as a template error rather than as
- * coverage; only the lead takes an image.
- */
-function PressWall({ items }: { items: MediaCoverage[] }) {
-  const [lead, ...rest] = items;
-  if (!lead) return null;
-  const cover = webSrc(lead.coverImage);
-  const leadDate = lead.publishedAt ? formatCoverageDate(lead.publishedAt) : null;
-
-  return (
-    <div className="hm-press">
-      <a
-        className="hm-press-lead"
-        href={lead.sourceUrl}
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        <span className="hm-press-fig">
-          <Image
-            src={cover ?? FRANCHISE_FALLBACK}
-            alt=""
-            fill
-            sizes="(max-width: 767px) 100vw, 42vw"
-          />
-        </span>
-        <span className="hm-press-lead-b">
-          <span className="hm-press-src">
-            {lead.sourceName}
-            {leadDate && <i className="nw-sep">·</i>}
-            {leadDate}
-          </span>
-          <span className="hm-press-t">{lead.title}</span>
-          <span className="hm-press-sum">{lead.summary}</span>
-          <span className="hm-press-go" aria-hidden>
-            Read at {lead.sourceName} →
-          </span>
-        </span>
-      </a>
-
-      {rest.length > 0 && (
-        <ul className="hm-press-rows">
-          {rest.map((item) => {
-            const date = item.publishedAt
-              ? formatCoverageDate(item.publishedAt)
-              : null;
-            return (
-              <li key={item.id}>
-                <a
-                  href={item.sourceUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <span className="hm-press-src">
-                    {item.sourceName}
-                    {date && <i className="nw-sep">·</i>}
-                    {date}
-                  </span>
-                  <span className="hm-press-rt">{item.title}</span>
-                  <span className="hp-arrow" aria-hidden>
-                    →
-                  </span>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-export type { Post };

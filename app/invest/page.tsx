@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/invest" },
   title: "Invest",
   description:
-    "The Vimtra Chennai Lions GC franchise opportunity — owned outright by Vimtra Ventures, entered at the formation of Indian franchise golf.",
+    "The Vimtra Chennai Lions GC franchise opportunity — owned by Vimtra Ventures, a San Francisco & Chennai investment firm founded in 2014, entered at the formation of Indian franchise golf.",
 };
 
 /* ---------------------------------------------------------------------------
@@ -98,7 +98,7 @@ const STRUCTURE = [
     // verticals, "principal, not intermediary", the credential figures —
     // belongs to /vimtra-ventures and is not restated here; this card only
     // needs to establish who sits at the top of the chain.
-    body: "The San Francisco and Chennai investment firm that owns the franchise outright, operating as principal since 1995. Sports is one of its six verticals.",
+    body: "Owned by Vimtra Ventures, a San Francisco & Chennai investment firm founded in 2014. Sports is one of its six verticals.",
   },
   {
     tag: "Operating Framework",
@@ -121,7 +121,7 @@ const REASONS = [
   },
   {
     k: "02",
-    t: "Owned outright.",
+    t: "Owned by Vimtra Ventures.",
     // Deliberately no firm profile here — the ownership chain is the
     // structure diagram above, and the firm itself is /vimtra-ventures.
     // This reason has to say why sole ownership matters, not repeat who
@@ -205,7 +205,7 @@ export default function InvestPage() {
 
       <FullBleedStatement
         eyebrow="Owned by the firm"
-        line={["OWNED", "OUTRIGHT."]}
+        line={["OWNED BY", "VIMTRA."]}
         image="/assets/photo/club-hero-fairway-dusk.jpg"
         imageAlt="A championship fairway and treeline under a dusk sky"
         imagePosition="50% 48%"

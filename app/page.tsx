@@ -71,7 +71,7 @@ export default async function HomePage() {
   // Press coverage is real and already in the database. The Media section
   // had stopped reading it entirely — five live rows, none of them rendered,
   // which is what left that chapter as a heading over an empty band.
-  const stories: StoryRow[] = coverage.slice(0, 5).map((m) => ({
+  const stories: StoryRow[] = coverage.slice(0, 1).map((m) => ({
     id: m.id,
     source: m.sourceName,
     title: m.title,
