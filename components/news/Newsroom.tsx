@@ -183,10 +183,9 @@ function RowStory({ entry, index }: { entry: NewsEntry; index: string }) {
         <span className="nwr-n" aria-hidden>
           {index}
         </span>
-        {/* Matches the figure's real widths in globals.css (104 / 132 /
-            150), so the browser never fetches a derivative wider than the
-            row can show — including below 560px, where the figure is not
-            rendered at all. */}
+        {/* Matches the figure's real widths in globals.css (88 / 104 / 132 /
+          150), so the browser never fetches a derivative wider than the
+          row can show at any breakpoint. */}
         <Figure
           entry={entry}
           className="nwr-row-fig"

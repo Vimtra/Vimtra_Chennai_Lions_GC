@@ -146,8 +146,8 @@ export default function TheClubPage() {
           eyebrow="AM Green IGPL · Season 2026"
           title={["THE", "CLUB"]}
           line="Chennai's franchise in the AM Green Indian Golf Premier League. Owned by Vimtra Ventures, a San Francisco & Chennai investment firm founded in 2014."
-          image="/assets/photo/club-hero-fairway-dusk.jpg"
-          imageAlt="A championship fairway and treeline under a dusk sky"
+          image="/assets/photo/golf-club.jpg"
+          imageAlt="A golf club landscape"
           imagePosition="58% 46%"
           cta={{ href: "/players", label: "MEET THE PRIDE" }}
         />
@@ -243,63 +243,68 @@ export default function TheClubPage() {
           values, evenly spaced (0/25/50/75/100%) — nothing added, nothing
           reordered from the brochure's own sequence. */}
       <Section surface="ivory" className="cl-kit-sec">
-        <div className="cm-track cl-kit">
-          <IndexLabel n="04">The Kit · Season 2026</IndexLabel>
+        <div className="cl-kit-layout">
+          <header className="cl-kit-intro">
+            <IndexLabel n="04">The Kit · Season 2026</IndexLabel>
+            <h2 className="cl-kit-h">
+              <span className="mq-line" data-line>
+                <span>A WHITE-TO-</span>
+              </span>
+              <span className="mq-line" data-line>
+                <span>COURT-YELLOW</span>
+              </span>
+              <span className="mq-line" data-line>
+                <span>GRADIENT.</span>
+              </span>
+            </h2>
+            <p className="cl-kit-lede" data-rise>
+              Designed to travel from Chennai heat to floodlit international
+              venues without losing the team&apos;s visual identity.
+            </p>
+          </header>
 
-          <h2 className="cl-kit-h">
-            <span className="mq-line" data-line>
-              <span>A WHITE-TO-</span>
-            </span>
-            <span className="mq-line" data-line>
-              <span>COURT-YELLOW</span>
-            </span>
-            <span className="mq-line" data-line>
-              <span>GRADIENT.</span>
-            </span>
-          </h2>
-          <p className="cl-kit-lede" data-rise>
-            Designed to travel from Chennai heat to floodlit international
-            venues without losing the team&apos;s visual identity.
-          </p>
-        </div>
-
-        <div className="cl-kit-strip-wrap" data-rise>
-          <div
-            className="cl-kit-strip"
-            style={{
-              ["--stops" as string]: PALETTE.map(
-                (p, i) => `${p.hex} ${(i / (PALETTE.length - 1)) * 100}%`
-              ).join(", "),
-            }}
-          />
-          <ol className="cl-kit-ticks">
-            {PALETTE.map((p, i) => (
-              <li
-                key={p.label}
+          <div className="cl-kit-display" data-rise>
+            <div className="cl-kit-display-head">
+              <span>Team palette</span>
+              <span>Vimtra Chennai Lions GC</span>
+            </div>
+            <div className="cl-kit-strip-wrap">
+              <div
+                className="cl-kit-strip"
                 style={{
-                  ["--pos" as string]: `${(i / (PALETTE.length - 1)) * 100}%`,
+                  ["--stops" as string]: PALETTE.map(
+                    (p, i) => `${p.hex} ${(i / (PALETTE.length - 1)) * 100}%`
+                  ).join(", "),
                 }}
-              >
-                <span className="cl-kit-tick" aria-hidden />
-                <span className="cl-kit-tick-l">{p.label}</span>
-                <span className="cl-kit-tick-h">{p.hex}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
+              />
+              <ol className="cl-kit-ticks">
+                {PALETTE.map((p, i) => (
+                  <li
+                    key={p.label}
+                    style={{
+                      ["--pos" as string]: `${(i / (PALETTE.length - 1)) * 100}%`,
+                    }}
+                  >
+                    <span className="cl-kit-tick" aria-hidden />
+                    <span className="cl-kit-tick-l">{p.label}</span>
+                    <span className="cl-kit-tick-h">{p.hex}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
-        <div className="cm-track cl-kit-credits-track">
-          <dl className="cl-kit-credits">
-            {KIT_CREDITS.map((k) => (
-              <div key={k.name} data-rise>
-                <dt>{k.tag}</dt>
-                <dd>
-                  <span className="cl-kit-spec-n">{k.name}</span>
-                  <span className="cl-kit-spec-d">{k.detail}</span>
-                </dd>
-              </div>
-            ))}
-          </dl>
+            <dl className="cl-kit-credits">
+              {KIT_CREDITS.map((k) => (
+                <div key={k.name}>
+                  <dt>{k.tag}</dt>
+                  <dd>
+                    <span className="cl-kit-spec-n">{k.name}</span>
+                    <span className="cl-kit-spec-d">{k.detail}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </Section>
 

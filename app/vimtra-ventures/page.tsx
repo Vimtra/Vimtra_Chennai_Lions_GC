@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import VimtraHero from "@/components/site/VimtraHero";
+import LeadershipComposition from "@/components/vv/LeadershipComposition";
 import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
@@ -280,75 +280,29 @@ export default function VimtraVenturesPage() {
       </Section>
 
       {/* 03 — LEADERSHIP.
-          REDESIGNED. The previous version gave each principal a large
-          alternating portrait with the name on a plate crossing the photo's
-          inner edge — photograph-led, and close in kind to the player
-          spreads on /players. A venture and investment firm should not read
-          like a team roster.
+          The one section on this page that owns its own component and its
+          own motion — see components/vv/LeadershipComposition.tsx for the
+          composition, and the `.vvl-*` block in app/globals.css for the
+          grid. It is lifted out of `<Section>` because it needs a single
+          ordered ScrollTrigger timeline (label → heading → each
+          principal's portrait, index, name and biography) rather than the
+          generic `[data-rise]` choreography `<Section>` wires for
+          everything beneath it; nesting the two animated the same nodes
+          twice.
 
-          This is a LEDGER, and it is typography-led. The two principals are
-          entries in one continuous ruled register: a thick crimson rule
-          opens it, a hairline divides the entries, a rule closes it. Each
-          entry carries a left rail with the ordinal and the seat, the name
-          at display scale with an oversized ghosted numeral layered behind
-          it, the biography set on a proper measure, and the portrait as a
-          tall narrow column held to the right edge of the entry — present
-          and dignified, but not the dominant element.
+          The heading is a left rail and the principals occupy the right of
+          the same grid row, so the portraits rise to the heading's top edge
+          — the empty field that used to sit under the title is gone and
+          the section opens on the people. The two principals are strictly
+          level: no offset, no stagger, no vertical displacement of any
+          kind, in CSS or in the timeline. They read as two equal pillars.
 
-          The asymmetry is in the register, not in the people: both
-          portraits are framed identically at the same ratio, and the first
-          entry is larger only because it is first in the firm's own listing.
-          Nothing here implies a seniority the source does not state.
-
-          Both principals, both photographs, both verbatim biographies and
-          both seats are preserved exactly as FOUNDERS holds them. No person
-          was added or removed, and no title, biography or achievement was
-          invented or borrowed from another page. */}
-      <Section surface="ivory" className="vv-lead-sec">
-        <div className="cm-track vv-lead-head">
-          <div className="vv-lead-head-a">
-            <IndexLabel n="03">Leadership</IndexLabel>
-            <SectionTitle lines={["THE PEOPLE", "BEHIND IT."]} />
-          </div>
-        </div>
-
-        <ol className="vv-ledger">
-          {FOUNDERS.map((f, i) => (
-            <li className="vv-entry" key={f.name} style={{ ["--rank" as string]: i }}>
-              <div className="cm-track vv-entry-in">
-                <div className="vv-entry-rail">
-                  <span className="vv-entry-n" aria-hidden>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="vv-entry-seat">{f.role}</span>
-                </div>
-
-                <div className="vv-entry-main">
-                  <span className="vv-entry-ghost" aria-hidden>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="vv-entry-name" data-rise>
-                    {f.name}
-                  </h3>
-                  <p className="vv-entry-bio" data-rise>
-                    {f.body}
-                  </p>
-                </div>
-
-                <figure className="vv-entry-f" data-rise>
-                  <Image
-                    src={f.image}
-                    alt={f.imageAlt}
-                    fill
-                    sizes="(max-width: 767px) 100vw, (max-width: 1023px) 40vw, 22vw"
-                    style={{ objectPosition: f.imagePosition }}
-                  />
-                </figure>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </Section>
+          Both principals, both existing photographs, both verbatim
+          biographies and both roles are passed through from FOUNDERS
+          untouched. No person was added or removed, no image was created,
+          and no title, biography or achievement was invented or borrowed
+          from another page. */}
+      <LeadershipComposition people={FOUNDERS} />
 
       {/* 04 — GOVERNANCE.
           Two objects, deliberately unlike each other and unlike every ruled

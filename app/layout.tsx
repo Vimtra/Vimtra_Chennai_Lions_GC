@@ -4,7 +4,6 @@ import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Loader from "@/components/Loader";
-import ToastHost from "@/components/ToastHost";
 import ScrollToTop from "@/components/ScrollToTop";
 import { getCurrentUser } from "@/lib/auth";
 import { SITE_URL } from "./robots";
@@ -120,7 +119,6 @@ export default async function RootLayout({
         </main>
         <Footer />
         <ScrollToTop />
-        <ToastHost />
       </body>
     </html>
   );

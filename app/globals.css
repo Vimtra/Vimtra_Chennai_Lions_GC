@@ -5533,7 +5533,8 @@ a:hover .hp-arrow {
 /* From 1280 there is room for the contact column to come back inline. */
 @media (min-width: 1280px) {
   .ft-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(280px, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(320px, 1.15fr);
+    align-items: start;
   }
   .ft-contact {
     grid-column: auto;
@@ -5567,7 +5568,20 @@ a:hover .hp-arrow {
   }
 }
 @media (min-width: 1280px) {
-  .ft-contact { padding-left: clamp(28px, 3vw, 56px); }
+  .ft-contact {
+    padding-left: clamp(28px, 2.5vw, 44px);
+  }
+  .ft-contact ul {
+    display: grid;
+    gap: 6px;
+  }
+  .ft-contact li a {
+    gap: 10px;
+    min-height: 36px;
+  }
+  .ft-contact-meta {
+    margin-top: 10px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -5726,6 +5740,14 @@ a:hover .hp-arrow {
   /* Clears the floating header without reserving a dead band. */
   padding-top: calc(76px + var(--sp-8));
   padding-bottom: var(--sp-8);
+}
+.cm-hero.pride-hero-full {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+.cm-hero.golf-development-hero-full {
+  min-height: 100vh;
+  min-height: 100svh;
 }
 @media (min-width: 768px) {
   .cm-hero {
@@ -6212,19 +6234,27 @@ a:hover .hp-arrow {
 /* ============================================================
    6 — CLOSING STATEMENT
 ============================================================ */
-.cm-close { row-gap: var(--sp-6); align-items: end; }
+.cm-close {
+  padding-top: var(--sp-7);
+  padding-bottom: var(--sp-7);
+  row-gap: var(--sp-7);
+  column-gap: var(--sp-7);
+  align-items: end;
+}
 .cm-close-title { grid-column: 1 / -1; }
 .cm-close-actions {
   grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-3);
+  margin-top: var(--sp-2);
 }
 @media (min-width: 1024px) {
   .cm-close-title { grid-column: 1 / span 7; }
   .cm-close-actions {
     grid-column: 9 / span 4;
     justify-content: flex-end;
+    margin-top: 0;
     padding-bottom: var(--sp-3);
   }
 }
@@ -6276,16 +6306,16 @@ a:hover .hp-arrow {
    of them indented) read as a poster rather than a statement of what
    the franchise stands for — a diagonal stack with a lot of unclaimed
    space around each line and nothing structural tying the four words
-   together. This replaces it with the numbered/ruled register the
-   rest of the module already uses for a set of things (`.cal`,
-   `.gd-index`), so "the four pillars" reads as one built system
-   instead of four independent headlines.
+  together. This replaces it with a separated two-by-two numbered/ruled
+  register the rest of the module already uses for a set of things (`.cal`,
+  `.gd-index`), so "the four pillars" reads as one built system instead of
+  four independent headlines.
 
    `.pr-values-head` is deliberately NOT another full-scale display
    heading — `max-width` on the title keeps it a compact, secondary
    line above the register it introduces, per the same idiom already
    used on /invest (`.iv-pillars-h .cm-display`). */
-.pr-values { row-gap: var(--sp-7); }
+.pr-values { row-gap: var(--sp-8); }
 .pr-values > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
 
 .pr-values-head { grid-column: 1 / -1; }
@@ -6294,59 +6324,43 @@ a:hover .hp-arrow {
   font-size: clamp(28px, 4.4vw, 52px);
 }
 
-/* Mobile: a plain ruled list, one pillar per row — the same compact-list
-   rhythm as `.cal`/`.ss-link` elsewhere on the site, so "stacked on a
-   phone" still looks like a considered composition rather than a
-   shrunken desktop grid.
-   Tablet (640px+): two columns, one rule spanning the pair, a single
-   vertical divider between them.
-   Desktop (1024px+): all four side by side, hairlines between every
-   pillar — an architectural row rather than a ledger. The middle two
-   step down a fixed, restrained amount (not a diagonal jumble) so the
-   four units still read as one system with a little rhythm, echoing
-   the previous design's alternation without its clipping risk. */
+/* One column on mobile and a disciplined two-by-two register from tablet
+   upward. Each unit owns its complete grid area, so long value names never
+   compete for the same line or touch the adjacent pillar. */
 .pr-pillars {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: 1fr;
+  column-gap: 0;
+  row-gap: 0;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .pr-pillar {
   min-width: 0;
-  padding: var(--sp-6) 0;
+  padding: var(--sp-5) 0 var(--sp-6);
   border-top: 1px solid var(--v-hair-ink);
 }
-.pr-pillar:last-child { border-bottom: 1px solid var(--v-hair-ink); }
+.pr-pillar:nth-last-child(-n + 1) { border-bottom: 1px solid var(--v-hair-ink); }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .pr-pillars {
     grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--sp-8);
+    row-gap: var(--sp-7);
+  }
+  .pr-pillar {
+    padding: var(--sp-6) 0 var(--sp-6);
     border-top: 1px solid var(--v-hair-ink);
   }
-  .pr-pillar {
-    padding: var(--sp-6) var(--sp-6) var(--sp-2) 0;
-    border-top: 0;
-  }
-  .pr-pillar:last-child { border-bottom: 0; }
-  .pr-pillar:nth-child(even) { padding-left: var(--sp-6); border-left: 1px solid var(--v-hair-ink); }
-}
-
-@media (min-width: 1024px) {
-  .pr-pillars { grid-template-columns: repeat(4, 1fr); }
-  .pr-pillar {
-    padding: 0 var(--sp-6);
+  .pr-pillar:nth-child(even) {
+    padding-left: var(--sp-7);
     border-left: 1px solid var(--v-hair-ink);
   }
-  .pr-pillar:nth-child(even) { padding-left: var(--sp-6); }
-  .pr-pillar:first-child { padding-left: 0; border-left: 0; }
-  .pr-pillar:last-child { padding-right: 0; }
-  /* The restrained stagger: pillars 2 and 3 (Excellence, Heritage) drop
-     a fixed step below 1 and 4, so the row has quiet rhythm rather than
-     four numbers pinned to one baseline — without reintroducing the old
-     design's diagonal, unstructured offsets. */
-  .pr-pillar:nth-child(2), .pr-pillar:nth-child(3) { padding-top: var(--sp-7); }
+  .pr-pillar:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--v-hair-ink);
+  }
 }
 
 .pr-pillar-n {
@@ -6362,7 +6376,7 @@ a:hover .hp-arrow {
   display: block;
   width: 32px;
   height: 1px;
-  margin: var(--sp-4) 0;
+  margin: var(--sp-3) 0;
   background: var(--v-gold);
   transition: width var(--mo-mid) var(--ease), background-color var(--mo-mid) var(--ease);
 }
@@ -6375,9 +6389,9 @@ a:hover .hp-arrow {
   display: block;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(38px, 5.4vw, 68px);
+  font-size: clamp(34px, 4.1vw, 62px);
   line-height: 0.98;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   color: var(--v-ivory);
   transition: color var(--mo-mid) var(--ease);
 }
@@ -6394,13 +6408,18 @@ a:hover .hp-arrow {
    four above it. */
 .pr-values-quote {
   grid-column: 1 / -1;
-  max-width: 60ch;
-  margin-top: var(--sp-2);
+  max-width: none;
+  margin-top: var(--sp-1);
   padding-left: var(--sp-5);
   border-left: 2px solid var(--v-gold);
 }
 @media (min-width: 1024px) {
-  .pr-values-quote { grid-column: 1 / span 8; }
+  .pr-values-quote { grid-column: 1 / -1; }
+}
+.pr-values-quote > .cm-pull {
+  margin: 0;
+  font-size: clamp(24px, 2.7vw, 40px);
+  line-height: 1.14;
 }
 .pr-values-quote > .cm-pull { margin: 0; }
 .pr-values-quote > .cm-pull-by { margin-top: var(--sp-3); }
@@ -9271,6 +9290,8 @@ a:hover .hp-arrow {
    not express. */
 .nwr-hero {
   align-items: stretch;
+  height: 100vh;
+  min-height: 100vh;
 }
 .nwr-hero-inner {
   position: relative;
@@ -9598,10 +9619,10 @@ a:hover .hp-arrow {
   text-decoration: none;
   color: inherit;
 }
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .nwr-lead {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    align-items: center;
+    align-items: start;
     column-gap: var(--sp-8);
   }
 }
@@ -9664,18 +9685,6 @@ a:hover .hp-arrow {
   .nwr-mids {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--sp-6);
-  }
-}
-@media (min-width: 1024px) {
-  /* Indented into the right of the track rather than run full width.
-     Two-up at full width put the pair of mid figures within a hand's
-     breadth of the lead figure, and three near-equal pictures down one
-     page is exactly the flat card grid this layout exists to avoid. The
-     step in from the left is the asymmetry, and it also cuts each mid to
-     roughly six-tenths of the lead. */
-  .nwr-mids {
-    width: 72%;
-    margin-left: auto;
   }
 }
 @media (min-width: 1280px) {
@@ -9750,7 +9759,7 @@ a:hover .hp-arrow {
 .nwr-rows > li { border-bottom: 1px solid var(--v-hair-ivory); }
 .nwr-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: 24px 88px minmax(0, 1fr) auto;
   align-items: center;
   column-gap: var(--sp-4);
   row-gap: var(--sp-3);
@@ -9773,13 +9782,13 @@ a:hover .hp-arrow {
 .nwr-row:focus-visible { outline: 2px solid var(--v-red); outline-offset: -2px; }
 .nwr-row-fig {
   position: relative;
-  display: none;
+  display: block;
   overflow: hidden;
-  width: 104px;
+  width: 88px;
   aspect-ratio: var(--ar-classic);
   background: var(--v-ink-2);
 }
-@media (min-width: 560px) { .nwr-row-fig { display: block; } }
+@media (min-width: 560px) { .nwr-row-fig { width: 104px; } }
 @media (min-width: 1024px) { .nwr-row-fig { width: 132px; } }
 @media (min-width: 1280px) { .nwr-row-fig { width: 150px; } }
 .nwr-row-fig img {
@@ -11704,104 +11713,175 @@ a:hover .hp-arrow {
 
 /* ============================================================
    4 · GOLF DEVELOPMENT — THE FRAMEWORK
-   A governing spine. One rule runs down the column with a node
-   per stratum, and each stratum steps further in than the one
-   above it, so the hierarchy IS the drawing. Beside it, the
-   page's only portrait-format photograph.
+   A descent drawn as a stair.
+
+   The previous version of this section drew the framework as a
+   timeline: one vertical rule with a dot per stratum and a tick
+   out to each. It read as a chronology, which the framework is
+   not — the rows are an authority and the thing that authority
+   produces, and only two of them exist, which is thin material
+   for a timeline.
+
+   Redrawn so the RULING carries the hierarchy. Every stratum is
+   a full step whose top rule, accent tab and numeral all begin
+   at that row's own indent, so each step visibly starts further
+   in than the one above and the descent needs no dots to be
+   read. `--depth` is the row index, so the stair follows however
+   many rows the data holds.
+
+   The numerals are the structural element now: outlined and
+   oversized down the stack, solid crimson on the terminal row.
+   Beside it, the page's only portrait-format photograph, pinned
+   so its 9:16 height is used rather than merely reserved.
+
+   Ink / ivory / crimson / gold only. No cards, no boxes.
 ============================================================ */
 .gdf { row-gap: var(--sp-6); }
 .gdf > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
-.gdf-col {
-  position: relative;
+
+/* ---- The plate ----------------------------------------------
+   `ball-golf-field.jpg` is natively 3264 × 5824 — a 9:16 portrait.
+   The frame only gets to be that shape where it is a NARROW column
+   (1024px up, where it takes the stair's height); below that the
+   plate spans the full track, and a 9:16 full-width frame is a
+   screen and a half of one golf ball. So the ratio opens out as the
+   frame widens: portrait on phones, close to square on tablet. */
+.gdf-plate {
   grid-column: 1 / -1;
   margin: 0;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background: var(--v-ink);
-  border: 1px solid var(--v-hair-ivory);
+  min-width: 0;
 }
-.gdf-col img { object-fit: cover; }
+.gdf-plate-frame {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: var(--v-ink);
+}
+.gdf-plate-frame img { object-fit: cover; }
+/* A gold corner rather than a border on all four sides — the
+   frame is held, not boxed in. */
+.gdf-plate-frame::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 34%;
+  height: 3px;
+  background: var(--v-gold);
+}
+@media (min-width: 768px) {
+  .gdf-plate-frame { aspect-ratio: 4 / 3; }
+}
+
 .gdf-body { grid-column: 1 / -1; min-width: 0; }
 .gdf-h {
   grid-column: auto !important;
   font-size: clamp(32px, 4.6vw, 68px) !important;
+  text-wrap: balance;
 }
+
 @media (min-width: 1024px) {
   .gdf { row-gap: var(--sp-7); align-items: start; }
   .gdf > .hp-index { grid-row: 1; grid-column: 1 / -1; }
-  .gdf-col {
-    grid-row: 2;
-    grid-column: 1 / span 4;
-    aspect-ratio: 3 / 4;
-    align-self: stretch;
-    min-height: 560px;
-  }
+  .gdf-plate { grid-row: 2; grid-column: 1 / span 4; align-self: stretch; }
   .gdf-body { grid-row: 2; grid-column: 6 / span 7; }
+
+  /* The plate takes the height the STRATA set rather than a ratio of
+     its own, so the photograph's foot always lands on the last row's
+     foot however many rows FRAMEWORK holds. `aspect-ratio` has to be
+     released for that — a ratio and a stretched grid item fight each
+     other, and the ratio wins, which is what left a column of ivory
+     under the copy. The crop is `cover` against a 3264 × 5824 source,
+     so a taller row simply reveals more of a frame that is already
+     far taller than the box. */
+  .gdf-plate-frame {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 520px;
+  }
 }
 
+/* ---- The stair ----------------------------------------------- */
 .gdf-strata {
   list-style: none;
   margin: var(--sp-7) 0 0;
   padding: 0;
-  position: relative;
 }
-/* The spine. Gold at the authority end, crimson at the franchise end. */
-.gdf-strata::before {
-  content: "";
-  position: absolute;
-  left: 5px;
-  top: 8px;
-  bottom: 24px;
-  width: 2px;
-  background: linear-gradient(180deg, var(--v-gold), var(--v-red));
-}
+
+/* One step. The whole row is offset by its depth, which is what
+   moves the rule, the tab and the numeral together — the reason
+   the descent is legible without a spine. */
 .gdf-stratum {
   position: relative;
-  padding-left: 34px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--sp-4);
+  align-items: start;
+  margin-left: calc(var(--depth, 0) * 14px);
+  padding-top: var(--sp-5);
   padding-bottom: var(--sp-6);
+  border-top: 1px solid var(--v-hair-ivory);
 }
 .gdf-stratum:last-child { padding-bottom: 0; }
 @media (min-width: 768px) {
-  /* The stagger. `--depth` is the row's index, so this follows however
-     many strata the data holds. */
-  .gdf-stratum { padding-left: calc(48px + var(--depth, 0) * 26px); }
+  .gdf-stratum {
+    margin-left: calc(var(--depth, 0) * 34px);
+    column-gap: var(--sp-5);
+  }
 }
-.gdf-node {
-  position: absolute;
-  left: 0;
-  top: 5px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid var(--v-gold);
-  background: var(--v-ivory);
+@media (min-width: 1280px) {
+  .gdf-stratum { margin-left: calc(var(--depth, 0) * 48px); }
 }
-.gdf-stratum:last-child .gdf-node { border-color: var(--v-red); background: var(--v-red); }
-/* The tick that carries the eye from the spine out to the stratum —
-   longer for each step down, which is what makes the descent legible. */
+
+/* The accent tab: a short heavy segment laid over the left of the
+   row's own rule. Gold while the framework is describing the
+   institution, crimson at the end of the descent, where the
+   platform becomes a team. */
 .gdf-stratum::before {
   content: "";
   position: absolute;
-  left: 12px;
-  top: 10px;
-  width: 16px;
-  height: 1px;
-  background: rgba(14, 11, 10, 0.28);
+  left: 0;
+  top: -1px;
+  width: 64px;
+  height: 3px;
+  background: var(--v-gold);
 }
-@media (min-width: 768px) {
-  .gdf-stratum::before { width: calc(28px + var(--depth, 0) * 26px); }
-}
+.gdf-stratum:last-child::before { background: var(--v-red); }
+
+/* The numeral does the work the timeline nodes used to. Outlined
+   while the stack is still descending, solid at the terminus. */
 .gdf-stratum-n {
   display: block;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  color: var(--v-red);
+  font-size: clamp(40px, 5.6vw, 92px);
+  line-height: 0.78;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  /* Solid tint is the base so the numeral is never invisible where
+     text-stroke is unsupported; the outline is layered on top of
+     it only where the browser can actually paint one. */
+  color: rgba(14, 11, 10, 0.16);
 }
+@supports (-webkit-text-stroke: 1px #000) {
+  .gdf-stratum-n {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(14, 11, 10, 0.34);
+  }
+}
+/* Higher specificity than the rule inside the @supports block above,
+   so this wins in both directions: the fill returns and the outline
+   is cleared. `-webkit-text-stroke: 0` is simply ignored where the
+   property is unknown. */
+.gdf-stratum:last-child .gdf-stratum-n {
+  color: var(--v-red);
+  -webkit-text-stroke: 0;
+}
+
+.gdf-stratum-b { min-width: 0; padding-top: 4px; }
 .gdf-stratum-k {
   display: block;
-  margin-top: 6px;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: var(--t-micro);
@@ -11810,17 +11890,18 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 .gdf-stratum-t {
-  margin: var(--sp-2) 0 0;
+  margin: var(--sp-3) 0 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(20px, 2.4vw, 32px);
-  line-height: 1.12;
-  letter-spacing: -0.028em;
+  font-size: clamp(21px, 2.5vw, 34px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
   color: var(--v-ink);
 }
 .gdf-stratum-d {
   margin: var(--sp-3) 0 0;
-  max-width: 58ch;
+  max-width: 56ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
   line-height: 1.72;
@@ -12124,9 +12205,15 @@ a:hover .hp-arrow {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(23px, 4.4vw, 58px);
-  line-height: 1.12;
-  letter-spacing: -0.035em;
+  /* Stepped down from clamp(23px, 4.4vw, 58px). At the old size this list
+     of disciplines ran at 58px against a 74px section heading — near
+     enough to read as a second headline and crowd the chapter. It is
+     supporting matter, so it now sits clearly below the heading while
+     staying display-scale rather than dropping to body copy. The gold
+     lozenge between words is sized in `em`, so it scales with this. */
+  font-size: clamp(19px, 2.9vw, 38px);
+  line-height: 1.16;
+  letter-spacing: -0.032em;
   color: var(--v-ink);
 }
 .vv-wall-w { position: relative; padding-right: 0.56em; }
@@ -12797,9 +12884,16 @@ a:hover .hp-arrow {
    right, no gaps and no borders, bleeding off the page edge, each
    key set inside its own colour.
 ============================================================ */
-.cl-kit-sec { overflow: hidden; }
+.cl-kit-sec {
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(circle at 88% 8%, rgba(195, 154, 82, 0.12), transparent 24rem),
+    var(--hp-ivory);
+}
 .cl-kit { row-gap: var(--sp-4); }
 .cl-kit > * { grid-column: 1 / -1; }
+.cl-kit > .hp-index { margin-bottom: var(--sp-2); }
 .cl-kit-h {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
@@ -12817,6 +12911,21 @@ a:hover .hp-arrow {
   line-height: 1.72;
   color: var(--v-on-ivory);
 }
+@media (min-width: 1024px) {
+  .cl-kit {
+    align-items: end;
+    row-gap: var(--sp-5);
+  }
+  .cl-kit-h {
+    grid-column: 1 / span 7;
+  }
+  .cl-kit-lede {
+    grid-column: 9 / -1;
+    margin: 0 0 4px;
+    padding: 0 0 0 var(--sp-5);
+    border-left: 2px solid var(--v-gold);
+  }
+}
 
 /* ---- The strip ------------------------------------------------
    The actual visual referent for "a white-to-court-yellow gradient" —
@@ -12828,7 +12937,7 @@ a:hover .hp-arrow {
    the row with it. */
 .cl-kit-strip-wrap {
   position: relative;
-  margin-top: var(--sp-8);
+  margin-top: var(--sp-7);
   --kw-pad: 20px;
   margin-left: calc(-1 * (var(--kw-pad) + max(0px, (100vw - 1560px) / 2)));
   margin-right: calc(-1 * (var(--kw-pad) + max(0px, (100vw - 1560px) / 2)));
@@ -12838,10 +12947,26 @@ a:hover .hp-arrow {
 @media (min-width: 1600px) { .cl-kit-strip-wrap { --kw-pad: 80px; } }
 
 .cl-kit-strip {
-  height: clamp(96px, 15vw, 220px);
+  position: relative;
+  height: clamp(112px, 11vw, 176px);
+  overflow: hidden;
+  border-top: 1px solid rgba(26, 21, 19, 0.16);
+  border-bottom: 1px solid rgba(26, 21, 19, 0.2);
   /* --stops is built in the page from the exact five verified hex
      values, evenly spaced — see the component's own comment. */
-  background: linear-gradient(90deg, var(--stops));
+  background:
+    linear-gradient(105deg, rgba(255, 255, 255, 0.2), transparent 32%, rgba(26, 21, 19, 0.12)),
+    repeating-linear-gradient(105deg, rgba(255, 255, 255, 0.1) 0 1px, transparent 1px 18px),
+    linear-gradient(90deg, var(--stops));
+  box-shadow: inset 0 14px 24px rgba(255, 255, 255, 0.1), inset 0 -18px 28px rgba(26, 21, 19, 0.12);
+}
+.cl-kit-strip::after {
+  content: "";
+  position: absolute;
+  inset: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
 }
 
 /* Ticks hang below the strip rather than sitting inside it, so no
@@ -12976,6 +13101,90 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 
+/* ---- Reconstructed kit studio --------------------------------
+   The intro and palette now form one responsive composition. The display
+   keeps the spectrum, labels and partner details in the same visual frame,
+   so the section reads as a designed system rather than stacked bands. */
+.cl-kit-layout {
+  display: grid;
+  gap: var(--sp-8);
+}
+.cl-kit-intro {
+  min-width: 0;
+}
+.cl-kit-intro .hp-index { margin-bottom: var(--sp-5); }
+.cl-kit-display {
+  min-width: 0;
+  padding: var(--sp-5);
+  border: 1px solid var(--v-hair-ivory);
+  border-top: 2px solid var(--v-ink);
+  background: rgba(255, 255, 255, 0.28);
+}
+.cl-kit-display-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--v-hair-ivory);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-micro);
+  font-weight: 700;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.cl-kit-display-head span:last-child { color: var(--v-red); }
+.cl-kit-display .cl-kit-strip-wrap {
+  margin: var(--sp-5) 0 0;
+  --kw-pad: 0px;
+}
+.cl-kit-display .cl-kit-strip {
+  height: clamp(112px, 13vw, 184px);
+}
+.cl-kit-display .cl-kit-ticks {
+  padding-right: 0;
+  padding-left: 0;
+}
+.cl-kit-display .cl-kit-credits {
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 0;
+}
+.cl-kit-display .cl-kit-credits > div {
+  padding: var(--sp-2) 0 0;
+  border: 0;
+}
+@media (min-width: 1024px) {
+  .cl-kit-layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+    gap: clamp(48px, 7vw, 112px);
+  }
+  .cl-kit-intro {
+    padding-top: var(--sp-2);
+  }
+  .cl-kit-intro .cl-kit-h {
+    font-size: clamp(42px, 4.35vw, 70px);
+    line-height: 1;
+  }
+  .cl-kit-intro .cl-kit-lede {
+    margin-top: var(--sp-7);
+    margin-bottom: var(--sp-7);
+    font-size: clamp(16px, 1.08vw, 18px);
+    line-height: 1.68;
+  }
+  .cl-kit-display {
+    padding: var(--sp-6);
+  }
+}
+@media (max-width: 639px) {
+  .cl-kit-display { padding: var(--sp-4); }
+  .cl-kit-display-head {
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+}
+
 /* ============================================================
    05 · THE SIGN-OFF
    A two-tone display lockup over a full-width rail of the two
@@ -12986,7 +13195,7 @@ a:hover .hp-arrow {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(46px, 11.4vw, 172px);
+  font-size: clamp(42px, 9.5vw, 144px);
   line-height: 0.88;
   letter-spacing: -0.052em;
   color: var(--v-ivory);
@@ -13271,138 +13480,263 @@ a:hover .hp-arrow {
 }
 
 /* ============================================================
-   VIMTRA VENTURES · LEADERSHIP — the ledger
+   VIMTRA VENTURES · 03 LEADERSHIP — editorial portrait composition
    ------------------------------------------------------------
-   Replaces `.vv-principals` / `.vv-principal*`, which led with a
-   large alternating portrait and a name plate crossing it —
-   photograph-led, and close in kind to the player spreads on
-   /players.
+   Scoped to `.vvl-*` and rendered by
+   components/vv/LeadershipComposition.tsx. Nothing here is used by
+   another section or another route.
 
-   This is typography-led and register-ruled: an ordinal and seat
-   in a left rail, the name at display scale with an oversized
-   ghost numeral layered behind it, the biography on a measure,
-   and the portrait as a tall narrow column at the right edge.
-   Both entries are framed identically.
+   THE PROBLEM THIS SOLVES. The previous format ran the heading
+   across a full-width band with the two principals beneath it. That
+   produced a large empty field between the title and the people, and
+   with both profiles identical, level and side by side, they read as
+   two cards no matter how the borders were removed.
+
+   THE COMPOSITION. The heading is now a LEFT RAIL on the global
+   12-column track, and the two principals occupy the right of the
+   SAME grid row. The first portrait therefore rises to the heading's
+   own top edge — the section opens on a face, not on empty ivory,
+   and the title reads as the opening frame of the composition rather
+   than as a banner sitting above it.
+
+   THE ASYMMETRY is a single measured vertical drop on the second
+   principal, and nothing else. Both principals keep identical column
+   widths, identical portrait ratios, identical type and identical
+   left edges, so every horizontal relationship stays exact and the
+   offset reads as art direction rather than drift.
+
+   ALIGNMENT. Within a principal, one left edge governs everything:
+   the index/role line, the portrait frame, the name and the
+   biography all begin on it. The portrait fills its column, so its
+   right edge is a grid line too; only the biography is held short of
+   it, by measure rather than by a different origin.
 ============================================================ */
-.vv-ledger {
-  list-style: none;
-  margin: var(--sp-8) 0 0;
-  padding: 0;
-  border-top: 3px solid var(--v-red);
-}
-.vv-entry { border-bottom: 1px solid var(--v-hair-ivory); }
-.vv-entry:last-child { border-bottom-width: 2px; border-bottom-color: var(--v-ink); }
-.vv-entry-in {
-  row-gap: var(--sp-5);
-  align-items: start;
-  padding: var(--sp-6) 0 var(--sp-7);
-}
-@media (min-width: 1024px) {
-  .vv-entry-in { padding: var(--sp-7) 0 var(--sp-8); column-gap: var(--sp-6); }
+
+.vvl-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-7);
 }
 
-.vv-entry-rail {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: baseline;
-  gap: var(--sp-4);
-}
-.vv-entry-n {
+/* ---- Heading rail --------------------------------------------- */
+.vvl-head { min-width: 0; }
+.vvl-label { margin-bottom: var(--sp-4); }
+/* Not `.hp-section-title`: that sets its lines as `.mq-line`, whose
+   child is `white-space: nowrap` inside `overflow: hidden`, so it
+   cannot be trusted in a narrow rail — a line wider than the rail is
+   amputated rather than wrapped. These lines are plain blocks. */
+.vvl-title {
+  margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  color: var(--v-red);
-  font-variant-numeric: tabular-nums;
+  font-size: clamp(32px, 5.6vw, 58px);
+  line-height: 0.96;
+  letter-spacing: var(--tr-h2);
+  color: var(--v-ink);
 }
-.vv-entry-seat {
+.vvl-title > span { display: block; }
+
+/* ---- The pair -------------------------------------------------- */
+.vvl-people {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-9);
+  column-gap: var(--sp-7);
+  align-items: start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.vvl-person { min-width: 0; }
+
+/* ---- Index + role ---------------------------------------------
+   Editorial indexing, not a badge: the ordinal is set in gold on the
+   same baseline as the role, separated by a short gold rule. The
+   rule is the section's one accent, and the only thing hover moves
+   besides the portrait. */
+.vvl-mark {
+  display: flex;
+  /* Top-aligned, not centred: with a reserved two-line block a ONE-line
+     role would centre itself and sit 8px below a wrapped one, so the two
+     role labels would not share a baseline even though everything below
+     them did. Top alignment puts both on the same first line; the numeral
+     matches that line box below, and the rule is nudged onto its centre. */
+  align-items: flex-start;
+  gap: var(--sp-3);
+  margin: 0 0 var(--sp-4);
+  /* Two lines of the role are RESERVED, for the same reason `.vvl-name`
+     reserves two: "Founder & Managing Director" needs 244px and the
+     column is 280px at 1024, so it wraps there while "Founder & CEO"
+     does not. Without a shared block that extra line pushed the second
+     portrait 11px below the first — a stagger the layout must not have.
+     `--t-micro` is a fixed 10.5px, so this height is stable at every
+     breakpoint rather than drifting with a clamp. */
+  min-height: 32px;
+}
+.vvl-n {
+  flex: none;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  /* 14 × 1.09 ≈ 15.2px — the same line box as one line of the role, so
+     the two top-align exactly rather than by eye. */
+  line-height: 1.09;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+}
+.vvl-mark::after {
+  content: "";
+  order: 1;
+  flex: none;
+  width: 28px;
+  height: 2px;
+  /* Onto the optical centre of that first 15.2px line. */
+  margin-top: 7px;
+  background: var(--v-gold);
+  transition: width var(--mo-mid) var(--ease);
+}
+.vvl-role {
+  order: 2;
+  min-width: 0;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: var(--t-micro);
+  /* Explicit, so the reserved two-line height above is deterministic
+     rather than dependent on the inherited line-height. */
+  line-height: 1.45;
   letter-spacing: var(--tr-caps);
   text-transform: uppercase;
-  color: var(--v-on-ivory);
+  color: var(--v-red);
 }
 
-.vv-entry-main { grid-column: 1 / -1; position: relative; min-width: 0; }
-/* Layered typography: the ordinal again, oversized and set behind the name
-   rather than beside it. Decorative only — the readable ordinal is in the
-   rail above. */
-.vv-entry-ghost {
+/* ---- Portrait --------------------------------------------------
+   The frame fills the principal's column, so its edges ARE grid
+   lines. 4/5 for both, which is the shape the stored `imagePosition`
+   origins in FOUNDERS were framed for — the crop is a gentle one and
+   both faces sit inside it. No border, no radius, no shadow: a gold
+   rule sits under the frame's left edge as the only mark. */
+.vvl-figure {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  background: var(--v-ink-2);
+}
+.vvl-figure img {
+  object-fit: cover;
+  /* Transform only — the frame's box never changes, so a hover or a
+     reveal can never shift the layout around it. */
+  transition: transform var(--mo-cine) var(--ease);
+}
+.vvl-figure::after {
+  content: "";
   position: absolute;
-  right: 0;
-  top: -0.28em;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(80px, 12vw, 190px);
-  line-height: 0.8;
-  letter-spacing: -0.06em;
-  color: rgba(14, 11, 10, 0.05);
-  pointer-events: none;
-  user-select: none;
+  left: 0;
+  bottom: 0;
+  width: 34%;
+  height: 3px;
+  background: var(--v-gold);
+  transition: width var(--mo-cine) var(--ease);
 }
-.vv-entry-name {
-  position: relative;
-  margin: var(--sp-3) 0 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.038em;
-  color: var(--v-ink);
-  /* The first entry sits larger because it is first in the firm's own
-     listing — not because the source states a seniority. Same rule as the
-     partner descent: `--rank` has to reach the maximum too, or both entries
-     pin to the cap on a wide screen. Resolves to 64/50 at 1440. */
-  font-size: clamp(
-    calc(27px - var(--rank, 0) * 2px),
-    calc((4.8 - var(--rank, 0) * 1.1) * 1vw + 8px),
-    calc(64px - var(--rank, 0) * 14px)
-  );
-}
-.vv-entry-bio {
-  position: relative;
+
+/* ---- Name + biography ------------------------------------------ */
+.vvl-name {
   margin: var(--sp-5) 0 0;
-  max-width: 66ch;
+  /* Two lines of space are RESERVED, not added: "Thimmaji Rao Yammada"
+     wraps to two lines in this column and "Subash Yammada" does not, so
+     without a shared block the second biography would start a line lower
+     than the first. This keeps both biographies on one baseline without
+     any offset, and a longer name simply grows the block for both. */
+  min-height: 2.08em;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  color: var(--v-ink);
+  transition: transform var(--mo-mid) var(--ease);
+}
+.vvl-bio {
+  margin: var(--sp-4) 0 0;
+  max-width: 46ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
-  line-height: 1.8;
+  line-height: 1.72;
   color: var(--v-on-ivory);
 }
 
-.vv-entry-f {
-  position: relative;
-  grid-column: 1 / -1;
-  margin: 0;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--v-ink);
-  order: -1;
+/* ---- Hover / focus --------------------------------------------
+   Desktop pointers only, so a touch device never sticks in a hover
+   state. Three small moves: the portrait settles in, the gold rules
+   extend, the name shifts 3px. No lift, no shadow, no scale on any
+   box that would push its neighbours. */
+@media (hover: hover) and (pointer: fine) {
+  .vvl-person:hover .vvl-figure img,
+  .vvl-person:focus-within .vvl-figure img { transform: scale(1.035); }
+  .vvl-person:hover .vvl-figure::after,
+  .vvl-person:focus-within .vvl-figure::after { width: 52%; }
+  .vvl-person:hover .vvl-mark::after,
+  .vvl-person:focus-within .vvl-mark::after { width: 48px; }
+  .vvl-person:hover .vvl-name,
+  .vvl-person:focus-within .vvl-name { transform: translateX(3px); }
 }
-.vv-entry-f img { object-fit: cover; }
 
+/* ---- 768px+: the pair goes side by side ------------------------
+   Level here, not offset: at this width the columns are narrow
+   enough that dropping one would cost a screen of scroll and read as
+   a mistake rather than as art direction. */
 @media (min-width: 768px) {
-  .vv-entry-rail { grid-column: 1 / span 8; }
-  .vv-entry-main { grid-column: 1 / span 8; }
-  .vv-entry-f { grid-column: 1 / span 8; aspect-ratio: 21 / 9; order: 0; }
-}
-@media (min-width: 1024px) {
-  /* The register: rail, then the name and biography, then the portrait held
-     to the right edge as a tall column. Identical framing for both entries
-     — the asymmetry is in the layout, never in the people. */
-  .vv-entry-rail { grid-column: 1 / span 8; }
-  .vv-entry-main { grid-column: 1 / span 7; }
-  .vv-entry-f {
-    /* Four columns, not three. At three the portrait fell to 208px wide at
-       1024 and 300px at 1440 — a thin strip inside a very wide container,
-       which is the failure the brief calls out for large screens. */
-    grid-column: 9 / -1;
-    grid-row: 1 / span 2;
-    aspect-ratio: 3 / 4;
-    order: 0;
-    align-self: start;
+  .vvl-grid { row-gap: var(--sp-8); }
+  .vvl-people {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--sp-8);
+    column-gap: var(--sp-6);
   }
+  .vvl-title { font-size: clamp(38px, 5vw, 58px); }
 }
 
+/* ---- 1024px+: the full composition -----------------------------
+   Heading rail on columns 1–4, the pair on 5–12 of the same row, so
+   the first portrait's top edge is the heading's top edge and the
+   dead field under the title is gone. */
+@media (min-width: 1024px) {
+  .vvl-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    row-gap: 0;
+    align-items: start;
+  }
+  .vvl-head { grid-column: 1 / span 4; padding-right: var(--sp-6); }
+  .vvl-people { grid-column: 5 / -1; column-gap: var(--sp-7); }
+
+  .vvl-name { font-size: clamp(26px, 2.4vw, 36px); }
+  .vvl-bio { max-width: 42ch; }
+}
+
+@media (min-width: 1280px) {
+  .vvl-head { grid-column: 1 / span 4; padding-right: var(--sp-7); }
+  .vvl-people { column-gap: var(--sp-8); }
+}
+
+/* ---- Reduced motion --------------------------------------------
+   The GSAP timeline is not built at all under this setting (the
+   effect returns before registering anything), so there is nothing
+   to disable there and no chance of content being left at opacity 0.
+   These are the CSS transitions, which are separate. */
+@media (prefers-reduced-motion: reduce) {
+  .vvl-figure img,
+  .vvl-figure::after,
+  .vvl-mark::after,
+  .vvl-name { transition: none; }
+  .vvl-person:hover .vvl-figure img,
+  .vvl-person:focus-within .vvl-figure img { transform: none; }
+  .vvl-person:hover .vvl-name,
+  .vvl-person:focus-within .vvl-name { transform: none; }
+}
 /* ============================================================
    GOLF DEVELOPMENT · THE PGA PARTNERSHIP
    ------------------------------------------------------------
@@ -13576,41 +13910,51 @@ a:hover .hp-arrow {
    Content audit, Sept 2026; REDESIGNED, this sub-section only.
    Vimtra x PGA brochure p. 03 — wording of all five moves unchanged.
 
-   The version before this one pinned the five moves to a single
-   horizontal track, alternating above and below it. It was legible
-   and it aligned perfectly, and that was the problem: a symmetrical
-   line with five equal columns hung off it reads as a stock timeline
-   widget, not as this franchise's own plan.
+   NO RULES ANYWHERE IN THIS FIELD. That is the brief and it is also
+   the design problem: the previous version separated the five moves
+   with four different line devices at once — a gold hairline running
+   off every numeral, a border over every move, a border under the
+   last one, and a vertical divider between the intro and the field.
+   Stacked together they read as a table of contents, and on ink four
+   competing hairlines are most of what the eye actually receives.
 
-   This is a STEPPED FIELD instead. Every move opens on the same
-   mark — an oversized gold numeral with a hairline running off it to
-   the far edge of that move's own span — and the marks are then
-   DISTRIBUTED across the 12-column track rather than threaded onto
-   one line:
+   Everything that was doing structural work is now doing it
+   typographically:
 
-     01  cols 1–5    the left edge, opening
-     02  cols 7–12   right half, dropped
-     03  cols 2–6    stepped one column in from 01
-     04  cols 7–11   right half, dropped, narrower than 02
-     05  cols 1–12   closing band, the field's longest rule
+     · the numeral is the mark, set solid gold and large, with the
+       title tucked up under it so numeral + title read as ONE
+       lockup rather than two stacked items;
+     · separation between moves is space, not a border — the row gap
+       is deliberately larger than any gap inside a move, which is
+       what keeps the group boundaries obvious without drawing them;
+     · the intro is held off the field by a column of clear space
+       instead of a divider.
 
-   Span, indent and vertical drop all vary by position, so the
-   sequence is carried by composition rather than by a track, and no
-   two moves are the same size. Below 768px the field folds to one
-   column against a single hairline; 768–1023px runs it as a
-   two-track spread. There is no spine at any width above 768px and
-   no card at any width at all.
+   The scale ladder (numeral → title → body) and the colour ladder
+   (gold → ivory → muted ink-text) are what group each move. Move 01
+   takes the one crimson accent as the opener; the ordinal itself
+   still carries the order, and the `<ol>` carries it for assistive
+   tech, so nothing depends on colour alone.
+
+   Deliberately NOT the same numeral treatment as `.gdf-*` on this
+   same page: that field is outlined numerals on ivory, this one is
+   solid numerals on ink, so the two sections never read as the same
+   device used twice.
 
    Scoped to `.gdm-*`. Touches no shared class.
 ============================================================ */
-.gdm { row-gap: var(--sp-6); align-items: start; }
-.gdm > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
-.gdm-head { grid-column: 1 / -1; }
-.gdm-set { grid-column: 1 / -1; }
+
+/* ---- Frame --------------------------------------------------- */
+.gdm-layout {
+  display: grid;
+  gap: var(--sp-8);
+}
+.gdm-intro { min-width: 0; }
+.gdm-intro .hp-index { margin-bottom: var(--sp-5); }
 
 .gdm-h {
   grid-column: auto !important;
-  max-width: 17ch;
+  max-width: 12ch;
   font-size: clamp(30px, 4.6vw, 68px) !important;
 }
 .gdm-h em {
@@ -13619,89 +13963,59 @@ a:hover .hp-arrow {
   color: var(--v-gold-lit);
 }
 
-/* ---- Below 768px: one column against a single hairline ----------- */
+/* ---- The field ------------------------------------------------
+   One column on phones, two from 768px, with move 05 closing the
+   field across both. No borders, no spine, no track. */
 .gdm-set {
-  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--sp-6);
+  row-gap: var(--sp-8);
+  column-gap: var(--sp-7);
   align-items: start;
   list-style: none;
-  margin: var(--sp-6) 0 0;
-  padding: 0 0 0 var(--sp-6);
+  margin: 0;
+  padding: 0;
 }
-/* Fades in and out rather than stopping hard, so it reads as depth
-   behind the marks and not as a rule the moves are hung on. */
-.gdm-set::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 4px;
-  bottom: 4px;
-  width: 1px;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    var(--v-hair-ink) 12%,
-    var(--v-hair-ink) 88%,
-    transparent 100%
-  );
-}
-.gdm-set > li { position: relative; min-width: 0; }
+.gdm-set > li { min-width: 0; }
 
-/* ---- The mark: numeral + its rule -------------------------------- */
+/* ---- The mark -------------------------------------------------
+   Numeral and title are one lockup. `line-height: 0.78` plus the
+   small negative pull below closes the gap between the numeral's
+   baseline and the title's cap height, so the pair reads as a
+   single unit — which is the whole reason the field can do without
+   a rule to bind them. */
 .gdm-mark {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  margin-bottom: var(--sp-3);
+  display: block;
+  margin-bottom: var(--sp-2);
 }
 .gdm-n {
-  flex: none;
+  display: block;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(30px, 7.4vw, 44px);
-  line-height: 0.86;
-  letter-spacing: -0.045em;
-  color: var(--v-gold);
+  font-size: clamp(44px, 8vw, 64px);
+  line-height: 0.78;
+  letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
   transition: color var(--mo-mid) var(--ease);
 }
-/* Move 01 opens the plan — the one crimson accent in the field. The
-   ordinal itself is what carries the order (and the `<ol>` carries it
-   for assistive tech), so nothing here depends on colour alone. */
+/* Move 01 opens the plan — the one crimson accent in the field. */
 .gdm-set > li:first-child .gdm-n { color: var(--v-red); }
-/* The rule is the structural device of this field, not a flourish, so
-   it holds gold well past the numeral and only thins toward its far
-   end — enough to read as drawn structure at a glance. Its LENGTH is
-   set by that move's column span, which is what makes the five marks
-   measure differently against each other. */
-.gdm-rule {
-  flex: 1 1 auto;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    var(--v-gold) 0%,
-    rgba(184, 144, 75, 0.62) 58%,
-    rgba(184, 144, 75, 0.2) 100%
-  );
-  opacity: 0.9;
-  transition: opacity var(--mo-mid) var(--ease);
-}
 
 .gdm-t {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(19px, 2.3vw, 26px);
-  line-height: 1.14;
-  letter-spacing: -0.028em;
+  font-size: clamp(20px, 2.3vw, 27px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
   color: var(--v-ivory);
   transition: transform var(--mo-mid) var(--ease);
 }
 .gdm-d {
-  margin: var(--sp-2) 0 0;
-  max-width: 52ch;
+  margin: var(--sp-3) 0 0;
+  max-width: 46ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
   line-height: 1.7;
@@ -13710,81 +14024,59 @@ a:hover .hp-arrow {
 
 .gdm-set > li:hover .gdm-n,
 .gdm-set > li:focus-within .gdm-n { color: var(--v-gold-lit); }
-.gdm-set > li:hover .gdm-rule,
-.gdm-set > li:focus-within .gdm-rule { opacity: 1; }
 .gdm-set > li:hover .gdm-t,
 .gdm-set > li:focus-within .gdm-t { transform: translateX(4px); }
 @media (prefers-reduced-motion: reduce) {
   .gdm-n,
-  .gdm-rule,
   .gdm-t { transition: none; }
   .gdm-set > li:hover .gdm-t,
   .gdm-set > li:focus-within .gdm-t { transform: none; }
 }
 
-/* ---- 768px+: two tracks, the right one dropped ------------------- */
+/* ---- 768px+: two tracks --------------------------------------
+   The row gap opens further than the column gap here: with nothing
+   drawn between the moves, vertical space is the only thing telling
+   the reader that 03 begins a new row rather than continuing 02. */
 @media (min-width: 768px) {
   .gdm-set {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--sp-9);
+  }
+  .gdm-set > li:nth-child(5) { grid-column: 1 / -1; }
+}
+
+/* ---- 1024px+: intro rail beside the field --------------------- */
+@media (min-width: 1024px) {
+  .gdm-layout {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--sp-6);
-    row-gap: var(--sp-7);
-    padding-left: 0;
+    align-items: start;
   }
-  /* The field's own geometry takes over from the hairline here. */
-  .gdm-set::before { content: none; }
-
-  .gdm-set > li:nth-child(1) { grid-column: 1 / span 6; }
-  .gdm-set > li:nth-child(2) { grid-column: 7 / span 6; margin-top: var(--sp-6); }
-  .gdm-set > li:nth-child(3) { grid-column: 1 / span 6; }
-  .gdm-set > li:nth-child(4) { grid-column: 7 / span 6; margin-top: var(--sp-6); }
-  .gdm-set > li:nth-child(5) { grid-column: 1 / -1; }
-
-  .gdm-n { font-size: clamp(38px, 5vw, 52px); }
-  .gdm-d { font-size: 14.5px; line-height: 1.66; max-width: 46ch; }
-}
-
-/* ---- 1024px+: the stepped field ----------------------------------
-   Held deliberately tight. The drop that breaks the two tracks off a
-   shared baseline is the smallest one that still reads as intentional
-   (~37px at 1440), because every pixel of it is section height, and
-   the asymmetry here is meant to come from span and indent — which
-   cost nothing vertically — not from pushing blocks down the page. */
-@media (min-width: 1024px) {
-  .gdm { row-gap: var(--sp-6); }
-  .gdm-head { grid-column: 1 / span 8; }
+  /* Held off the field by a clear column rather than by a divider —
+     the gutter plus this padding is wider than any gap inside the
+     field, which is what separates the two zones. */
+  .gdm-intro {
+    grid-column: 1 / span 4;
+    padding-right: var(--sp-6);
+  }
+  .gdm-h {
+    max-width: 10ch;
+    font-size: clamp(38px, 4.2vw, 64px) !important;
+    line-height: 0.98;
+  }
 
   .gdm-set {
-    margin-top: var(--sp-6);
-    row-gap: var(--sp-7);
+    grid-column: 5 / -1;
+    column-gap: var(--sp-8);
   }
+  .gdm-n { font-size: clamp(52px, 4.4vw, 72px); }
+  .gdm-d { max-width: 42ch; }
 
-  /* Spans and indents differ per position — this is the composition,
-     not decoration. 03 steps one column in from 01; 04 is narrower
-     than 02; 05 runs the full field and closes it. */
-  .gdm-set > li:nth-child(1) { grid-column: 1 / span 5; }
-  .gdm-set > li:nth-child(2) {
-    grid-column: 7 / span 6;
-    margin-top: clamp(32px, 2.6vw, 44px);
-  }
-  .gdm-set > li:nth-child(3) { grid-column: 2 / span 5; }
-  .gdm-set > li:nth-child(4) {
-    grid-column: 7 / span 5;
-    margin-top: clamp(32px, 2.6vw, 44px);
-  }
-  .gdm-set > li:nth-child(5) { grid-column: 1 / -1; }
-
-  .gdm-n { font-size: clamp(48px, 4vw, 62px); }
-  .gdm-mark { gap: var(--sp-5); margin-bottom: var(--sp-3); }
-  .gdm-t { font-size: clamp(21px, 1.8vw, 28px); }
-  .gdm-d { max-width: 52ch; }
-
-  /* The closing band carries the longest rule in the field, so its
-     text is held to a measure rather than running the full width
-     under it. */
+  /* The closing move runs the field's full width, so its text is
+     held to a measure instead of running edge to edge under it. */
   .gdm-set > li:nth-child(5) .gdm-t,
-  .gdm-set > li:nth-child(5) .gdm-d { max-width: 40ch; }
+  .gdm-set > li:nth-child(5) .gdm-d { max-width: 46ch; }
 }
-
 /* ============================================================
    INVEST · THE THREE PILLARS
    ------------------------------------------------------------
@@ -14177,4 +14469,263 @@ a:hover .hp-arrow {
 }
 @media (min-width: 1024px) {
   .vfy-panel { grid-column: 1 / span 7; }
+}
+
+/* ============================================================
+   NEWS · 14 AUGUST 2026 — A DAY IN THE DEN
+   ------------------------------------------------------------
+   An activity chapter inside /news, rendered by
+   components/news/DayInTheDen.tsx. Scoped to `.den-*`; nothing
+   here is used by the news desk below it or by any other route.
+
+   Set on INK inside an otherwise light page. The chapter is
+   carried by two large photographs, and a dark ground is what
+   lets them read as photography rather than as illustrations
+   dropped into a column of body copy — it also separates the
+   feature from the verified news record beneath it without a
+   single divider.
+
+   THE TWO MOMENTS ARE BUILT AS OPPOSITES, not as a mirrored
+   pair, because a repeated image/text block twice over is
+   exactly the "two cards" result this chapter exists to avoid:
+
+     01 MORNING  narrow text rail LEFT, 4/3 frame RIGHT breaking
+                 out through the right gutter, text hung from the
+                 TOP of the frame.
+     02 EVENING  wider, shorter 16/9 frame LEFT breaking out
+                 through the left gutter, text RIGHT, sitting on
+                 the FOOT of the frame.
+
+   Different side, different ratio, different vertical anchor —
+   one system, two distinct moments.
+
+   The break-out is measured against `.hp-wrap`'s own gutter, so
+   a frame runs into the page margin and stops there. It never
+   uses viewport units, which is why the section cannot produce a
+   horizontal scrollbar at any width.
+============================================================ */
+
+.den-sec {
+  /* Belt and braces against the break-out below. */
+  overflow-x: clip;
+  --den-gutter: 20px;
+}
+@media (min-width: 768px)  { .den-sec { --den-gutter: 40px; } }
+@media (min-width: 1280px) { .den-sec { --den-gutter: 64px; } }
+@media (min-width: 1600px) { .den-sec { --den-gutter: 80px; } }
+
+/* ---- Chapter head ---------------------------------------------- */
+.den-head { margin-bottom: var(--sp-8); }
+
+/* The dated top rail: stamp, hairline, chapter name. */
+.den-rail {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0 0 var(--sp-6);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+}
+.den-stamp {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold-lit);
+}
+.den-rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--v-hair-ink);
+}
+.den-rail-k { flex: none; color: var(--v-on-ink); }
+
+.den-title {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(38px, 8.4vw, 118px);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--v-ivory);
+}
+.den-title > span { display: block; }
+.den-date {
+  margin: var(--sp-5) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red-lit);
+}
+
+/* ---- Moments --------------------------------------------------- */
+.den-moments {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-9);
+}
+.den-moment { min-width: 0; }
+
+/* The frame. Ratio is set per moment below — this is only the
+   shared treatment: no border, no radius, no shadow, and a gold
+   index edge that marks the frame without enclosing it. */
+.den-fig {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  margin: 0 0 var(--sp-6);
+  background: var(--v-ink-2);
+  /* Taller on phones. A 16/9 frame in a 335px column is 188px of
+     photograph, which turns the hero of each moment into a strip — the
+     ratio opens out as the column widens instead. The two moments keep a
+     ratio of their own at every breakpoint so the pair never reads as one
+     block repeated, even in the single-column mobile sequence. */
+  aspect-ratio: 4 / 3;
+}
+.den-moment-2 .den-fig { aspect-ratio: var(--ar-classic); }
+.den-fig img {
+  object-fit: cover;
+  transition: transform var(--mo-cine) var(--ease);
+}
+.den-fig::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 84px;
+  height: 3px;
+  background: var(--v-gold);
+}
+/* The marker sits on the edge the frame breaks out through, so it
+   reads as the frame's index rather than as a stray underline. */
+.den-moment-1 .den-fig::after { right: 0; }
+.den-moment-2 .den-fig::after { left: 0; }
+
+@media (hover: hover) and (pointer: fine) {
+  .den-moment:hover .den-fig img { transform: scale(1.03); }
+}
+
+/* ---- Moment copy ------------------------------------------------ */
+.den-body { min-width: 0; }
+.den-mark {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin: 0 0 var(--sp-4);
+}
+.den-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 3.6vw, 44px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+}
+.den-label {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red-lit);
+}
+.den-h {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 4.4vw, 54px);
+  line-height: 1.02;
+  letter-spacing: var(--tr-h2);
+  text-wrap: balance;
+  color: var(--v-ivory);
+}
+.den-d {
+  margin: var(--sp-4) 0 0;
+  max-width: 44ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.72;
+  color: var(--v-on-ink);
+}
+.den-foot {
+  margin: var(--sp-5) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  font-variant-numeric: tabular-nums;
+  color: var(--v-on-ink-faint);
+}
+
+/* ---- 768px+: the frames start to breathe ------------------------ */
+@media (min-width: 768px) {
+  .den-moments { row-gap: var(--sp-10); }
+  .den-moment-1 .den-fig { aspect-ratio: var(--ar-classic); }
+  .den-moment-2 .den-fig { aspect-ratio: var(--ar-wide); }
+}
+
+/* ---- 1024px+: the asymmetric composition ------------------------
+   Each moment becomes a 12-column field of its own, so the two can
+   be laid out as opposites while both still sit on the page's one
+   grid. */
+@media (min-width: 1024px) {
+  .den-moments { row-gap: var(--sp-11); }
+
+  .den-moment {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+
+  /* 01 — text rail left, tall frame right, text hung from the top.
+     The frame runs past the content column into the page margin. */
+  .den-moment-1 .den-body {
+    grid-column: 1 / span 4;
+    grid-row: 1;
+    align-self: start;
+  }
+  .den-moment-1 .den-fig {
+    grid-column: 6 / -1;
+    grid-row: 1;
+    margin: 0;
+    margin-right: calc(-1 * var(--den-gutter));
+    aspect-ratio: 4 / 3;
+  }
+
+  /* 02 — wide frame left breaking out through the LEFT margin, text
+     right, and the text sits on the frame's FOOT rather than its
+     head. That flip is what stops the pair reading as one block
+     repeated twice. */
+  .den-moment-2 .den-fig {
+    grid-column: 1 / span 8;
+    grid-row: 1;
+    margin: 0;
+    margin-left: calc(-1 * var(--den-gutter));
+    aspect-ratio: var(--ar-wide);
+  }
+  .den-moment-2 .den-body {
+    grid-column: 9 / -1;
+    grid-row: 1;
+    align-self: end;
+  }
+
+  .den-moment-2 .den-h { font-size: clamp(26px, 2.9vw, 40px); }
+  .den-moment-2 .den-d { max-width: 34ch; }
+}
+
+@media (min-width: 1280px) {
+  .den-moment-1 .den-body { grid-column: 1 / span 4; }
+  .den-moment-2 .den-body { grid-column: 9 / -1; }
+}
+
+/* ---- Reduced motion --------------------------------------------
+   The GSAP timelines are never built under this setting (the effect
+   returns before registering anything), so nothing can be left at
+   opacity 0. This only disables the hover transition. */
+@media (prefers-reduced-motion: reduce) {
+  .den-fig img { transition: none; }
+  .den-moment:hover .den-fig img { transform: none; }
 }

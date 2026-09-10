@@ -194,6 +194,7 @@ export default function GolfDevelopmentPage() {
   return (
     <>
       <StoryHero
+        className="golf-development-hero-full"
         eyebrow="The Platform"
         title={["GOLF", "DEVELOPMENT"]}
         line="Coaching, academies, event standards and course operations — to international championship level."
@@ -203,34 +204,47 @@ export default function GolfDevelopmentPage() {
       />
 
       {/* 01 — THE FRAMEWORK.
-          A governing spine, not a statement beside a figure.
+          A descent, not a statement beside a figure.
 
           The two rows of FRAMEWORK are not a list of equals — the first is
           the institutional authority and the second is what that authority
-          produces. The section is drawn that way: a single vertical rule
-          runs down the column with a node on it for each stratum, and each
-          stratum steps further in than the one above, so the structure of
-          the framework is the composition rather than something the copy
-          has to assert. It adapts to however many rows FRAMEWORK holds.
+          produces. The section is drawn that way, and the drawing is what
+          was redesigned: the dot-and-tick timeline became a STAIR. Each
+          stratum is a full ruled step that begins further in than the one
+          above it, so its rule, its accent tab and its numeral all move
+          right together and the descent is visible in the ruling itself
+          rather than asserted by the copy. `--depth` is the row index, so
+          it still follows however many rows FRAMEWORK holds.
 
-          The photograph is a tall column pinned to the left of the section
-          and is the page's only portrait-format frame — chosen so it reads
-          as a core sample through the platform rather than as an
-          illustration beside a paragraph. See the note in
+          The numerals do the structural work the nodes used to: outlined
+          and oversized while the framework is still describing authority,
+          then solid crimson on the terminal row — the point where the
+          platform becomes a team. They are `aria-hidden`; the ordered list
+          already carries the sequence for anyone not looking at it.
+
+          The photograph is a tall plate held to the left. From 1024px it
+          takes the height the stair sets rather than a ratio of its own,
+          so the plate's foot always lands on the last stratum's foot
+          however many rows FRAMEWORK holds; below that the plate spans the
+          full track and its ratio opens out as it widens, because
+          `ball-golf-field.jpg` is natively 3264 × 5824 and a full-width
+          9:16 frame is a screen and a half of one golf ball. See the note in
           public/assets/photo/CREDITS.md on why this frame replaced the
           aerial that /invest was also using. */}
       <Section surface="ivory" className="gdf-sec">
         <div className="cm-track gdf">
           <IndexLabel n="01">The Framework</IndexLabel>
 
-          <figure className="gdf-col">
-            <Image
-              src="/assets/photo/gd-framework-dawn-green.jpg"
-              alt="A cut green and pin flag on rising ground in dawn mist"
-              fill
-              sizes="(max-width: 1023px) 100vw, 30vw"
-              style={{ objectPosition: "56% 50%" }}
-            />
+          <figure className="gdf-plate">
+            <span className="gdf-plate-frame">
+              <Image
+                src="/assets/photo/ball-golf-field.jpg"
+                alt="A golf ball resting on a tee"
+                fill
+                sizes="(max-width: 1023px) 100vw, 34vw"
+                style={{ objectPosition: "56% 46%" }}
+              />
+            </span>
           </figure>
 
           <div className="gdf-body">
@@ -246,13 +260,14 @@ export default function GolfDevelopmentPage() {
                   style={{ ["--depth" as string]: i }}
                   data-rise
                 >
-                  <span className="gdf-node" aria-hidden />
                   <span className="gdf-stratum-n" aria-hidden>
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="gdf-stratum-k">{f.tag}</span>
-                  <h3 className="gdf-stratum-t">{f.name}</h3>
-                  <p className="gdf-stratum-d">{f.body}</p>
+                  <div className="gdf-stratum-b">
+                    <span className="gdf-stratum-k">{f.tag}</span>
+                    <h3 className="gdf-stratum-t">{f.name}</h3>
+                    <p className="gdf-stratum-d">{f.body}</p>
+                  </div>
                 </li>
               ))}
             </ol>
@@ -328,47 +343,42 @@ export default function GolfDevelopmentPage() {
           rather than running three light sections together.
 
           REDESIGNED — this sub-section only; wording of all five moves is
-          untouched. The version before this one was a single horizontal
-          track with the moves floating above and below it: symmetrical,
-          predictable, and read as a stock timeline rather than as this
-          franchise's own plan.
+          untouched. The version before this one drew the field with four
+          separate line devices at once: a gold hairline running off every
+          numeral, a border over every move, a border under the last one,
+          and a vertical divider between the intro and the field. Together
+          they read as a table of contents, and on ink four competing
+          hairlines were most of what the eye actually received.
 
-          It is now a STEPPED FIELD. Each move opens on a mark — an
-          oversized gold numeral with a hairline running off it to the far
-          edge of that move's own column span — and the five marks are
-          distributed across a 12-column field rather than pinned to one
-          line: 01 at the left edge, 02 dropped into the right half, 03
-          stepped one column in from 01, 04 dropped again, and 05 closing
-          the field on a rule that runs its full width. Widths, indents and
-          vertical drops all differ by position, so the sequence is carried
-          by composition instead of by a track. Below 768px the field folds
-          to one column against a single hairline; 768–1023px runs it as a
-          two-track editorial spread.
+          There is now NO RULE ANYWHERE in this field. Everything that was
+          structural is typographic instead: the numeral is the mark, set
+          solid gold and large with the title tucked up under it so the two
+          read as one lockup; the moves are separated by space, with the
+          row gap deliberately wider than any gap inside a move; and the
+          intro is held off the field by a clear column rather than by a
+          divider. The scale and colour ladders do the grouping.
+
+          The numerals here are solid on ink, where the Framework field
+          above uses outlined numerals on ivory — the two sections must not
+          read as the same device used twice on one page.
 
           No figure is attached to any move: the source attaches none. */}
       <Section surface="ink" className="gdm-sec hp-sec-atmos">
-        <div className="cm-track gdm">
-          <IndexLabel n="03" tone="dark">
-            The Plan
-          </IndexLabel>
-
-          <div className="gdm-head">
+        <div className="gdm-layout">
+          <header className="gdm-intro">
+            <IndexLabel n="03" tone="dark">
+              The Plan
+            </IndexLabel>
             <h2 className="cm-display gdm-h" data-rise>
               FIVE MOVES TO GROW THE <em>game</em>.
             </h2>
-          </div>
+          </header>
 
-          {/* One markup shape at every width; the field is built entirely
-              in CSS from `grid-column` / offset per `:nth-child`. The mark
-              (numeral + rule) is decorative in full: the `<ol>` already
-              carries the ordinal for assistive tech, so repeating "01" to a
-              screen reader would only double it. */}
           <ol className="gdm-set">
             {MOVES.map((m) => (
               <li key={m.n} data-rise>
                 <span className="gdm-mark" aria-hidden>
                   <span className="gdm-n">{m.n}</span>
-                  <span className="gdm-rule" />
                 </span>
                 <h3 className="gdm-t">{m.t}</h3>
                 <p className="gdm-d">{m.d}</p>

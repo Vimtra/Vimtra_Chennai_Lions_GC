@@ -3,6 +3,7 @@ import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import NewsHero from "@/components/news/NewsHero";
 import Newsroom from "@/components/news/Newsroom";
+import DayInTheDen from "@/components/news/DayInTheDen";
 import { listPublishedPosts } from "@/lib/posts";
 import { listActiveMediaCoverage } from "@/lib/media-coverage";
 import { buildNewsDesk } from "@/lib/news-desk";
@@ -39,6 +40,58 @@ export const dynamic = "force-dynamic";
    the page keeps its own opener and says the desk is quiet, rather than
    showing an example story.
 --------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   14 AUGUST 2026 — A DAY IN THE DEN.
+
+   An ACTIVITY FEATURE, deliberately not a news row. It is authored here
+   rather than inserted into `Post` or `MediaCoverage` because those tables
+   are the verified news record that the data-integrity rule protects — the
+   official AM Green IGPL squad-launch item lives there and stays exactly
+   where it is, classified as it was. Nothing below is a news article, and
+   nothing here touches the news desk.
+
+   Every string is the operator's own approved copy, reproduced verbatim:
+   the date, the chapter title, both moment labels, both headlines and both
+   descriptions. No attendance figure, venue, name, result or outcome
+   appears anywhere in this chapter, because none was supplied.
+
+   Both photographs are the operator's own uploads, downscaled through the
+   project's existing derivative settings (2000px, q80, mozjpeg) and
+   otherwise unaltered. The originals are untouched on disk. `imagePosition`
+   holds the face/subject inside every crop the layout asks for.
+--------------------------------------------------------------------------- */
+const DEN_DATE = "14 August 2026";
+const DEN_STAMP = "14.08.26";
+
+const DEN_MOMENTS = [
+  {
+    n: "01",
+    label: "Morning",
+    headline: "Tee. Drive. Connect.",
+    body:
+      "A morning of golf, competition and camaraderie — celebrating the spirit of sport and the people behind it.",
+    // IMGL8570.JPG — a drive off the tee in front of the Lions backdrop.
+    image: "/assets/photo/den-morning-drive.jpg",
+    imageAlt:
+      "A golfer follows through on a drive from the tee as guests watch, in front of a Vimtra Chennai Lions backdrop",
+    // Holds the golfer and the backdrop; the swing sits left of centre.
+    imagePosition: "44% 52%",
+  },
+  {
+    n: "02",
+    label: "Evening",
+    headline: "Connecting People. Creating Opportunities.",
+    body:
+      "An evening of meaningful connections at the Vimtra meet & greet, bringing the community together through conversation and collaboration.",
+    // IGPL Event/IMGL9398.JPG — the meet & greet reception.
+    image: "/assets/photo/den-evening-meet.jpg",
+    imageAlt:
+      "Guests and players gathered for the Vimtra meet and greet in front of a Vimtra Ventures screen",
+    // Faces sit in the upper-middle band of this frame.
+    imagePosition: "50% 42%",
+  },
+];
 
 export default async function NewsPage() {
   const [posts, articles, social] = await Promise.all([
@@ -117,6 +170,15 @@ export default async function NewsPage() {
   return (
     <>
       <NewsHero story={desk.featured} counts={desk.counts} />
+
+      {/* The activity chapter sits between the cover story and the record.
+          It carries its own dated head, so it reads as a separate chapter
+          rather than as another entry in the desk below. */}
+      <DayInTheDen
+        date={DEN_DATE}
+        stamp={DEN_STAMP}
+        moments={DEN_MOMENTS}
+      />
 
       <section
         className="hp-sec hp-sec-ivory nw-sec nwr-sec"

@@ -40,6 +40,7 @@ export default function StoryHero({
   imagePosition = "50% 45%",
   cta,
   above,
+  className = "",
 }: {
   eyebrow: string;
   /** Hand-broken lines — each becomes one masked line that slides up. */
@@ -68,6 +69,7 @@ export default function StoryHero({
      *  hero itself is the call to act, not a chapter opener. */
     variant?: "ghost" | "primary";
   };
+  className?: string;
 }) {
   const root = useRef<HTMLElement | null>(null);
 
@@ -110,7 +112,7 @@ export default function StoryHero({
   return (
     <section
       ref={root}
-      className={`cm-hero ${image ? "" : "is-plain"} ${
+      className={`cm-hero ${className} ${image ? "" : "is-plain"} ${
         longestLine > 9 ? "is-long" : ""
       }`
         .replace(/\s+/g, " ")

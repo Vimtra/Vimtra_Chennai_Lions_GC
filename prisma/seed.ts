@@ -149,7 +149,7 @@ async function main() {
   // no AI, no scraped publisher images.
   const BHULLAR = "/players/gaganjeet-bhullar-web.jpg";
   const SQUAD = "/assets/car-2-web.jpg";
-  const AL_HAMRA = "/assets/photo/club-hero-fairway-dusk.jpg";
+  const AL_HAMRA = "/assets/photo/club-01-marquee-swing.jpg";
   const CHENNAI = "/assets/photo/club-01-marquee-swing.jpg";
   const MEDIA: {
     sourceName: string;

@@ -32,6 +32,7 @@ export default function ThePridePage() {
   return (
     <>
       <StoryHero
+        className="pride-hero-full"
         eyebrow="The Mark · Pride of Chennai"
         title={["THE PRIDE"]}
         // Existing approved lead, cut to its strongest clause. The hero
@@ -128,13 +129,13 @@ export default function ThePridePage() {
 
           THIS PASS keeps the same ink ground and the same restraint on
           invented content — nothing quoted below changed a single word —
-          but replaces the stacked poster with an architectural four-up
+          but replaces the stacked poster with an architectural two-by-two
           register (`.pr-pillars`), the same numbered-and-ruled idiom the
           rest of the module already uses for a list of things (`.cal`,
           `.gd-index`, `.iv-pillar-set`), rather than a one-off. Each value
           gets an ordinal, a short gold rule and a controlled (not
-          maximal) display word; thin hairlines between them do the
-          structural work the old version asked pure whitespace to do.
+          maximal) display word; generous tracks and hairlines between them
+          do the structural work the old version asked pure whitespace to do.
           The quote moves to its own quieter register below — a gold
           spine on its left edge, like a pull-quote in print, so it reads
           as an attributed statement rather than a fifth headline. */}
