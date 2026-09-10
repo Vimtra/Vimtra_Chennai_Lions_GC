@@ -191,12 +191,6 @@ export function Season({ rows }: { rows: SeasonRow[] }) {
       aria-labelledby="se-h"
     >
       <div className="hp-wrap">
-        {/* The Club (ink) hands over to this ivory chapter with nothing
-            but a colour cut. The brand already owns a device for exactly
-            this handover (see .hp-chapter-mark in globals.css) — it was
-            never wired into a page. Used once here, not on every section,
-            per that class's own comment. */}
-        <span className="hp-chapter-mark" aria-hidden />
         <div className="cm-track hm-head">
           <div className="hm-head-t">
             <p className="hp-index" data-rise>
@@ -360,11 +354,6 @@ export function Media({ stories }: { stories: StoryRow[] }) {
       aria-labelledby="md-h"
     >
       <div className="hp-wrap">
-        {/* Golf Development closes on a dark, full-bleed photograph; this
-            chapter opens on flat paper right after it — the starkest cut
-            on the page. Same chapter-mark device as the Season entry
-            above, not layered on every section. */}
-        <span className="hp-chapter-mark" aria-hidden />
         {/* Head and the route out share one baseline — the right half of
             this row was empty in the previous layout. */}
         <div className="hm-press-head">
