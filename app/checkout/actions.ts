@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getSiteHost } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth";
 import {
   placeOrder,
@@ -256,9 +257,7 @@ export async function placeOrderAction(formData: FormData): Promise<PlaceOrderRe
       const full = await getOrderByIdForAdmin(placed.id);
       if (full) {
         const shippingAddress = readShippingSnapshot(full);
-        const siteHost = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000")
-          .replace(/\/$/, "")
-          .replace(/^https?:\/\//, "");
+        const siteHost = getSiteHost();
         const lines = full.items.map((it) => ({
           productName: it.productName,
           qty: it.qty,

@@ -1,45 +1,52 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
-import { getProductById } from "@/lib/db";
-import AdminShell from "@/components/admin/AdminShell";
+import { getProductById, listAllProducts } from "@/lib/db";
+import PageHeader from "@/components/admin/ui/PageHeader";
 import ProductForm from "@/components/admin/ProductForm";
 import { updateProductAction } from "../../actions";
 
 export const metadata: Metadata = {
-  title: "Edit Product · Lions Admin",
+  title: "Edit product",
   robots: { index: false, follow: false },
 };
 
-export default async function EditProductPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const user = await requireAdmin();
+export const dynamic = "force-dynamic";
+
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdmin();
   const { id } = await params;
-  const product = await getProductById(id);
+  const [product, all] = await Promise.all([getProductById(id), listAllProducts()]);
   if (!product) notFound();
+  const categories = Array.from(new Set(all.map((p) => p.cat).filter(Boolean))).sort();
 
   return (
-    <AdminShell email={user.email} active="products">
-      <Link href="/admin/products" className="font-manrope font-semibold text-[13px] text-crimson-600 no-underline">
-        ← Back to products
-      </Link>
-      <h1 className="mt-3 font-sora font-extrabold text-[34px] tracking-[-0.02em] text-ink">Edit product</h1>
-      <p className="font-manrope text-[14px] text-muted mt-1">
-        {product.name} · <span className="text-[12.5px]">{product.id}</span>
-      </p>
-
-      <div className="admin-card mt-7 !p-7 max-w-[760px]">
+    <>
+      <PageHeader
+        back={{ href: "/admin/products", label: "Products" }}
+        eyebrow="Product"
+        title={product.name}
+        lede={
+          <>
+            <span className="adm-mono">{product.id}</span>
+            {product.sku ? (
+              <>
+                {" "}
+                · SKU <span className="adm-mono">{product.sku}</span>
+              </>
+            ) : null}
+          </>
+        }
+      />
+      <div className="adm-panel adm-panel-pad" style={{ maxWidth: 820 }}>
         <ProductForm
           action={updateProductAction}
           product={product}
+          categories={categories}
           submitLabel="Save changes"
           redirectOnSuccess="/admin/products"
         />
       </div>
-    </AdminShell>
+    </>
   );
 }

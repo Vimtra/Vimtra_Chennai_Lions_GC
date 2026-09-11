@@ -1,103 +1,91 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import type { MediaKind } from "@prisma/client";
+import type { PostStatus } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth";
 import {
+  MEDIA_KINDS,
   createMediaCoverage,
   deleteMediaCoverage,
+  getMediaCoverage,
   updateMediaCoverage,
-  type MediaCoverageInput,
 } from "@/lib/media-coverage";
+import { parseCoverageForm } from "@/lib/coverage-admin";
+import type { ActionResult } from "@/lib/admin-action-result";
 
-const KINDS: MediaKind[] = ["ARTICLE", "SOCIAL"];
-
-function toKind(raw: FormDataEntryValue | null): MediaKind {
-  const s = String(raw ?? "ARTICLE").toUpperCase();
-  return (KINDS as string[]).includes(s) ? (s as MediaKind) : "ARTICLE";
-}
-
-function opt(raw: FormDataEntryValue | null): string | null {
-  const s = String(raw ?? "").trim();
-  return s ? s : null;
-}
-function req(raw: FormDataEntryValue | null): string {
-  return String(raw ?? "").trim();
-}
-function parseDate(raw: FormDataEntryValue | null): Date | null {
-  const s = String(raw ?? "").trim();
-  if (!s) return null;
-  const d = new Date(s + "T00:00:00Z");
-  return isNaN(d.getTime()) ? null : d;
-}
-
-function parseInput(formData: FormData): MediaCoverageInput | null {
-  const sourceName = req(formData.get("sourceName"));
-  const sourceUrl = req(formData.get("sourceUrl"));
-  const title = req(formData.get("title"));
-  const summary = req(formData.get("summary"));
-  if (!sourceName || !sourceUrl || !title || !summary) return null;
-  // Only allow http(s) URLs. rel="noreferrer noopener" on the public card
-  // still protects tabnabbing, but blocking javascript:/data: at input
-  // time keeps the DB clean.
-  try {
-    const u = new URL(sourceUrl);
-    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
-  } catch {
-    return null;
-  }
-  const sortRaw = formData.get("sortOrder");
-  const sortOrder = sortRaw != null && String(sortRaw).trim() !== "" ? Number(sortRaw) : 0;
-  return {
-    kind: toKind(formData.get("kind")),
-    sourceName,
-    sourceUrl,
-    title,
-    summary,
-    publishedAt: parseDate(formData.get("publishedAt")),
-    coverImage: opt(formData.get("coverImage")),
-    active: formData.get("active") === "on" || formData.get("active") === "true",
-    sortOrder: Number.isFinite(sortOrder) ? sortOrder : 0,
-  };
-}
+/**
+ * Admin → Media: third-party press and social posts (ARTICLE / SOCIAL).
+ *
+ * Official news is never handled here — `parseCoverageForm` is passed only
+ * the media kinds, so an OFFICIAL row cannot be created or moved through
+ * this surface, and every guard below refuses to touch one.
+ */
 
 function revalidateSurfaces() {
   revalidatePath("/news");
+  revalidatePath("/");
   revalidatePath("/admin/media");
+  revalidatePath("/admin");
 }
 
-export async function createMediaCoverageAction(formData: FormData) {
+export type CoverageActionResult = ActionResult<{ id: string }>;
+
+export async function createMediaCoverageAction(formData: FormData): Promise<CoverageActionResult> {
   await requireAdmin();
-  const input = parseInput(formData);
-  if (!input) redirect("/admin/media?error=invalid");
-  await createMediaCoverage(input);
+  const parsed = await parseCoverageForm(formData, { allowedKinds: MEDIA_KINDS, folder: "media" });
+  if (!parsed.ok) return { ok: false, error: parsed.error };
+  const row = await createMediaCoverage(parsed.input);
   revalidateSurfaces();
-  redirect("/admin/media");
+  return {
+    ok: true,
+    id: row.id,
+    message: row.status === "PUBLISHED" ? "Published to /news." : "Saved as a draft.",
+  };
 }
 
-export async function updateMediaCoverageAction(formData: FormData) {
-  await requireAdmin();
-  const id = String(formData.get("id") ?? "");
-  const input = parseInput(formData);
-  if (!input) redirect(`/admin/media/${id}/edit?error=invalid`);
-  await updateMediaCoverage(id, input);
-  revalidateSurfaces();
-  redirect("/admin/media");
-}
-
-export async function toggleActiveAction(formData: FormData) {
+export async function updateMediaCoverageAction(formData: FormData): Promise<CoverageActionResult> {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
-  const active = formData.get("active") === "true";
-  await updateMediaCoverage(id, { active });
+  const existing = await getMediaCoverage(id);
+  if (!existing || !MEDIA_KINDS.includes(existing.kind)) {
+    return { ok: false, error: "That article no longer exists." };
+  }
+  const parsed = await parseCoverageForm(formData, { allowedKinds: MEDIA_KINDS, folder: "media" });
+  if (!parsed.ok) return { ok: false, error: parsed.error };
+  const row = await updateMediaCoverage(id, parsed.input);
+  if (!row) return { ok: false, error: "The article could not be saved. Reload and try again." };
   revalidateSurfaces();
+  return {
+    ok: true,
+    id,
+    message: row.status === "PUBLISHED" ? "Saved and live on /news." : `Saved as ${row.status.toLowerCase()}.`,
+  };
 }
 
-export async function deleteMediaCoverageAction(formData: FormData) {
+/** Quick Draft / Publish / Archive from a list row. */
+export async function setMediaStatusAction(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
-  await deleteMediaCoverage(id);
+  const raw = String(formData.get("status") ?? "").toUpperCase();
+  const status: PostStatus = raw === "PUBLISHED" || raw === "ARCHIVED" ? raw : "DRAFT";
+  const existing = await getMediaCoverage(id);
+  if (!existing || !MEDIA_KINDS.includes(existing.kind)) {
+    return { ok: false, error: "That article no longer exists." };
+  }
+  await updateMediaCoverage(id, { status });
   revalidateSurfaces();
-  redirect("/admin/media");
+  return { ok: true, message: `“${existing.title}” is now ${status.toLowerCase()}.` };
+}
+
+export async function deleteMediaCoverageAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const existing = await getMediaCoverage(id);
+  if (!existing || !MEDIA_KINDS.includes(existing.kind)) {
+    return { ok: false, error: "That article no longer exists." };
+  }
+  const removed = await deleteMediaCoverage(id);
+  if (!removed) return { ok: false, error: "The article could not be deleted. Reload and try again." };
+  revalidateSurfaces();
+  return { ok: true, message: `“${existing.title}” deleted.` };
 }

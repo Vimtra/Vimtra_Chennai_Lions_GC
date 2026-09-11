@@ -1807,89 +1807,8 @@ a {
   resize: vertical;
   min-height: 90px;
 }
-/* Ruled editorial table — replaces the boxed default table look;
-   updates every admin sub-page that renders one. */
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-manrope), sans-serif;
-}
-.admin-table th {
-  text-align: left;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--hp-muted);
-  padding: 14px 14px;
-  border-bottom: 1px solid var(--hp-ink);
-}
-.admin-table td {
-  padding: 16px 14px;
-  border-bottom: 1px solid var(--hp-hair);
-  font-size: 14px;
-  vertical-align: middle;
-  color: var(--hp-ink);
-}
-.admin-table tr:hover td { background: rgba(189, 34, 39, 0.03); }
-.inventory-table {
-  width: 100%;
-  min-width: 0;
-  table-layout: fixed;
-}
-.inventory-table th,
-.inventory-table td {
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.inventory-table th:nth-child(1),
-.inventory-table td:nth-child(1) { width: 23%; }
-.inventory-table th:nth-child(2),
-.inventory-table td:nth-child(2) { width: 8%; }
-.inventory-table th:nth-child(3),
-.inventory-table td:nth-child(3) { width: 12%; }
-.inventory-table th:nth-child(4),
-.inventory-table td:nth-child(4) { width: 8%; }
-.inventory-table th:nth-child(5),
-.inventory-table td:nth-child(5) { width: 13%; }
-.inventory-table th:nth-child(6),
-.inventory-table td:nth-child(6) { width: 13%; }
-.inventory-table th:nth-child(7),
-.inventory-table td:nth-child(7) { width: 9%; }
-.inventory-table th:nth-child(8),
-.inventory-table td:nth-child(8) { width: 14%; }
-.inventory-table th:nth-child(n + 2),
-.inventory-table td:nth-child(n + 2) {
-  white-space: nowrap;
-}
-.inventory-table td:first-child > div {
-  min-width: 0;
-}
-.inventory-actions {
-  gap: 6px;
-}
-.inventory-actions .btn-ghost {
-  padding: 7px 9px;
-  font-size: 11.5px;
-  gap: 4px;
-}
-.inventory-filters input,
-.inventory-filters select {
-  box-sizing: border-box;
-  min-height: 42px;
-}
-@media (max-width: 640px) {
-  .inventory-table {
-    min-width: 900px;
-    table-layout: auto;
-  }
-  .inventory-table th,
-  .inventory-table td {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-}
+/* Admin console styles live in app/admin/admin.css (loaded by app/admin/layout.tsx). */
+
 .btn-dark {
   display: inline-flex;
   align-items: center;
@@ -1939,207 +1858,6 @@ a {
   background: var(--hp-red);
   color: #fff;
   border-color: var(--hp-red);
-}
-
-/* Shell nav ---------------------------------------------------------- */
-.admin-shell-bar { border-bottom: 1px solid var(--hp-hair); background: var(--hp-ivory-2); }
-.admin-brand {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: 12.5px;
-  letter-spacing: 0.2em;
-  color: var(--hp-ink);
-}
-.admin-nav-link {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 12.5px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  color: var(--hp-muted);
-  text-decoration: none;
-  transition: 0.2s var(--hp-e);
-}
-.admin-nav-link:hover { color: var(--hp-red); }
-.admin-nav-link.is-active { color: var(--hp-ivory); background: var(--hp-red); }
-
-/* Dashboard ------------------------------------------------------------ */
-.admin-stat {
-  padding: 20px;
-  border: 1px solid var(--hp-hair);
-  border-radius: 4px;
-  background: var(--hp-ivory-2);
-}
-.admin-stat-n {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: 30px;
-  color: var(--hp-red);
-  line-height: 1;
-}
-.admin-stat-l {
-  margin-top: 8px;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--hp-muted);
-}
-.admin-mgr-card {
-  display: block;
-  padding: 26px;
-  border: 1px solid var(--hp-hair);
-  border-radius: 4px;
-  background: var(--hp-ivory-2);
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 0.2s var(--hp-e), transform 0.2s var(--hp-e);
-}
-.admin-mgr-card:hover { border-color: var(--hp-red); transform: translateY(-2px); }
-.admin-mgr-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  background: var(--hp-ink);
-  color: var(--hp-gold-lt);
-}
-.admin-mgr-title {
-  margin-top: 18px;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--hp-ink);
-}
-.admin-mgr-body {
-  margin-top: 8px;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: var(--hp-muted);
-}
-
-/* ---- Shared admin primitives ---------------------------------
-   One vocabulary reused by every admin route (Dashboard/Products/
-   Messages already used the .admin-card look ad-hoc via inline
-   styles; formalized here as real classes so Inventory, Fixtures,
-   Scores, Leaderboards, News, Media and Users can share it too,
-   instead of each hand-rolling its own card/chip/banner Tailwind
-   string). Visual only — no route's CRUD logic changes. */
-.admin-head {
-  margin-bottom: 28px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.admin-head h1 {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: 32px;
-  letter-spacing: -0.02em;
-  color: var(--hp-ink);
-  margin: 0;
-}
-.admin-head p {
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 13.5px;
-  color: var(--hp-muted);
-  margin: 4px 0 0;
-}
-.admin-head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-.admin-card {
-  background: var(--hp-ivory-2);
-  border: 1px solid var(--hp-hair);
-  border-radius: 4px;
-  padding: 20px;
-}
-.admin-card + .admin-card { margin-top: 16px; }
-.admin-card-title {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: 16px;
-  letter-spacing: -0.005em;
-  color: var(--hp-ink);
-  margin: 0 0 4px;
-}
-.admin-card-sub {
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 12.5px;
-  color: var(--hp-muted);
-  margin: 0 0 16px;
-}
-
-.admin-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
-.admin-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 38px;
-  padding: 0 16px;
-  border-radius: 999px;
-  border: 1px solid var(--hp-hair);
-  background: var(--hp-ivory);
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  color: var(--hp-muted);
-  text-decoration: none;
-  cursor: pointer;
-  transition: 0.2s var(--hp-e);
-}
-.admin-chip:hover { border-color: rgba(189, 34, 39, 0.32); color: var(--hp-red); }
-.admin-chip.is-active {
-  background: var(--hp-ink);
-  color: var(--hp-ivory);
-  border-color: var(--hp-ink);
-}
-
-.admin-banner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-radius: 4px;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  margin-bottom: 16px;
-}
-.admin-banner.is-success { background: rgba(14, 138, 79, 0.1); color: #0e8a4f; }
-.admin-banner.is-error { background: rgba(189, 34, 39, 0.08); color: var(--hp-red); }
-
-.admin-empty {
-  padding: 52px 20px;
-  text-align: center;
-}
-.admin-empty p {
-  margin: 0;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 13.5px;
-  color: var(--hp-muted);
-}
-
-.admin-cell-input {
-  width: 100%;
-  padding: 7px 9px;
-  border: 1px solid var(--hp-hair);
-  border-radius: 6px;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 13.5px;
-  background: #fff;
-  color: var(--hp-ink);
-  outline: none;
-  transition: border-color 0.2s var(--hp-e), box-shadow 0.2s var(--hp-e);
-}
-.admin-cell-input:focus {
-  border-color: var(--hp-red);
-  box-shadow: 0 0 0 3px rgba(189, 34, 39, 0.1);
 }
 
 /* =====================================================
@@ -9263,295 +8981,110 @@ a:hover .hp-arrow {
 }
 
 /* ---- Newsroom -----------------------------------------------
-   /news is a front page, not a blog index. Three devices, all
-   scoped to `.nwr-*` so nothing here can reach another route:
+   /news · Media coverage — the press index. Scoped to `.nwr-*` so
+   nothing here can reach another route.
 
-     .nwr-hero   the cover story, composed inside `.cm-hero`
-     .nwr-index  the editorial index (filter)
-     .nwr-lead / .nwr-mid / .nwr-row   the ranked story flow
-
-   Weight is the whole point of the layout: the reader should be
-   able to tell what matters most without reading a word. So the
-   three story tiers differ in image size, type size and density,
-   and only the tiers differ — the type family, the colour roles,
-   the rules and the hover behaviour are the same across all of
-   them, and the same as the rest of the site.
+   One uniform tier: every entry is the same medium item, identical
+   in size, so the reader compares publishers and headlines rather
+   than frame sizes. Order is carried by the gold ordinal. The type
+   family, the colour roles, the rules and the hover behaviour are
+   the same as the rest of the site.
 
    Palette is ink / ivory / crimson / gold only, taken from the
    `--v-*` tokens. No new colours are introduced here.
 ------------------------------------------------------------- */
 
-/* ---- Cover story --------------------------------------------
-   The section itself carries `.cm-hero`, so the frame height,
-   header clearance, media, veil, aurora and grain are the shared
-   story-hero rules. Everything below re-composes the INSIDE of
-   that frame into a masthead at the top and a cover story at the
-   foot, which `.cm-hero`'s own bottom-aligned single block could
-   not express. */
-.nwr-hero {
-  align-items: stretch;
-  height: 100vh;
-  min-height: 100vh;
-}
-.nwr-hero-inner {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--sp-8);
-  width: 100%;
-}
-
-/* Crop: the subject of a landscape golf photograph sits above the
-   horizon, and the type sits along the bottom edge — so the frame
-   holds slightly above centre on desktop and higher still on
-   phones, where the frame is much taller than it is wide and a
-   centred crop would push the subject behind the headline. */
-.nwr-hero-img {
-  object-fit: cover;
-  object-position: 50% 38%;
-}
-@media (min-width: 768px) {
-  .nwr-hero-img { object-position: 50% 42%; }
-}
-@media (min-width: 1280px) {
-  .nwr-hero-img { object-position: 50% 46%; }
-}
-
-/* One extra scrim under the foot only. `.cm-hero-veil` is tuned for
-   a short display word; this frame carries a wire headline, a meta
-   line and a button down there, so the bottom third is taken a
-   little further down for contrast without flattening the picture. */
-.nwr-hero-veil {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(14, 11, 10, 0.62) 0%,
-      rgba(14, 11, 10, 0.1) 26%,
-      rgba(14, 11, 10, 0.52) 64%,
-      rgba(14, 11, 10, 0.92) 100%
-    ),
-    linear-gradient(
-      92deg,
-      rgba(14, 11, 10, 0.74) 0%,
-      rgba(14, 11, 10, 0.26) 46%,
-      rgba(14, 11, 10, 0) 78%
-    );
-}
-
-.nwr-hero-top {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-5);
-}
-@media (min-width: 768px) {
-  .nwr-hero-top {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--sp-7);
-  }
-}
-.nwr-hero-id { min-width: 0; }
-.nwr-hero-eyebrow { margin-bottom: var(--sp-3); }
-
-/* The masthead names the page; the cover story below it is the
-   larger type. Deliberate: this is a front page, so the story wins
-   the eye and the masthead only has to be unmistakable. */
-.nwr-hero-mast {
-  margin: 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(38px, 7.4vw, 78px);
-  line-height: 0.9;
-  letter-spacing: -0.05em;
-  color: var(--v-ivory);
-}
-/* `.mq-line` pads its mask for display type set at a line-height below 1.
-   At this weight and size the default 0.16em was two pixels short from
-   1280px up, so the mask was clipping the foot of the word. Widened here
-   rather than in `.mq-line`, which every other hero shares. */
-.nwr-hero-mast .mq-line {
-  padding-bottom: 0.24em;
-  margin-bottom: -0.24em;
-}
-
-/* Counted facts only — how many entries the desk actually holds in
-   each of its three authorships, featured included. Nothing here is
-   derived or rounded. */
-.nwr-hero-rail {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-5);
-  margin: 0;
-  padding-top: var(--sp-4);
-  border-top: 1px solid var(--v-hair-ink);
-}
-@media (min-width: 768px) {
-  .nwr-hero-rail {
-    gap: var(--sp-6);
-    padding-top: var(--sp-3);
-    border-top: 0;
-  }
-}
-.nwr-hero-rail dt {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-gold-lit);
-}
-.nwr-hero-rail dd {
-  margin: 4px 0 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(20px, 2vw, 26px);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.03em;
-  color: var(--v-ivory);
-}
-
-.nwr-hero-foot {
-  display: grid;
-  gap: var(--sp-5);
-  padding-top: var(--sp-5);
-  border-top: 1px solid var(--v-hair-ink);
-}
-@media (min-width: 1024px) {
-  .nwr-hero-foot {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    column-gap: var(--sp-8);
-  }
-}
-.nwr-hero-story { min-width: 0; }
-
-.nwr-hero-kick {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-3);
-  margin: 0 0 var(--sp-4);
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-gold-lit);
-}
-/* Crimson fill = the franchise's own flag on the cover story. The
-   authorship of the story itself is carried by the words next to
-   it, never by this colour alone. */
-.nwr-hero-flag {
-  padding: 5px 10px 4px;
-  background: var(--v-red);
-  color: var(--v-ivory);
-}
-.nwr-hero-meta { color: var(--v-on-ink); }
-
-.nwr-hero-t {
-  max-width: 20ch;
-  margin: 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(27px, 4vw, 56px);
-  line-height: 1.02;
-  letter-spacing: var(--tr-h2);
-  text-wrap: balance;
-  color: var(--v-ivory);
-}
-@media (min-width: 768px) {
-  .nwr-hero-t { max-width: 24ch; }
-}
-
-.nwr-hero-act { margin: 0; }
-@media (min-width: 1024px) {
-  .nwr-hero-act { justify-self: end; }
-}
-
-/* No `is-plain` rules are needed here: a cover story with no stored
-   image falls through to `.cm-hero.is-plain`, which already drops the
-   frame to a compact height and lightens the veil for the ink-and-
-   aurora ground. Same treatment /players uses. */
-
 /* ---- Section rhythm -----------------------------------------
-   One long editorial flow rather than heading / cards / heading /
-   cards, so the page reads as a curated front page. */
+   The press index sits under its own chapter head, with no filter
+   between them: official rows render in their own section, so this
+   list only ever holds one channel and had nothing left to filter. */
 .nwr-sec .nw-head { margin-bottom: var(--sp-6); }
 
-/* ---- Editorial index ----------------------------------------
-   Text links on a rule with an active underline, not a row of
-   pills. Scrolls horizontally on narrow phones inside its own box
-   so it can never push the page sideways. */
-.nwr-index {
-  border-top: 1px solid var(--v-ink);
-  border-bottom: 1px solid var(--v-hair-ivory);
-  margin-bottom: var(--sp-7);
-}
-.nwr-index-l {
-  display: flex;
-  gap: var(--sp-5);
+/* ---- Media coverage — one uniform tier -------------------------
+   Every entry is the same medium item, by request: a 16:9 frame,
+   authorship, headline, summary, source link — identical in size
+   for every row. One column on phones, two from 768px, three from
+   1024px. Order is carried by the gold ordinal, not by size. */
+.nwr-mids {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-7);
   margin: 0;
   padding: 0;
   list-style: none;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
-.nwr-index-l::-webkit-scrollbar { display: none; }
 @media (min-width: 768px) {
-  .nwr-index-l { gap: var(--sp-7); overflow-x: visible; }
+  .nwr-mids {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-7) var(--sp-6);
+  }
 }
-.nwr-index-l > li { flex: none; }
-.nwr-index-b {
+@media (min-width: 1024px) {
+  .nwr-mids {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-8) var(--sp-6);
+  }
+}
+.nwr-mid-w { min-width: 0; }
+.nwr-mid {
   display: block;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+.nwr-mid:focus-visible { outline: 2px solid var(--v-red); outline-offset: 6px; }
+/* 3:2 on phones, where a 16:9 strip in a 335px column is too shallow
+   to read as a photograph; 16:9 from tablet up. The same ratio for
+   every entry at every breakpoint. */
+.nwr-mid-fig {
   position: relative;
-  padding: var(--sp-4) 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  white-space: nowrap;
-  font-family: var(--font-manrope), sans-serif;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: var(--ar-classic);
+  background: var(--v-ink-2);
+}
+@media (min-width: 768px) {
+  .nwr-mid-fig { aspect-ratio: var(--ar-wide); }
+}
+.nwr-mid-fig img {
+  object-fit: cover;
+  object-position: 50% 32%;
+  transition: transform var(--mo-cine) var(--ease);
+}
+.nwr-mid-fig .nwr-mark { font-size: clamp(30px, 4vw, 52px); }
+.nwr-mid:hover .nwr-mid-fig img { transform: scale(1.04); }
+.nwr-mid-b { display: block; min-width: 0; padding-top: var(--sp-4); }
+.nwr-mid-b .nwr-meta { margin-top: var(--sp-3); }
+.nwr-mid-t {
+  display: block;
+  margin-top: var(--sp-3);
+  font-family: var(--font-sora), sans-serif;
   font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
+  font-size: clamp(19px, 1.9vw, 24px);
+  line-height: 1.16;
+  letter-spacing: var(--tr-h2);
+  color: var(--v-ink);
+  transition: color var(--mo-mid) var(--ease);
+}
+.nwr-mid:hover .nwr-mid-t { color: var(--v-red); }
+.nwr-mid-s {
+  /* Three lines of the stored summary, then it stops — the full text
+     lives at the source, which is one click away. Truncation only:
+     no sentence is ever rewritten or shortened in the data. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: var(--sp-3);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-meta);
+  line-height: 1.62;
   color: var(--v-on-ivory);
-  transition: color var(--mo-fast) var(--ease);
 }
-.nwr-index-b::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  background: var(--v-gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--mo-mid) var(--ease);
-}
-.nwr-index-b:hover { color: var(--v-ink); }
-.nwr-index-b:focus-visible {
-  outline: 2px solid var(--v-red);
-  outline-offset: -2px;
-}
-/* The active desk is marked twice — colour AND the underline — so
-   the state is never carried by hue alone. */
-.nwr-index-b.is-on { color: var(--v-red); }
-.nwr-index-b.is-on::after { transform: scaleX(1); }
-@media (prefers-reduced-motion: reduce) {
-  .nwr-index-b::after { transition: none; }
-}
+.nwr-mid-b .nwr-go { margin-top: var(--sp-4); }
+.nwr-mid:hover .nwr-go i { transform: translateX(4px); }
 
 /* ---- Shared story parts -------------------------------------- */
-.nwr-flow { min-width: 0; }
-/* The filter's polite status line — announced, never drawn. */
-.nwr-sr {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-}
 .nwr-sep { font-style: normal; margin: 0 6px; opacity: 0.55; }
 
 .nwr-n {
@@ -9565,8 +9098,8 @@ a:hover .hp-arrow {
 }
 
 /* Authorship line. The classification word is crimson and always
-   first, so "Official" and "Media coverage" can never be read as
-   the same thing at a glance. */
+   first, so the publisher is never mistaken for the author of the
+   franchise's own news. */
 .nwr-meta {
   display: block;
   font-family: var(--font-manrope), sans-serif;
@@ -9608,215 +9141,9 @@ a:hover .hp-arrow {
   transition: transform var(--mo-mid) var(--ease);
 }
 
-/* ---- Lead story ---------------------------------------------- */
-.nwr-lead-w { min-width: 0; }
-.nwr-lead {
-  display: grid;
-  gap: var(--sp-5);
-  min-width: 0;
-  padding-bottom: var(--sp-7);
-  border-bottom: 1px solid var(--v-hair-ivory);
-  text-decoration: none;
-  color: inherit;
-}
-@media (min-width: 768px) {
-  .nwr-lead {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    align-items: start;
-    column-gap: var(--sp-8);
-  }
-}
-.nwr-lead-fig {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  aspect-ratio: var(--ar-classic);
-  background: var(--v-ink-2);
-}
-@media (min-width: 768px) {
-  .nwr-lead-fig { aspect-ratio: var(--ar-wide); }
-}
-.nwr-lead-fig img {
-  object-fit: cover;
-  object-position: 50% 40%;
-  transition: transform var(--mo-cine) var(--ease);
-}
-.nwr-lead-fig .nwr-mark { font-size: clamp(44px, 7vw, 92px); }
-.nwr-lead:hover .nwr-lead-fig img { transform: scale(1.04); }
-.nwr-lead:focus-visible { outline: 2px solid var(--v-red); outline-offset: 6px; }
-
-.nwr-lead-b { display: block; min-width: 0; }
-.nwr-lead-b .nwr-meta { margin-top: var(--sp-3); }
-.nwr-lead-t {
-  display: block;
-  margin-top: var(--sp-4);
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(25px, 3.2vw, 44px);
-  line-height: 1.06;
-  letter-spacing: var(--tr-h2);
-  text-wrap: balance;
-  color: var(--v-ink);
-  transition: color var(--mo-mid) var(--ease);
-}
-.nwr-lead:hover .nwr-lead-t { color: var(--v-red); }
-.nwr-lead-s {
-  display: block;
-  max-width: 46ch;
-  margin-top: var(--sp-4);
-  font-family: var(--font-manrope), sans-serif;
-  font-size: var(--t-body);
-  line-height: 1.65;
-  color: var(--v-on-ivory);
-}
-.nwr-lead-b .nwr-go { margin-top: var(--sp-5); }
-.nwr-lead:hover .nwr-go i { transform: translateX(4px); }
-
-/* ---- Medium stories ------------------------------------------ */
-.nwr-mids {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-7);
-  margin: var(--sp-7) 0 0;
-  padding: 0;
-  list-style: none;
-}
-@media (min-width: 768px) {
-  .nwr-mids {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--sp-6);
-  }
-}
-@media (min-width: 1280px) {
-  .nwr-mids { gap: var(--sp-8); }
-}
-.nwr-mid-w { min-width: 0; }
-.nwr-mid {
-  display: block;
-  min-width: 0;
-  text-decoration: none;
-  color: inherit;
-}
-.nwr-mid:focus-visible { outline: 2px solid var(--v-red); outline-offset: 6px; }
-/* Same ratio as the lead at every breakpoint — the tiers differ in SIZE,
-   not in shape, so the page never looks like a set of mismatched crops.
-   Without the widescreen step the two-up mids grew taller than the lead
-   figure from 1280px up and flattened the hierarchy the layout exists to
-   express. */
-.nwr-mid-fig {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  aspect-ratio: var(--ar-classic);
-  background: var(--v-ink-2);
-}
-@media (min-width: 768px) {
-  .nwr-mid-fig { aspect-ratio: var(--ar-wide); }
-}
-.nwr-mid-fig img {
-  object-fit: cover;
-  object-position: 50% 32%;
-  transition: transform var(--mo-cine) var(--ease);
-}
-.nwr-mid-fig .nwr-mark { font-size: clamp(30px, 4vw, 52px); }
-.nwr-mid:hover .nwr-mid-fig img { transform: scale(1.04); }
-.nwr-mid-b { display: block; min-width: 0; padding-top: var(--sp-4); }
-.nwr-mid-b .nwr-meta { margin-top: var(--sp-3); }
-.nwr-mid-t {
-  display: block;
-  margin-top: var(--sp-3);
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(19px, 1.9vw, 26px);
-  line-height: 1.16;
-  letter-spacing: var(--tr-h2);
-  color: var(--v-ink);
-  transition: color var(--mo-mid) var(--ease);
-}
-.nwr-mid:hover .nwr-mid-t { color: var(--v-red); }
-.nwr-mid-s {
-  /* Three lines of the stored summary, then it stops — the full text
-     lives at the source, which is one click away. Truncation only:
-     no sentence is ever rewritten or shortened in the data. */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-top: var(--sp-3);
-  font-family: var(--font-manrope), sans-serif;
-  font-size: var(--t-meta);
-  line-height: 1.62;
-  color: var(--v-on-ivory);
-}
-
-/* ---- Compact rows -------------------------------------------- */
-.nwr-rows {
-  margin: var(--sp-7) 0 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--v-ink);
-}
-.nwr-rows > li { border-bottom: 1px solid var(--v-hair-ivory); }
-.nwr-row {
-  display: grid;
-  grid-template-columns: 24px 88px minmax(0, 1fr) auto;
-  align-items: center;
-  column-gap: var(--sp-4);
-  row-gap: var(--sp-3);
-  padding: var(--sp-4) 0;
-  text-decoration: none;
-  color: inherit;
-  transition: padding-left var(--mo-mid) var(--ease);
-}
-@media (min-width: 560px) {
-  .nwr-row {
-    grid-template-columns: auto auto minmax(0, 1fr) auto;
-    column-gap: var(--sp-5);
-    padding: var(--sp-5) 0;
-  }
-}
-@media (min-width: 1024px) {
-  .nwr-row { column-gap: var(--sp-6); }
-}
-.nwr-row:hover { padding-left: var(--sp-3); }
-.nwr-row:focus-visible { outline: 2px solid var(--v-red); outline-offset: -2px; }
-.nwr-row-fig {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  width: 88px;
-  aspect-ratio: var(--ar-classic);
-  background: var(--v-ink-2);
-}
-@media (min-width: 560px) { .nwr-row-fig { width: 104px; } }
-@media (min-width: 1024px) { .nwr-row-fig { width: 132px; } }
-@media (min-width: 1280px) { .nwr-row-fig { width: 150px; } }
-.nwr-row-fig img {
-  object-fit: cover;
-  object-position: 50% 28%;
-  transition: transform var(--mo-cine) var(--ease);
-}
-.nwr-row-fig .nwr-mark { font-size: clamp(18px, 2vw, 26px); }
-.nwr-row:hover .nwr-row-fig img { transform: scale(1.04); }
-.nwr-row-b { min-width: 0; }
-.nwr-row-t {
-  display: block;
-  margin-top: var(--sp-2);
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(16.5px, 1.7vw, 22px);
-  line-height: 1.2;
-  letter-spacing: -0.024em;
-  color: var(--v-ink);
-  transition: color var(--mo-mid) var(--ease);
-}
-.nwr-row:hover .nwr-row-t { color: var(--v-red); }
-.nwr-row-go { color: var(--v-gold); }
-
-/* ---- Empty desks --------------------------------------------
-   Shown when a filter has nothing behind it, or when the whole
-   desk is empty. It states the position; it never fills the space
-   with an example story. */
+/* ---- Empty desk ---------------------------------------------
+   Shown by the page when the whole desk is empty. It states the
+   position; it never fills the space with an example story. */
 .nwr-empty {
   border-top: 1px solid var(--v-gold);
   padding-top: var(--sp-6);
@@ -9871,31 +9198,17 @@ a:hover .hp-arrow {
 }
 
 /* ---- Reduced motion -------------------------------------------
-   The entrance choreography is already a no-op under this setting
-   (the GSAP primitives and `Reveal` both bail out). These are the
-   hover transitions, which are not: the slow image push-in and the
-   row's indent both animate on pointer-over, so they are switched
-   to an instant state change rather than removed — the affordance
+   The entrance is already a no-op under this setting (`Reveal` bails
+   out). These are the hover transitions, which are not: switched to
+   an instant state change rather than removed — the affordance
    stays, the movement does not. */
 @media (prefers-reduced-motion: reduce) {
-  .nwr-lead-fig img,
   .nwr-mid-fig img,
-  .nwr-row-fig img,
-  .nwr-lead-t,
   .nwr-mid-t,
-  .nwr-row-t,
-  .nwr-index-b,
-  .nwr-go i {
-    transition: none;
-  }
-  .nwr-row { transition: none; }
-  .nwr-lead:hover .nwr-lead-fig img,
+  .nwr-go i { transition: none; }
   .nwr-mid:hover .nwr-mid-fig img,
-  .nwr-row:hover .nwr-row-fig img { transform: none; }
-  .nwr-lead:hover .nwr-go i { transform: none; }
-  .nwr-row:hover { padding-left: 0; }
+  .nwr-mid:hover .nwr-go i { transform: none; }
 }
-
 
 /* ============================================================
    PARTNERS — /partners
@@ -14474,50 +13787,45 @@ a:hover .hp-arrow {
 /* ============================================================
    NEWS · 14 AUGUST 2026 — A DAY IN THE DEN
    ------------------------------------------------------------
-   An activity chapter inside /news, rendered by
-   components/news/DayInTheDen.tsx. Scoped to `.den-*`; nothing
-   here is used by the news desk below it or by any other route.
+   Scoped to `.den-*`, rendered by components/news/DayInTheDen.tsx.
+   Nothing here reaches the news desks either side of it or any
+   other route.
 
-   Set on INK inside an otherwise light page. The chapter is
-   carried by two large photographs, and a dark ground is what
-   lets them read as photography rather than as illustrations
-   dropped into a column of body copy — it also separates the
-   feature from the verified news record beneath it without a
-   single divider.
+   Set on INK, and built from two different film idioms so the two
+   moments never read as one block repeated:
 
-   THE TWO MOMENTS ARE BUILT AS OPPOSITES, not as a mirrored
-   pair, because a repeated image/text block twice over is
-   exactly the "two cards" result this chapter exists to avoid:
+     01 MORNING   THE WIDE SHOT — an edge-to-edge frame at near full
+                  viewport height (the site's `.cm-full` idiom:
+                  parallax headroom, bottom-weighted veil, grain),
+                  with the title card INSIDE the frame, lower-left,
+                  over the grass. The player and guests sit in the
+                  upper two-thirds of this crop; no type touches them.
 
-     01 MORNING  narrow text rail LEFT, 4/3 frame RIGHT breaking
-                 out through the right gutter, text hung from the
-                 TOP of the frame.
-     02 EVENING  wider, shorter 16/9 frame LEFT breaking out
-                 through the left gutter, text RIGHT, sitting on
-                 the FOOT of the frame.
+     02 EVENING   THE PROJECTED STILL — a 21:9 letterboxed frame
+                  inset on the grid, the page's own gutters as its
+                  black bars, and the caption BELOW it on the right.
+                  No type sits on this photograph at all.
 
-   Different side, different ratio, different vertical anchor —
-   one system, two distinct moments.
-
-   The break-out is measured against `.hp-wrap`'s own gutter, so
-   a frame runs into the page margin and stops there. It never
-   uses viewport units, which is why the section cannot produce a
-   horizontal scrollbar at any width.
+   Colour is ink / ivory / crimson / gold only. The only drawn
+   structure is one hairline in the chapter head and the gold index
+   marks on the frames.
 ============================================================ */
 
 .den-sec {
-  /* Belt and braces against the break-out below. */
+  position: relative;
   overflow-x: clip;
-  --den-gutter: 20px;
+  background: var(--v-ink);
+  color: var(--v-ivory);
 }
-@media (min-width: 768px)  { .den-sec { --den-gutter: 40px; } }
-@media (min-width: 1280px) { .den-sec { --den-gutter: 64px; } }
-@media (min-width: 1600px) { .den-sec { --den-gutter: 80px; } }
 
-/* ---- Chapter head ---------------------------------------------- */
-.den-head { margin-bottom: var(--sp-8); }
-
-/* The dated top rail: stamp, hairline, chapter name. */
+/* ---- Chapter head ------------------------------------------------ */
+.den-head {
+  padding-top: var(--sp-8);
+  padding-bottom: var(--sp-7);
+}
+@media (min-width: 768px) {
+  .den-head { padding-top: var(--sp-9); padding-bottom: var(--sp-8); }
+}
 .den-rail {
   display: flex;
   align-items: center;
@@ -14534,20 +13842,16 @@ a:hover .hp-arrow {
   font-variant-numeric: tabular-nums;
   color: var(--v-gold-lit);
 }
-.den-rule {
-  flex: 1 1 auto;
-  height: 1px;
-  background: var(--v-hair-ink);
-}
+.den-rule { flex: 1 1 auto; height: 1px; background: var(--v-hair-ink); }
 .den-rail-k { flex: none; color: var(--v-on-ink); }
 
 .den-title {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(38px, 8.4vw, 118px);
-  line-height: 0.9;
-  letter-spacing: -0.05em;
+  font-size: clamp(40px, 9vw, 128px);
+  line-height: 0.88;
+  letter-spacing: -0.052em;
   color: var(--v-ivory);
 }
 .den-title > span { display: block; }
@@ -14561,54 +13865,8 @@ a:hover .hp-arrow {
   color: var(--v-red-lit);
 }
 
-/* ---- Moments --------------------------------------------------- */
-.den-moments {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--sp-9);
-}
-.den-moment { min-width: 0; }
-
-/* The frame. Ratio is set per moment below — this is only the
-   shared treatment: no border, no radius, no shadow, and a gold
-   index edge that marks the frame without enclosing it. */
-.den-fig {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  margin: 0 0 var(--sp-6);
-  background: var(--v-ink-2);
-  /* Taller on phones. A 16/9 frame in a 335px column is 188px of
-     photograph, which turns the hero of each moment into a strip — the
-     ratio opens out as the column widens instead. The two moments keep a
-     ratio of their own at every breakpoint so the pair never reads as one
-     block repeated, even in the single-column mobile sequence. */
-  aspect-ratio: 4 / 3;
-}
-.den-moment-2 .den-fig { aspect-ratio: var(--ar-classic); }
-.den-fig img {
-  object-fit: cover;
-  transition: transform var(--mo-cine) var(--ease);
-}
-.den-fig::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  width: 84px;
-  height: 3px;
-  background: var(--v-gold);
-}
-/* The marker sits on the edge the frame breaks out through, so it
-   reads as the frame's index rather than as a stray underline. */
-.den-moment-1 .den-fig::after { right: 0; }
-.den-moment-2 .den-fig::after { left: 0; }
-
-@media (hover: hover) and (pointer: fine) {
-  .den-moment:hover .den-fig img { transform: scale(1.03); }
-}
-
-/* ---- Moment copy ------------------------------------------------ */
-.den-body { min-width: 0; }
+/* ---- Shared type ------------------------------------------------- */
+.den-card { min-width: 0; }
 .den-mark {
   display: flex;
   align-items: baseline;
@@ -14618,7 +13876,7 @@ a:hover .hp-arrow {
 .den-n {
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(28px, 3.6vw, 44px);
+  font-size: clamp(26px, 3.2vw, 40px);
   line-height: 1;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
@@ -14636,18 +13894,17 @@ a:hover .hp-arrow {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(26px, 4.4vw, 54px);
-  line-height: 1.02;
+  line-height: 1;
   letter-spacing: var(--tr-h2);
   text-wrap: balance;
   color: var(--v-ivory);
 }
 .den-d {
   margin: var(--sp-4) 0 0;
-  max-width: 44ch;
+  max-width: 42ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
-  line-height: 1.72;
+  line-height: 1.7;
   color: var(--v-on-ink);
 }
 .den-foot {
@@ -14660,72 +13917,380 @@ a:hover .hp-arrow {
   color: var(--v-on-ink-faint);
 }
 
-/* ---- 768px+: the frames start to breathe ------------------------ */
+/* ---- 01 · THE WIDE SHOT ------------------------------------------ */
+.den-wide {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(560px, 88svh, 920px);
+  padding: var(--sp-8) 0 var(--sp-8);
+  background: var(--v-ink);
+}
 @media (min-width: 768px) {
-  .den-moments { row-gap: var(--sp-10); }
-  .den-moment-1 .den-fig { aspect-ratio: var(--ar-classic); }
-  .den-moment-2 .den-fig { aspect-ratio: var(--ar-wide); }
+  .den-wide { padding-bottom: var(--sp-9); }
 }
-
-/* ---- 1024px+: the asymmetric composition ------------------------
-   Each moment becomes a 12-column field of its own, so the two can
-   be laid out as opposites while both still sit on the page's one
-   grid. */
+.den-wide-media {
+  position: absolute;
+  /* Headroom for the 4% parallax so no edge is ever exposed. */
+  inset: -7% 0;
+  z-index: -2;
+  overflow: hidden;
+}
+.den-wide-media img {
+  object-fit: cover;
+  /* The frame's own subject sits upper-centre in this crop; the origin
+     holds the player's head well inside every viewport ratio. */
+}
+/* Two crossed scrims: the lower third is held down for the title card,
+   the left edge a little more so the card's measure never sits on open
+   sky. Kept light elsewhere — the picture must stay a picture. */
+.den-wide-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14, 11, 10, 0.34) 0%,
+      rgba(14, 11, 10, 0.04) 26%,
+      rgba(14, 11, 10, 0.42) 62%,
+      rgba(14, 11, 10, 0.92) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(14, 11, 10, 0.5) 0%,
+      rgba(14, 11, 10, 0.12) 46%,
+      rgba(14, 11, 10, 0) 72%
+    );
+}
+.den-wide-inner {
+  position: relative;
+  width: 100%;
+  row-gap: 0;
+}
+.den-card-wide {
+  grid-column: 1 / -1;
+}
+.den-card-wide .den-h { font-size: clamp(34px, 6vw, 80px); }
+.den-card-wide .den-d {
+  max-width: 44ch;
+  color: rgba(245, 239, 228, 0.82);
+}
+@media (min-width: 768px) {
+  .den-card-wide { grid-column: 1 / span 6; }
+}
 @media (min-width: 1024px) {
-  .den-moments { row-gap: var(--sp-11); }
+  .den-card-wide { grid-column: 1 / span 7; }
+  .den-card-wide .den-h { font-size: clamp(44px, 5vw, 76px); }
+}
+/* The date stamp as a corner mark on the frame's top-right, sitting on
+   the grid's right edge at every gutter width. */
+.den-wide-stamp {
+  position: absolute;
+  top: var(--sp-6);
+  right: 20px;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold-lit);
+}
+@media (min-width: 768px)  { .den-wide-stamp { right: 40px; top: var(--sp-7); } }
+@media (min-width: 1280px) { .den-wide-stamp { right: 64px; } }
+@media (min-width: 1600px) { .den-wide-stamp { right: calc((100% - 1560px) / 2 + 80px); } }
 
-  .den-moment {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+/* ---- 02 · THE PROJECTED STILL ------------------------------------ */
+.den-still {
+  padding: var(--sp-9) 0 var(--sp-9);
+}
+@media (min-width: 768px) {
+  .den-still { padding: var(--sp-10) 0; }
+}
+.den-still-fig {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  margin: 0;
+  /* Cinemascope on tablet and up. Phones get a 16/9 — a 21/9 strip in a
+     335px column is 143px of photograph, which turns the still into a
+     banner; the ratio narrows as the frame widens instead. */
+  aspect-ratio: var(--ar-wide);
+  background: var(--v-ink-2);
+}
+@media (min-width: 768px) {
+  .den-still-fig { aspect-ratio: var(--ar-cinema); }
+}
+.den-still-fig img { object-fit: cover; }
+/* A soft vignette so the frame's edges sit into the ink rather than
+   cutting against it — the letterbox reads as projected, not pasted. */
+.den-still-fig::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(14, 11, 10, 0.34) 0%, transparent 14%, transparent 86%, rgba(14, 11, 10, 0.34) 100%),
+    linear-gradient(180deg, rgba(14, 11, 10, 0.18) 0%, transparent 18%, transparent 82%, rgba(14, 11, 10, 0.3) 100%);
+}
+/* Gold index on the frame's top-left corner. */
+.den-still-index {
+  position: absolute;
+  top: var(--sp-4);
+  left: var(--sp-4);
+  z-index: 1;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold-lit);
+}
+@media (min-width: 768px) {
+  .den-still-index { top: var(--sp-5); left: var(--sp-5); }
+}
+.den-still-caption {
+  margin-top: var(--sp-6);
+  row-gap: 0;
+}
+.den-card-still { grid-column: 1 / -1; }
+.den-card-still .den-h { font-size: clamp(28px, 4.6vw, 56px); }
+@media (min-width: 768px) {
+  .den-still-caption { margin-top: var(--sp-7); }
+  .den-card-still { grid-column: 3 / -1; }
+}
+@media (min-width: 1024px) {
+  .den-card-still { grid-column: 7 / -1; }
+  .den-card-still .den-h { font-size: clamp(30px, 3.1vw, 48px); }
+  .den-card-still .den-d { max-width: 40ch; }
+}
+
+/* ---- Reduced motion ---------------------------------------------- */
+/* The GSAP work is never built under this setting (the effect returns
+   before registering anything), so nothing can be left at opacity 0 or
+   mid-clip. There are no CSS transitions in this chapter to disable. */
+
+/* ============================================================
+   NEWS · 01 OFFICIAL NEWS
+   ------------------------------------------------------------
+   Scoped to `.onw-*`, rendered by components/news/OfficialNews.tsx
+   inside the shared `<Section>`. Nothing here reaches the press
+   index, the activity chapter or any other route.
+
+   One register, identical frames. Every official story is a ruled
+   row on the 12-column `.cm-track`: a 3:2 frame on columns 1–5, the
+   copy on 7–12, a hairline between rows. The frame is the SAME size
+   for every story — the operator asked for that — so order is
+   carried by the gold ordinal and the ruling rather than by one
+   photograph out-weighing another.
+
+   Ink / ivory / crimson / gold only. No panels, no shadows, no
+   radius. Hairlines are the section's only drawn structure.
+============================================================ */
+
+.onw-head { margin-bottom: var(--sp-7); }
+.onw-head .hp-section-title { font-size: clamp(34px, 5.2vw, 72px); }
+@media (min-width: 1024px) {
+  .onw-head { margin-bottom: var(--sp-8); }
+}
+
+/* ---- The register ------------------------------------------------ */
+.onw-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--v-ink);
+}
+.onw-rows > li { border-bottom: 1px solid var(--v-hair-ivory); }
+.onw-row {
+  display: grid;
+  row-gap: var(--sp-5);
+  padding: var(--sp-6) 0;
+  text-decoration: none;
+  color: inherit;
+}
+.onw-row > * { grid-column: 1 / -1; min-width: 0; }
+.onw-row:focus-visible { outline: 2px solid var(--v-red); outline-offset: -2px; }
+
+/* ---- The frame ----------------------------------------------------
+   3:2 for every row. Full column on phones; five of twelve columns
+   from 1024px. No border, no radius, no shadow — a gold foot on the
+   left edge is the only mark. */
+.onw-fig {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: var(--ar-classic);
+  background: var(--v-ink-2);
+}
+.onw-fig img {
+  object-fit: cover;
+  transition: transform var(--mo-cine) var(--ease);
+}
+.onw-fig::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 30%;
+  height: 3px;
+  background: var(--v-gold);
+  transition: width var(--mo-cine) var(--ease);
+}
+
+/* ---- The copy ----------------------------------------------------- */
+.onw-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+.onw-n {
+  display: block;
+  margin-bottom: var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 3.6vw, 46px);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold);
+}
+/* Authorship line — the classification word is crimson and always
+   first, so "Official" is read before the outlet's name. */
+.onw-meta {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-on-ivory);
+}
+.onw-meta-k { color: var(--v-red); }
+.onw-meta-s { color: var(--v-ink); }
+.onw-t {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 2.8vw, 38px);
+  line-height: 1.06;
+  letter-spacing: var(--tr-h2);
+  text-wrap: balance;
+  color: var(--v-ink);
+  transition: color var(--mo-mid) var(--ease);
+}
+.onw-s {
+  display: block;
+  max-width: 48ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.68;
+  color: var(--v-on-ivory);
+}
+.onw-go {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--v-ink);
+}
+.onw-go i {
+  font-style: normal;
+  color: var(--v-gold);
+  transition: transform var(--mo-mid) var(--ease);
+}
+
+/* ---- Hover ------------------------------------------------------- */
+@media (hover: hover) and (pointer: fine) {
+  .onw-row:hover .onw-fig img { transform: scale(1.03); }
+  .onw-row:hover .onw-fig::after { width: 46%; }
+  .onw-row:hover .onw-t { color: var(--v-red); }
+  .onw-row:hover .onw-go i { transform: translateX(4px); }
+}
+
+/* ---- 768px+: frame beside the copy -------------------------------- */
+@media (min-width: 768px) {
+  .onw-row {
+    row-gap: 0;
     column-gap: var(--sp-6);
+    align-items: start;
+    padding: var(--sp-7) 0;
   }
-
-  /* 01 — text rail left, tall frame right, text hung from the top.
-     The frame runs past the content column into the page margin. */
-  .den-moment-1 .den-body {
-    grid-column: 1 / span 4;
-    grid-row: 1;
-    align-self: start;
-  }
-  .den-moment-1 .den-fig {
-    grid-column: 6 / -1;
-    grid-row: 1;
-    margin: 0;
-    margin-right: calc(-1 * var(--den-gutter));
-    aspect-ratio: 4 / 3;
-  }
-
-  /* 02 — wide frame left breaking out through the LEFT margin, text
-     right, and the text sits on the frame's FOOT rather than its
-     head. That flip is what stops the pair reading as one block
-     repeated twice. */
-  .den-moment-2 .den-fig {
-    grid-column: 1 / span 8;
-    grid-row: 1;
-    margin: 0;
-    margin-left: calc(-1 * var(--den-gutter));
-    aspect-ratio: var(--ar-wide);
-  }
-  .den-moment-2 .den-body {
-    grid-column: 9 / -1;
-    grid-row: 1;
-    align-self: end;
-  }
-
-  .den-moment-2 .den-h { font-size: clamp(26px, 2.9vw, 40px); }
-  .den-moment-2 .den-d { max-width: 34ch; }
+  .onw-fig { grid-column: 1 / span 4; }
+  .onw-body { grid-column: 5 / -1; }
+  /* A row with no cover keeps the same start column for its copy, so
+     every headline in the register begins on the same line. */
+  .onw-row:not(.has-fig) .onw-body { grid-column: 5 / -1; }
 }
 
-@media (min-width: 1280px) {
-  .den-moment-1 .den-body { grid-column: 1 / span 4; }
-  .den-moment-2 .den-body { grid-column: 9 / -1; }
+/* ---- 1024px+: five columns of frame, six of copy ------------------ */
+@media (min-width: 1024px) {
+  .onw-row { padding: var(--sp-8) 0; }
+  .onw-fig { grid-column: 1 / span 5; }
+  .onw-body { grid-column: 7 / -1; }
+  .onw-row:not(.has-fig) .onw-body { grid-column: 7 / -1; }
+  .onw-s { max-width: 46ch; }
 }
 
-/* ---- Reduced motion --------------------------------------------
-   The GSAP timelines are never built under this setting (the effect
-   returns before registering anything), so nothing can be left at
-   opacity 0. This only disables the hover transition. */
+/* ---- Reduced motion -------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .den-fig img { transition: none; }
-  .den-moment:hover .den-fig img { transform: none; }
+  .onw-fig img,
+  .onw-fig::after,
+  .onw-t,
+  .onw-go i { transition: none; }
+  .onw-row:hover .onw-fig img,
+  .onw-row:hover .onw-go i { transform: none; }
 }
+
+/* =====================================================
+   CHECK YOUR EMAIL — verify-before-activate state
+   (app/check-email, rendered inside the dark .hp-auth-card)
+===================================================== */
+.hp-auth-card .vfy-msg.is-ok { color: #9fe0b8; background: rgba(28, 107, 63, 0.22); border-color: rgba(159, 224, 184, 0.3); }
+.hp-auth-card .vfy-msg.is-bad { color: #ffb4b7; background: rgba(189, 34, 39, 0.22); border-color: rgba(255, 180, 183, 0.3); }
+.vfy-steps {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  counter-reset: vfy-step;
+}
+.vfy-steps li {
+  counter-increment: vfy-step;
+  position: relative;
+  padding-top: 12px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--hp-muted-dark);
+}
+.vfy-steps li::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; border-radius: 3px;
+  background: rgba(245, 239, 228, 0.14);
+}
+.vfy-steps li.is-done { color: var(--hp-ivory); }
+.vfy-steps li.is-done::before { background: var(--hp-gold); }
+.vfy-steps li.is-current { color: var(--hp-gold-lt); }
+.vfy-steps li.is-current::before { background: var(--hp-gold-lt); }
+@media (max-width: 480px) { .vfy-steps li { font-size: 9.5px; letter-spacing: 0.04em; } }
+.vfy-mail-icon {
+  flex: none; width: 44px; height: 44px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: rgba(184, 144, 75, 0.16); color: var(--hp-gold-lt);
+  border: 1px solid rgba(184, 144, 75, 0.35);
+}
+.vfy-link-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; border: 0; padding: 4px 0; cursor: pointer;
+  font-family: var(--font-manrope), sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--hp-muted-dark); text-decoration: underline; text-underline-offset: 3px;
+}
+.vfy-link-btn:hover { color: var(--hp-ivory); }
+.vfy-link-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.hp-auth-card .cta-gold:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
-import NewsHero from "@/components/news/NewsHero";
 import Newsroom from "@/components/news/Newsroom";
+import OfficialNews, { type OfficialStory } from "@/components/news/OfficialNews";
 import DayInTheDen from "@/components/news/DayInTheDen";
 import { listPublishedPosts } from "@/lib/posts";
 import { listActiveMediaCoverage } from "@/lib/media-coverage";
@@ -21,24 +21,28 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 /* ---------------------------------------------------------------------------
-   The news desk — a newsroom front page.
+   The news desk.
 
-   Redesigned from three stacked chapters (official list → press wall →
-   social rows) into one continuous editorial flow: a cover story, an
-   editorial index, then the rest of the desk ranked by weight. What did NOT
-   change is the thing that matters most here — who wrote what. Every row
-   still declares its own authorship, official league reporting is still
-   never mixed into the third-party wall by accident, and the classification
-   is still decided by table, kind and source host rather than by anything
-   the redesign found convenient.
+   Opens on the site's shared `StoryHero` — the same opener /the-club,
+   /the-pride, /players, /golf-development and /vimtra-ventures use — so the
+   page introduces itself as NEWS and nothing else. The hero carries no
+   story: the previous cover-story hero has been retired because a page
+   identity and a news item are different things, and the hero is the
+   former.
 
-   All of that now lives in lib/news-desk.ts, which this page calls once and
-   hands to the client index. Read the comments there for the ordering,
-   syndication and cover-image rules.
+   Then, in order: OFFICIAL NEWS (the league's own reporting, each row a
+   verified AM Green IGPL item), the 14 August activity chapter, MEDIA
+   COVERAGE (third-party press, the client index), and the sign-off.
+
+   Who wrote what is decided by the stored `kind` each row carries — set
+   explicitly in the admin, OFFICIAL under News and ARTICLE / SOCIAL under
+   Media — and read in lib/news-desk.ts. Official rows and press rows are
+   split here from that one classified feed and rendered in exactly one
+   place each, so no story appears twice and nothing is inferred from a URL.
 
    Every item is a real database row. Nothing is padded: with no rows at all
-   the page keeps its own opener and says the desk is quiet, rather than
-   showing an example story.
+   the page keeps its opener and says the desk is quiet, rather than showing
+   an example story.
 --------------------------------------------------------------------------- */
 
 /* ---------------------------------------------------------------------------
@@ -94,16 +98,16 @@ const DEN_MOMENTS = [
 ];
 
 export default async function NewsPage() {
-  const [posts, articles, social] = await Promise.all([
+  // Everything PUBLISHED, every kind. The desk classifies by the stored
+  // `kind` the admin set — OFFICIAL / ARTICLE / SOCIAL — never by URL.
+  const [posts, coverage] = await Promise.all([
     listPublishedPosts(),
-    listActiveMediaCoverage("ARTICLE"),
-    listActiveMediaCoverage("SOCIAL"),
+    listActiveMediaCoverage(),
   ]);
 
   const desk = buildNewsDesk({
     posts,
-    articles,
-    social,
+    coverage,
     // Stored paths resolve to their optimized `-web` derivative at render
     // time — the project's existing image strategy, not a new one.
     resolveImage: (src) => webSrc(src) ?? null,
@@ -138,17 +142,43 @@ export default async function NewsPage() {
     </section>
   );
 
-  // No rows at all. The page keeps the site's own hero language (ink and
-  // aurora, no photograph standing in for a story that does not exist) and
-  // states the position plainly.
-  if (!desk.featured) {
+  // One classified feed, split by authorship and rendered in exactly one
+  // place each. `buildNewsDesk` already ordered, classified and de-duplicated
+  // every row; the only thing done here is deciding which section shows it.
+  const all = desk.featured ? [desk.featured, ...desk.entries] : [];
+  // The cover on each row — uploaded through Admin → News — is the source
+  // of truth. Nothing is mapped or substituted here: a row with no cover
+  // renders text-led with its source mark, by the component's own fallback.
+  // `MediaCoverage` carries no alt text; the cover sits inside a link whose
+  // text is the headline, so an empty alt is the correct, non-duplicating
+  // description for assistive tech.
+  const official: OfficialStory[] = all
+    .filter((e) => e.channel === "official")
+    .map((e) => ({ ...e, imageAlt: "", imagePosition: "50% 35%" }));
+  const press = all.filter((e) => e.channel !== "official");
+
+  // The page identity — the same opener every other chapter page uses.
+  // `News Hero.JPG` is the operator's own photograph: a Lions player set up
+  // on the tee, the fairway open ahead. The subject sits right of centre,
+  // which leaves the lower-left — where the hero's type lives — over grass
+  // rather than over the player at every crop.
+  const hero = (
+    <StoryHero
+      eyebrow="From the Den · Vimtra Chennai Lions GC"
+      title={["NEWS"]}
+      line="Official league reporting and press coverage of the Vimtra Chennai Lions — filed as it is published."
+      image="/assets/photo/news-hero-tee.jpg"
+      imageAlt="A Vimtra Chennai Lions player addressing the ball on the tee, with the fairway ahead"
+      imagePosition="52% 62%"
+    />
+  );
+
+  // No rows at all: the page keeps its opener and states the position
+  // plainly rather than showing an example story.
+  if (all.length === 0) {
     return (
       <>
-        <StoryHero
-          eyebrow="From the Den · Vimtra Chennai Lions GC"
-          title={["News"]}
-          line="Franchise editorial, official league reporting and press coverage — filed as it is published."
-        />
+        {hero}
         <section className="hp-sec hp-sec-ivory nw-sec">
           <div className="hp-wrap">
             <div className="nwr-empty nwr-empty-page">
@@ -169,41 +199,43 @@ export default async function NewsPage() {
 
   return (
     <>
-      <NewsHero story={desk.featured} counts={desk.counts} />
+      {hero}
 
-      {/* The activity chapter sits between the cover story and the record.
-          It carries its own dated head, so it reads as a separate chapter
-          rather than as another entry in the desk below. */}
-      <DayInTheDen
-        date={DEN_DATE}
-        stamp={DEN_STAMP}
-        moments={DEN_MOMENTS}
-      />
+      {/* 01 — Official news: the league's own reporting, immediately after
+          the hero. Absent entirely when there is none; never padded. */}
+      {official.length > 0 && <OfficialNews stories={official} />}
 
-      <section
-        className="hp-sec hp-sec-ivory nw-sec nwr-sec"
-        aria-labelledby="nwr-latest"
-      >
-        <div className="hp-wrap">
-          <div className="nw-head">
-            <div>
-              <p className="hp-index">
-                01 <span>Latest coverage</span>
+      {/* The activity chapter. Its own dated head keeps it reading as a
+          separate chapter rather than as an entry in either desk. */}
+      <DayInTheDen date={DEN_DATE} stamp={DEN_STAMP} moments={DEN_MOMENTS} />
+
+      {/* 02 — Media coverage: third-party press only. Official rows never
+          reach this list, so no story is shown twice on the page. */}
+      {press.length > 0 && (
+        <section
+          className="hp-sec hp-sec-ivory nw-sec nwr-sec"
+          aria-labelledby="nwr-coverage"
+        >
+          <div className="hp-wrap">
+            <div className="nw-head">
+              <div>
+                <p className="hp-index">
+                  02 <span>Media coverage</span>
+                </p>
+                <h2 id="nwr-coverage" className="nw-h">
+                  What the press is writing.
+                </h2>
+              </div>
+              <p className="nw-note">
+                Curated by us, published by others. Every entry names its
+                publisher and opens at the source.
               </p>
-              <h2 id="nwr-latest" className="nw-h">
-                The rest of the record.
-              </h2>
             </div>
-            <p className="nw-note">
-              Every entry names its own author — what we publish, what the
-              league publishes, and what the press publishes are never merged
-              into one voice.
-            </p>
-          </div>
 
-          <Newsroom entries={desk.entries} />
-        </div>
-      </section>
+            <Newsroom entries={press} />
+          </div>
+        </section>
+      )}
 
       {closing}
     </>

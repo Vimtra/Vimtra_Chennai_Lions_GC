@@ -37,6 +37,14 @@ const DERIVATIVES: Record<string, string> = {
   "/assets/hero-golfer.png": "/assets/car-2-web.jpg",
   "/assets/hero-golfer-web.png": "/assets/car-2-web.jpg",
 
+  // Franchise-supplied news photography (6000 × 4000 originals, 7–12 MB).
+  // The originals were attached to MediaCoverage rows through the admin
+  // under their upload names, so those exact paths are what the rows hold;
+  // this sends them to the 2000px derivatives instead of serving the
+  // masters. Same pattern as the player portraits above.
+  "/assets/photo/News Hero.JPG": "/assets/photo/news-hero-tee.jpg",
+  "/assets/photo/Cover I.JPG": "/assets/photo/news-cover-squad.jpg",
+
   // Product photography
   "/assets/prod-tshirt.png": "/assets/prod-tshirt-web.jpg",
   "/assets/prod-cap.png": "/assets/prod-cap-web.jpg",

@@ -18,9 +18,9 @@ import {
   Redo2,
   Code2,
   Minus,
-  Trash2,
 } from "lucide-react";
 import { updatePostAction, deletePostAction } from "@/app/admin/news/actions";
+import ConfirmDeleteButton from "@/components/admin/ConfirmDeleteButton";
 
 // A rich-text editor bound to a single Post row. TipTap loads only on this
 // route (client component); public /news and /news/[slug] stay editor-free.
@@ -30,7 +30,7 @@ import { updatePostAction, deletePostAction } from "@/app/admin/news/actions";
 // one go. Delete lives in a sibling form (HTML disallows nested forms).
 
 const TOOLBAR_BTN =
-  "inline-flex items-center justify-center w-8 h-8 rounded-[8px] border border-black/[0.10] bg-white text-ink text-[13px] hover:border-crimson-600 hover:text-crimson-600 disabled:opacity-40";
+  "inline-flex items-center justify-center w-8 h-8 rounded-[6px] border border-black/[0.14] bg-white text-ink text-[13px] hover:border-[#bd2227] hover:text-[#bd2227] disabled:opacity-40";
 
 export default function PostEditor({ post }: { post: Post }) {
   const initialJson = useMemo(() => {
@@ -50,7 +50,7 @@ export default function PostEditor({ post }: { post: Post }) {
     editorProps: {
       attributes: {
         class:
-          "min-h-[420px] bg-white border border-black/[0.12] rounded-[14px] p-5 focus:outline-none focus:border-crimson-600 focus:ring-4 focus:ring-crimson-600/10 " +
+          "min-h-[420px] bg-white border border-black/[0.14] rounded-[10px] p-5 focus:outline-none focus:border-[#bd2227] focus:ring-4 focus:ring-[#bd2227]/10 " +
           "font-manrope text-[15.5px] leading-[1.7] text-ink " +
           "[&_p]:my-[0.7em] " +
           "[&_h2]:font-sora [&_h2]:font-extrabold [&_h2]:text-[24px] [&_h2]:tracking-[-0.015em] [&_h2]:mt-6 [&_h2]:mb-2 " +
@@ -99,7 +99,7 @@ export default function PostEditor({ post }: { post: Post }) {
 
   return (
     <div>
-      <form action={updatePostAction} className="grid gap-6 lg:grid-cols-[1fr_320px] items-start">
+      <form action={updatePostAction} className="adm-grid adm-grid-sidebar">
         <input type="hidden" name="id" value={post.id} />
         <input type="hidden" name="bodyJson" ref={jsonRef} />
         <input type="hidden" name="bodyHtml" ref={htmlRef} />
@@ -107,9 +107,11 @@ export default function PostEditor({ post }: { post: Post }) {
         <input type="hidden" name="status" value={status} />
 
         {/* -------- LEFT: editorial fields + body -------- */}
-        <div className="grid gap-4">
-          <div className="field">
-            <label htmlFor="post-title">Title</label>
+        <div className="adm-panel adm-panel-pad adm-form">
+          <div className="adm-field">
+            <label className="adm-label" htmlFor="post-title">
+              Title
+            </label>
             <input
               id="post-title"
               name="title"
@@ -128,12 +130,15 @@ export default function PostEditor({ post }: { post: Post }) {
                 }
               }}
               required
+              maxLength={200}
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_220px] gap-4">
-            <div className="field">
-              <label htmlFor="post-slug">Slug</label>
+          <div className="adm-row adm-row-main-side">
+            <div className="adm-field">
+              <label className="adm-label" htmlFor="post-slug">
+                Slug
+              </label>
               <input
                 id="post-slug"
                 name="slug"
@@ -143,131 +148,102 @@ export default function PostEditor({ post }: { post: Post }) {
                   setSlugManuallyEdited(true);
                 }}
               />
+              <span className="adm-hint">Public address: /news/{slug || "…"}</span>
             </div>
-            <div className="field">
-              <label htmlFor="post-category">Category</label>
-              <input
-                id="post-category"
-                name="category"
-                defaultValue={post.category ?? ""}
-                placeholder="Feature · Notebook · …"
-              />
-            </div>
-          </div>
-
-          <div className="field">
-            <label htmlFor="post-excerpt">
-              Excerpt (1–2 lines shown on /news and in metadata)
-            </label>
-            <textarea
-              id="post-excerpt"
-              name="excerpt"
-              defaultValue={post.excerpt ?? ""}
-              rows={3}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="field">
-              <label htmlFor="post-cover">
-                Cover image (path under /public, optional)
+            <div className="adm-field">
+              <label className="adm-label" htmlFor="post-category">
+                Category <span className="adm-opt">optional</span>
               </label>
-              <input
-                id="post-cover"
-                name="coverImage"
-                defaultValue={post.coverImage ?? ""}
-                placeholder="/news/some-photo.jpg"
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="post-author">Author</label>
-              <input
-                id="post-author"
-                name="authorName"
-                defaultValue={post.authorName}
-              />
+              <input id="post-category" name="category" defaultValue={post.category ?? ""} placeholder="Feature · Notebook" />
             </div>
           </div>
 
-          <div>
-            <label className="block font-manrope font-semibold text-[13px] text-ink mb-2">
-              Body
+          <div className="adm-field">
+            <label className="adm-label" htmlFor="post-excerpt">
+              Excerpt <span className="adm-opt">1–2 lines shown on /news and in link previews</span>
             </label>
+            <textarea id="post-excerpt" name="excerpt" defaultValue={post.excerpt ?? ""} rows={3} maxLength={400} />
+          </div>
+
+          <div className="adm-row adm-row-2">
+            <div className="adm-field">
+              <label className="adm-label" htmlFor="post-cover">
+                Cover image path <span className="adm-opt">under /public, optional</span>
+              </label>
+              <input id="post-cover" name="coverImage" defaultValue={post.coverImage ?? ""} placeholder="/assets/photo/…jpg" />
+            </div>
+            <div className="adm-field">
+              <label className="adm-label" htmlFor="post-author">
+                Author
+              </label>
+              <input id="post-author" name="authorName" defaultValue={post.authorName} />
+            </div>
+          </div>
+
+          <div className="adm-field">
+            <span className="adm-label">Body</span>
             <EditorToolbar editor={editor} />
             <EditorContent editor={editor} />
           </div>
         </div>
 
         {/* -------- RIGHT: publish sidebar -------- */}
-        <aside className="grid gap-4 self-start lg:sticky lg:top-24">
-          <div className="admin-card">
-            <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
+        <aside className="adm-stack adm-sticky">
+          <div className="adm-panel adm-panel-pad adm-form" style={{ gap: 14 }}>
+            <div className="adm-kicker" style={{ color: "var(--adm-crimson)" }}>
               Publish
             </div>
-            <div className="mt-3 grid gap-3">
-              <StatusRadio value="DRAFT" current={status} setStatus={setStatus} label="Draft" />
-              <StatusRadio value="PUBLISHED" current={status} setStatus={setStatus} label="Published" />
-              <StatusRadio value="ARCHIVED" current={status} setStatus={setStatus} label="Archived" />
+            <div style={{ display: "grid", gap: 8 }}>
+              <StatusRadio value="DRAFT" current={status} setStatus={setStatus} label="Draft" hint="Only visible here." />
+              <StatusRadio value="PUBLISHED" current={status} setStatus={setStatus} label="Published" hint="Live on /news." />
+              <StatusRadio value="ARCHIVED" current={status} setStatus={setStatus} label="Archived" hint="Off the site, kept on file." />
             </div>
 
-            <div className="field mt-5">
-              <label htmlFor="post-publishedAt">Publish date (optional)</label>
-              <input
-                id="post-publishedAt"
-                type="datetime-local"
-                name="publishedAt"
-                defaultValue={toDateInputLocal(post.publishedAt)}
-              />
+            <div className="adm-field">
+              <label className="adm-label" htmlFor="post-publishedAt">
+                Publish date <span className="adm-opt">optional</span>
+              </label>
+              <input id="post-publishedAt" type="datetime-local" name="publishedAt" defaultValue={toDateInputLocal(post.publishedAt)} />
+              <span className="adm-hint">Left blank, it is set to now the first time the post is published.</span>
             </div>
 
-            <div className="field">
-              <label htmlFor="post-sort">Sort order (higher pins to top)</label>
-              <input
-                id="post-sort"
-                type="number"
-                name="sortOrder"
-                defaultValue={post.sortOrder}
-              />
+            <div className="adm-field">
+              <label className="adm-label" htmlFor="post-sort">
+                Sort order <span className="adm-opt">higher pins to top</span>
+              </label>
+              <input id="post-sort" type="number" name="sortOrder" defaultValue={post.sortOrder} />
             </div>
 
-            <p className="mt-1 font-manrope text-[12px] text-muted leading-[1.55] mb-0">
-              On <strong>Draft → Published</strong>, publish date defaults to
-              now if left blank. Only <strong>Published</strong> posts render
-              on the public site.
-            </p>
-
-            <div className="mt-5 flex flex-col gap-2">
-              <button type="submit" className="btn-dark press w-full justify-center">
+            <div style={{ display: "grid", gap: 8 }}>
+              <button type="submit" className="adm-btn adm-btn-primary adm-btn-block">
                 Save changes
               </button>
-              <Link href="/admin/news" className="btn-ghost justify-center">
+              <Link href="/admin/news/editorial" className="adm-btn adm-btn-block">
                 Cancel
               </Link>
             </div>
 
-            <div className="mt-4 font-manrope text-[11.5px] text-muted">
-              Last updated {formatShort(post.updatedAt)}
+            <div className="adm-hint">Last updated {formatShort(post.updatedAt)}</div>
+          </div>
+
+          <div className="adm-panel adm-panel-pad">
+            <div className="adm-kicker" style={{ color: "var(--adm-crimson)" }}>
+              Danger zone
             </div>
+            <p className="adm-sub" style={{ marginBottom: 12 }}>
+              Delete permanently. Archived is usually the safer choice.
+            </p>
+            <ConfirmDeleteButton
+              action={deletePostAction}
+              id={post.id}
+              label={post.title}
+              meta={`/news/${post.slug}`}
+              description="Permanently deletes the post and its public page. This cannot be undone."
+              triggerLabel="Delete post"
+              redirectTo="/admin/news/editorial"
+            />
           </div>
         </aside>
-      </form>
-
-      {/* Sibling delete form — HTML disallows nested <form>. */}
-      <form
-        action={deletePostAction}
-        className="admin-card mt-6 max-w-[360px]"
-        style={{ background: "#fff" }}
-      >
-        <input type="hidden" name="id" value={post.id} />
-        <div className="font-manrope font-bold text-[10.5px] tracking-[0.28em] text-crimson-600 uppercase">
-          Danger Zone
-        </div>
-        <div className="mt-2 font-manrope text-[12.5px] text-muted">
-          Delete permanently. Archived is usually the safer choice.
-        </div>
-        <button type="submit" className="btn-ghost btn-danger mt-3">
-          <Trash2 className="w-[13px] h-[13px]" /> Delete post
-        </button>
       </form>
     </div>
   );
@@ -280,29 +256,25 @@ function StatusRadio({
   current,
   setStatus,
   label,
+  hint,
 }: {
   value: PostStatus;
   current: PostStatus;
   setStatus: (s: PostStatus) => void;
   label: string;
+  hint: string;
 }) {
   const active = current === value;
   return (
     <label
-      className={`flex items-center gap-3 cursor-pointer rounded-[10px] px-3 py-[10px] border transition-colors ${
-        active
-          ? "bg-white border-crimson-600 text-ink"
-          : "border-black/[0.06] text-muted hover:text-ink hover:border-black/[0.14]"
-      }`}
+      className="adm-check"
+      style={active ? { borderColor: "var(--adm-crimson)", boxShadow: "0 0 0 3px rgba(189,34,39,0.08)" } : undefined}
     >
-      <input
-        type="radio"
-        checked={active}
-        onChange={() => setStatus(value)}
-        className="!m-0 !w-4 !h-4"
-        aria-label={label}
-      />
-      <span className="font-manrope font-semibold text-[13.5px]">{label}</span>
+      <input type="radio" name="status-choice" checked={active} onChange={() => setStatus(value)} aria-label={label} />
+      <span>
+        <strong>{label}</strong>
+        <span>{hint}</span>
+      </span>
     </label>
   );
 }
@@ -312,7 +284,7 @@ function EditorToolbar({ editor }: { editor: Editor | null }) {
   const btn = (active: boolean, disabled = false) =>
     `${TOOLBAR_BTN} ${active ? "border-crimson-600 text-crimson-600 bg-crimson-600/5" : ""}${disabled ? " opacity-40" : ""}`;
   return (
-    <div className="flex flex-wrap gap-1 mb-2">
+    <div className="flex flex-wrap gap-1 mb-2" role="toolbar" aria-label="Formatting">
       <button type="button" aria-label="Bold" className={btn(editor.isActive("bold"))} onClick={() => editor.chain().focus().toggleBold().run()}>
         <Bold className="w-4 h-4" />
       </button>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { signIn } from "../actions";
-import { getCurrentUser } from "@/lib/auth";
+import { getPendingUser, safeNextPath } from "@/lib/auth";
 import PasswordField from "@/components/auth/PasswordField";
 
 export const metadata: Metadata = {
@@ -23,8 +23,12 @@ export default async function SignInPage({
   searchParams: Promise<{ error?: string; next?: string }>;
 }) {
   const { error, next } = await searchParams;
-  const safeNext = next && next.startsWith("/") ? next : undefined;
-  if (await getCurrentUser()) redirect(safeNext ?? "/profile");
+  const safeNext = safeNextPath(next);
+  const pending = await getPendingUser();
+  if (pending?.verificationRequired) {
+    redirect(safeNext ? `/check-email?next=${encodeURIComponent(safeNext)}` : "/check-email");
+  }
+  if (pending) redirect(safeNext ?? "/profile");
 
   return (
     <div className="admin-page hp-auth">

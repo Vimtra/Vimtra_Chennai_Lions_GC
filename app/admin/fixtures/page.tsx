@@ -1,121 +1,158 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Pencil, Trash2, Activity } from "lucide-react";
+import { Pencil, Activity, Plus, CalendarDays, Radio, CheckCircle2 } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { listFixtures, formatFixtureDate } from "@/lib/fixtures";
-import AdminShell from "@/components/admin/AdminShell";
-import FixtureForm from "@/components/admin/FixtureForm";
-import { createFixtureAction, deleteFixtureAction } from "./actions";
+import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/ui/PageHeader";
+import EmptyState from "@/components/admin/ui/EmptyState";
+import QuickActionButton from "@/components/admin/ui/QuickActionButton";
+import ConfirmDeleteButton from "@/components/admin/ConfirmDeleteButton";
+import { FixturePill } from "@/components/admin/ui/StatusPill";
+import { deleteFixtureAction, setFixtureStatusAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Fixtures · Lions Admin",
+  title: "Fixtures",
   robots: { index: false, follow: false },
 };
 
-const STATUS_STYLE: Record<string, React.CSSProperties> = {
-  LIVE: { background: "#E9CB8E", color: "#3A1A06" },
-  UPCOMING: { background: "rgba(196,32,42,0.10)", color: "#C4202A" },
-  COMPLETED: { background: "rgba(26,21,19,0.08)", color: "#1A1513" },
-  CANCELLED: { background: "rgba(107,99,92,0.10)", color: "#6B635C" },
-};
+export const dynamic = "force-dynamic";
 
 export default async function AdminFixturesPage() {
-  const user = await requireAdmin();
-  const fixtures = await listFixtures();
+  await requireAdmin();
+  const [fixtures, scoreCounts] = await Promise.all([
+    listFixtures(),
+    prisma.score.groupBy({ by: ["fixtureId"], _count: { _all: true } }),
+  ]);
+  const scoresFor = (id: string) => scoreCounts.find((s) => s.fixtureId === id)?._count._all ?? 0;
+  const live = fixtures.filter((f) => f.status === "LIVE").length;
 
   return (
-    <AdminShell email={user.email} active="fixtures">
-      <div className="admin-head">
-        <div>
-          <h1>Fixtures</h1>
-          <p>
-            {fixtures.length} fixture{fixtures.length === 1 ? "" : "s"} · verified against the Chennai Lions IGPL brochure
-          </p>
-        </div>
-        <Link href="#new" className="btn-dark">+ Add fixture</Link>
-      </div>
+    <>
+      <PageHeader
+        eyebrow="Season"
+        title="Fixtures"
+        lede={
+          <>
+            The AM Green IGPL Season 2026 calendar as shown on <Link href="/fixtures">/fixtures</Link> and the home page.
+            Only verified dates and venues belong here — every row is a public claim.
+          </>
+        }
+        actions={
+          <Link href="/admin/fixtures/new" className="adm-btn adm-btn-primary">
+            <Plus /> Add fixture
+          </Link>
+        }
+      />
 
-      <div className="admin-card overflow-x-auto">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Fixture</th>
-              <th>Dates</th>
-              <th>Venue</th>
-              <th>Status</th>
-              <th>Sort</th>
-              <th className="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {fixtures.map((f) => (
-              <tr key={f.id}>
-                <td>
-                  <div className="flex items-center gap-3">
-                    <span className="w-9 h-9 rounded-[9px] bg-gradient-to-br from-[#C9242E] to-[#871119] text-white/85 font-sora font-extrabold text-[11px] flex items-center justify-center">
-                      <Activity className="w-4 h-4" />
-                    </span>
-                    <div>
-                      <div className="font-sora font-bold text-[14px] text-ink">{f.name}</div>
-                      <div className="font-manrope text-[12px] text-muted">{f.slug}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="font-manrope text-muted">{formatFixtureDate(f)}</td>
-                <td className="font-manrope text-muted">
-                  {f.courseName ? `${f.courseName} · ` : ""}
-                  {f.city}
-                  {f.city !== f.country ? `, ${f.country}` : ""}
-                </td>
-                <td>
-                  <span className="tier-badge" style={STATUS_STYLE[f.status]}>
-                    {f.status}
-                  </span>
-                </td>
-                <td className="font-manrope text-[12.5px] text-muted">{f.sortOrder}</td>
-                <td>
-                  <div className="flex items-center gap-2 justify-end">
-                    <Link
-                      href={`/admin/fixtures/${f.id}/edit`}
-                      className="btn-ghost"
-                    >
-                      <Pencil className="w-[13px] h-[13px]" /> Edit
-                    </Link>
-                    <Link
-                      href={`/admin/scores?fixtureId=${f.id}`}
-                      className="btn-ghost"
-                    >
-                      <Activity className="w-[13px] h-[13px]" /> Scores
-                    </Link>
-                    <form action={deleteFixtureAction}>
-                      <input type="hidden" name="id" value={f.id} />
-                      <button type="submit" className="btn-ghost btn-danger">
-                        <Trash2 className="w-[13px] h-[13px]" /> Delete
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {fixtures.length === 0 && (
-              <tr>
-                <td colSpan={6} className="admin-empty">
-                  <p>No fixtures yet. Add one below.</p>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div id="new" className="mt-10 scroll-mt-24">
-        <h2 className="font-sora font-extrabold text-[20px] tracking-[-0.01em] text-ink mb-4">
-          Add a fixture
-        </h2>
-        <div className="admin-card !p-7 max-w-[860px]">
-          <FixtureForm action={createFixtureAction} submitLabel="Add fixture" />
+      {live > 1 && (
+        <div className="adm-alert" data-tone="warn" style={{ marginBottom: 14 }}>
+          <span>{live} fixtures are marked live at once. The scores desk and home page lead with the earliest-dated one.</span>
         </div>
+      )}
+
+      <div className="adm-panel">
+        {fixtures.length === 0 ? (
+          <EmptyState
+            icon={<CalendarDays />}
+            title="No fixtures yet"
+            body="Add the season calendar to populate /fixtures, the home page season strip and the scores desk."
+            actions={
+              <Link href="/admin/fixtures/new" className="adm-btn adm-btn-sm adm-btn-primary">
+                <Plus /> Add fixture
+              </Link>
+            }
+          />
+        ) : (
+          <div className="adm-table-wrap">
+            <table className="adm-table is-responsive">
+              <thead>
+                <tr>
+                  <th>Fixture</th>
+                  <th>Dates</th>
+                  <th>Venue</th>
+                  <th>Status</th>
+                  <th>Scores</th>
+                  <th className="adm-td-actions">
+                    <span className="adm-sr">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {fixtures.map((f) => {
+                  const n = scoresFor(f.id);
+                  return (
+                    <tr key={f.id} className={f.status === "LIVE" ? "is-highlight" : f.status === "CANCELLED" ? "is-dim" : undefined}>
+                      <td className="adm-td-primary">
+                        <Link href={`/admin/fixtures/${f.id}/edit`} className="adm-cell-title" style={{ textDecoration: "none" }}>
+                          {f.name}
+                        </Link>
+                        <div className="adm-cell-sub">
+                          {f.leg ? `${f.leg} · ` : ""}
+                          <span className="adm-mono">{f.slug}</span>
+                        </div>
+                      </td>
+                      <td data-label="Dates" className="adm-td-muted adm-td-nowrap">
+                        {formatFixtureDate(f)}
+                      </td>
+                      <td data-label="Venue" className="adm-td-muted">
+                        {f.courseName ? (
+                          <>
+                            {f.courseName}
+                            <br />
+                          </>
+                        ) : null}
+                        {f.city}
+                        {f.city !== f.country ? `, ${f.country}` : ""}
+                      </td>
+                      <td data-label="Status">
+                        <FixturePill status={f.status} />
+                      </td>
+                      <td data-label="Scores">
+                        <Link href={`/admin/scores?fixtureId=${f.id}`} className="adm-link">
+                          {n === 0 ? "No rows" : `${n} row${n === 1 ? "" : "s"}`}
+                        </Link>
+                      </td>
+                      <td className="adm-td-actions">
+                        <div className="adm-actions">
+                          <Link href={`/admin/fixtures/${f.id}/edit`} className="adm-btn adm-btn-sm">
+                            <Pencil /> Edit
+                          </Link>
+                          <Link href={`/admin/scores?fixtureId=${f.id}`} className="adm-btn adm-btn-sm">
+                            <Activity /> Scores
+                          </Link>
+                          {f.status === "UPCOMING" && (
+                            <QuickActionButton action={setFixtureStatusAction} fields={{ id: f.id, status: "LIVE" }} className="adm-btn adm-btn-sm adm-btn-ghost" title="Mark as live">
+                              <Radio /> Go live
+                            </QuickActionButton>
+                          )}
+                          {f.status === "LIVE" && (
+                            <QuickActionButton action={setFixtureStatusAction} fields={{ id: f.id, status: "COMPLETED" }} className="adm-btn adm-btn-sm adm-btn-ghost" title="Mark as completed">
+                              <CheckCircle2 /> Complete
+                            </QuickActionButton>
+                          )}
+                          <ConfirmDeleteButton
+                            action={deleteFixtureAction}
+                            id={f.id}
+                            label={f.name}
+                            meta={formatFixtureDate(f)}
+                            description={
+                              n > 0
+                                ? `Removes the fixture from /fixtures AND permanently deletes its ${n} score row${n === 1 ? "" : "s"}. Mark it Cancelled instead if it should stay on record.`
+                                : "Removes the fixture from /fixtures and the home page. Mark it Cancelled instead if it should stay on record."
+                            }
+                            triggerClassName="adm-btn adm-btn-sm adm-btn-ghost adm-tone-danger"
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-    </AdminShell>
+    </>
   );
 }

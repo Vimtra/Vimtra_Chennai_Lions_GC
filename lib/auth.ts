@@ -31,10 +31,52 @@ export interface SafeUser {
   email: string;
   name: string;
   role: Role;
+  /** True once the address on the account has been confirmed by link. */
+  emailVerified: boolean;
+  /** True when this account may not use the signed-in experience until it verifies. */
+  verificationRequired: boolean;
 }
 
-function toSafe(u: { id: string; email: string; name: string; role: Role }): SafeUser {
-  return { id: u.id, email: u.email, name: u.name, role: u.role };
+type UserRow = {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+  emailVerifiedAt: Date | null;
+  createdAt: Date;
+};
+
+/**
+ * VERIFY-BEFORE-ACTIVATE — the one rule that decides who is gated.
+ *
+ * Accounts created on or after this instant must confirm their email before
+ * the signed-in experience opens (profile, checkout, orders, admin). Legacy
+ * accounts created before it keep the behaviour they always had — sign-in
+ * works, verification stays optional and is offered on /profile — so no
+ * existing member (or the pre-existing unverified admin) is locked out by
+ * this rule landing. A date rather than a new column so no migration is
+ * needed; the schema already records createdAt and emailVerifiedAt.
+ *
+ * Note the rule is evaluated on every request from the database row, never
+ * from anything the client sends: a verified user who changes their address
+ * becomes unverified again (see lib/verification.ts changeUserEmail) and is
+ * gated until the new address is confirmed.
+ */
+export const VERIFICATION_REQUIRED_SINCE = new Date("2026-09-11T12:00:00Z");
+
+export function isVerificationRequired(u: Pick<UserRow, "emailVerifiedAt" | "createdAt">): boolean {
+  return u.emailVerifiedAt === null && u.createdAt >= VERIFICATION_REQUIRED_SINCE;
+}
+
+function toSafe(u: UserRow): SafeUser {
+  return {
+    id: u.id,
+    email: u.email,
+    name: u.name,
+    role: u.role,
+    emailVerified: u.emailVerifiedAt !== null,
+    verificationRequired: isVerificationRequired(u),
+  };
 }
 
 export function hashPassword(password: string): Promise<string> {
@@ -75,6 +117,18 @@ export async function verifyCredentials(
   return ok ? toSafe(user) : null;
 }
 
+/** True when a session cookie for this user is already present and valid. */
+export async function hasSessionFor(userId: string): Promise<boolean> {
+  const token = (await cookies()).get(COOKIE)?.value;
+  if (!token) return false;
+  try {
+    const s = await prisma.session.findUnique({ where: { token }, select: { userId: true, expiresAt: true } });
+    return Boolean(s && s.userId === userId && s.expiresAt >= new Date());
+  } catch {
+    return false;
+  }
+}
+
 export async function createSession(userId: string): Promise<void> {
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
@@ -101,8 +155,13 @@ export async function destroySession(): Promise<void> {
   store.delete(COOKIE);
 }
 
-/** Current signed-in user, or null. Resilient to DB errors (treats as logged-out). */
-export async function getCurrentUser(): Promise<SafeUser | null> {
+/**
+ * The user behind the session cookie, whatever their verification state.
+ * Only the check-your-email surface (and the gate helpers below) should
+ * use this; everything else goes through getCurrentUser(), which hides
+ * gated accounts. Resilient to DB errors (treats as logged-out).
+ */
+export async function getPendingUser(): Promise<SafeUser | null> {
   const token = (await cookies()).get(COOKIE)?.value;
   if (!token) return null;
   try {
@@ -117,17 +176,43 @@ export async function getCurrentUser(): Promise<SafeUser | null> {
   }
 }
 
-export async function requireUser(nextPath?: string): Promise<SafeUser> {
-  const user = await getCurrentUser();
-  if (!user) {
-    redirect(nextPath ? `/sign-in?next=${encodeURIComponent(nextPath)}` : "/sign-in");
-  }
+/**
+ * Current signed-in user, or null. An account that still has to verify its
+ * email (see VERIFICATION_REQUIRED_SINCE) is reported as null here, so the
+ * nav, checkout, orders, profile and admin all treat it as signed out until
+ * the address is confirmed. Its session row exists only so /check-email can
+ * offer resend / change-address and so verifying in the same browser lands
+ * straight in the account.
+ */
+export async function getCurrentUser(): Promise<SafeUser | null> {
+  const user = await getPendingUser();
+  if (!user || user.verificationRequired) return null;
   return user;
 }
 
+export async function requireUser(nextPath?: string): Promise<SafeUser> {
+  const pending = await getPendingUser();
+  if (pending?.verificationRequired) {
+    // Signed in but not yet allowed in: send them to the verification state,
+    // keeping where they were headed so it survives the round trip.
+    redirect(nextPath ? `/check-email?next=${encodeURIComponent(nextPath)}` : "/check-email");
+  }
+  if (!pending) {
+    redirect(nextPath ? `/sign-in?next=${encodeURIComponent(nextPath)}` : "/sign-in");
+  }
+  return pending;
+}
+
 export async function requireAdmin(): Promise<SafeUser> {
-  const user = await getCurrentUser();
-  if (!user) redirect("/sign-in?next=/admin");
-  if (user.role !== "ADMIN") redirect("/?denied=admin");
-  return user;
+  const pending = await getPendingUser();
+  if (pending?.verificationRequired) redirect("/check-email?next=%2Fadmin");
+  if (!pending) redirect("/sign-in?next=/admin");
+  if (pending.role !== "ADMIN") redirect("/?denied=admin");
+  return pending;
+}
+
+/** Only internal, relative destinations — never a host, never protocol-relative. */
+export function safeNextPath(next: string | null | undefined): string | undefined {
+  if (!next) return undefined;
+  return next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : undefined;
 }

@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Loader from "@/components/Loader";
 import ScrollToTop from "@/components/ScrollToTop";
+import PublicChrome from "@/components/PublicChrome";
 import { getCurrentUser } from "@/lib/auth";
 import { SITE_URL } from "./robots";
 
@@ -112,13 +113,19 @@ export default async function RootLayout({
         <a href="#main-content" className="gs-skip-link">
           Skip to main content
         </a>
-        <Loader />
-        <Nav user={user} />
+        {/* The admin console (/admin/*) supplies its own frame — see
+            app/admin/layout.tsx. PublicChrome hides the site chrome there. */}
+        <PublicChrome>
+          <Loader />
+          <Nav user={user} />
+        </PublicChrome>
         <main id="main-content" tabIndex={-1}>
           {children}
         </main>
-        <Footer />
-        <ScrollToTop />
+        <PublicChrome>
+          <Footer />
+          <ScrollToTop />
+        </PublicChrome>
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 import type { OrderReceiptResult } from "@/lib/orders";
+import { getSiteOrigin, SiteUrlError } from "@/lib/site-url";
 import {
   contactConfirmationEmail,
   contactNotificationEmail,
@@ -331,20 +332,41 @@ export async function sendCodOrderNotificationToAdmin(
 // Called from signUp() and from the profile's resend action. Never from
 // signIn() — a routine login must not trigger mail.
 
-/** Build the absolute verification URL for a raw token. */
-export function verificationUrl(token: string): string {
-  const origin = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
-  return `${origin}/verify-email?token=${encodeURIComponent(token)}`;
+/**
+ * Build the absolute verification URL for a raw token.
+ *
+ * The origin comes from lib/site-url.ts: NEXT_PUBLIC_SITE_URL, a localhost
+ * fallback in development only, and in production a thrown SiteUrlError
+ * when nothing is configured — a link to localhost must never be emailed.
+ */
+export function verificationUrl(token: string, next?: string): string {
+  const sp = new URLSearchParams({ token });
+  // Only an internal path ever rides along; anything else is dropped here
+  // and checked again when the link is consumed.
+  if (next && next.startsWith("/") && !next.startsWith("//")) sp.set("next", next);
+  return `${getSiteOrigin()}/verify-email?${sp.toString()}`;
 }
 
 export async function sendVerificationEmail(
-  input: Omit<VerificationEmailInput, "verifyUrl"> & { token: string }
+  input: Omit<VerificationEmailInput, "verifyUrl"> & { token: string; next?: string }
 ): Promise<MailResult> {
+  let verifyUrl: string;
+  try {
+    verifyUrl = verificationUrl(input.token, input.next);
+  } catch (err) {
+    if (err instanceof SiteUrlError) {
+      // Refuse rather than send a dead link. The error names the missing
+      // variable, nothing else — no token, no address.
+      console.error("[mail] verification email NOT sent:", err.message);
+      return { sent: false, reason: "error", detail: err.message };
+    }
+    throw err;
+  }
   const { subject, text, html } = emailVerificationEmail({
     name: input.name,
     email: input.email,
     expiresInLabel: input.expiresInLabel,
-    verifyUrl: verificationUrl(input.token),
+    verifyUrl,
   });
   return sendMail({ to: input.email, subject, text, html, replyTo: resolveFromAddress() });
 }

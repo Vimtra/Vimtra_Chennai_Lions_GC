@@ -64,21 +64,23 @@ function formatRange(start: Date, end: Date | null): string {
 export default async function HomePage() {
   const [fixtures, coverage, products] = await Promise.all([
     listFixtures().catch(() => []),
-    listActiveMediaCoverage().catch(() => []),
+    listActiveMediaCoverage("OFFICIAL").catch(() => []),
     listProducts().catch(() => []),
   ]);
 
-  // Press coverage is real and already in the database. The Media section
-  // had stopped reading it entirely — five live rows, none of them rendered,
-  // which is what left that chapter as a heading over an empty band.
-  const stories: StoryRow[] = coverage.slice(0, 1).map((m) => ({
+  // Only published Official News explicitly featured by an admin belongs in
+  // this homepage chapter. Media Coverage is rendered only on /news.
+  const stories: StoryRow[] = coverage
+    .filter((m) => m.featuredOnHome)
+    .slice(0, 1)
+    .map((m) => ({
     id: m.id,
     source: m.sourceName,
     title: m.title,
     summary: m.summary,
     href: m.sourceUrl,
     cover: webSrc(m.coverImage),
-  }));
+    }));
 
   // Counted from the live catalogue, not typed in.
   const store: StoreFacts = {

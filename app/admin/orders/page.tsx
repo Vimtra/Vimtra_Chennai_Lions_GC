@@ -1,135 +1,151 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ShoppingBag } from "lucide-react";
 import type { OrderStatus } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth";
-import { listOrdersForAdmin } from "@/lib/orders";
+import { searchOrdersForAdmin } from "@/lib/orders";
 import { inr } from "@/lib/products";
-import {
-  formatOrderDate,
-  orderStatusLabel,
-  orderStatusStyle,
-  paymentStatusLabel,
-  paymentStatusStyle,
-} from "@/lib/orders-format";
-import AdminShell from "@/components/admin/AdminShell";
+import { formatOrderDate, orderStatusLabel, paymentMethodLabel } from "@/lib/orders-format";
+import PageHeader from "@/components/admin/ui/PageHeader";
+import SearchForm from "@/components/admin/ui/SearchForm";
+import Pagination, { PAGE_SIZE, parsePage } from "@/components/admin/ui/Pagination";
+import EmptyState from "@/components/admin/ui/EmptyState";
+import { OrderPill, PaymentPill } from "@/components/admin/ui/StatusPill";
 
 export const metadata: Metadata = {
-  title: "Orders · Lions Admin",
+  title: "Orders",
   robots: { index: false, follow: false },
 };
 
+export const dynamic = "force-dynamic";
+
 // Real enum values only — no invented statuses.
 const STATUS_TABS: { key: OrderStatus | "ALL"; label: string }[] = [
-  { key: "ALL", label: "ALL" },
-  { key: "PENDING", label: "PENDING" },
-  { key: "PAYMENT_PENDING", label: "AWAITING PAYMENT" },
-  { key: "PAID", label: "PAID" },
-  { key: "PROCESSING", label: "PROCESSING" },
-  { key: "SHIPPED", label: "SHIPPED" },
-  { key: "DELIVERED", label: "DELIVERED" },
-  { key: "CANCELLED", label: "CANCELLED" },
-  { key: "REFUNDED", label: "REFUNDED" },
+  { key: "ALL", label: "All" },
+  { key: "PENDING", label: "Pending" },
+  { key: "PAYMENT_PENDING", label: "Awaiting payment" },
+  { key: "PAID", label: "Paid" },
+  { key: "PROCESSING", label: "Processing" },
+  { key: "SHIPPED", label: "Shipped" },
+  { key: "DELIVERED", label: "Delivered" },
+  { key: "CANCELLED", label: "Cancelled" },
+  { key: "REFUNDED", label: "Refunded" },
 ];
 
 export default async function AdminOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; q?: string; page?: string }>;
 }) {
-  const user = await requireAdmin();
-  const { status: rawStatus } = await searchParams;
+  await requireAdmin();
+  const { status: rawStatus, q, page: rawPage } = await searchParams;
   const status =
-    rawStatus && (STATUS_TABS as { key: string }[]).some((t) => t.key === rawStatus) && rawStatus !== "ALL"
+    rawStatus && rawStatus !== "ALL" && (STATUS_TABS as { key: string }[]).some((t) => t.key === rawStatus)
       ? (rawStatus as OrderStatus)
       : undefined;
+  const page = parsePage(rawPage);
+  const { rows, total } = await searchOrdersForAdmin({ status, q, page, pageSize: PAGE_SIZE });
 
-  const orders = await listOrdersForAdmin(status ? { status } : undefined);
+  const keep = { status: status ?? undefined };
+  const chipHref = (key: string) => {
+    const sp = new URLSearchParams();
+    if (key !== "ALL") sp.set("status", key);
+    if (q) sp.set("q", q);
+    const qs = sp.toString();
+    return qs ? `/admin/orders?${qs}` : "/admin/orders";
+  };
 
   return (
-    <AdminShell email={user.email} active="orders">
-      <div className="admin-head">
-        <div>
-          <h1>Orders</h1>
-          <p>
-            {orders.length} order{orders.length === 1 ? "" : "s"}
-            {status ? ` · ${orderStatusLabel(status)}` : ""}
-          </p>
+    <>
+      <PageHeader
+        eyebrow="Commerce"
+        title="Orders"
+        lede="Every order placed through the shop. Open an order to advance its status, record payment, or cancel and restock."
+      />
+
+      <div className="adm-toolbar">
+        <SearchForm action="/admin/orders" q={q} keep={keep} placeholder="Search order no., name, email or phone" />
+        <div className="adm-chips-scroll">
+          <div className="adm-chips">
+            {STATUS_TABS.map((t) => (
+              <Link key={t.key} href={chipHref(t.key)} className={`adm-chip ${(status ?? "ALL") === t.key ? "is-active" : ""}`}>
+                {t.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="admin-chip-row">
-        {STATUS_TABS.map((t) => (
-          <Link
-            key={t.key}
-            href={t.key === "ALL" ? "/admin/orders" : `/admin/orders?status=${t.key}`}
-            className={`admin-chip ${
-              (status ?? "ALL") === t.key ? "is-active" : ""
-            }`}
-          >
-            {t.label}
-          </Link>
-        ))}
+      <div className="adm-panel">
+        {rows.length === 0 ? (
+          <EmptyState
+            icon={<ShoppingBag />}
+            title={q ? "No orders match that search" : status ? `No ${orderStatusLabel(status).toLowerCase()} orders` : "No orders yet"}
+            body={
+              q
+                ? "Try the order number, the customer's name, or the email or phone used at checkout."
+                : status
+                  ? "Orders move here as their status changes."
+                  : "Orders placed through the shop will appear here."
+            }
+            actions={q || status ? <Link href="/admin/orders" className="adm-btn adm-btn-sm">Clear filters</Link> : undefined}
+          />
+        ) : (
+          <div className="adm-table-wrap">
+            <table className="adm-table is-responsive">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Placed</th>
+                  <th className="adm-td-right">Total</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th className="adm-td-actions">
+                    <span className="adm-sr">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((o) => (
+                  <tr key={o.id} className={o.status === "PENDING" ? "is-highlight" : undefined}>
+                    <td className="adm-td-primary">
+                      <Link href={`/admin/orders/${o.id}`} className="adm-cell-title" style={{ textDecoration: "none" }}>
+                        {o.orderNumber}
+                      </Link>
+                      <div className="adm-cell-sub">{paymentMethodLabel(o.paymentMethod)}</div>
+                    </td>
+                    <td data-label="Customer">
+                      <div style={{ fontWeight: 600 }}>{o.user.name}</div>
+                      <div className="adm-cell-sub">{o.contactEmail}</div>
+                    </td>
+                    <td data-label="Placed" className="adm-td-muted adm-td-nowrap">
+                      {formatOrderDate(o.createdAt)}
+                    </td>
+                    <td data-label="Total" className="adm-td-num adm-td-right">
+                      {inr(o.total)}
+                    </td>
+                    <td data-label="Status">
+                      <OrderPill status={o.status} />
+                    </td>
+                    <td data-label="Payment">
+                      <PaymentPill status={o.paymentStatus} />
+                    </td>
+                    <td className="adm-td-actions">
+                      <div className="adm-actions">
+                        <Link href={`/admin/orders/${o.id}`} className="adm-btn adm-btn-sm">
+                          Open
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <Pagination action="/admin/orders" page={page} total={total} params={{ status, q }} />
       </div>
-
-      <div className="admin-card overflow-x-auto">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Order</th>
-              <th>Placed</th>
-              <th>Contact</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Payment</th>
-              <th className="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((o) => (
-              <tr key={o.id}>
-                <td className="font-sora font-bold text-[14px] text-ink whitespace-nowrap">
-                  {o.orderNumber}
-                </td>
-                <td className="font-manrope text-[12.5px] text-muted whitespace-nowrap">
-                  {formatOrderDate(o.createdAt)}
-                </td>
-                <td className="font-manrope text-[13px] text-muted">{o.contactEmail}</td>
-                <td className="font-sora font-bold text-[13.5px] text-ink whitespace-nowrap">
-                  {inr(o.total)}
-                </td>
-                <td>
-                  <span className="tier-badge" style={orderStatusStyle(o.status)}>
-                    {orderStatusLabel(o.status)}
-                  </span>
-                </td>
-                <td>
-                  <span className="tier-badge" style={paymentStatusStyle(o.paymentStatus)}>
-                    {paymentStatusLabel(o.paymentStatus)}
-                  </span>
-                </td>
-                <td>
-                  <div className="flex items-center justify-end">
-                    <Link href={`/admin/orders/${o.id}`} className="btn-ghost">
-                      View
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {orders.length === 0 && (
-              <tr>
-                <td colSpan={7} className="admin-empty">
-                  <p>
-                    {status
-                      ? `No orders with status ${orderStatusLabel(status)}.`
-                      : "No orders placed yet."}
-                  </p>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </AdminShell>
+    </>
   );
 }

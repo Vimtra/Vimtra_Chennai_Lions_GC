@@ -104,6 +104,47 @@ export async function upsertStanding(input: StandingInput): Promise<Standing> {
   });
 }
 
+/**
+ * Update one existing row by id. Changing the rank moves THIS row rather
+ * than creating a second one (which is what an upsert keyed on rank did).
+ * Returns "conflict" if another row in the same season + board already
+ * holds the requested rank.
+ */
+export async function updateStandingById(
+  id: string,
+  input: Omit<StandingInput, "seasonYear" | "board">
+): Promise<{ ok: true; row: Standing } | { ok: false; reason: "missing" | "conflict" }> {
+  const existing = await prisma.standing.findUnique({ where: { id } });
+  if (!existing) return { ok: false, reason: "missing" };
+  if (input.rank !== existing.rank) {
+    const clash = await prisma.standing.findUnique({
+      where: {
+        seasonYear_board_rank: {
+          seasonYear: existing.seasonYear,
+          board: existing.board,
+          rank: input.rank,
+        },
+      },
+    });
+    if (clash && clash.id !== id) return { ok: false, reason: "conflict" };
+  }
+  const row = await prisma.standing.update({
+    where: { id },
+    data: {
+      rank: input.rank,
+      name: input.name,
+      teamName: input.teamName ?? null,
+      points: input.points ?? null,
+      extra: serializeExtra(input.extra),
+    },
+  });
+  return { ok: true, row };
+}
+
+export async function getStanding(id: string): Promise<Standing | null> {
+  return prisma.standing.findUnique({ where: { id } });
+}
+
 export async function deleteStanding(id: string): Promise<boolean> {
   try {
     await prisma.standing.delete({ where: { id } });

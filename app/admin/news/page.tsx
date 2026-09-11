@@ -1,203 +1,119 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
-import { Pencil, Trash2, ExternalLink, Plus, Send, Archive, Undo2 } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
+import type { PostStatus } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth";
-import AdminShell from "@/components/admin/AdminShell";
-import { listPosts, formatPublishedDate } from "@/lib/posts";
-import type { Post, PostStatus } from "@prisma/client";
-import { newDraftAction, setStatusAction, deletePostAction } from "./actions";
+import CoverageTable from "@/components/admin/CoverageTable";
+import PageHeader from "@/components/admin/ui/PageHeader";
+import { NEWS_KINDS, listMediaCoverageByKinds } from "@/lib/media-coverage";
+import {
+  deleteOfficialNewsAction,
+  setOfficialNewsStatusAction,
+  setOfficialNewsFeaturedAction,
+} from "./actions";
 
 export const metadata: Metadata = {
-  title: "News · Lions Admin",
+  title: "Official News",
   robots: { index: false, follow: false },
 };
 
-type Filter = "all" | "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export const dynamic = "force-dynamic";
 
-const FILTER_TABS: { key: Filter; label: string }[] = [
-  { key: "all", label: "ALL" },
-  { key: "DRAFT", label: "DRAFT" },
-  { key: "PUBLISHED", label: "PUBLISHED" },
-  { key: "ARCHIVED", label: "ARCHIVED" },
+type Filter = "ALL" | PostStatus;
+const TABS: { key: Filter; label: string }[] = [
+  { key: "ALL", label: "All" },
+  { key: "DRAFT", label: "Drafts" },
+  { key: "PUBLISHED", label: "Published" },
+  { key: "ARCHIVED", label: "Archived" },
 ];
 
-const STATUS_STYLE: Record<PostStatus, React.CSSProperties> = {
-  DRAFT: { background: "rgba(107,99,92,0.10)", color: "#6B635C" },
-  PUBLISHED: { background: "rgba(14,138,79,0.10)", color: "#0E8A4F" },
-  ARCHIVED: { background: "rgba(26,21,19,0.08)", color: "#1A1513" },
-};
-
-export default async function AdminNewsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ filter?: string }>;
-}) {
-  const user = await requireAdmin();
-  const { filter: rawFilter } = await searchParams;
-  const filter: Filter =
-    rawFilter === "DRAFT" || rawFilter === "PUBLISHED" || rawFilter === "ARCHIVED"
-      ? rawFilter
-      : "all";
-  const posts = await listPosts();
-  const shown = filter === "all" ? posts : posts.filter((p) => p.status === filter);
-
+/**
+ * Admin → Official News. OFFICIAL coverage only: the league's and the
+ * franchise's own reporting. Third-party press lives under Admin → Media
+ * and never appears here. Long-form franchise posts (the TipTap editor)
+ * keep their own list at /admin/news/editorial.
+ */
+export default async function AdminNewsPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  await requireAdmin();
+  const { status: raw } = await searchParams;
+  const filter: Filter = raw === "DRAFT" || raw === "PUBLISHED" || raw === "ARCHIVED" ? raw : "ALL";
+  const all = await listMediaCoverageByKinds(NEWS_KINDS);
+  const items = filter === "ALL" ? all : all.filter((i) => i.status === filter);
   const counts = {
-    all: posts.length,
-    DRAFT: posts.filter((p) => p.status === "DRAFT").length,
-    PUBLISHED: posts.filter((p) => p.status === "PUBLISHED").length,
-    ARCHIVED: posts.filter((p) => p.status === "ARCHIVED").length,
+    ALL: all.length,
+    DRAFT: all.filter((i) => i.status === "DRAFT").length,
+    PUBLISHED: all.filter((i) => i.status === "PUBLISHED").length,
+    ARCHIVED: all.filter((i) => i.status === "ARCHIVED").length,
   };
+  const featured = all.filter((i) => i.status === "PUBLISHED" && i.featuredOnHome);
 
   return (
-    <AdminShell email={user.email} active="news">
-      <div className="admin-head">
-        <div>
-          <h1>News &amp; Notebook</h1>
-          <p>
-            Franchise editorial. Draft freely, publish deliberately, archive
-            when a piece is out of date. Only <strong>Published</strong> posts
-            appear on the public /news feed.
-          </p>
+    <>
+      <PageHeader
+        eyebrow="Content"
+        title="Official News"
+        lede={
+          <>
+            The league&rsquo;s and the franchise&rsquo;s own reporting — published items appear under{" "}
+            <strong>Official News</strong> on <Link href="/news">/news</Link>, and one featured story drives the home page.
+            Press coverage is filed separately under <Link href="/admin/media">Media Coverage</Link>.
+          </>
+        }
+        actions={
+          <>
+            <Link href="/admin/news/editorial" className="adm-btn">
+              <FileText /> Editorial posts
+            </Link>
+            <Link href="/admin/news/new" className="adm-btn adm-btn-primary">
+              <Plus /> Add official news
+            </Link>
+          </>
+        }
+      />
+
+      {featured.length === 0 && counts.PUBLISHED > 0 && (
+        <div className="adm-alert" data-tone="warn" style={{ marginBottom: 14 }}>
+          <span>
+            No published story is featured on the home page right now — the home news section is empty. Use{" "}
+            <strong>Feature</strong> on a published item below.
+          </span>
         </div>
-        <form action={newDraftAction}>
-          <button type="submit" className="btn-dark press">
-            <Plus className="w-[13px] h-[13px]" /> New post
-          </button>
-        </form>
+      )}
+      {featured.length > 1 && (
+        <div className="adm-alert" data-tone="info" style={{ marginBottom: 14 }}>
+          <span>
+            {featured.length} published stories are marked featured. The home page shows only the highest-sorted one:{" "}
+            <strong>{featured[0].title}</strong>.
+          </span>
+        </div>
+      )}
+
+      <div className="adm-toolbar">
+        <div className="adm-chips">
+          {TABS.map((t) => (
+            <Link key={t.key} href={t.key === "ALL" ? "/admin/news" : `/admin/news?status=${t.key}`} className={`adm-chip ${filter === t.key ? "is-active" : ""}`}>
+              {t.label} <span className="adm-chip-n">{counts[t.key]}</span>
+            </Link>
+          ))}
+        </div>
       </div>
 
-      <div className="admin-chip-row">
-        {FILTER_TABS.map((t) => (
-          <Link
-            key={t.key}
-            href={t.key === "all" ? "/admin/news" : `/admin/news?filter=${t.key}`}
-            className={`admin-chip ${filter === t.key ? "is-active" : ""}`}
-          >
-            {t.label} <span className="opacity-60">({counts[t.key]})</span>
-          </Link>
-        ))}
-      </div>
-
-      <div className="admin-card overflow-x-auto">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Post</th>
-              <th>Category</th>
-              <th>Status</th>
-              <th>Author</th>
-              <th>Published</th>
-              <th className="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {shown.map((p) => (
-              <PostRow key={p.id} post={p} />
-            ))}
-            {shown.length === 0 && (
-              <tr>
-                <td colSpan={6} className="admin-empty">
-                  <p>
-                    {filter === "all"
-                      ? "No posts yet. Create your first draft to get started."
-                      : `No ${filter.toLowerCase()} posts.`}
-                  </p>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="mt-8 font-manrope text-[13px] text-muted flex items-center gap-2">
-        <ExternalLink className="w-3.5 h-3.5" />
-        <Link href="/news" className="text-crimson-600 no-underline">
-          Preview the public /news feed →
-        </Link>
-      </div>
-    </AdminShell>
-  );
-}
-
-function PostRow({ post }: { post: Post }) {
-  return (
-    <tr>
-      <td>
-        <div className="flex items-center gap-3">
-          {post.coverImage ? (
-            <div className="relative w-[52px] h-[36px] rounded-[8px] overflow-hidden bg-cream-100 shrink-0">
-              <Image
-                src={post.coverImage}
-                alt=""
-                fill
-                sizes="52px"
-                className="object-cover"
-              />
-            </div>
-          ) : (
-            <div className="w-[52px] h-[36px] rounded-[8px] bg-gradient-to-br from-[#C9242E] to-[#871119] shrink-0" />
-          )}
-          <div>
-            <div className="font-sora font-bold text-[14px] text-ink">
-              {post.title}
-            </div>
-            <div className="font-manrope text-[12px] text-muted">
-              /{post.slug}
-            </div>
+      <div className="adm-panel">
+        <CoverageTable
+          items={items}
+          mode="news"
+          filtered={filter !== "ALL"}
+          setStatusAction={setOfficialNewsStatusAction}
+          deleteAction={deleteOfficialNewsAction}
+          setFeaturedAction={setOfficialNewsFeaturedAction}
+        />
+        {items.length > 0 && (
+          <div className="adm-table-note">
+            Only file items the league or the franchise itself published. Write a short, original description — never paste
+            the article body.
           </div>
-        </div>
-      </td>
-      <td className="font-manrope text-muted">{post.category ?? "—"}</td>
-      <td>
-        <span className="tier-badge" style={STATUS_STYLE[post.status]}>
-          {post.status}
-        </span>
-      </td>
-      <td className="font-manrope text-muted">{post.authorName}</td>
-      <td className="font-manrope text-[12.5px] text-muted">
-        {post.publishedAt ? formatPublishedDate(post.publishedAt) : "—"}
-      </td>
-      <td>
-        <div className="flex items-center gap-2 justify-end">
-          <Link href={`/admin/news/${post.id}/edit`} className="btn-ghost">
-            <Pencil className="w-[13px] h-[13px]" /> Edit
-          </Link>
-          {post.status === "DRAFT" && (
-            <form action={setStatusAction}>
-              <input type="hidden" name="id" value={post.id} />
-              <input type="hidden" name="status" value="PUBLISHED" />
-              <button type="submit" className="btn-ghost" title="Publish">
-                <Send className="w-[13px] h-[13px]" /> Publish
-              </button>
-            </form>
-          )}
-          {post.status === "PUBLISHED" && (
-            <form action={setStatusAction}>
-              <input type="hidden" name="id" value={post.id} />
-              <input type="hidden" name="status" value="ARCHIVED" />
-              <button type="submit" className="btn-ghost" title="Archive">
-                <Archive className="w-[13px] h-[13px]" /> Archive
-              </button>
-            </form>
-          )}
-          {post.status === "ARCHIVED" && (
-            <form action={setStatusAction}>
-              <input type="hidden" name="id" value={post.id} />
-              <input type="hidden" name="status" value="DRAFT" />
-              <button type="submit" className="btn-ghost" title="Restore to draft">
-                <Undo2 className="w-[13px] h-[13px]" /> Restore
-              </button>
-            </form>
-          )}
-          <form action={deletePostAction}>
-            <input type="hidden" name="id" value={post.id} />
-            <button type="submit" className="btn-ghost btn-danger">
-              <Trash2 className="w-[13px] h-[13px]" /> Delete
-            </button>
-          </form>
-        </div>
-      </td>
-    </tr>
+        )}
+      </div>
+    </>
   );
 }

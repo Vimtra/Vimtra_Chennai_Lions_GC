@@ -176,7 +176,90 @@ export async function issueEmailVerificationToken(userId: string): Promise<Issue
   await prisma.emailVerificationToken.create({
     data: { userId, tokenHash: sha256(token), expiresAt },
   });
+
+  // Opportunistic housekeeping, no scheduler needed: rows for THIS user that
+  // are both outside the rate-limit window (so they no longer count towards
+  // it) and dead (used or expired) serve no purpose. Live tokens inside their
+  // 24 h are never touched. Best-effort — a failure here must not fail the
+  // issue that just succeeded.
+  prisma.emailVerificationToken
+    .deleteMany({
+      where: {
+        userId,
+        createdAt: { lt: windowStart },
+        OR: [{ usedAt: { not: null } }, { expiresAt: { lt: now } }],
+      },
+    })
+    .catch(() => undefined);
+
   return { ok: true, token, expiresAt };
+}
+
+/**
+ * Read-only look at a token from a verification link: what WOULD happen if
+ * it were consumed. Nothing is written. The verify page renders from this on
+ * GET so that mail scanners and link pre-fetchers, which follow the link
+ * without a person present, cannot burn it — consumption happens only from
+ * the explicit confirm action.
+ */
+export type PeekResult =
+  | { ok: true; email: string; expiresAt: Date }
+  | { ok: false; reason: "invalid" | "expired" | "used" };
+
+export async function peekEmailVerificationToken(rawToken: string): Promise<PeekResult> {
+  const token = (rawToken ?? "").trim();
+  if (!token) return { ok: false, reason: "invalid" };
+  const row = await prisma.emailVerificationToken.findUnique({
+    where: { tokenHash: sha256(token) },
+    select: { expiresAt: true, usedAt: true, user: { select: { email: true } } },
+  });
+  if (!row) return { ok: false, reason: "invalid" };
+  if (row.usedAt) return { ok: false, reason: "used" };
+  if (row.expiresAt < new Date()) return { ok: false, reason: "expired" };
+  return { ok: true, email: row.user.email, expiresAt: row.expiresAt };
+}
+
+/**
+ * Retire every live email token for a user (used when the address changes:
+ * a link sent to the OLD address must not be able to verify the NEW one).
+ * Accepts a transaction client so it can run inside the same transaction as
+ * the email change itself.
+ */
+export async function retireEmailVerificationTokens(
+  userId: string,
+  tx: Pick<typeof prisma, "emailVerificationToken"> = prisma
+): Promise<number> {
+  const r = await tx.emailVerificationToken.updateMany({
+    where: { userId, usedAt: null },
+    data: { usedAt: new Date() },
+  });
+  return r.count;
+}
+
+/**
+ * Change a user's email address safely.
+ *
+ * One transaction: the new address is written together with
+ * `emailVerifiedAt = null` (so a verified old address can never carry its
+ * status across), and every live token is retired in the same statement
+ * group. Nothing about the old state survives. The caller then issues and
+ * sends a fresh token to the NEW address; that step is deliberately outside
+ * the transaction because it is best-effort mail, not data integrity.
+ *
+ * `extra` lets the profile action save name / password in the same write.
+ */
+export async function changeUserEmail(
+  userId: string,
+  newEmail: string,
+  extra: { name?: string; passwordHash?: string } = {}
+): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { id: userId },
+      data: { ...extra, email: newEmail, emailVerifiedAt: null },
+    });
+    await retireEmailVerificationTokens(userId, tx);
+  });
 }
 
 /**

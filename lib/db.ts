@@ -1,4 +1,5 @@
 import "server-only";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { normalizeImg, type Product } from "@/lib/products";
 
@@ -68,8 +69,9 @@ export type ProductInput = Omit<
 > & {
   img?: string;
   images?: string[];
-  weightGrams?: number;
-  sku?: string;
+  /** null clears the column; undefined leaves it untouched on update. */
+  weightGrams?: number | null;
+  sku?: string | null;
   stock?: number;
   active?: boolean;
 };
@@ -145,7 +147,7 @@ export async function createProduct(input: ProductInput): Promise<Product> {
       active: input.active ?? true,
       images: normalizeImages(input.images),
       weightGrams: input.weightGrams ?? null,
-      sku: input.sku ?? null,
+      sku: input.sku || null,
     },
   });
   return toProduct(row);
@@ -179,9 +181,9 @@ export async function updateProduct(
           ? { images: normalizeImages(input.images) }
           : {}),
         ...(input.weightGrams !== undefined
-          ? { weightGrams: input.weightGrams }
+          ? { weightGrams: input.weightGrams ?? null }
           : {}),
-        ...(input.sku !== undefined ? { sku: input.sku } : {}),
+        ...(input.sku !== undefined ? { sku: input.sku || null } : {}),
       },
     });
     return toProduct(row);
@@ -218,14 +220,37 @@ export async function bulkSetProductStock(
   return rows.length;
 }
 
-export async function deleteProduct(id: string): Promise<boolean> {
+export type DeleteProductOutcome = "deleted" | "missing" | "referenced" | "error";
+
+/**
+ * Delete a product. OrderItem.productId is a RESTRICT relation, so a product
+ * that has ever been ordered cannot be deleted — the outcome says so, and
+ * the admin UI offers "hide" (active = false) as the correct alternative.
+ * Checked up front so the common case never round-trips a failing delete;
+ * the catch still handles the race where an order lands in between.
+ */
+export async function deleteProduct(id: string): Promise<DeleteProductOutcome> {
+  const referenced = await prisma.orderItem.count({ where: { productId: id } });
+  if (referenced > 0) return "referenced";
   try {
     await prisma.product.delete({ where: { id } });
-    return true;
+    return "deleted";
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === "P2025") return "missing";
+      if (err.code === "P2003") return "referenced";
+    }
+    console.error("[deleteProduct]", err);
+    return "error";
+  }
+}
+
+/** Show or hide one product on the shop without touching anything else. */
+export async function setProductActive(id: string, active: boolean): Promise<Product | undefined> {
+  try {
+    const row = await prisma.product.update({ where: { id }, data: { active } });
+    return toProduct(row);
   } catch {
-    // Product.delete may fail with a FK RESTRICT if there are OrderItems
-    // referencing it — that's intentional. The caller (admin form) should
-    // present "toggle active" as the safer alternative.
-    return false;
+    return undefined;
   }
 }

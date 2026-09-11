@@ -1,106 +1,79 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { CheckCircle2, XCircle, Clock, RotateCcw } from "lucide-react";
 import StoryHero from "@/components/site/StoryHero";
 import { Section } from "@/components/site/Section";
-import { consumeEmailVerificationToken } from "@/lib/verification";
+import VerifyEmailConfirm from "@/components/auth/VerifyEmailConfirm";
+import { peekEmailVerificationToken } from "@/lib/verification";
+import { safeNextPath } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Verify Email",
   // A one-time token lives in this URL's query string. It must never be
-  // indexed, and crawlers must not follow it and burn the token.
+  // indexed, and crawlers must not follow it.
   robots: { index: false, follow: false },
 };
 
-// The token is consumed on load, so this can never be cached or prerendered.
+// Never cached or prerendered — the token's state can change at any moment.
 export const dynamic = "force-dynamic";
 
 /**
  * Email verification landing page.
  *
- * Reached only from the link in the verification email. The token arrives
- * as a query parameter, is consumed exactly once by
- * consumeEmailVerificationToken(), and each distinct failure is reported
- * with its own message so the person knows whether to click their newest
- * link, request a fresh one, or simply carry on already-verified.
+ * Reached from the link in the verification email. Rendering this page
+ * WRITES NOTHING: the token is only peeked at (read-only) so the right
+ * message can be shown, and the actual consumption happens when the person
+ * presses "Confirm my email" (app/verify-email/actions.ts). That is what
+ * keeps corporate mail scanners and link pre-fetchers — which open every
+ * link in an email without anyone present — from burning the token before
+ * the recipient ever sees it.
  *
  * Deliberately does NOT require a session. The link is followed from a mail
  * client, often in a different browser from the one that signed up, and the
  * token itself is the proof of ownership — 256 bits of CSPRNG entropy tied
- * to one user row. Demanding a login here would strand exactly the people
- * the flow exists to serve, without adding security the token does not
- * already provide. It also does not create, alter, or elevate a session:
- * whatever the visitor was signed in as before, they still are.
+ * to one user row. It also does not create, alter, or elevate a session.
  */
 export default async function VerifyEmailPage({
   searchParams,
 }: {
-  searchParams: Promise<{ token?: string }>;
+  searchParams: Promise<{ token?: string; next?: string }>;
 }) {
-  const { token } = await searchParams;
-  const result = await consumeEmailVerificationToken(token ?? "");
+  const { token, next } = await searchParams;
+  const raw = (token ?? "").trim();
+  const safeNext = safeNextPath(next);
+  const peek = await peekEmailVerificationToken(raw);
+  // Shown to the link holder only in masked form — the mailbox owner knows
+  // their own address, and a leaked URL should not hand it out in full.
+  const masked = peek.ok ? maskEmail(peek.email) : "";
 
-  const view = result.ok
-    ? {
-        icon: <CheckCircle2 className="vfy-icon vfy-icon-ok" aria-hidden />,
-        eyebrow: "Verified",
-        heading: "Your email is confirmed.",
-        body: "Thank you. We can now reach you about orders and account changes at this address.",
-        tone: "ok" as const,
-      }
-    : result.reason === "expired"
-      ? {
-          icon: <Clock className="vfy-icon vfy-icon-warn" aria-hidden />,
-          eyebrow: "Link expired",
-          heading: "That link has expired.",
-          body: "Verification links are valid for 24 hours. Open your account page and send yourself a fresh one.",
-          tone: "warn" as const,
-        }
-      : result.reason === "used"
-        ? {
-            icon: <RotateCcw className="vfy-icon vfy-icon-warn" aria-hidden />,
-            eyebrow: "Already used",
-            heading: "That link has already been used.",
-            body: "Each verification link works once. If your address is already confirmed there is nothing more to do — your account page will show its status.",
-            tone: "warn" as const,
-          }
-        : {
-            icon: <XCircle className="vfy-icon vfy-icon-bad" aria-hidden />,
-            eyebrow: "Invalid link",
-            heading: "We could not verify that link.",
-            body: "It may have been copied incompletely from your email. Open your account page to send a fresh verification link.",
-            tone: "bad" as const,
-          };
+  const line = peek.ok
+    ? "Confirm this is you."
+    : peek.reason === "expired"
+      ? "That link has expired."
+      : peek.reason === "used"
+        ? "That link has already been used."
+        : "We could not verify that link.";
 
   return (
     <>
-      <StoryHero
-        eyebrow="Account"
-        title={["EMAIL", "VERIFICATION"]}
-        line={view.heading}
-      />
+      <StoryHero eyebrow="Account" title={["EMAIL", "VERIFICATION"]} line={line} />
 
       <Section surface="ivory" size="tight">
         <div className="cm-track">
-          <div className={`vfy-panel vfy-${view.tone}`} data-rise>
-            {view.icon}
-            <p className="vfy-eyebrow">{view.eyebrow}</p>
-            <h2 className="vfy-heading">{view.heading}</h2>
-            <p className="vfy-body">{view.body}</p>
-            <div className="vfy-actions">
-              <Link href="/profile" className="hp-btn hp-btn-solid">
-                Go to my account
-              </Link>
-              <Link href="/shop" className="hp-btn hp-btn-text">
-                Visit the shop
-                <span className="hp-arrow" aria-hidden>
-                  →
-                </span>
-              </Link>
-            </div>
-          </div>
+          <VerifyEmailConfirm
+            token={raw}
+            next={safeNext}
+            initial={peek.ok ? { ok: true, email: masked } : { ok: false, reason: peek.reason }}
+          />
         </div>
       </Section>
     </>
   );
+}
+
+/** "j•••@example.com" — enough to recognise, not enough to harvest. */
+function maskEmail(email: string): string {
+  const at = email.indexOf("@");
+  if (at <= 0) return "your address";
+  const local = email.slice(0, at);
+  const domain = email.slice(at);
+  return `${local.slice(0, 1)}${"•".repeat(Math.max(2, Math.min(local.length - 1, 5)))}${domain}`;
 }

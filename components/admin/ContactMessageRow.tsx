@@ -1,128 +1,115 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Mail, Phone } from "lucide-react";
 import type { ContactMessage, ContactStatus } from "@prisma/client";
 import { formatContactDate } from "@/lib/contact-messages-format";
 import ConfirmDeleteButton from "@/components/admin/ConfirmDeleteButton";
-import {
-  setContactMessageStatusAction,
-  deleteContactMessageAction,
-} from "@/app/admin/messages/actions";
+import QuickActionButton from "@/components/admin/ui/QuickActionButton";
+import { ContactPill, StatusPill } from "@/components/admin/ui/StatusPill";
+import { setContactMessageStatusAction, deleteContactMessageAction } from "@/app/admin/messages/actions";
 
 /**
- * One row of /admin/messages, plus its expand-to-read detail row.
+ * One row of /admin/messages plus its expand-to-read detail row (a real
+ * second <tr> — a <details> cannot legally contain table rows).
  *
- * A real second `<tr>`, not a `<details>` wrapping one — a `<details>`
- * cannot legally contain table rows; browsers foster-parent it right out
- * of the table and the layout breaks. Local `open` state is the smallest
- * correct way to toggle a table row, and it is the same shape of client
- * leaf the rest of this admin area already uses for a delete dialog.
- *
- * Status is a full state machine, not a read/unread flag — the same
- * choice lib/orders.ts makes for order status: three explicit states
- * (NEW/READ/RESOLVED) an admin can move between in either direction,
- * shown here as the specific next steps that make sense from wherever
- * the enquiry currently sits, rather than one generic toggle.
+ * Status is a small state machine (NEW → READ → RESOLVED, reversible), so
+ * the actions offered are the specific next steps from wherever the
+ * enquiry sits. Opening a NEW enquiry does not silently mark it read — the
+ * admin decides.
  */
-
-const STATUS_STYLE: Record<ContactStatus, React.CSSProperties> = {
-  NEW: { background: "rgba(196,32,42,0.10)", color: "#C4202A" },
-  READ: { background: "rgba(184,144,75,0.16)", color: "#8A6A2E" },
-  RESOLVED: { background: "rgba(14,138,79,0.10)", color: "#0E8A4F" },
-};
-
-const NEXT_ACTIONS: Record<ContactStatus, { to: ContactStatus; label: string }[]> = {
+const NEXT_ACTIONS: Record<ContactStatus, { to: ContactStatus; label: string; primary?: boolean }[]> = {
   NEW: [
-    { to: "READ", label: "Mark as read" },
-    { to: "RESOLVED", label: "Mark as resolved" },
+    { to: "READ", label: "Mark as read", primary: true },
+    { to: "RESOLVED", label: "Resolve" },
   ],
   READ: [
-    { to: "RESOLVED", label: "Mark as resolved" },
-    { to: "NEW", label: "Reopen as new" },
+    { to: "RESOLVED", label: "Resolve", primary: true },
+    { to: "NEW", label: "Mark unread" },
   ],
-  RESOLVED: [{ to: "NEW", label: "Reopen as new" }],
+  RESOLVED: [{ to: "NEW", label: "Reopen" }],
 };
 
-export default function ContactMessageRow({ message }: { message: ContactMessage }) {
-  const [open, setOpen] = useState(false);
+export default function ContactMessageRow({
+  message,
+  initiallyOpen = false,
+}: {
+  message: ContactMessage;
+  initiallyOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(initiallyOpen);
   const isNew = message.status === "NEW";
+  const preview = message.message.length > 110 ? message.message.slice(0, 110).trimEnd() + "…" : message.message;
 
   return (
     <>
-      <tr style={isNew ? { background: "rgba(196,32,42,0.03)" } : undefined}>
-        <td>
-          <span className="tier-badge" style={STATUS_STYLE[message.status]}>
-            {message.status}
-          </span>
-        </td>
-        <td>
-          <div className="font-sora font-bold text-[14px] text-ink leading-[1.3]">
-            {message.name}
-          </div>
-          <div className="font-manrope text-[12px] text-muted mt-1 break-all">
-            {message.email}
+      <tr className={isNew ? "is-highlight" : undefined}>
+        <td className="adm-td-primary">
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div className="adm-cell-title">{message.name}</div>
+              <div className="adm-cell-sub">{message.email}</div>
+              {!open && <div className="adm-cell-sub" style={{ marginTop: 6, color: "var(--adm-text-3)" }}>{preview}</div>}
+            </div>
           </div>
         </td>
-        <td className="font-manrope text-[12.5px] text-muted">
-          <div>{message.phone || "—"}</div>
-          <div className="mt-1">{message.city || "—"}</div>
+        <td data-label="Status">
+          <ContactPill status={message.status} />
         </td>
-        <td>
-          <span
-            className="tier-badge"
-            style={{ background: "rgba(26,21,19,0.08)", color: "#1A1513" }}
-          >
+        <td data-label="Topic">
+          <StatusPill tone="neutral" dotless>
             {message.category}
-          </span>
+          </StatusPill>
         </td>
-        <td className="font-manrope text-[12.5px] text-muted whitespace-nowrap">
+        <td data-label="Phone / City" className="adm-td-muted">
+          <div>{message.phone || "—"}</div>
+          <div>{message.city || "—"}</div>
+        </td>
+        <td data-label="Received" className="adm-td-muted adm-td-nowrap">
           {formatContactDate(message.createdAt)}
         </td>
-        <td>
-          <div className="flex items-center justify-end">
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              className="btn-ghost"
-              aria-expanded={open}
-            >
-              <ChevronDown
-                className={`w-[13px] h-[13px] transition-transform ${open ? "rotate-180" : ""}`}
-                aria-hidden
-              />
-              {open ? "Hide" : "View"}
+        <td className="adm-td-actions">
+          <div className="adm-actions">
+            <button type="button" onClick={() => setOpen((v) => !v)} className="adm-btn adm-btn-sm" aria-expanded={open}>
+              <ChevronDown style={{ transform: open ? "rotate(180deg)" : undefined, transition: "transform 140ms" }} aria-hidden />
+              {open ? "Hide" : "Read"}
             </button>
           </div>
         </td>
       </tr>
 
       {open && (
-        <tr>
-          <td colSpan={6} className="!p-0">
-            <div className="border border-black/[0.07] rounded-[4px] p-5 my-3" style={{ background: "#fff" }}>
-              <p className="font-manrope text-[14.5px] leading-[1.7] text-ink whitespace-pre-wrap">
-                {message.message}
-              </p>
-
-              <div className="mt-5 flex items-center gap-2 flex-wrap justify-between">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {NEXT_ACTIONS[message.status].map((next) => (
-                    <form action={setContactMessageStatusAction} key={next.to}>
-                      <input type="hidden" name="id" value={message.id} />
-                      <input type="hidden" name="status" value={next.to} />
-                      <button type="submit" className="btn-ghost">
-                        {next.label}
-                      </button>
-                    </form>
-                  ))}
-                </div>
+        <tr className="adm-row-detail">
+          <td colSpan={6} style={{ padding: 0, background: "var(--adm-panel-2)" }}>
+            <div style={{ padding: "16px clamp(14px, 2vw, 20px) 18px", borderTop: "1px solid var(--adm-hair)", borderBottom: "1px solid var(--adm-hair)" }}>
+              <p className="adm-prose">{message.message}</p>
+              <div className="adm-inline" style={{ marginTop: 14, gap: 12 }}>
+                <a href={`mailto:${message.email}`} className="adm-btn adm-btn-sm">
+                  <Mail /> Reply by email
+                </a>
+                {message.phone && (
+                  <a href={`tel:${message.phone}`} className="adm-btn adm-btn-sm">
+                    <Phone /> Call
+                  </a>
+                )}
+                <span className="adm-spacer" style={{ flex: 1 }} />
+                {NEXT_ACTIONS[message.status].map((next) => (
+                  <QuickActionButton
+                    key={next.to}
+                    action={setContactMessageStatusAction}
+                    fields={{ id: message.id, status: next.to }}
+                    className={`adm-btn adm-btn-sm ${next.primary ? "adm-btn-primary" : ""}`}
+                  >
+                    {next.label}
+                  </QuickActionButton>
+                ))}
                 <ConfirmDeleteButton
                   action={deleteContactMessageAction}
                   id={message.id}
                   label={message.name}
                   meta={message.email}
-                  description="This permanently deletes the enquiry. It cannot be undone."
+                  description="Permanently deletes this enquiry and the personal details it contains. It cannot be recovered."
+                  triggerClassName="adm-btn adm-btn-sm adm-btn-ghost adm-tone-danger"
                 />
               </div>
             </div>

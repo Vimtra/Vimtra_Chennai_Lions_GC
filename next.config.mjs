@@ -30,6 +30,13 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    // Cover uploads accept files up to 5 MB; reserve room for multipart
+    // form-data overhead while keeping the application-level file limit.
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
   images: {
     // Local assets live in /public. Google thumbnail URLs are accepted for
     // product images entered through the admin catalog.
@@ -41,6 +48,14 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      // Vercel Blob — where admin-uploaded cover images (news, media,
+      // products) live in production. Every store gets its own subdomain,
+      // hence the wildcard; the path is left open because object names are
+      // random UUIDs under a per-feature prefix.
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
       },
     ],
     formats: ["image/avif", "image/webp"],

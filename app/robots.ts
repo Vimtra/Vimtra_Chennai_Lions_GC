@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
+import { getSiteOrigin } from "@/lib/site-url";
 
 // Absolute origin used for the sitemap URL. Configure per-environment via
 // NEXT_PUBLIC_SITE_URL. Localhost is a safe dev default that will never
 // ship — search engines won't crawl a localhost sitemap.
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-).replace(/\/$/, "");
+// Resolved by lib/site-url.ts (non-strict here: a sitemap host is
+// informational, so a missing variable logs rather than throws).
+export const SITE_URL = getSiteOrigin({ strict: false });
 
 export default function robots(): MetadataRoute.Robots {
   return {

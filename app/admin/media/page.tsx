@@ -1,182 +1,90 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Pencil, Trash2, ExternalLink, EyeOff, Eye } from "lucide-react";
+import { Plus } from "lucide-react";
+import type { PostStatus } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth";
-import AdminShell from "@/components/admin/AdminShell";
-import {
-  listMediaCoverage,
-  formatCoverageDate,
-} from "@/lib/media-coverage";
-import MediaCoverageForm from "@/components/admin/MediaCoverageForm";
-import {
-  createMediaCoverageAction,
-  deleteMediaCoverageAction,
-  toggleActiveAction,
-} from "./actions";
+import CoverageTable from "@/components/admin/CoverageTable";
+import PageHeader from "@/components/admin/ui/PageHeader";
+import { MEDIA_KINDS, listMediaCoverageByKinds } from "@/lib/media-coverage";
+import { deleteMediaCoverageAction, setMediaStatusAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Media Coverage · Lions Admin",
+  title: "Media Coverage",
   robots: { index: false, follow: false },
 };
 
-export default async function AdminMediaPage() {
-  const user = await requireAdmin();
-  const items = await listMediaCoverage();
-  const activeCount = items.filter((i) => i.active).length;
+export const dynamic = "force-dynamic";
+
+type Filter = "ALL" | PostStatus;
+const TABS: { key: Filter; label: string }[] = [
+  { key: "ALL", label: "All" },
+  { key: "DRAFT", label: "Drafts" },
+  { key: "PUBLISHED", label: "Published" },
+  { key: "ARCHIVED", label: "Archived" },
+];
+
+/**
+ * Admin → Media Coverage. Third-party press (ARTICLE) and social posts
+ * (SOCIAL) only. The league's and the franchise's own reporting is OFFICIAL
+ * and lives under Admin → Official News; it never appears here.
+ */
+export default async function AdminMediaPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  await requireAdmin();
+  const { status: raw } = await searchParams;
+  const filter: Filter = raw === "DRAFT" || raw === "PUBLISHED" || raw === "ARCHIVED" ? raw : "ALL";
+  const all = await listMediaCoverageByKinds(MEDIA_KINDS);
+  const items = filter === "ALL" ? all : all.filter((i) => i.status === filter);
+  const counts = {
+    ALL: all.length,
+    DRAFT: all.filter((i) => i.status === "DRAFT").length,
+    PUBLISHED: all.filter((i) => i.status === "PUBLISHED").length,
+    ARCHIVED: all.filter((i) => i.status === "ARCHIVED").length,
+  };
 
   return (
-    <AdminShell email={user.email} active="media">
-      <div className="admin-head">
-        <div>
-          <h1>Media Coverage</h1>
-          <p>
-            Curated third-party press mentions. {activeCount} of {items.length}{" "}
-            visible on the public{" "}
-            <Link href="/news" className="text-crimson-600 no-underline">
-              /news
-            </Link>{" "}
-            page.
-          </p>
-        </div>
-        <Link href="#new" className="btn-dark">
-          + Add coverage
-        </Link>
-      </div>
+    <>
+      <PageHeader
+        eyebrow="Content"
+        title="Media Coverage"
+        lede={
+          <>
+            What the press and social platforms published about the Lions. Published items appear under{" "}
+            <strong>Media Coverage</strong> on <Link href="/news">/news</Link>. The league&rsquo;s own reporting is filed
+            under <Link href="/admin/news">Official News</Link>.
+          </>
+        }
+        actions={
+          <Link href="/admin/media/new" className="adm-btn adm-btn-primary">
+            <Plus /> Add media article
+          </Link>
+        }
+      />
 
-      <div className="admin-card overflow-x-auto">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Kind</th>
-              <th>Source</th>
-              <th>Published</th>
-              <th>Visible</th>
-              <th>Sort</th>
-              <th className="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((m) => (
-              <tr key={m.id}>
-                <td>
-                  <div className="font-sora font-bold text-[14px] text-ink leading-[1.3]">
-                    {m.title}
-                  </div>
-                  <div className="font-manrope text-[12px] text-muted mt-1 max-w-[520px] line-clamp-2">
-                    {m.summary}
-                  </div>
-                </td>
-                <td>
-                  <span
-                    className="tier-badge"
-                    style={
-                      m.kind === "SOCIAL"
-                        ? {
-                            background:
-                              "linear-gradient(135deg,#E1306C,#833AB4)",
-                            color: "#fff",
-                          }
-                        : { background: "var(--hp-ink)", color: "var(--hp-gold-lt)" }
-                    }
-                  >
-                    {m.kind}
-                  </span>
-                </td>
-                <td>
-                  <div className="font-manrope font-semibold text-[13px] text-ink">
-                    {m.sourceName}
-                  </div>
-                  <a
-                    href={m.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="font-manrope text-[11.5px] text-crimson-600 no-underline inline-flex items-center gap-1 mt-1"
-                  >
-                    <ExternalLink className="w-3 h-3" /> open
-                  </a>
-                </td>
-                <td className="font-manrope text-[12.5px] text-muted">
-                  {m.publishedAt ? formatCoverageDate(m.publishedAt) : "—"}
-                </td>
-                <td>
-                  <span
-                    className="tier-badge"
-                    style={
-                      m.active
-                        ? { background: "rgba(14,138,79,0.10)", color: "#0E8A4F" }
-                        : { background: "rgba(107,99,92,0.10)", color: "#6B635C" }
-                    }
-                  >
-                    {m.active ? "VISIBLE" : "HIDDEN"}
-                  </span>
-                </td>
-                <td className="font-manrope text-[12.5px] text-muted">{m.sortOrder}</td>
-                <td>
-                  <div className="flex items-center gap-2 justify-end">
-                    <Link
-                      href={`/admin/media/${m.id}/edit`}
-                      className="btn-ghost"
-                    >
-                      <Pencil className="w-[13px] h-[13px]" /> Edit
-                    </Link>
-                    <form action={toggleActiveAction}>
-                      <input type="hidden" name="id" value={m.id} />
-                      <input
-                        type="hidden"
-                        name="active"
-                        value={String(!m.active)}
-                      />
-                      <button type="submit" className="btn-ghost">
-                        {m.active ? (
-                          <>
-                            <EyeOff className="w-[13px] h-[13px]" /> Hide
-                          </>
-                        ) : (
-                          <>
-                            <Eye className="w-[13px] h-[13px]" /> Show
-                          </>
-                        )}
-                      </button>
-                    </form>
-                    <form action={deleteMediaCoverageAction}>
-                      <input type="hidden" name="id" value={m.id} />
-                      <button type="submit" className="btn-ghost btn-danger">
-                        <Trash2 className="w-[13px] h-[13px]" /> Delete
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {items.length === 0 && (
-              <tr>
-                <td colSpan={7} className="admin-empty">
-                  <p>No media coverage entries yet. Add one below.</p>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div id="new" className="mt-10 scroll-mt-24">
-        <h2 className="font-sora font-extrabold text-[20px] tracking-[-0.01em] text-ink mb-4">
-          Add coverage
-        </h2>
-        <div className="admin-card !p-7 max-w-[860px]">
-          <MediaCoverageForm
-            action={createMediaCoverageAction}
-            submitLabel="Add coverage"
-          />
+      <div className="adm-toolbar">
+        <div className="adm-chips">
+          {TABS.map((t) => (
+            <Link key={t.key} href={t.key === "ALL" ? "/admin/media" : `/admin/media?status=${t.key}`} className={`adm-chip ${filter === t.key ? "is-active" : ""}`}>
+              {t.label} <span className="adm-chip-n">{counts[t.key]}</span>
+            </Link>
+          ))}
         </div>
       </div>
 
-      <p className="mt-6 font-manrope text-[12.5px] text-muted max-w-[720px]">
-        Do not paste full article text into the summary field. Write a short,
-        original attribution of what the source published. Cover-image files
-        are only appropriate to embed if you have permission from the source.
-      </p>
-    </AdminShell>
+      <div className="adm-panel">
+        <CoverageTable
+          items={items}
+          mode="media"
+          filtered={filter !== "ALL"}
+          setStatusAction={setMediaStatusAction}
+          deleteAction={deleteMediaCoverageAction}
+        />
+        {items.length > 0 && (
+          <div className="adm-table-note">
+            Write a short, original attribution of what the source published. Upload a cover only if the franchise owns the
+            photograph or has permission from the source.
+          </div>
+        )}
+      </div>
+    </>
   );
 }

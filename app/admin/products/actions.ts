@@ -1,95 +1,192 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
-import { randomUUID } from "crypto";
-import { put } from "@vercel/blob";
 import { requireAdmin } from "@/lib/auth";
 import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductById,
   getProductsByIds,
   bulkSetProductStock,
+  setProductActive,
   type ProductInput,
 } from "@/lib/db";
-
-async function parseInput(formData: FormData): Promise<ProductInput> {
-  const upload = formData.get("image");
-  const currentImg = String(formData.get("currentImg") ?? "").trim();
-  // The admin explicitly cleared the image. Without this the current value
-  // was always echoed back, so an image could be replaced but never removed.
-  const removeImage = String(formData.get("removeImage") ?? "") === "1";
-
-  let img = removeImage ? undefined : currentImg || undefined;
-
-  if (upload instanceof File && upload.size > 0) {
-    if (upload.size > 5 * 1024 * 1024 || !["image/jpeg", "image/png", "image/webp", "image/avif"].includes(upload.type)) {
-      throw new Error("Please upload a JPG, PNG, WebP or AVIF image under 5 MB.");
-    }
-    const extension = upload.type === "image/jpeg" ? "jpg" : upload.type.split("/")[1];
-    const fileName = `${randomUUID()}.${extension}`;
-    const imageBuffer = Buffer.from(await upload.arrayBuffer());
-
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
-      try {
-        const blob = await put(`products/${fileName}`, imageBuffer, {
-          access: "public",
-          contentType: upload.type,
-          token: process.env.BLOB_READ_WRITE_TOKEN,
-          addRandomSuffix: false,
-        });
-        img = blob.url;
-      } catch (err) {
-        console.error("[parseInput] blob upload failed:", err);
-        throw new Error(
-          "The image could not be saved to storage. The product was not changed."
-        );
-      }
-    } else {
-      // Keep local development usable when Blob storage is not configured.
-      try {
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        await mkdir(uploadDir, { recursive: true });
-        await writeFile(path.join(uploadDir, fileName), imageBuffer);
-        img = `/uploads/${fileName}`;
-      } catch (err) {
-        console.error("[parseInput] local image write failed:", err);
-        throw new Error(
-          "The image could not be saved to storage. The product was not changed."
-        );
-      }
-    }
-  }
-  return {
-    name: String(formData.get("name") ?? "").trim(),
-    cat: String(formData.get("cat") ?? "").trim(),
-    price: Math.max(0, Math.round(Number(formData.get("price")) || 0)),
-    glyph: String(formData.get("glyph") ?? "").trim().toUpperCase().slice(0, 3),
-    img,
-    images: img ? [img] : [],
-    range: String(formData.get("range") ?? "").trim(),
-    desc: String(formData.get("desc") ?? "").trim(),
-  };
-}
+import { CoverUploadError, storeCoverImage } from "@/lib/cover-upload";
+import type { ActionResult } from "@/lib/admin-action-result";
 
 /**
- * Images use Vercel Blob in deployed environments. Local development keeps a
- * filesystem fallback so the admin flow works without a Blob store.
+ * Product Manager actions. Every entry point calls requireAdmin() first and
+ * re-validates its input server-side; the client form's checks exist only
+ * to give faster feedback.
+ *
+ * Images go through lib/cover-upload.ts — the ONE storage path for every
+ * admin image (Vercel Blob in deployed environments, `public/uploads/`
+ * locally when no token is set). The token never leaves the server.
  */
+
+const MAX_STOCK = 1_000_000;
+
+function text(v: FormDataEntryValue | null): string {
+  return String(v ?? "").trim();
+}
+
+function optInt(v: FormDataEntryValue | null): number | null {
+  const s = text(v);
+  if (!s) return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? Math.max(0, Math.round(n)) : null;
+}
+
+async function parseInput(
+  formData: FormData,
+  existing?: { img?: string; images: string[] }
+): Promise<ProductInput> {
+  const upload = formData.get("image");
+  const currentImg = text(formData.get("currentImg"));
+  const removeImage = text(formData.get("removeImage")) === "1";
+
+  let img: string | undefined = removeImage ? undefined : currentImg || undefined;
+
+  if (upload instanceof File && upload.size > 0) {
+    // Throws CoverUploadError with a written, user-facing message.
+    img = await storeCoverImage(upload, "products");
+  }
+
+  // Keep any secondary gallery images the row already holds; only the
+  // primary slot is managed by this form. Previously every save collapsed
+  // `images` to a single entry.
+  const rest = (existing?.images ?? []).filter((s) => s !== existing?.img && s !== currentImg);
+  const images = img ? [img, ...rest] : rest;
+
+  const stock = optInt(formData.get("stock"));
+  const weightGrams = optInt(formData.get("weightGrams"));
+  const sku = text(formData.get("sku"));
+
+  return {
+    name: text(formData.get("name")),
+    cat: text(formData.get("cat")),
+    price: Math.max(0, Math.round(Number(formData.get("price")) || 0)),
+    glyph: text(formData.get("glyph")).toUpperCase().slice(0, 3),
+    img,
+    images,
+    range: text(formData.get("range")),
+    desc: text(formData.get("desc")),
+    // Only written when the form actually submitted the field.
+    ...(formData.has("stock") ? { stock: Math.min(MAX_STOCK, stock ?? 0) } : {}),
+    ...(formData.has("active") || formData.has("activeSubmitted")
+      ? { active: text(formData.get("active")) === "1" }
+      : {}),
+    ...(formData.has("sku") ? { sku: sku || null } : {}),
+    ...(formData.has("weightGrams") ? { weightGrams } : {}),
+  };
+}
 
 /** Refresh every surface that reads the catalog. */
 function revalidateCatalog(id?: string) {
   revalidatePath("/shop");
   revalidatePath("/admin/products");
-  // The inventory manager lists the same catalog and deletes from it, but was
-  // missing here — so a delete made on /admin/inventory left its own table
-  // showing the row it had just removed.
   revalidatePath("/admin/inventory");
+  revalidatePath("/admin");
   revalidatePath("/");
   if (id) revalidatePath(`/product/${id}`);
 }
+
+/** Server-side guard for the fields the form marks required. */
+function validate(input: ProductInput): string | null {
+  if (!input.name) return "Product name is required.";
+  if (!input.cat) return "Category is required.";
+  if (!Number.isFinite(input.price) || input.price < 0) return "Price must be zero or more.";
+  return null;
+}
+
+function toMessage(err: unknown): string {
+  if (err instanceof CoverUploadError) return err.message;
+  return "Something went wrong. The product was not changed.";
+}
+
+export type ProductActionResult = ActionResult<{ id: string }>;
+
+export async function createProductAction(formData: FormData): Promise<ProductActionResult> {
+  await requireAdmin();
+  try {
+    const input = await parseInput(formData);
+    const invalid = validate(input);
+    if (invalid) return { ok: false, error: invalid };
+    const product = await createProduct(input);
+    revalidateCatalog(product.id);
+    return { ok: true, id: product.id, message: `“${product.name}” added.` };
+  } catch (err) {
+    console.error("[createProductAction]", err instanceof Error ? err.message : err);
+    return { ok: false, error: toMessage(err) };
+  }
+}
+
+export async function updateProductAction(formData: FormData): Promise<ProductActionResult> {
+  await requireAdmin();
+  const id = text(formData.get("id"));
+  if (!id) return { ok: false, error: "Missing product identifier." };
+  try {
+    const existing = await getProductById(id);
+    if (!existing) {
+      return { ok: false, error: "That product is no longer in the catalog. Reload and try again." };
+    }
+    const input = await parseInput(formData, existing);
+    const invalid = validate(input);
+    if (invalid) return { ok: false, error: invalid };
+    const updated = await updateProduct(id, input);
+    if (!updated) {
+      return { ok: false, error: "That product could not be saved. Reload and try again." };
+    }
+    revalidateCatalog(id);
+    return { ok: true, id, message: "Changes saved." };
+  } catch (err) {
+    console.error("[updateProductAction]", err instanceof Error ? err.message : err);
+    return { ok: false, error: toMessage(err) };
+  }
+}
+
+/**
+ * Delete reports its outcome instead of pretending: a product that has ever
+ * been ordered cannot be deleted (OrderItem is a RESTRICT relation) — the
+ * dialog keeps that message on screen and points at "Hide" instead.
+ */
+export async function deleteProductAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+  const id = text(formData.get("id"));
+  if (!id) return { ok: false, error: "Missing product identifier." };
+  const outcome = await deleteProduct(id);
+  switch (outcome) {
+    case "deleted":
+      revalidateCatalog(id);
+      return { ok: true, message: "Product deleted." };
+    case "referenced":
+      return {
+        ok: false,
+        error:
+          "This product appears on existing orders, so it cannot be deleted. Hide it from the shop instead — order history stays intact.",
+      };
+    case "missing":
+      return { ok: false, error: "That product no longer exists." };
+    default:
+      return { ok: false, error: "That product could not be deleted. Reload and try again." };
+  }
+}
+
+/** Show / hide on the shop. Reversible, so no confirmation required. */
+export async function setProductActiveAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+  const id = text(formData.get("id"));
+  const active = text(formData.get("active")) === "1";
+  if (!id) return { ok: false, error: "Missing product identifier." };
+  const updated = await setProductActive(id, active);
+  if (!updated) return { ok: false, error: "That product no longer exists." };
+  revalidateCatalog(id);
+  return { ok: true, message: active ? `“${updated.name}” is now visible on the shop.` : `“${updated.name}” hidden from the shop.` };
+}
+
+// ---------------------------------------------------------------------------
+// Inventory — bulk stock update (the only stock entry point for /admin/inventory)
 
 export interface BulkStockUpdateItem {
   id: string;
@@ -101,20 +198,12 @@ export type BulkStockResult =
   | { ok: false; error: string };
 
 /**
- * Bulk stock update for the inventory manager (/admin/inventory).
- *
- * Authorization is enforced server-side via requireAdmin() — the client
- * component cannot reach the database on its own.
- *
- * Scope is deliberately narrow: this writes STOCK ONLY. `bulkSetProductStock`
- * takes an `active` flag as well, so each product's current `active` value is
- * read and passed straight back through — the flag is preserved, never
- * toggled here. Nothing else on the product row is touched, and none of the
- * checkout/order stock-decrement paths are involved.
+ * Writes STOCK ONLY. `bulkSetProductStock` takes an `active` flag as well,
+ * so each product's current value is read and passed straight back — the
+ * flag is preserved, never toggled here. Nothing else on the row is
+ * touched, and none of the checkout stock-decrement paths are involved.
  */
-export async function bulkUpdateStockAction(
-  updates: BulkStockUpdateItem[]
-): Promise<BulkStockResult> {
+export async function bulkUpdateStockAction(updates: BulkStockUpdateItem[]): Promise<BulkStockResult> {
   await requireAdmin();
 
   if (!Array.isArray(updates) || updates.length === 0) {
@@ -127,10 +216,10 @@ export async function bulkUpdateStockAction(
       return { ok: false, error: "Invalid product identifier encountered." };
     }
     const num = Number(item.stock);
-    if (!Number.isInteger(num) || num < 0) {
+    if (!Number.isInteger(num) || num < 0 || num > MAX_STOCK) {
       return {
         ok: false,
-        error: `Invalid stock value "${item.stock}" for product "${item.id}". Stock must be a non-negative whole number.`,
+        error: `Invalid stock value "${item.stock}" for product "${item.id}". Stock must be a whole number between 0 and ${MAX_STOCK.toLocaleString("en-IN")}.`,
       };
     }
     validated.push({ id: item.id.trim(), stock: num });
@@ -144,9 +233,7 @@ export async function bulkUpdateStockAction(
     if (missing.length > 0) {
       return {
         ok: false,
-        error: `No longer in the catalog: ${missing
-          .map((m) => m.id)
-          .join(", ")}. Reload the page and try again.`,
+        error: `No longer in the catalog: ${missing.map((m) => m.id).join(", ")}. Reload the page and try again.`,
       };
     }
 
@@ -163,92 +250,6 @@ export async function bulkUpdateStockAction(
     return { ok: true, updatedCount };
   } catch (err: unknown) {
     console.error("[bulkUpdateStockAction] Error updating stock:", err);
-    return {
-      ok: false,
-      error: "Failed to update stock in database. Please try again.",
-    };
+    return { ok: false, error: "Failed to update stock in database. Please try again." };
   }
-}
-
-/**
- * Create/update outcome.
- *
- * These used to end in `redirect("/admin/products")`. A redirect throws
- * NEXT_REDIRECT, which a modal calling the action cannot tell apart from a
- * genuine failure — so there was no way to show a loading, error or success
- * state. They now report the outcome and let the caller decide: the modal
- * closes and the revalidated list refreshes underneath it, and the
- * standalone edit page navigates itself.
- *
- * The data logic is unchanged — same `parseInput`, same `createProduct` /
- * `updateProduct`, same `revalidateCatalog`.
- */
-export type ProductActionResult =
-  | { ok: true; id: string }
-  | { ok: false; error: string };
-
-/** Server-side guard for the two fields the form marks required. */
-function validate(input: ProductInput): string | null {
-  if (!input.name) return "Product name is required.";
-  if (!input.cat) return "Category is required.";
-  return null;
-}
-
-function toMessage(err: unknown): string {
-  // parseInput throws a written, user-facing message for a bad upload.
-  if (err instanceof Error && err.message) return err.message;
-  return "Something went wrong. Please try again.";
-}
-
-export async function createProductAction(
-  formData: FormData
-): Promise<ProductActionResult> {
-  await requireAdmin();
-  try {
-    const input = await parseInput(formData);
-    const invalid = validate(input);
-    if (invalid) return { ok: false, error: invalid };
-
-    const product = await createProduct(input);
-    revalidateCatalog(product.id);
-    return { ok: true, id: product.id };
-  } catch (err) {
-    console.error("[createProductAction]", err);
-    return { ok: false, error: toMessage(err) };
-  }
-}
-
-export async function updateProductAction(
-  formData: FormData
-): Promise<ProductActionResult> {
-  await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) return { ok: false, error: "Missing product identifier." };
-
-  try {
-    const input = await parseInput(formData);
-    const invalid = validate(input);
-    if (invalid) return { ok: false, error: invalid };
-
-    const updated = await updateProduct(id, input);
-    if (!updated) {
-      return {
-        ok: false,
-        error: "That product is no longer in the catalog. Reload and try again.",
-      };
-    }
-    revalidateCatalog(id);
-    return { ok: true, id };
-  } catch (err) {
-    console.error("[updateProductAction]", err);
-    return { ok: false, error: toMessage(err) };
-  }
-}
-
-export async function deleteProductAction(formData: FormData) {
-  await requireAdmin();
-  const id = String(formData.get("id") ?? "");
-  await deleteProduct(id);
-  revalidateCatalog(id);
-  revalidatePath("/admin/products");
 }

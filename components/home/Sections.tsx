@@ -321,7 +321,7 @@ export function Development() {
   );
 }
 
-/* ── 05 · MEDIA ──────────────────────────────────────────── */
+/* ── 05 · NEWS ───────────────────────────────────────────── */
 export interface StoryRow {
   id: string;
   source: string;
@@ -332,16 +332,15 @@ export interface StoryRow {
 }
 
 /**
- * 05 — Media.
+ * 05 — News.
  *
  * A press wall, not a heading over an empty band. The chapter reads the
- * real MediaCoverage rows: the first is given a cover and its summary, the
+ * real Official News row: the first is given a cover and its summary, the
  * rest run as ruled rows carrying source and headline. Only the featured
  * story shows an image — four of the five rows currently point at the same
  * portrait, so repeating it would read as a template rather than a page.
  *
- * With no coverage the wall is simply absent and the chapter falls back to
- * the route into the news desk. Nothing is padded out.
+ * With no featured Official News the chapter shows an intentional empty state.
  */
 export function Media({ stories }: { stories: StoryRow[] }) {
   const root = useSectionMotion();
@@ -359,7 +358,7 @@ export function Media({ stories }: { stories: StoryRow[] }) {
         <div className="hm-press-head">
           <div>
             <p className="hp-index" data-rise>
-              05 <span>Media</span>
+              05 <span>News</span>
             </p>
             <h2 id="md-h" className="hp-section-title">
               <span className="mq-line" data-line>
@@ -410,8 +409,7 @@ export function Media({ stories }: { stories: StoryRow[] }) {
           </div>
         ) : (
           <p className="hm-body hp-mt-lg" data-rise>
-            News, press coverage and updates from the Chennai Lions — all in
-            one place, kept current by the team.
+            No official news has been featured here yet.
           </p>
         )}
       </div>

@@ -20,34 +20,12 @@ import { formatPublishedDate } from "./posts-format";
 import { formatCoverageDate } from "./media-coverage-format";
 
 /**
- * The official AM Green IGPL website. A `MediaCoverage` row sourced from
- * this exact host is the league reporting on itself — official news, not
- * third-party press and not Chennai Lions editorial. Matching on host
- * rather than a free-text flag keeps this deterministic and avoids adding a
- * schema field for what is, right now, a single confirmed source.
- *
- * Carried over unchanged from the previous /news implementation: the
- * classification rule is data integrity, not styling, so a visual redesign
- * does not get to reinterpret it.
- */
-const OFFICIAL_IGPL_HOST = "theigpl.com";
-
-export function isOfficialIgpl(sourceUrl: string): boolean {
-  try {
-    return (
-      new URL(sourceUrl).hostname.replace(/^www\./, "") === OFFICIAL_IGPL_HOST
-    );
-  } catch {
-    return false;
-  }
-}
-
-/**
  * The three authorships the desk keeps apart. They are not cosmetic tags:
  * `official` means the franchise or the league published it, `press` means
- * somebody else did, `social` means it is a platform post. Nothing is ever
- * reclassified by title-matching or guesswork — only by table, kind and
- * source host.
+ * somebody else did, `social` means it is a platform post. Each maps to a
+ * stored `MediaCoverage.kind` the admin set explicitly — OFFICIAL, ARTICLE,
+ * SOCIAL — plus `Post` rows, which are the franchise's own editorial and
+ * therefore official. Nothing is inferred from a title or a URL.
  */
 export type NewsChannel = "official" | "press" | "social";
 
@@ -170,7 +148,7 @@ function fromCoverage(item: MediaCoverage, channel: NewsChannel): DraftEntry {
  *
  *  1. Franchise editorial first, in the order the data layer returned it
  *     (pinned `sortOrder`, then newest). The newsroom leads its own page.
- *  2. Official AM Green IGPL rows next, same ordering rule.
+ *  2. OFFICIAL coverage rows next, same ordering rule.
  *  3. Third-party press.
  *  4. Social.
  *
@@ -192,22 +170,23 @@ function fromCoverage(item: MediaCoverage, channel: NewsChannel): DraftEntry {
  */
 export function buildNewsDesk(input: {
   posts: Post[];
-  articles: MediaCoverage[];
-  social: MediaCoverage[];
+  /** Every PUBLISHED MediaCoverage row, any kind; classified here by kind. */
+  coverage: MediaCoverage[];
   /**
    * Resolver for stored image paths (`webSrc`). Injected so this module
    * stays a pure data shaper with no import of the asset map.
    */
   resolveImage: (src: string | null) => string | null;
 }): NewsDesk {
-  const { posts, articles, social, resolveImage } = input;
+  const { posts, coverage, resolveImage } = input;
 
-  const igpl = articles.filter((a) => isOfficialIgpl(a.sourceUrl));
-  const press = articles.filter((a) => !isOfficialIgpl(a.sourceUrl));
+  const official = coverage.filter((c) => c.kind === "OFFICIAL");
+  const press = coverage.filter((c) => c.kind === "ARTICLE");
+  const social = coverage.filter((c) => c.kind === "SOCIAL");
 
   const draft: DraftEntry[] = [
     ...posts.map(fromPost),
-    ...igpl.map((i) => fromCoverage(i, "official")),
+    ...official.map((i) => fromCoverage(i, "official")),
     ...press.map((i) => fromCoverage(i, "press")),
     ...social.map((i) => fromCoverage(i, "social")),
   ];
@@ -231,7 +210,7 @@ export function buildNewsDesk(input: {
     featured: all[0] ?? null,
     entries: all.slice(1),
     counts: {
-      official: posts.length + igpl.length,
+      official: posts.length + official.length,
       press: press.length,
       social: social.length,
     },

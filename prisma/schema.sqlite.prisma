@@ -143,6 +143,7 @@ model Post {
 }
 
 enum MediaKind {
+  OFFICIAL
   ARTICLE
   SOCIAL
 }
@@ -156,12 +157,16 @@ model MediaCoverage {
   summary     String
   publishedAt DateTime?
   coverImage  String?
+  status      PostStatus @default(PUBLISHED)
   active      Boolean   @default(true)
+  featuredOnHome Boolean @default(false)
   sortOrder   Int       @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@index([active, kind, sortOrder])
+  @@index([status, kind, sortOrder])
+  @@index([featuredOnHome, status, kind, sortOrder])
 }
 
 // Contact — /contact enquiries. Mirrors the model in schema.prisma; see

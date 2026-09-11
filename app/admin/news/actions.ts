@@ -4,13 +4,16 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import type { PostStatus } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth";
+import { createPost, deletePost, getPost, updatePost, type PostInput } from "@/lib/posts";
 import {
-  createPost,
-  deletePost,
-  getPost,
-  updatePost,
-  type PostInput,
-} from "@/lib/posts";
+  NEWS_KINDS,
+  createMediaCoverage,
+  deleteMediaCoverage,
+  getMediaCoverage,
+  updateMediaCoverage,
+} from "@/lib/media-coverage";
+import { parseCoverageForm } from "@/lib/coverage-admin";
+import type { ActionResult } from "@/lib/admin-action-result";
 
 const STATUSES: PostStatus[] = ["DRAFT", "PUBLISHED", "ARCHIVED"];
 
@@ -35,13 +38,16 @@ function toStatus(raw: FormDataEntryValue | null): PostStatus {
 function revalidatePostSurfaces(slug?: string | null) {
   revalidatePath("/news");
   revalidatePath("/admin/news");
+  revalidatePath("/admin/news/editorial");
+  revalidatePath("/admin");
   if (slug) revalidatePath(`/news/${slug}`);
 }
 
-/**
- * Create a fresh DRAFT and redirect straight into the editor for it.
- * The admin list's "+ New post" button calls this.
- */
+/* ---------------------------------------------------------------------------
+   EDITORIAL POSTS — long-form Post rows with the TipTap editor.
+--------------------------------------------------------------------------- */
+
+/** Create a fresh DRAFT and redirect straight into the editor for it. */
 export async function newDraftAction() {
   await requireAdmin();
   const post = await createPost({
@@ -55,27 +61,20 @@ export async function newDraftAction() {
   redirect(`/admin/news/${post.id}/edit`);
 }
 
-/**
- * Update every editable field, plus status. Handles slug uniqueness
- * (case-changes preserved via uniquePostSlug ignoring the current row).
- */
+/** Update every editable field, plus status. */
 export async function updatePostAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const existing = await getPost(id);
-  if (!existing) redirect("/admin/news?error=missing");
+  if (!existing) redirect("/admin/news/editorial?error=missing");
 
   const title = String(formData.get("title") ?? "").trim() || "Untitled post";
   const slugRaw = opt(formData.get("slug"));
   const status = toStatus(formData.get("status"));
 
   const publishedAtInput = parseDate(formData.get("publishedAt"));
-  // If publish-date field left blank AND transitioning to PUBLISHED, let
-  // the library auto-set to now(). Otherwise pass the parsed value (or null
-  // to clear).
   const publishedAt =
-    publishedAtInput ??
-    (status === "PUBLISHED" && !existing?.publishedAt ? undefined : null);
+    publishedAtInput ?? (status === "PUBLISHED" && !existing?.publishedAt ? undefined : null);
 
   const input: Partial<PostInput> = {
     slug: slugRaw ?? undefined,
@@ -92,7 +91,6 @@ export async function updatePostAction(formData: FormData) {
   };
   const updated = await updatePost(id, input);
   revalidatePostSurfaces(updated?.slug ?? existing?.slug ?? null);
-  // If slug changed, also revalidate the previous URL.
   if (existing && updated && existing.slug !== updated.slug) {
     revalidatePath(`/news/${existing.slug}`);
   }
@@ -100,23 +98,124 @@ export async function updatePostAction(formData: FormData) {
 }
 
 /** Quick status transitions from the list rows. */
-export async function setStatusAction(formData: FormData) {
+export async function setStatusAction(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const status = toStatus(formData.get("status"));
   const existing = await getPost(id);
-  if (!existing) return;
-  const publishedAt =
-    status === "PUBLISHED" && !existing.publishedAt ? new Date() : undefined;
+  if (!existing) return { ok: false, error: "That post no longer exists." };
+  const publishedAt = status === "PUBLISHED" && !existing.publishedAt ? new Date() : undefined;
   const updated = await updatePost(id, { status, publishedAt });
   revalidatePostSurfaces(updated?.slug ?? existing.slug);
+  return { ok: true, message: `“${existing.title}” is now ${status.toLowerCase()}.` };
 }
 
-export async function deletePostAction(formData: FormData) {
+export async function deletePostAction(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const existing = await getPost(id);
-  await deletePost(id);
-  revalidatePostSurfaces(existing?.slug ?? null);
-  redirect("/admin/news");
+  if (!existing) return { ok: false, error: "That post no longer exists." };
+  const removed = await deletePost(id);
+  if (!removed) return { ok: false, error: "The post could not be deleted. Reload and try again." };
+  revalidatePostSurfaces(existing.slug);
+  return { ok: true, message: `“${existing.title}” deleted.` };
+}
+
+/* ---------------------------------------------------------------------------
+   OFFICIAL NEWS — MediaCoverage rows of kind OFFICIAL.
+
+   The league's or the franchise's own reporting: headline, source, date,
+   external URL, description, cover, editorial status, Feature on Home.
+   `parseCoverageForm` is passed only NEWS_KINDS, so a press article can
+   never be filed here, and each guard refuses a row that is not official.
+--------------------------------------------------------------------------- */
+
+function revalidateNewsSurfaces() {
+  revalidatePath("/news");
+  revalidatePath("/");
+  revalidatePath("/admin/news");
+  revalidatePath("/admin");
+}
+
+export type CoverageActionResult = ActionResult<{ id: string }>;
+
+export async function createOfficialNewsAction(formData: FormData): Promise<CoverageActionResult> {
+  await requireAdmin();
+  const parsed = await parseCoverageForm(formData, { allowedKinds: NEWS_KINDS, folder: "news" });
+  if (!parsed.ok) return { ok: false, error: parsed.error };
+  const row = await createMediaCoverage(parsed.input);
+  revalidateNewsSurfaces();
+  return {
+    ok: true,
+    id: row.id,
+    message: row.status === "PUBLISHED" ? "Published to /news." : "Saved as a draft.",
+  };
+}
+
+export async function updateOfficialNewsAction(formData: FormData): Promise<CoverageActionResult> {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const existing = await getMediaCoverage(id);
+  if (!existing || !NEWS_KINDS.includes(existing.kind)) {
+    return { ok: false, error: "That news item no longer exists." };
+  }
+  const parsed = await parseCoverageForm(formData, { allowedKinds: NEWS_KINDS, folder: "news" });
+  if (!parsed.ok) return { ok: false, error: parsed.error };
+  const row = await updateMediaCoverage(id, parsed.input);
+  if (!row) return { ok: false, error: "The item could not be saved. Reload and try again." };
+  revalidateNewsSurfaces();
+  return {
+    ok: true,
+    id,
+    message: row.status === "PUBLISHED" ? "Saved and live on /news." : `Saved as ${row.status.toLowerCase()}.`,
+  };
+}
+
+/** Quick Draft / Publish / Archive from a list row. */
+export async function setOfficialNewsStatusAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const raw = String(formData.get("status") ?? "").toUpperCase();
+  const status: PostStatus = raw === "PUBLISHED" || raw === "ARCHIVED" ? raw : "DRAFT";
+  const existing = await getMediaCoverage(id);
+  if (!existing || !NEWS_KINDS.includes(existing.kind)) {
+    return { ok: false, error: "That news item no longer exists." };
+  }
+  await updateMediaCoverage(id, { status });
+  revalidateNewsSurfaces();
+  return { ok: true, message: `“${existing.title}” is now ${status.toLowerCase()}.` };
+}
+
+/** Toggle the home-page feature flag from the list. */
+export async function setOfficialNewsFeaturedAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const featured = String(formData.get("featured") ?? "") === "1";
+  const existing = await getMediaCoverage(id);
+  if (!existing || !NEWS_KINDS.includes(existing.kind)) {
+    return { ok: false, error: "That news item no longer exists." };
+  }
+  await updateMediaCoverage(id, { featuredOnHome: featured });
+  revalidateNewsSurfaces();
+  return {
+    ok: true,
+    message: featured
+      ? existing.status === "PUBLISHED"
+        ? "Featured on the home page."
+        : "Marked as featured — it will show on the home page once published."
+      : "Removed from the home page.",
+  };
+}
+
+export async function deleteOfficialNewsAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const existing = await getMediaCoverage(id);
+  if (!existing || !NEWS_KINDS.includes(existing.kind)) {
+    return { ok: false, error: "That news item no longer exists." };
+  }
+  const removed = await deleteMediaCoverage(id);
+  if (!removed) return { ok: false, error: "The item could not be deleted. Reload and try again." };
+  revalidateNewsSurfaces();
+  return { ok: true, message: `“${existing.title}” deleted.` };
 }

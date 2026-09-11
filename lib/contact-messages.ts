@@ -1,4 +1,5 @@
 import "server-only";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { ContactMessage, ContactStatus } from "@prisma/client";
 
@@ -45,6 +46,46 @@ export async function listContactMessages(): Promise<ContactMessage[]> {
   return prisma.contactMessage.findMany({
     orderBy: { createdAt: "desc" },
   });
+}
+
+/**
+ * Paged, filterable admin listing. `q` matches name, email, phone, city and
+ * the message body (case-insensitive). Newest first.
+ */
+export async function searchContactMessages(opts: {
+  status?: ContactStatus;
+  q?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<{ rows: ContactMessage[]; total: number }> {
+  const page = Math.max(1, opts.page ?? 1);
+  const pageSize = Math.min(100, Math.max(1, opts.pageSize ?? 25));
+  const q = opts.q?.trim();
+  const where: Prisma.ContactMessageWhereInput = {
+    ...(opts.status ? { status: opts.status } : {}),
+    ...(q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { email: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q } },
+            { city: { contains: q, mode: "insensitive" } },
+            { category: { contains: q, mode: "insensitive" } },
+            { message: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+  };
+  const [rows, total] = await Promise.all([
+    prisma.contactMessage.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.contactMessage.count({ where }),
+  ]);
+  return { rows, total };
 }
 
 /** Powers the "N new" indicator on /admin and /admin/messages. */

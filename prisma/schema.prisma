@@ -234,8 +234,9 @@ model Post {
 // ---------------------------------------------------------------
 
 enum MediaKind {
-  ARTICLE
-  SOCIAL
+  OFFICIAL // the league's or the franchise's own reporting — rendered under OFFICIAL NEWS
+  ARTICLE  // third-party press — rendered under MEDIA COVERAGE
+  SOCIAL   // social-platform post
 }
 
 model MediaCoverage {
@@ -247,12 +248,19 @@ model MediaCoverage {
   summary     String // our short original summary (1–3 sentences)
   publishedAt DateTime? // source publish date, when verified
   coverImage  String? // /public path to the cover image, optional
-  active      Boolean   @default(true) // hide without deleting
+  // Editorial state. `active` is kept alongside it and is always derived
+  // (active = status == PUBLISHED) by lib/media-coverage.ts, so every
+  // existing `active: true` query keeps returning exactly the published set.
+  status      PostStatus @default(PUBLISHED)
+  active      Boolean   @default(true) // derived from status — see above
+  featuredOnHome Boolean @default(false)
   sortOrder   Int       @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@index([active, kind, sortOrder])
+  @@index([status, kind, sortOrder])
+  @@index([featuredOnHome, status, kind, sortOrder])
 }
 
 // ---------------------------------------------------------------

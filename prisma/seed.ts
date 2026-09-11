@@ -152,6 +152,10 @@ async function main() {
   const AL_HAMRA = "/assets/photo/club-01-marquee-swing.jpg";
   const CHENNAI = "/assets/photo/club-01-marquee-swing.jpg";
   const MEDIA: {
+    // OFFICIAL = the league's / franchise's own reporting (Admin → News);
+    // ARTICLE = third-party press (Admin → Media). Set explicitly per row —
+    // the public page classifies by this field, never by URL.
+    kind: "OFFICIAL" | "ARTICLE";
     sourceName: string;
     sourceUrl: string;
     title: string;
@@ -160,6 +164,7 @@ async function main() {
     sortOrder: number;
   }[] = [
     {
+      kind: "ARTICLE",
       sourceName: "Times of India",
       sourceUrl:
         "https://timesofindia.indiatimes.com/sports/golf/asiad-medal-will-be-huge-for-indian-golf-gaganjeet-bhullar/amp_articleshow/133247638.cms",
@@ -170,6 +175,7 @@ async function main() {
       sortOrder: 50,
     },
     {
+      kind: "ARTICLE",
       sourceName: "The Hindu",
       sourceUrl:
         "https://www.thehindu.com/sport/other-sports/important-to-perform-well-in-multi-sport-events-gaganjeet-bhullar/article71347158.ece",
@@ -180,6 +186,7 @@ async function main() {
       sortOrder: 40,
     },
     {
+      kind: "ARTICLE",
       sourceName: "Sportstar",
       sourceUrl:
         "https://sportstar.thehindu.com/golf/gaganjeet-bhullar-india-asian-games-2026-medal-prospect-igpl-season-2/article71345096.ece/amp/",
@@ -191,6 +198,7 @@ async function main() {
       sortOrder: 30,
     },
     {
+      kind: "ARTICLE",
       sourceName: "Sports Now",
       sourceUrl:
         "https://www.sports-now.com/other-sports/gaganjeet-bhullar-multi-sport-events-performance-article-155632202",
@@ -201,6 +209,7 @@ async function main() {
       sortOrder: 20,
     },
     {
+      kind: "ARTICLE",
       sourceName: "Breathe Golf",
       sourceUrl:
         "https://breathe.golf/vimtra-chennai-lions-gc-unveils-squad-sets-sights-on-building-chennais-golfing-legacy/",
@@ -212,6 +221,7 @@ async function main() {
       sortOrder: 10,
     },
     {
+      kind: "OFFICIAL",
       sourceName: "AM Green IGPL",
       sourceUrl: "https://theigpl.com/news/igpl-season-2-ras-al-khaimah",
       title: "IGPL brings first franchisee event of the season to Al Hamra, Ras Al Khaimah",
@@ -221,6 +231,7 @@ async function main() {
       sortOrder: 60,
     },
     {
+      kind: "OFFICIAL",
       sourceName: "AM Green IGPL",
       sourceUrl: "https://theigpl.com/news/vimtra-chennai-sit-down-dinner",
       title: "Vimtra Chennai Lions GC unveils squad, sets sights on building Chennai’s golfing legacy",
@@ -236,14 +247,15 @@ async function main() {
       where: { sourceUrl: m.sourceUrl },
     });
     const data = {
-      kind: "ARTICLE" as const,
+      kind: m.kind,
       sourceName: m.sourceName,
       sourceUrl: m.sourceUrl,
       title: m.title,
       summary: m.summary,
       coverImage: m.coverImage,
       sortOrder: m.sortOrder,
-      active: true,
+      status: "PUBLISHED" as const,
+      active: true, // derived from status — kept in sync by lib/media-coverage.ts
     };
     if (existing) {
       await prisma.mediaCoverage.update({ where: { id: existing.id }, data });

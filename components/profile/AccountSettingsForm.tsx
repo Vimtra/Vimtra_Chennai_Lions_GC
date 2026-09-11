@@ -76,11 +76,30 @@ export default function AccountSettingsForm({
       try {
         const result = await updateProfile(formData);
         if (result.ok) {
-          setSuccess(
-            result.passwordChanged
-              ? "Password updated. Your profile has been saved."
-              : "Profile updated."
-          );
+          const base = result.passwordChanged
+            ? "Password updated. Your profile has been saved."
+            : "Profile updated.";
+          if (result.emailChanged && result.verificationRequired) {
+            // The new address must be confirmed before the account is usable
+            // again; the check-your-email state explains and offers resend.
+            router.push("/check-email");
+            router.refresh();
+            return;
+          }
+          if (result.emailChanged) {
+            const newEmail = String(formData.get("email") ?? "").trim().toLowerCase();
+            const tail =
+              result.verification === "sent"
+                ? `Your new address is not verified yet — we've sent a verification link to ${newEmail}. Check your inbox.`
+                : result.verification === "cooldown"
+                  ? `Your new address is not verified yet. A link was requested very recently — use “Send verification link” below in ${result.retryAfterSec ?? 60} seconds.`
+                  : result.verification === "not-configured"
+                    ? "Your new address is not verified yet. Email is not configured on this deployment, so no link was sent."
+                    : "Your new address is not verified yet. We couldn't send the link just now — use “Send verification link” below.";
+            setSuccess(`${base} ${tail}`);
+          } else {
+            setSuccess(base);
+          }
           // Never leave a typed password sitting in the DOM.
           const pwInput = form.querySelector<HTMLInputElement>('[name="password"]');
           const cfInput = form.querySelector<HTMLInputElement>('[name="confirmPassword"]');

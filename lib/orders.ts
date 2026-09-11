@@ -421,6 +421,50 @@ export async function listOrdersForAdmin(filters?: {
   });
 }
 
+export type AdminOrderRow = Order & { user: { name: string; email: string } };
+
+/**
+ * Paged admin listing with an optional free-text search across the order
+ * number, contact email/phone, and the buyer's name/email. Returns the
+ * page plus the total so the UI can render a pager; the buyer is joined so
+ * the list can show who ordered without a second query per row.
+ */
+export async function searchOrdersForAdmin(opts: {
+  status?: OrderStatus;
+  q?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<{ rows: AdminOrderRow[]; total: number }> {
+  const page = Math.max(1, opts.page ?? 1);
+  const pageSize = Math.min(100, Math.max(1, opts.pageSize ?? 25));
+  const q = opts.q?.trim();
+  const where: Prisma.OrderWhereInput = {
+    ...(opts.status ? { status: opts.status } : {}),
+    ...(q
+      ? {
+          OR: [
+            { orderNumber: { contains: q, mode: "insensitive" } },
+            { contactEmail: { contains: q, mode: "insensitive" } },
+            { contactPhone: { contains: q } },
+            { user: { name: { contains: q, mode: "insensitive" } } },
+            { user: { email: { contains: q, mode: "insensitive" } } },
+          ],
+        }
+      : {}),
+  };
+  const [rows, total] = await Promise.all([
+    prisma.order.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      include: { user: { select: { name: true, email: true } } },
+    }),
+    prisma.order.count({ where }),
+  ]);
+  return { rows, total };
+}
+
 // ---------------------------------------------------------------------------
 // Cash on Delivery email delivery tracking.
 //
@@ -512,7 +556,18 @@ export async function setPaymentStatus(
   });
 }
 
-/** Cancel an order and restock its items. Admin-only. */
+/**
+ * Cancel an order and restock its items. Admin-only.
+ *
+ * Refuses (returns null) unless the FORWARD table allows the current status
+ * to become CANCELLED — the same rule setOrderStatus() enforces. Without
+ * this check a forged form value could cancel a SHIPPED or DELIVERED order
+ * and put goods that already left the building back into stock. A row that
+ * is already CANCELLED / REFUNDED is returned untouched (idempotent).
+ *
+ * The restock is one statement for any number of lines, for the same
+ * round-trip-budget reason placeOrder() collapses its decrement.
+ */
 export async function cancelOrderAndRestock(id: string): Promise<Order | null> {
   return prisma.$transaction(async (tx) => {
     const existing = await tx.order.findUnique({
@@ -523,11 +578,18 @@ export async function cancelOrderAndRestock(id: string): Promise<Order | null> {
     if (existing.status === "CANCELLED" || existing.status === "REFUNDED") {
       return existing;
     }
-    for (const item of existing.items) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stock: { increment: item.qty } },
-      });
+    if (!canTransition(existing.status, "CANCELLED")) return null;
+    if (existing.items.length > 0) {
+      const restock = Prisma.join(
+        existing.items.map((it) => Prisma.sql`(${it.productId}::text, ${it.qty}::int)`)
+      );
+      await tx.$executeRaw`
+        UPDATE "Product" AS p
+           SET stock = p.stock + v.qty,
+               "updatedAt" = NOW()
+          FROM (VALUES ${restock}) AS v(id, qty)
+         WHERE p.id = v.id
+      `;
     }
     return tx.order.update({
       where: { id },
