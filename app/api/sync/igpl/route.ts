@@ -23,8 +23,14 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const auth = req.headers.get("authorization");
-  const key = req.nextUrl.searchParams.get("key");
-  if (secret && auth !== `Bearer ${secret}` && key !== secret) {
+  const production = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
+  if (!secret && production) {
+    return NextResponse.json(
+      { ok: false, error: "sync authentication is not configured" },
+      { status: 500 }
+    );
+  }
+  if (secret && auth !== `Bearer ${secret}`) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 

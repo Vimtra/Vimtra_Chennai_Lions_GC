@@ -361,7 +361,9 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlacedOrder> {
     });
   } catch (e) {
     if (e instanceof DuplicateClientRequestError && requestId) {
-      const winner = await prisma.order.findUnique({ where: { clientRequestId: requestId } });
+      const winner = await prisma.order.findFirst({
+        where: { clientRequestId: requestId, userId: input.userId },
+      });
       if (winner) return { id: winner.id, orderNumber: winner.orderNumber };
     }
     throw e;
@@ -559,10 +561,12 @@ export async function setOrderStatus(
   // If we're marking PAID via status, also lift paymentStatus if UNPAID/PENDING.
   const paymentStatus: PaymentStatus | undefined =
     next === "PAID" && existing.paymentStatus !== "PAID" ? "PAID" : undefined;
-  return prisma.order.update({
-    where: { id },
+  const changed = await prisma.order.updateMany({
+    where: { id, status: existing.status },
     data: { status: next, ...(paymentStatus ? { paymentStatus } : {}) },
   });
+  if (changed.count !== 1) return null;
+  return prisma.order.findUnique({ where: { id } });
 }
 
 export async function setPaymentStatus(
@@ -604,6 +608,11 @@ export async function cancelOrderAndRestock(id: string): Promise<Order | null> {
       return existing;
     }
     if (!canTransition(existing.status, "CANCELLED")) return null;
+    const claimed = await tx.order.updateMany({
+      where: { id, status: existing.status },
+      data: { status: "CANCELLED" },
+    });
+    if (claimed.count !== 1) return null;
     if (existing.items.length > 0) {
       const restock = Prisma.join(
         existing.items.map((it) => Prisma.sql`(${it.productId}::text, ${it.qty}::int)`)
@@ -616,10 +625,7 @@ export async function cancelOrderAndRestock(id: string): Promise<Order | null> {
          WHERE p.id = v.id
       `;
     }
-    return tx.order.update({
-      where: { id },
-      data: { status: "CANCELLED" },
-    });
+    return tx.order.findUnique({ where: { id } });
   });
 }
 
