@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/vimtra-ventures" },
   title: "Vimtra Ventures",
   description:
-    "The San Francisco & Chennai-based PE, VC, and investment firm behind the Chennai Lions — founded 1995 under the same principals, 60+ technology acquisitions, six core verticals, a $1.1B+ Frisco / PGA District cluster, a licensed PGA of America partnership, and ownership of the Chennai Lions GC and Dallas Sidekicks.",
+    "The San Francisco & Chennai-based PE, VC, and investment firm behind the Chennai Lions — founded 1995 under the same principals, 60+ technology acquisitions, six core verticals, a licensed PGA of America partnership, and ownership of the Chennai Lions GC and Dallas Sidekicks.",
 };
 
 /* ---------------------------------------------------------------------------
@@ -72,10 +72,7 @@ export const metadata: Metadata = {
 const CREDENTIALS = [
   { v: "1995", l: "Founded" },
   { v: "60+", l: "Technology Acquisitions" },
-  { v: "55+", l: "North America Real-Estate Assets" },
   { v: "6", l: "Core Verticals" },
-  // Vimtra x PGA of America brochure p. 09, verbatim.
-  { v: "$1.1B+", l: "Frisco · PGA District Cluster · 30+ Assets" },
 ];
 
 // Brochure p. 15 — the six verticals, verbatim descriptions.
@@ -98,7 +95,7 @@ const VERTICALS = [
   {
     name: "Real Estate",
     body:
-      "High-value residential and mixed-use developments integrated with lifestyle and hospitality anchors.",
+      "Residential and mixed-use development connected with lifestyle and hospitality initiatives.",
   },
   {
     name: "Golf Communities & Academies",
@@ -122,7 +119,7 @@ const FOUNDERS = [
     imagePosition: "50% 14%",
     imageAlt: "Subash Yammada — Founder & CEO, Vimtra Ventures",
     body:
-      "Serial entrepreneur and CEO of Vimtra Ventures — a San Francisco-based diversified global enterprise. Three decades of leadership cultivating an expansive portfolio across sports franchises, private equity, venture capital, real estate (with a focus on AI infrastructure), golf communities and academies, technology, healthcare, and hospitality.",
+      "Serial entrepreneur and CEO of Vimtra Ventures — a San Francisco-based diversified global enterprise. Three decades of leadership cultivating an expansive portfolio across sports franchises, private equity, venture capital, golf communities and academies, technology, healthcare, hospitality and AI infrastructure.",
   },
   {
     name: "Thimmaji Rao Yammada",
@@ -132,7 +129,7 @@ const FOUNDERS = [
     imageAlt:
       "Thimmaji Rao Yammada — Founder & Managing Director, Vimtra Ventures",
     body:
-      "Managing Director of Vimtra Ventures with 31 years of leadership across private equity, sports franchises, infrastructure, real estate, and industrial development in North America and India. Full-cycle real-estate expertise spanning commercial, residential, retail, and mixed-use assets, with a track record in mid- to large-scale project execution and asset restructuring.",
+      "Managing Director of Vimtra Ventures with 31 years of leadership across private equity, sports franchises, infrastructure and industrial development in North America and India, with experience in project execution and asset restructuring.",
   },
 ];
 
@@ -176,8 +173,6 @@ const ROADMAP = [
   { n: "01", state: "Done", t: "PGA of America partnership" },
   { n: "02", state: "Done", t: "IGPL franchise: Chennai Lions GC" },
   { n: "03", state: "Underway", t: "Academy partnerships across India" },
-  { n: "04", state: "Underway", t: "Premium resorts — three tourist destinations" },
-  { n: "05", state: "Underway", t: "Real estate collaborations in metros" },
 ];
 
 // Brochure p. 15 — the two sports-franchise ownership positions, verbatim.

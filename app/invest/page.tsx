@@ -36,8 +36,6 @@ export const metadata: Metadata = {
    with the pillar it actually measures: a figure repeated in two places on
    one page is duplication, not emphasis. */
 const MARKET = [
-  { v: "$1B+", l: "India Golf Market Today" },
-  { v: "17.1%", l: "Sports Tourism CAGR" },
   { v: "10", l: "IGPL Franchises · Chennai is one" },
 ];
 
@@ -50,11 +48,19 @@ const MARKET = [
    investor would receive — the sources make no such statement and neither
    does this page.
 --------------------------------------------------------------------------- */
-const PILLARS = [
+type PillarFigure = { v: string; l: string };
+
+const PILLARS: {
+  n: string;
+  t: string;
+  d: string;
+  figures: PillarFigure[];
+  set?: { k: string; v: string; d: string }[];
+}[] = [
   {
     n: "01",
     t: "Sports Tourism",
-    d: "Golf tourists spend more per capita and stay longer than any other visitor segment — making golf resorts and destination tournaments highly profitable anchors for India's growing travel economy.",
+    d: "Golf tourism connects destination events, hospitality and community development across India's growing golf ecosystem.",
     /* No figure group. The pillar's own number — 17.1% sports-tourism CAGR —
        is already the second figure in the market rail above, and the source
        for both is the same statistic. It is stated once on this page, in the
@@ -70,21 +76,15 @@ const PILLARS = [
   {
     n: "02",
     t: "Franchise Leagues",
-    d: "The Indian Golf Premier League (IGPL), launched in 2025, has attracted $100M in franchise commitments — the largest private investment in Indian golf history. Compact 8–10-acre courses in Tier 2/3 cities expand accessibility and anchor integrated golf communities.",
+    d: "The Indian Golf Premier League launched in 2025. The Vimtra Chennai Lions begin their inaugural franchise season in 2026, while accessible golf development remains part of the wider platform.",
     figures: [
-      // "10 city franchises" is in the market rail above — not repeated here.
-      { v: "$100M", l: "Franchise commitments" },
-      { v: "8–10 ac", l: "Compact course footprint" },
     ],
   },
   {
     n: "03",
-    t: "Real Estate Integration",
-    d: "Golf-facing homes command 5–12% price premiums — up to 25% in metros like Gurugram. Mixed-use sports townships combining residential, academies, and leisure are more resilient than single-purpose mega projects.",
-    figures: [
-      { v: "5–12%", l: "Golf-facing home premium" },
-      { v: "25%", l: "Up to, in metros" },
-    ],
+    t: "Community Development",
+    d: "Golf facilities, academies, hospitality and community initiatives developed as connected parts of Vimtra's India golf platform.",
+    figures: [],
   },
 ];
 
@@ -116,8 +116,8 @@ const STRUCTURE = [
 const REASONS = [
   {
     k: "01",
-    t: "At formation.",
-    d: "Entered at formation rather than after the fact — ten franchises, a fifteen-event calendar, Chennai among them.",
+    t: "The inaugural season.",
+    d: "The IGPL launched in 2025; the Vimtra Chennai Lions begin their inaugural franchise season in 2026.",
   },
   {
     k: "02",
@@ -130,8 +130,8 @@ const REASONS = [
   },
   {
     k: "03",
-    t: "Golf-led communities.",
-    d: "Premium golf facilities integrated with luxury residential communities, lifestyle amenities, and investment opportunities — an ecosystem connecting sport, real estate, and long-term value.",
+    t: "Golf development.",
+    d: "Golf facilities, academies, lifestyle amenities and community initiatives connected through Vimtra's India golf platform.",
   },
 ];
 
@@ -187,9 +187,9 @@ export default function InvestPage() {
           </h2>
           <div className="iv-thesis-b" data-rise>
             <p>
-              Indian franchise golf begins now. Ten franchises, a fifteen-event
-              calendar, and a domestic golf market already past $1B — entered
-              at formation rather than after the fact.
+              The IGPL launched in 2025. The Vimtra Chennai Lions begin their
+              inaugural franchise season in 2026, with ten franchises and a
+              fifteen-event calendar across India and international venues.
             </p>
           </div>
           <dl className="iv-market" data-rise>

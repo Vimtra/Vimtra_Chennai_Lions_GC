@@ -141,9 +141,9 @@ export function Club() {
               </span>
             </h2>
             <p className="hm-body" data-rise>
-              Ten franchises. Fifteen events across a single season — ten in
-              India, five international. Chennai is one of them, and the Lions
-              play their first ball in 2026.
+              The IGPL launched in 2025. Its 2026 season carries ten franchises
+              across fifteen events — ten in India, five international — and
+              the Lions play their inaugural franchise season in 2026.
             </p>
             <Link href="/the-pride" className="hp-btn hp-btn-text" data-rise>
               The mark &amp; the city
@@ -252,7 +252,7 @@ const PILLARS = [
   {
     k: "Signature thesis",
     t: "Golf-led communities",
-    d: "Premium golf facilities integrated with residential communities, lifestyle amenities and long-cycle investment.",
+    d: "Golf facilities developed alongside residential communities, lifestyle amenities and community engagement.",
   },
 ];
 
