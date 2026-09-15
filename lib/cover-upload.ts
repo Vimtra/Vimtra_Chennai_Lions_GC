@@ -36,6 +36,8 @@ export const COVER_ACCEPTED_TYPES = [
 
 export class CoverUploadError extends Error {}
 
+export type SupportedImageType = (typeof COVER_ACCEPTED_TYPES)[number];
+
 /**
  * Object-store namespaces. Products use the same mechanism as the news
  * desks — one storage path for every admin image, so the Blob/local
@@ -50,6 +52,69 @@ const EXT: Record<string, string> = {
   "image/avif": "avif",
 };
 
+const MIME_BY_SIGNATURE: Record<SupportedImageType, SupportedImageType> = {
+  "image/jpeg": "image/jpeg",
+  "image/png": "image/png",
+  "image/webp": "image/webp",
+  "image/avif": "image/avif",
+};
+
+function ascii(bytes: Uint8Array, start: number, length: number): string {
+  return String.fromCharCode(...bytes.slice(start, start + length));
+}
+
+function hasPrefix(bytes: Uint8Array, prefix: number[]): boolean {
+  return prefix.every((value, index) => bytes[index] === value);
+}
+
+function isAvif(bytes: Uint8Array): boolean {
+  // ISO-BMFF files start with an ftyp box. Handle both the normal 32-bit
+  // size and the extended 64-bit size without assuming a fixed byte offset.
+  if (bytes.length < 16 || ascii(bytes, 4, 4) !== "ftyp") return false;
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const size32 = view.getUint32(0);
+  let boxStart = 8;
+  let boxSize: number;
+  if (size32 === 1) {
+    if (bytes.length < 24) return false;
+    const high = view.getUint32(8);
+    const low = view.getUint32(12);
+    boxSize = high * 2 ** 32 + low;
+    boxStart = 16;
+  } else if (size32 >= 16) {
+    boxSize = size32;
+  } else {
+    return false;
+  }
+  if (!Number.isSafeInteger(boxSize) || boxSize > bytes.length || boxStart > boxSize) return false;
+
+  const brands: string[] = [ascii(bytes, boxStart, 4)];
+  for (let offset = boxStart + 8; offset + 4 <= boxSize; offset += 4) {
+    brands.push(ascii(bytes, offset, 4));
+  }
+  return brands.some((brand) => brand === "avif" || brand === "avis" || brand === "mif1");
+}
+
+/** Detect the actual supported image format from its binary signature. */
+export function detectImageType(bytes: Uint8Array): SupportedImageType | null {
+  if (bytes.length >= 3 && hasPrefix(bytes, [0xff, 0xd8, 0xff])) return "image/jpeg";
+  if (
+    bytes.length >= 8 &&
+    hasPrefix(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
+  ) {
+    return "image/png";
+  }
+  if (bytes.length >= 12 && ascii(bytes, 0, 4) === "RIFF" && ascii(bytes, 8, 4) === "WEBP") {
+    return "image/webp";
+  }
+  if (isAvif(bytes)) return "image/avif";
+  return null;
+}
+
+export function requiresBlobStorage(): boolean {
+  return process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
+}
+
 /**
  * Store one uploaded cover and return its public URL / path.
  *
@@ -60,7 +125,8 @@ export async function storeCoverImage(
   upload: File,
   folder: UploadFolder
 ): Promise<string> {
-  if (!(COVER_ACCEPTED_TYPES as readonly string[]).includes(upload.type)) {
+  const declaredType = upload.type.toLowerCase();
+  if (!(COVER_ACCEPTED_TYPES as readonly string[]).includes(declaredType)) {
     throw new CoverUploadError(
       "That file type isn't supported. Upload a JPG, PNG, WebP or AVIF image."
     );
@@ -72,15 +138,23 @@ export async function storeCoverImage(
     throw new CoverUploadError("That file is empty.");
   }
 
-  const fileName = `${randomUUID()}.${EXT[upload.type]}`;
+  const fileName = `${randomUUID()}.${EXT[declaredType]}`;
   const bytes = Buffer.from(await upload.arrayBuffer());
+  const actualType = detectImageType(bytes);
+  if (!actualType) {
+    throw new CoverUploadError("That file is not a valid JPG, PNG, WebP or AVIF image.");
+  }
+  if (actualType !== MIME_BY_SIGNATURE[declaredType as SupportedImageType]) {
+    throw new CoverUploadError("The file type does not match the image contents.");
+  }
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  if (token) {
     try {
       const blob = await put(`${folder}/${fileName}`, bytes, {
         access: "public",
-        contentType: upload.type,
-        token: process.env.BLOB_READ_WRITE_TOKEN,
+        contentType: actualType,
+        token,
         addRandomSuffix: false,
       });
       return blob.url;
@@ -92,6 +166,12 @@ export async function storeCoverImage(
         "The image could not be saved to storage. Nothing was changed — please try again."
       );
     }
+  }
+
+  if (requiresBlobStorage()) {
+    throw new CoverUploadError(
+      "Image storage is unavailable in this deployment. Configure Vercel Blob and try again."
+    );
   }
 
   try {

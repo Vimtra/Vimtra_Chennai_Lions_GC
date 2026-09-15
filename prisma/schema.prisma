@@ -54,6 +54,18 @@ model Session {
   @@index([userId])
 }
 
+model AuthRateLimit {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  attempts    Int       @default(1)
+  windowStart DateTime
+  lockedUntil DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([lockedUntil])
+}
+
 // ---------------------------------------------------------------
 // M6 — Email + phone verification.
 //

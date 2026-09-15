@@ -42,7 +42,11 @@ export default function AddToCartButton({
       qty
     );
     const label = qty > 1 ? `${qty} × ${product.name}` : product.name;
-    showToast(`Added <span class="gold">${label}</span> to cart`);
+    showToast(
+      <>
+        Added <span className="gold">{label}</span> to cart
+      </>
+    );
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };

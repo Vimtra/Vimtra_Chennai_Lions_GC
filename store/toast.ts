@@ -1,11 +1,11 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { create } from "zustand";
 
 interface ToastState {
-  /** Rendered HTML message (may include a <span class="gold">…</span>). */
-  message: string | null;
-  show: (message: string) => void;
+  message: ReactNode | null;
+  show: (message: ReactNode) => void;
   hide: () => void;
 }
 

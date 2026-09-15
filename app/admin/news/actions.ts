@@ -14,6 +14,7 @@ import {
 } from "@/lib/media-coverage";
 import { parseCoverageForm } from "@/lib/coverage-admin";
 import type { ActionResult } from "@/lib/admin-action-result";
+import { sanitizeNewsHtml } from "@/lib/news-html";
 
 const STATUSES: PostStatus[] = ["DRAFT", "PUBLISHED", "ARCHIVED"];
 
@@ -81,7 +82,7 @@ export async function updatePostAction(formData: FormData) {
     title,
     excerpt: opt(formData.get("excerpt")),
     coverImage: opt(formData.get("coverImage")),
-    bodyHtml: String(formData.get("bodyHtml") ?? "").trim(),
+    bodyHtml: sanitizeNewsHtml(String(formData.get("bodyHtml") ?? "").trim()),
     bodyJson: opt(formData.get("bodyJson")),
     category: opt(formData.get("category")),
     authorName: String(formData.get("authorName") ?? "").trim() || "Chennai Lions Editorial",

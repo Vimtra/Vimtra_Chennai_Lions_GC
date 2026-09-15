@@ -10,8 +10,8 @@ export default function ToastHost() {
       className={`toast ${message ? "show" : ""}`}
       role="status"
       aria-live="polite"
-      // Message is built from product names we control (no user input).
-      dangerouslySetInnerHTML={{ __html: message ?? "" }}
-    />
+    >
+      {message}
+    </div>
   );
 }

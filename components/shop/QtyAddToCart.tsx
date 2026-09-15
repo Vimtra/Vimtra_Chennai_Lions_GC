@@ -36,7 +36,11 @@ export default function QtyAddToCart({ product }: { product: Product }) {
       },
       useQty
     );
-    showToast(`Added <span class="gold">${useQty} × ${product.name}</span> to cart`);
+    showToast(
+      <>
+        Added <span className="gold">{useQty} × {product.name}</span> to cart
+      </>
+    );
   };
 
   return (

@@ -7,6 +7,7 @@ import { getPublishedPostBySlug, formatPublishedDate } from "@/lib/posts";
 import PageHero from "@/components/site/PageHero";
 import { Section } from "@/components/site/Section";
 import { webSrc } from "@/lib/image-src";
+import { sanitizeNewsHtml } from "@/lib/news-html";
 
 export const dynamic = "force-dynamic";
 
@@ -107,10 +108,7 @@ export default async function NewsArticlePage({
               "[&_img]:rounded-[14px] [&_img]:my-6",
             ].join(" ")}
           >
-            {/* bodyHtml is produced by the admin TipTap editor; author is
-                trusted (ADMIN role required to publish). Sanitisation could
-                be layered in later if untrusted authors are added. */}
-            <div dangerouslySetInnerHTML={{ __html: post.bodyHtml }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizeNewsHtml(post.bodyHtml) }} />
           </Reveal>
 
           <div className="mt-16 pt-8 border-t border-black/[0.08] flex flex-wrap items-center justify-between gap-4">

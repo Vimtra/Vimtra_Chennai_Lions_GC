@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { z } from "zod";
 import {
   verifyCredentials,
@@ -12,6 +13,13 @@ import {
 import { sendWelcomeEmail, sendVerificationEmail } from "@/lib/mail";
 import { issueEmailVerificationToken } from "@/lib/verification";
 import { getSiteHost } from "@/lib/site-url";
+import {
+  clearLoginRateLimits,
+  getLoginRateLimitState,
+  getTrustedClientIp,
+  normaliseLoginEmail,
+  recordLoginFailure,
+} from "@/lib/auth-rate-limit";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -47,13 +55,23 @@ export async function signIn(formData: FormData) {
   });
   if (!parsed.success) redirect(urlWith("/sign-in", { error: "invalid", next }));
 
+  const email = normaliseLoginEmail(parsed.data.email);
+  const clientIp = getTrustedClientIp(await headers());
+  const rateLimitState = await getLoginRateLimitState(email, clientIp);
+  if (rateLimitState.blocked) redirect(urlWith("/sign-in", { error: "creds", next }));
+
   let user;
   try {
-    user = await verifyCredentials(parsed.data.email, parsed.data.password);
+    user = await verifyCredentials(email, parsed.data.password);
   } catch {
     redirect(urlWith("/sign-in", { error: "server", next }));
   }
-  if (!user) redirect(urlWith("/sign-in", { error: "creds", next }));
+  if (!user) {
+    await recordLoginFailure(email, clientIp);
+    redirect(urlWith("/sign-in", { error: "creds", next }));
+  }
+
+  await clearLoginRateLimits(email, clientIp);
 
   await createSession(user.id);
   // Verify-before-activate: an account that still has to confirm its email
@@ -105,11 +123,9 @@ export async function signUp(formData: FormData) {
   if (!welcomeMail.sent && welcomeMail.reason === "error") {
     console.error("[auth] welcome email failed:", welcomeMail.detail);
   }
-
   // Email verification (M6). Issued and sent here, at account creation, and
   // never from signIn() below.
   //
-  // Best-effort exactly like the welcome mail above, and for the same
   // reason: the account row already exists and is usable, so a mail
   // failure must not fail signup or leave the person without an account.
   // If the send fails, the token simply goes unused and expires — the
