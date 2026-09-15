@@ -186,6 +186,7 @@ export default function CheckoutFlow({
             saveAddress={saveAddress}
             setSaveAddress={setSaveAddress}
             onContinue={onContinue}
+            validationError={step === 1 ? error : null}
           />
         )}
 
@@ -295,7 +296,7 @@ function StepBar({ step }: { step: 1 | 2 }) {
 
 function ErrorBanner({ message }: { message: string }) {
   return (
-    <div role="alert" className="co-error">
+    <div id="checkout-error" role="alert" className="co-error">
       {message}
     </div>
   );
@@ -326,6 +327,7 @@ function StepOne({
   saveAddress,
   setSaveAddress,
   onContinue,
+  validationError,
 }: {
   contactEmail: string;
   setContactEmail: (v: string) => void;
@@ -339,8 +341,12 @@ function StepOne({
   saveAddress: boolean;
   setSaveAddress: (v: boolean) => void;
   onContinue: () => void;
+  validationError: string | null;
 }) {
   const showInline = addressChoice === "new";
+  const emailError = validationError?.includes("contact email") ?? false;
+  const phoneError = validationError?.includes("contact phone") ?? false;
+  const addressError = validationError?.includes("delivery address") ?? false;
   return (
     <div className="grid gap-6">
       <SectionCard title="Contact details" subtitle="How we'll confirm your order and delivery.">
@@ -354,6 +360,8 @@ function StepOne({
               onChange={(e) => setContactEmail(e.target.value)}
               autoComplete="email"
               required
+              aria-invalid={emailError || undefined}
+              aria-describedby={emailError ? "checkout-error" : undefined}
             />
           </div>
           <div className="field">
@@ -366,6 +374,8 @@ function StepOne({
               autoComplete="tel"
               placeholder="+91"
               required
+              aria-invalid={phoneError || undefined}
+              aria-describedby={phoneError ? "checkout-error" : undefined}
             />
           </div>
         </div>
@@ -431,6 +441,7 @@ function StepOne({
             saveAddress={saveAddress}
             setSaveAddress={setSaveAddress}
             showSaveToggle={true}
+            addressError={addressError}
           />
         )}
       </SectionCard>
@@ -453,29 +464,35 @@ function InlineAddressForm({
   saveAddress,
   setSaveAddress,
   showSaveToggle,
+  addressError,
 }: {
   value: InlineAddress;
   onChange: (v: InlineAddress) => void;
   saveAddress: boolean;
   setSaveAddress: (v: boolean) => void;
   showSaveToggle: boolean;
+  addressError: boolean;
 }) {
   const set = (patch: Partial<InlineAddress>) => onChange({ ...value, ...patch });
   return (
     <div className="grid gap-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="field">
-          <label>Full name</label>
+          <label htmlFor="co-address-full-name">Full name</label>
           <input
+            id="co-address-full-name"
             value={value.fullName}
             onChange={(e) => set({ fullName: e.target.value })}
             autoComplete="name"
             required
+            aria-invalid={addressError || undefined}
+            aria-describedby={addressError ? "checkout-error" : undefined}
           />
         </div>
         <div className="field">
-          <label>Phone (address-only)</label>
+          <label htmlFor="co-address-phone">Phone (address-only)</label>
           <input
+            id="co-address-phone"
             type="tel"
             value={value.phone}
             onChange={(e) => set({ phone: e.target.value })}
@@ -485,17 +502,21 @@ function InlineAddressForm({
         </div>
       </div>
       <div className="field">
-        <label>Address line 1</label>
+        <label htmlFor="co-address-line1">Address line 1</label>
         <input
+          id="co-address-line1"
           value={value.line1}
           onChange={(e) => set({ line1: e.target.value })}
           autoComplete="address-line1"
           required
+          aria-invalid={addressError || undefined}
+          aria-describedby={addressError ? "checkout-error" : undefined}
         />
       </div>
       <div className="field">
-        <label>Address line 2 (optional)</label>
+        <label htmlFor="co-address-line2">Address line 2 (optional)</label>
         <input
+          id="co-address-line2"
           value={value.line2}
           onChange={(e) => set({ line2: e.target.value })}
           autoComplete="address-line2"
@@ -503,45 +524,56 @@ function InlineAddressForm({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="field">
-          <label>City</label>
+          <label htmlFor="co-address-city">City</label>
           <input
+            id="co-address-city"
             value={value.city}
             onChange={(e) => set({ city: e.target.value })}
             autoComplete="address-level2"
             required
+            aria-invalid={addressError || undefined}
+            aria-describedby={addressError ? "checkout-error" : undefined}
           />
         </div>
         <div className="field">
-          <label>State</label>
+          <label htmlFor="co-address-state">State</label>
           <input
+            id="co-address-state"
             value={value.state}
             onChange={(e) => set({ state: e.target.value })}
             autoComplete="address-level1"
             required
+            aria-invalid={addressError || undefined}
+            aria-describedby={addressError ? "checkout-error" : undefined}
           />
         </div>
         <div className="field">
-          <label>Postal code</label>
+          <label htmlFor="co-address-postal-code">Postal code</label>
           <input
+            id="co-address-postal-code"
             value={value.postalCode}
             onChange={(e) => set({ postalCode: e.target.value })}
             autoComplete="postal-code"
             required
+            aria-invalid={addressError || undefined}
+            aria-describedby={addressError ? "checkout-error" : undefined}
           />
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="field">
-          <label>Country</label>
+          <label htmlFor="co-address-country">Country</label>
           <input
+            id="co-address-country"
             value={value.country}
             onChange={(e) => set({ country: e.target.value })}
             autoComplete="country-name"
           />
         </div>
         <div className="field">
-          <label>Label (optional — e.g. Home or Office)</label>
+          <label htmlFor="co-address-label">Label (optional — e.g. Home or Office)</label>
           <input
+            id="co-address-label"
             value={value.label}
             onChange={(e) => set({ label: e.target.value })}
           />
@@ -663,7 +695,9 @@ function StepTwo({
 
       <SectionCard title="Notes for the team (optional)">
         <div className="field !m-0">
+          <label htmlFor="co-notes">Notes for the team (optional)</label>
           <textarea
+            id="co-notes"
             rows={3}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}

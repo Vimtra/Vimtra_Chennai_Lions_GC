@@ -12,9 +12,7 @@ import { Eye, EyeOff } from "lucide-react";
  *
  * The toggle is a real button: reachable by keyboard, labelled for screen
  * readers, and `aria-pressed` so its state is announced rather than implied
- * by the icon alone. It is skipped in the tab order between the two password
- * boxes (`tabIndex={-1}`) so tabbing runs New → Confirm as expected; it stays
- * reachable via the labelled control itself.
+ * by the icon alone.
  */
 export default function PasswordField({
   name,
@@ -62,7 +60,6 @@ export default function PasswordField({
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? `Hide ${label}` : `Show ${label}`}
           aria-pressed={visible}
-          tabIndex={-1}
           disabled={disabled}
         >
           {visible ? (

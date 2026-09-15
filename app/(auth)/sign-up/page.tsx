@@ -36,7 +36,7 @@ export default async function SignUpPage({
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-[12px] font-manrope font-semibold text-[13.5px]" style={{ background: "rgba(196,32,42,0.10)", color: "#C4202A" }}>
+          <div role="alert" className="mb-4 p-3 rounded-[12px] font-manrope font-semibold text-[13.5px]" style={{ background: "rgba(196,32,42,0.10)", color: "#C4202A" }}>
             {error}
           </div>
         )}
@@ -44,16 +44,16 @@ export default async function SignUpPage({
         <form action={signUp} className="grid gap-4">
           <input type="hidden" name="next" value={safeNext ?? ""} />
           <div className="field">
-            <label>Full Name</label>
-            <input type="text" name="name" required autoComplete="name" placeholder="Your name" />
+            <label htmlFor="sign-up-name">Full Name</label>
+            <input id="sign-up-name" type="text" name="name" required autoComplete="name" placeholder="Your name" />
           </div>
           <div className="field">
-            <label>Email</label>
-            <input type="email" name="email" required autoComplete="username" placeholder="you@example.com" />
+            <label htmlFor="sign-up-email">Email</label>
+            <input id="sign-up-email" type="email" name="email" required autoComplete="username" placeholder="you@example.com" />
           </div>
           <div className="field">
-            <label>Password</label>
-            <PasswordField name="password" required minLength={8} autoComplete="new-password" placeholder="At least 8 characters" />
+            <label htmlFor="sign-up-password">Password</label>
+            <PasswordField id="sign-up-password" name="password" required minLength={8} autoComplete="new-password" placeholder="At least 8 characters" />
           </div>
           <button type="submit" className="cta-gold press justify-center" style={{ padding: 13 }}>
             CREATE ACCOUNT

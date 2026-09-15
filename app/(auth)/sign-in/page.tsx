@@ -42,7 +42,7 @@ export default async function SignInPage({
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-[12px] font-manrope font-semibold text-[13.5px]" style={{ background: "rgba(196,32,42,0.10)", color: "#C4202A" }}>
+          <div role="alert" className="mb-4 p-3 rounded-[12px] font-manrope font-semibold text-[13.5px]" style={{ background: "rgba(196,32,42,0.10)", color: "#C4202A" }}>
             {ERRORS[error] ?? "Could not sign you in."}
           </div>
         )}
@@ -50,12 +50,12 @@ export default async function SignInPage({
         <form action={signIn} className="grid gap-4">
           <input type="hidden" name="next" value={safeNext ?? ""} />
           <div className="field">
-            <label>Email</label>
-            <input type="email" name="email" required autoComplete="username" placeholder="you@example.com" />
+            <label htmlFor="sign-in-email">Email</label>
+            <input id="sign-in-email" type="email" name="email" required autoComplete="username" placeholder="you@example.com" />
           </div>
           <div className="field">
-            <label>Password</label>
-            <PasswordField name="password" required autoComplete="current-password" />
+            <label htmlFor="sign-in-password">Password</label>
+            <PasswordField id="sign-in-password" name="password" required autoComplete="current-password" />
           </div>
           <button type="submit" className="cta-gold press justify-center" style={{ padding: 13 }}>
             SIGN IN

@@ -71,12 +71,11 @@ export default function ContactForm({
       <div className="cf-eyebrow">What&apos;s on your mind?</div>
       <h2 className="cf-heading">Drop us a line.</h2>
 
-      <div className="flex gap-2 flex-wrap mb-[22px]" role="tablist" aria-label="Enquiry topic">
+      <div className="flex gap-2 flex-wrap mb-[22px]" role="group" aria-label="Enquiry topic">
         {CONTACT_TOPICS.map((t) => (
           <button
             type="button"
-            role="tab"
-            aria-selected={topic === t}
+            aria-pressed={topic === t}
             key={t}
             className={`chip ${topic === t ? "on" : ""}`}
             onClick={() => setTopic(t)}
