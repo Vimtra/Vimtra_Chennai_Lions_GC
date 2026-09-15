@@ -503,6 +503,31 @@ export async function recordCodEmailSent(
   }
 }
 
+/** Records a successful cancellation email without overwriting a prior mark. */
+export async function recordCancellationEmailSent(orderId: string): Promise<boolean> {
+  try {
+    const result = await prisma.order.updateMany({
+      where: { id: orderId, status: "CANCELLED", cancellationEmailSentAt: null },
+      data: { cancellationEmailSentAt: new Date() },
+    });
+    return result.count === 1;
+  } catch (err) {
+    console.error(
+      `[orders] failed to record cancellation email as sent for order ${orderId}:`,
+      err instanceof Error ? err.message : "Unknown error."
+    );
+    return false;
+  }
+}
+
+export function shouldSendCancellationEmail(
+  previousStatus: OrderStatus,
+  nextStatus: OrderStatus,
+  sentAt: Date | null
+): boolean {
+  return previousStatus !== "CANCELLED" && nextStatus === "CANCELLED" && sentAt === null;
+}
+
 // ---------------------------------------------------------------------------
 // Admin lifecycle transitions
 

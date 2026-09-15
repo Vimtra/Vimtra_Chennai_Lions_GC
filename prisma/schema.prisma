@@ -408,6 +408,7 @@ model Order {
   // touch these columns.
   codUserEmailSentAt  DateTime?
   codAdminEmailSentAt DateTime?
+  cancellationEmailSentAt DateTime?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   items             OrderItem[]

@@ -8,6 +8,7 @@ import {
   welcomeEmail,
   codOrderConfirmationEmail,
   codOrderNotificationEmail,
+  orderCancellationEmail,
   emailVerificationEmail,
   type ContactConfirmationInput,
   type ContactNotificationInput,
@@ -319,6 +320,13 @@ export async function sendCodOrderNotificationToAdmin(
   }
   const { subject, text, html } = codOrderNotificationEmail(input);
   return sendMail({ to, subject, text, html, replyTo: input.customerEmail });
+}
+
+export async function sendOrderCancellationEmail(
+  input: import("@/lib/email-templates").OrderCancellationEmailInput
+): Promise<MailResult> {
+  const { subject, text, html } = orderCancellationEmail(input);
+  return sendMail({ to: input.customerEmail, subject, text, html, replyTo: resolveFromAddress() });
 }
 
 // ---------------------------------------------------------------------------

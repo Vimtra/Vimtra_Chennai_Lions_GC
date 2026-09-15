@@ -524,6 +524,68 @@ export function codOrderConfirmationEmail(input: CodOrderConfirmationInput): Ren
 }
 
 // ---------------------------------------------------------------------------
+// Customer cancellation email — sent after an admin cancellation succeeds.
+
+export interface OrderCancellationEmailInput {
+  customerName: string;
+  customerEmail: string;
+  orderNumber: string;
+  items: OrderEmailLine[];
+  total: number;
+}
+
+export function orderCancellationEmail(input: OrderCancellationEmailInput): RenderedEmail {
+  const subject = `Order ${input.orderNumber} cancelled — Vimtra Chennai Lions GC`;
+
+  const text = [
+    `Hi ${input.customerName},`,
+    "",
+    `Your order ${input.orderNumber} has been cancelled.`,
+    "",
+    "Cancelled order summary:",
+    itemsTextBlock(input.items),
+    "",
+    `Order total: ${inr(input.total)}`,
+    "",
+    "If you have questions about this cancellation, please contact Vimtra Chennai Lions GC.",
+    "",
+    "— Vimtra Chennai Lions GC",
+    "AM Green IGPL · Season 2026",
+  ].join("\n");
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-family:${FONT};font-size:15px;line-height:1.6;color:${INK};">
+      Hi ${escapeHtml(input.customerName)},
+    </p>
+    <p style="margin:0 0 8px;font-family:${FONT};font-size:15px;line-height:1.6;color:${INK};">
+      Your order <strong>${escapeHtml(input.orderNumber)}</strong> has been cancelled.
+    </p>
+    <p style="margin:0 0 24px;">
+      <span style="display:inline-block;padding:6px 14px;background:${CRIMSON};color:${IVORY};font-family:${FONT};font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-radius:999px;">
+        Order status: Cancelled
+      </span>
+    </p>
+    ${itemsTableHtml(input.items)}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">
+      <tr>
+        <td style="padding:10px 0 0;font-family:${FONT};font-weight:700;font-size:15px;color:${INK};border-top:1px solid rgba(14,11,10,0.12);">Order total</td>
+        <td style="padding:10px 0 0;font-family:${FONT};font-weight:700;font-size:15px;color:${CRIMSON};text-align:right;border-top:1px solid rgba(14,11,10,0.12);">${escapeHtml(inr(input.total))}</td>
+      </tr>
+    </table>
+    <p style="margin:24px 0 0;font-family:${FONT};font-size:13px;line-height:1.6;color:${MUTED};">
+      If you have questions about this cancellation, please contact Vimtra Chennai Lions GC.
+    </p>`;
+
+  const html = emailShell({
+    preview: `Order ${input.orderNumber} has been cancelled.`,
+    eyebrow: "Order cancelled",
+    bodyHtml,
+  });
+
+  return { subject, text, html };
+}
+
+// ---------------------------------------------------------------------------
 // Email #2 — to the admin. Same order, admin-facing detail (customer
 // contact info, delivery address, link to the admin order view), with the
 // Cash on Delivery status made visually unmissable at the top of the email.

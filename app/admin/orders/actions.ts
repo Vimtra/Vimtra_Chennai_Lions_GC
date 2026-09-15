@@ -9,9 +9,12 @@ import {
   cancelOrderAndRestock,
   canTransition,
   getOrderByIdForAdmin,
+  recordCancellationEmailSent,
+  shouldSendCancellationEmail,
 } from "@/lib/orders";
 import { orderStatusLabel, paymentStatusLabel } from "@/lib/orders-format";
 import type { ActionResult } from "@/lib/admin-action-result";
+import { sendOrderCancellationEmail } from "@/lib/mail";
 
 const ORDER_STATUSES: OrderStatus[] = [
   "PENDING",
@@ -63,6 +66,33 @@ export async function updateOrderStatusAction(formData: FormData): Promise<Actio
     next === "CANCELLED" ? await cancelOrderAndRestock(id) : await setOrderStatus(id, next);
   if (!updated) {
     return { ok: false, error: "The order could not be updated. Reload and try again." };
+  }
+
+  if (shouldSendCancellationEmail(order.status, next, updated.cancellationEmailSentAt)) {
+    try {
+      const cancellationMail = await sendOrderCancellationEmail({
+        customerName: order.user.name,
+        customerEmail: order.contactEmail,
+        orderNumber: order.orderNumber,
+        items: order.items.map((item) => ({
+          productName: item.productName,
+          qty: item.qty,
+          unitPrice: item.unitPrice,
+          lineTotal: item.lineTotal,
+        })),
+        total: order.total,
+      });
+      if (cancellationMail.sent) {
+        await recordCancellationEmailSent(order.id);
+      } else if (cancellationMail.reason === "error") {
+        console.error("[updateOrderStatusAction] cancellation email failed:", cancellationMail.detail);
+      }
+    } catch (err) {
+      console.error(
+        "[updateOrderStatusAction] cancellation email failed:",
+        err instanceof Error ? err.message : "Unknown error."
+      );
+    }
   }
 
   revalidateOrder(id);
