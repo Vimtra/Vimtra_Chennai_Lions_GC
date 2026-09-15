@@ -12,6 +12,7 @@ import {
   type StoreFacts,
 } from "@/components/home/Sections";
 import { listFixtures } from "@/lib/fixtures";
+import { formatFixtureDate } from "@/lib/fixtures-format";
 import { listActiveMediaCoverage } from "@/lib/media-coverage";
 import { listProducts } from "@/lib/db";
 import { webSrc } from "@/lib/image-src";
@@ -41,25 +42,6 @@ import { webSrc } from "@/lib/image-src";
  * homepage is the club; portraits belong to /players.
  */
 export const dynamic = "force-dynamic";
-
-const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
-
-/** "23—25 Sep 2026", collapsing a same-month range. */
-function formatRange(start: Date, end: Date | null): string {
-  const s = new Date(start);
-  const e = end ? new Date(end) : null;
-  const sd = s.getUTCDate();
-  const sm = MONTHS[s.getUTCMonth()];
-  const sy = s.getUTCFullYear();
-  if (!e) return `${sd} ${sm} ${sy}`;
-  const ed = e.getUTCDate();
-  const em = MONTHS[e.getUTCMonth()];
-  if (sm === em && sy === e.getUTCFullYear()) return `${sd}—${ed} ${sm} ${sy}`;
-  return `${sd} ${sm} — ${ed} ${em} ${e.getUTCFullYear()}`;
-}
 
 export default async function HomePage() {
   const [fixtures, coverage, products] = await Promise.all([
@@ -99,7 +81,7 @@ export default async function HomePage() {
       city: f.city,
       country: f.country,
       courseName: f.courseName,
-      dates: formatRange(f.dateStart, f.dateEnd),
+      dates: formatFixtureDate(f),
       upcoming: f.status === "UPCOMING",
     }));
 
@@ -112,7 +94,7 @@ export default async function HomePage() {
     ? {
         name: first.courseName ?? first.name,
         place: [first.city, first.country].filter(Boolean).join(", "),
-        dates: formatRange(first.dateStart, first.dateEnd),
+        dates: formatFixtureDate(first),
       }
     : null;
 
