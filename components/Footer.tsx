@@ -69,6 +69,24 @@ export default function Footer() {
           </nav>
         ))}
 
+        <nav className="ft-col" aria-label="Editorial">
+          <h2 className="ft-h">Editorial</h2>
+          <ul>
+            <li>
+              <Link href="/news"><span>News</span><ArrowUpRight aria-hidden /></Link>
+            </li>
+          </ul>
+        </nav>
+
+        <nav className="ft-col" aria-label="Shop">
+          <h2 className="ft-h">Shop</h2>
+          <ul>
+            <li>
+              <Link href="/shop"><span>Shop</span><ArrowUpRight aria-hidden /></Link>
+            </li>
+          </ul>
+        </nav>
+
         <div className="ft-col ft-contact">
           <h2 className="ft-h">Stay connected</h2>
           <ul>

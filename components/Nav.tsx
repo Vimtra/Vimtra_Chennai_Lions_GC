@@ -56,8 +56,10 @@ type MegaGroup = SiteSection;
 const MEGA = MEGA_SECTIONS;
 const DIRECT = DIRECT_NAV;
 
-/** The overlay carries every section, including the one with no figure. */
+/** The overlay carries every section, including the one with no figure,
+    with direct Shop/News links interleaved to match the approved mobile order. */
 const MOBILE_GROUPS = SITE_SECTIONS;
+const MOBILE_DIRECT = DIRECT;
 
 /** Routes whose first section is a dark full-bleed hero — shared with
     lib/nav.ts so the header and the heroes cannot drift apart. */
@@ -346,7 +348,22 @@ export default function Nav({ user }: { user: SafeUser | null }) {
           </div>
 
           <nav className="nv-ov-nav" aria-label="Sections">
-            {MOBILE_GROUPS.map((g) => (
+            {MOBILE_GROUPS.slice(0, 2).map((g) => (
+              <OvGroup key={g.key} g={g} pathname={pathname} onNav={() => setOverlay(false)} open={overlay} />
+            ))}
+            {MOBILE_DIRECT.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`nv-ov-direct ${pathname.startsWith(item.href) ? "is-active" : ""}`}
+                onClick={() => setOverlay(false)}
+                tabIndex={overlay ? 0 : -1}
+              >
+                <span>{item.label}</span>
+                <span className="nv-ov-meta">{item.href === "/shop" ? "Official merchandise" : "Editorial"}</span>
+              </Link>
+            ))}
+            {MOBILE_GROUPS.slice(2).map((g) => (
               <OvGroup key={g.key} g={g} pathname={pathname} onNav={() => setOverlay(false)} open={overlay} />
             ))}
             <Link href="/cart" className="nv-ov-direct" onClick={() => setOverlay(false)} tabIndex={overlay ? 0 : -1}>
