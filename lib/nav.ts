@@ -114,7 +114,7 @@ export interface SectionItem {
 }
 
 export interface SiteSection {
-  key: "team" | "season" | "work";
+  key: "club" | "season" | "business";
   label: string;
   items: SectionItem[];
   /** Present only on sections the desktop mega panel can open. */
@@ -124,12 +124,14 @@ export interface SiteSection {
 
 export const SITE_SECTIONS: SiteSection[] = [
   {
-    key: "team",
-    label: "Team",
+    key: "club",
+    label: "The Club",
     items: [
       { href: "/the-club", label: "The Club", desc: "Franchise story · Chennai roots" },
       { href: "/the-pride", label: "The Pride", desc: "The city and the mark" },
       { href: "/players", label: "Players", desc: "Season 2026 roster" },
+      { href: "/golf-development", label: "Golf Development", desc: "Coaching · academies · course" },
+      { href: "/vimtra-ventures", label: "Vimtra Ventures", desc: "The firm behind the franchise" },
     ],
     // A photograph, never a transparent cutout — cover-fit needs a real frame.
     // Sourced photography (public/assets/photo/CREDITS.md), distinct from
@@ -140,22 +142,26 @@ export const SITE_SECTIONS: SiteSection[] = [
   },
   {
     key: "season",
-    label: "Season",
+    label: "The Season",
     items: [
       { href: "/fixtures", label: "Fixtures", desc: "AM Green IGPL · 2026 calendar" },
       { href: "/scores", label: "Scores", desc: "Round-by-round scorecards" },
       { href: "/leaderboards", label: "Standings", desc: "Franchise table · Order of Merit" },
+      { href: "/news", label: "News", desc: "Franchise news & press coverage" },
     ],
     image: "/assets/photo/nav-season-bunker-ocean.jpg",
     caption: "Season 2026",
   },
   {
-    key: "work",
-    label: "Work with the Lions",
+    key: "business",
+    label: "Business",
+    // Order follows the header's mobile overlay, which is the reference the
+    // footer is being brought into line with.
     items: [
-      { href: "/golf-development", label: "Golf Development", desc: "Coaching · academies · course" },
       { href: "/partners", label: "Partners", desc: "Commercial partners" },
       { href: "/invest", label: "Invest", desc: "Investment & sponsorship" },
+      { href: "/shop", label: "Shop", desc: "Official merchandise" },
+      { href: "/contact", label: "Contact", desc: "Talk to the franchise" },
     ],
   },
 ];
@@ -169,5 +175,7 @@ export const MEGA_SECTIONS = SITE_SECTIONS.filter(
 /** Shown inline in the desktop header rather than behind a panel. */
 export const DIRECT_NAV = [
   { href: "/shop", label: "Shop" },
-  { href: "/news", label: "News" },
+  { href: "/partners", label: "Partners" },
+  { href: "/invest", label: "Invest" },
+  { href: "/contact", label: "Contact" },
 ];
