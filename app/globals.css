@@ -9258,11 +9258,13 @@ a:hover .hp-arrow {
    each other. */
 .pt-sec-open { padding-top: calc(var(--pt-rhythm) * 0.62); }
 
-/* The close is the same thought as the ladder above it, not a new
-   one — it arrives tight, and its foot is trimmed because the
-   footer supplies the page's real bottom margin. */
+/* The close used to arrive tight, on the reasoning that it was "the
+   same thought as the ladder above it". That ladder is gone and the
+   close is now its own sign-off rather than a continuation, so it
+   takes a full step above. Its foot stays trimmed: the footer
+   supplies the page's real bottom margin. */
 .pt-sec-close {
-  padding-top: calc(var(--pt-rhythm) * 0.74);
+  padding-top: var(--pt-rhythm);
   padding-bottom: calc(var(--pt-rhythm) * 0.86);
 }
 
@@ -9414,33 +9416,49 @@ a:hover .hp-arrow {
   color: var(--v-on-ink);
 }
 
-/* ---- Close -------------------------------------------------- */
+/* ---- Close ---------------------------------------------------
+   A full-measure sign-off: one rule, one statement, one row of
+   actions, every edge on the same left line. Deliberately not the
+   site's shared `.cm-close` split (title left, actions hard right)
+   — this page has just spent a chapter comparing four tiers, and
+   it should end on a single statement rather than on the same
+   two-column comparison shape.
+
+   The rule is a real element, not a border, so it can draw across
+   on scroll; it spans the measure and is the only horizontal here. */
 .pt-close {
-  display: grid;
-  gap: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
-@media (min-width: 900px) {
-  .pt-close {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    justify-content: space-between;
-    gap: var(--sp-8);
-  }
+.pt-close-rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--v-gold) 0%, var(--v-gold) 22%, var(--v-hair-ivory) 22%);
+  transform-origin: left center;
 }
 .pt-close-t {
-  margin: 0;
+  margin: var(--sp-7) 0 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(34px, 5.4vw, 74px);
-  line-height: 0.94;
+  font-size: clamp(38px, 6.4vw, 92px);
+  line-height: 0.92;
   letter-spacing: var(--tr-h1);
   color: var(--v-ink);
+}
+@media (min-width: 900px) {
+  .pt-close-t { margin-top: var(--sp-8); }
 }
 .pt-close-a {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sp-4);
+  margin-top: var(--sp-7);
+}
+@media (min-width: 900px) {
+  .pt-close-a { margin-top: var(--sp-8); }
 }
 
 /* ============================================================

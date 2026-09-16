@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import PageMasthead from "@/components/site/PageMasthead";
+import { Section } from "@/components/site/Section";
 import CommercialTiers, { type Tier } from "@/components/partners/CommercialTiers";
 
 export const metadata: Metadata = {
@@ -280,15 +281,33 @@ export default function PartnersPage() {
       </section>
 
       {/* ---- Close. The market case lives on /invest and is linked, not
-              repeated. ---- */}
-      <section className="hp-sec hp-sec-ivory pt-sec pt-sec-close">
-        <div className="hp-wrap pt-close">
+              repeated.
+
+              Rendered through <Section> rather than a hand-rolled
+              <section>: the bespoke wrapper carried no `[data-line]` or
+              `[data-rise]` hooks, so this was the one block on the page
+              that never animated. Section wires both for everything
+              inside it.
+
+              The layout is a full-measure sign-off — rule, statement,
+              actions, all on one left edge — rather than the site's
+              shared title-left / actions-right close (`.cm-close`). A
+              page that has just laid out four tiers should end on a
+              single confident statement, not on the same split it used
+              to compare things. ---- */}
+      <Section surface="ivory" className="pt-sec pt-sec-close">
+        <div className="pt-close">
+          <span className="pt-close-rule" data-rise aria-hidden />
+
           <h2 className="pt-close-t">
-            Partner with
-            <br />
-            the Lions.
+            {["Partner with", "the Lions."].map((l) => (
+              <span className="mq-line" data-line key={l}>
+                <span>{l}</span>
+              </span>
+            ))}
           </h2>
-          <div className="pt-close-a">
+
+          <div className="pt-close-a" data-rise>
             <Link href="/contact" className="hp-btn hp-btn-primary">
               START A CONVERSATION
               <span className="hp-arrow" aria-hidden>
@@ -300,7 +319,7 @@ export default function PartnersPage() {
             </Link>
           </div>
         </div>
-      </section>
+      </Section>
     </>
   );
 }
