@@ -132,7 +132,7 @@ export default function ThePridePage() {
           but replaces the stacked poster with an architectural two-by-two
           register (`.pr-pillars`), the same numbered-and-ruled idiom the
           rest of the module already uses for a list of things (`.cal`,
-          `.gd-index`, `.iv-pillar-set`), rather than a one-off. Each value
+          `.gd-index`), rather than a one-off. Each value
           gets an ordinal, a short gold rule and a controlled (not
           maximal) display word; generous tracks and hairlines between them
           do the structural work the old version asked pure whitespace to do.

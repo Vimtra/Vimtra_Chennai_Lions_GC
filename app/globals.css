@@ -9414,159 +9414,6 @@ a:hover .hp-arrow {
   color: var(--v-on-ink);
 }
 
-/* ---- 03 · The tier grid ---------------------------------------
-   Was a ladder: four full-width rows, each a 5fr/6fr split of an
-   identity block against a bullet column. Two problems came from
-   that shape. First, comparing tiers meant scrolling — holding
-   tier 01 against tier 03 in memory across 600px of page. Second,
-   the bullet column was a fixed 6fr regardless of how much text it
-   held: tier 03's two short lines sat in the same ~610px column as
-   tier 01's four, leaving a wide dead field to their right that had
-   nothing to do with the tier itself being shorter.
-
-   Restructured as a four-up grid — the same mechanic chapter 02
-   already uses for the four surfaces above it (`.pt-dims`), so the
-   two chapters now visibly rhyme: dimensions across the top, tiers
-   in the same column rhythm below. A column's width is set by the
-   grid, not by its content, so bullet text wraps close to that
-   width instead of stranding itself in a wide fixed track — the
-   dead-space failure is structurally gone, not shortened. Comparing
-   tiers is now a left-to-right glance along one row instead of a
-   scroll through four.
-
-   Tier 03 and 04 still carry fewer inclusions than 01 and 02 — that
-   is the source data, unchanged; a column grid lets a shorter list
-   end early instead of forcing every row to match the tallest one.
-
-   The container keeps its own border-bottom (added; `.pt-dims`
-   doesn't need one) because that chapter closes into a same-tone
-   paper section below it, unlike `.pt-dims`, which closes on an
-   ink→paper surface change strong enough to read as a boundary on
-   its own. */
-.pt-tiers {
-  list-style: none;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--v-hair-ivory);
-  border-bottom: 1px solid var(--v-hair-ivory);
-}
-@media (min-width: 640px) {
-  .pt-tiers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (min-width: 1024px) {
-  .pt-tiers { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
-/* `> li`, not `li` — each tier column holds its own nested bullet
-   `<ul><li>`, so a bare descendant selector matches those too. With
-   `:first-child`/`:last-child` added below that stopped being safe:
-   `.pt-tiers li:first-child` doesn't mean "the first column," it
-   means "any li that is its parent's first child," which is every
-   column AND every column's own first bullet — that combination
-   briefly zeroed the left padding on every tier's first inclusion,
-   dragging its bullet dash back on top of the text next to it. */
-.pt-tiers > li {
-  padding: var(--sp-6) var(--sp-5) var(--sp-6) 0;
-  border-bottom: 1px solid var(--v-hair-ivory);
-}
-@media (min-width: 1024px) {
-  .pt-tiers > li {
-    border-bottom: 0;
-    border-right: 1px solid var(--v-hair-ivory);
-    padding-left: var(--sp-6);
-  }
-  .pt-tiers > li:first-child { padding-left: 0; }
-  .pt-tiers > li:last-child { border-right: 0; }
-}
-
-/* The identity block: numeral, name, headline. Inline at one and two
-   columns, where a cell still spans most of the viewport and a
-   numeral-left baseline row reads as a compact list item. Stacked
-   from two columns' own breakpoint up, where a cell has narrowed
-   enough that the numeral works better as a column header sitting
-   above its name — the same relationship `.pt-dim-k` has to
-   `.pt-dim-t` one chapter up. */
-.pt-tier-id {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: var(--sp-4);
-  align-items: baseline;
-}
-.pt-tier-n {
-  grid-row: 1 / span 2;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(24px, 2.6vw, 34px);
-  line-height: 0.86;
-  letter-spacing: -0.05em;
-  font-variant-numeric: tabular-nums;
-  /* Crimson, not gold: gold on the paper surface measures 2.83:1,
-     which misses even the 3:1 large-text threshold. Crimson clears
-     it at 5.4:1 and matches the numeral treatment on /leaderboards. */
-  color: var(--v-red);
-}
-.pt-tier-name {
-  grid-column: 2;
-  grid-row: 1;
-  margin: 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(19px, 1.7vw, 24px);
-  line-height: 1.14;
-  letter-spacing: var(--tr-h3);
-  color: var(--v-ink);
-}
-.pt-tier-head {
-  grid-column: 2;
-  grid-row: 2;
-  margin: var(--sp-2) 0 0;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: var(--t-meta);
-  line-height: 1.6;
-  color: var(--v-on-ivory);
-}
-@media (min-width: 640px) {
-  .pt-tier-id { display: block; }
-  .pt-tier-n {
-    display: block;
-    margin: 0 0 var(--sp-3);
-    font-size: clamp(22px, 2.2vw, 30px);
-  }
-  .pt-tier-name { margin: 0; }
-  .pt-tier-head { margin: var(--sp-2) 0 0; max-width: 30ch; }
-}
-
-/* The inclusions, ruled off from the identity block above them — a
-   divider a reader can feel with a thumb, not just see, and the
-   thing that reads as "here is what changes between tiers" even
-   when the two identity blocks above it run to different lengths. */
-.pt-tier-list {
-  margin: var(--sp-5) 0 0;
-  padding: var(--sp-4) 0 0;
-  list-style: none;
-  border-top: 1px solid var(--v-hair-ivory);
-}
-.pt-tier-list li {
-  position: relative;
-  padding: var(--sp-2) 0 var(--sp-2) var(--sp-4);
-  border: 0;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: var(--t-meta);
-  line-height: 1.55;
-  color: var(--v-ink);
-}
-.pt-tier-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.9em;
-  width: 10px;
-  height: 1px;
-  background: var(--v-gold);
-}
-
 /* ---- Close -------------------------------------------------- */
 .pt-close {
   display: grid;
@@ -9664,18 +9511,6 @@ a:hover .hp-arrow {
 @media (min-width: 1024px) {
   .iv-thesis-h { grid-column: 1 / span 7; }
   .iv-thesis-b { grid-column: 9 / span 4; align-self: end; }
-}
-
-/* Parent / platform / franchise — statement + figure, index below. */
-.iv-model { row-gap: var(--sp-7); }
-.iv-model > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
-.iv-model-h { grid-column: 1 / -1; }
-.iv-model-f { grid-column: 1 / -1; }
-.iv-model-h .cm-display { font-size: clamp(32px, 5.2vw, 78px); }
-@media (min-width: 1024px) {
-  .iv-model-h { grid-column: 1 / span 6; align-self: center; }
-  .iv-model-f { grid-column: 8 / span 5; }
-  .iv-model-f .gd-fig { aspect-ratio: var(--ar-portrait); }
 }
 
 /* Why — sticky rail + three statements, then a five-name welcome field. */
@@ -9856,10 +9691,6 @@ a:hover .hp-arrow {
 @media (max-width: 767px) {
   .iv-reasons li:last-child { padding-bottom: var(--sp-6); }
   .iv-welcome li { padding-right: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .iv-model-f .gd-fig img { transform: none; }
 }
 
 /* ============================================================
@@ -10586,7 +10417,6 @@ a:hover .hp-arrow {
      vv-principal-* …          · Leadership      crossing name plates
      vv-minute / vv-wall …     · Governance      minute panel + type field
      ss-scale-* Fixtures       · Season scale    data-driven season track
-     pt-ladder/pt-lead/pt-rung Partners · Tiers   scale ladder with one image
      iv-chain / iv-ring        Invest  · Franchise nested containment diagram
 
    Every one of them sits on the existing `.cm-track` / `.hp-wrap`
@@ -11690,170 +11520,6 @@ a:hover .hp-arrow {
   font-size: var(--t-body);
   line-height: 1.74;
   color: var(--v-on-ink);
-}
-
-/* ============================================================
-   7 · PARTNERS — COMMERCIAL TIERS
-   A ladder, not four columns. Hierarchy is scale: the lead tier
-   is a full ink plate with the photograph; the rest are ruled
-   rungs whose numerals shrink as they descend.
-============================================================ */
-.pt-ladder { list-style: none; margin: var(--sp-6) 0 0; padding: 0; }
-
-.pt-lead {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  background: var(--v-ink);
-  color: var(--v-ivory);
-  overflow: hidden;
-}
-@media (min-width: 900px) {
-  .pt-lead { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
-}
-.pt-lead-b { padding: var(--sp-6) var(--sp-5); order: 2; }
-@media (min-width: 768px) { .pt-lead-b { padding: var(--sp-8) var(--sp-7); } }
-@media (min-width: 900px) { .pt-lead-b { order: 0; } }
-.pt-lead-f {
-  position: relative;
-  margin: 0;
-  min-height: clamp(200px, 46vw, 280px);
-  order: 1;
-}
-@media (min-width: 900px) { .pt-lead-f { min-height: 0; order: 0; } }
-.pt-lead-f img { object-fit: cover; }
-/* The plate's ink runs into the photograph rather than butting against it. */
-.pt-lead-f::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(14, 11, 10, 0.5) 0%,
-    transparent 42%,
-    rgba(14, 11, 10, 0.32) 100%
-  );
-}
-@media (min-width: 900px) {
-  .pt-lead-f::after {
-    background: linear-gradient(
-      90deg,
-      var(--v-ink) 0%,
-      rgba(14, 11, 10, 0.45) 22%,
-      transparent 58%
-    );
-  }
-}
-.pt-lead-k {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  margin: 0;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-gold-lit);
-}
-.pt-lead-n {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(30px, 4.6vw, 60px);
-  line-height: 0.86;
-  letter-spacing: -0.05em;
-  color: var(--v-red);
-}
-.pt-lead-name {
-  margin: var(--sp-4) 0 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(26px, 3.6vw, 50px);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-  color: var(--v-ivory);
-}
-.pt-lead-head {
-  margin: var(--sp-3) 0 0;
-  max-width: 42ch;
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(17px, 1.8vw, 24px);
-  line-height: 1.36;
-  color: var(--v-gold-lit);
-}
-
-/* Inclusions run as one inline set — a commercial proposition, not a
-   pricing table. No prices anywhere: the brochure states none. */
-.pt-incl {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35em 0.9em;
-  list-style: none;
-  margin: var(--sp-5) 0 0;
-  padding: 0;
-}
-.pt-incl li {
-  position: relative;
-  padding-right: 0.95em;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: var(--v-on-ivory);
-}
-.pt-lead .pt-incl li { color: var(--v-on-ink); }
-.pt-incl li::after {
-  content: "";
-  position: absolute;
-  right: 0.16em;
-  top: 0.56em;
-  width: 5px;
-  height: 5px;
-  background: var(--v-gold);
-  transform: rotate(45deg);
-}
-.pt-incl li:last-child { padding-right: 0; }
-.pt-incl li:last-child::after { display: none; }
-
-.pt-rung {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: start;
-  gap: var(--sp-4);
-  padding: var(--sp-6) 0;
-  border-bottom: 1px solid var(--v-hair-ivory);
-}
-@media (min-width: 768px) { .pt-rung { gap: var(--sp-6); } }
-.pt-rung-n {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  line-height: 0.82;
-  letter-spacing: -0.05em;
-  color: rgba(14, 11, 10, 0.16);
-  font-variant-numeric: tabular-nums;
-}
-/* The descent: each rung's numeral is smaller than the one above it. */
-.pt-ladder > li:nth-child(2) .pt-rung-n { font-size: clamp(30px, 4.2vw, 54px); }
-.pt-ladder > li:nth-child(3) .pt-rung-n { font-size: clamp(26px, 3.5vw, 45px); }
-.pt-ladder > li:nth-child(n + 4) .pt-rung-n { font-size: clamp(23px, 2.9vw, 38px); }
-.pt-rung-name {
-  margin: 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(19px, 2.3vw, 30px);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  color: var(--v-ink);
-}
-.pt-rung-head {
-  margin: var(--sp-2) 0 0;
-  max-width: 52ch;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: var(--t-body);
-  line-height: 1.6;
-  color: var(--v-on-ivory);
 }
 
 /* ============================================================
@@ -13549,10 +13215,6 @@ a:hover .hp-arrow {
    pillars; the separation is the rail, the numeral's scale and
    space. It is deliberately not the players roster's hairline or
    the partners register's drawn rule, so the three stay distinct.
-
-   Note: the old rules here used `var(--v-muted)`, which is not
-   defined anywhere in this file — it silently fell back to
-   inherited ink. These use `--v-on-ivory`, which is defined.
 ============================================================ */
 .iv-pillars { row-gap: var(--sp-6); align-items: start; }
 .iv-pillars > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
@@ -13795,7 +13457,7 @@ a:hover .hp-arrow {
   font-size: var(--t-micro);
   letter-spacing: var(--tr-caps);
   text-transform: uppercase;
-  color: var(--v-muted);
+  color: var(--v-on-ivory);
 }
 .vfy-row-value {
   margin: 6px 0 0;
@@ -13882,7 +13544,7 @@ a:hover .hp-arrow {
   font-family: var(--font-manrope), sans-serif;
   font-weight: 600;
   font-size: 12.5px;
-  color: var(--v-muted);
+  color: var(--v-on-ivory);
 }
 .vfy-inline {
   display: flex;
@@ -13944,7 +13606,7 @@ a:hover .hp-arrow {
   font-size: var(--t-micro);
   letter-spacing: var(--tr-caps);
   text-transform: uppercase;
-  color: var(--v-muted);
+  color: var(--v-on-ivory);
 }
 .vfy-heading {
   margin: 8px 0 0;
