@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 /* ---------------------------------------------------------------------------
-   THE CLUB — five sections, five different compositions.
+  THE CLUB — four sections, four different compositions.
 
    CONTENT SOURCES
    Every string on this page comes from the Chennai Lions IGPL brochure
@@ -30,14 +30,11 @@ export const metadata: Metadata = {
                       paragraphs dropped asymmetrically. Not a text band.
      03  The build    four takes as ONE cascading spread on paper, numerals
                       breaking the frame edges. Not four alternating rows.
-     04  The kit      a hanging-label spec column beside a continuous
-                      vertical colour spectrum that bleeds off the page.
-                      Not a swatch chart.
-     05  Sign-off     a two-tone display lockup over a full-width "next"
+    04  Sign-off     a two-tone display lockup over a full-width "next"
                       rail. Not a heading with two buttons.
 
-   Surfaces run ink → crimson → paper → ivory → ink, so the page has a
-   rhythm rather than four variations of ivory-and-rules.
+  Surfaces run ink → crimson → paper → ink, so the page has a rhythm rather
+  than three variations of ivory-and-rules.
 
    NOT ON THIS PAGE, DELIBERATELY
    The "franchise in numbers" statistics band was removed earlier and is not
@@ -103,30 +100,6 @@ const TAKES: Take[] = [
     image: "/assets/photo/club-04-chennai-coast.jpg",
     alt: "A coastal city meeting the shoreline, the beach running the length of the frame",
     position: "50% 46%",
-  },
-];
-
-// Brochure p. 13 — kit palette, verbatim labels and hex values, in the
-// brochure's own order.
-const PALETTE = [
-  { label: "Pride Red", hex: "#C4202A" },
-  { label: "Highlight Gold", hex: "#C39A52" },
-  { label: "Court Yellow", hex: "#F2D66C" },
-  { label: "Stadium Cream", hex: "#F4F0E8" },
-  { label: "Jet Black", hex: "#1A1513" },
-];
-
-// Brochure p. 13 — title sponsor "am green", kit manufacturer "FIRSTCUT".
-const KIT_CREDITS = [
-  {
-    tag: "Title Partner",
-    name: "am green",
-    detail: "League-wide title partner and kit sponsor.",
-  },
-  {
-    tag: "Kit Manufacturer",
-    name: "FIRSTCUT",
-    detail: "Kit production partner for the 2026 season.",
   },
 ];
 
@@ -227,88 +200,7 @@ export default function TheClubPage() {
         </div>
       </Section>
 
-      {/* 04 — THE KIT.
-          REDESIGNED. The palette used to render as five stacked flat-colour
-          rows in a right-hand column — a swatch chart standing next to a
-          spec sheet, two unrelated shapes side by side. It's now one
-          full-bleed composition: the statement runs the width of the page
-          first, then a single blended gradient strip beneath it — the
-          actual visual referent for "a white-to-court-yellow gradient" —
-          bleeding to both true page edges, with each brand colour called
-          out by a tick and a label hanging below its own position on the
-          strip rather than boxed inside it. The two kit credits close the
-          section as a pair of plates, not a hairline-divided list.
-
-          The gradient's colour STOPS are exactly the five verified hex
-          values, evenly spaced (0/25/50/75/100%) — nothing added, nothing
-          reordered from the brochure's own sequence. */}
-      <Section surface="ivory" className="cl-kit-sec">
-        <div className="cl-kit-layout">
-          <header className="cl-kit-intro">
-            <IndexLabel n="04">The Kit · Season 2026</IndexLabel>
-            <h2 className="cl-kit-h">
-              <span className="mq-line" data-line>
-                <span>A WHITE-TO-</span>
-              </span>
-              <span className="mq-line" data-line>
-                <span>COURT-YELLOW</span>
-              </span>
-              <span className="mq-line" data-line>
-                <span>GRADIENT.</span>
-              </span>
-            </h2>
-            <p className="cl-kit-lede" data-rise>
-              Designed to travel from Chennai heat to floodlit international
-              venues without losing the team&apos;s visual identity.
-            </p>
-          </header>
-
-          <div className="cl-kit-display" data-rise>
-            <div className="cl-kit-display-head">
-              <span>Team palette</span>
-              <span>Vimtra Chennai Lions GC</span>
-            </div>
-            <div className="cl-kit-strip-wrap">
-              <div
-                className="cl-kit-strip"
-                style={{
-                  ["--stops" as string]: PALETTE.map(
-                    (p, i) => `${p.hex} ${(i / (PALETTE.length - 1)) * 100}%`
-                  ).join(", "),
-                }}
-              />
-              <ol className="cl-kit-ticks">
-                {PALETTE.map((p, i) => (
-                  <li
-                    key={p.label}
-                    style={{
-                      ["--pos" as string]: `${(i / (PALETTE.length - 1)) * 100}%`,
-                    }}
-                  >
-                    <span className="cl-kit-tick" aria-hidden />
-                    <span className="cl-kit-tick-l">{p.label}</span>
-                    <span className="cl-kit-tick-h">{p.hex}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-
-            <dl className="cl-kit-credits">
-              {KIT_CREDITS.map((k) => (
-                <div key={k.name}>
-                  <dt>{k.tag}</dt>
-                  <dd>
-                    <span className="cl-kit-spec-n">{k.name}</span>
-                    <span className="cl-kit-spec-d">{k.detail}</span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </Section>
-
-      {/* 05 — THE SIGN-OFF.
+      {/* 04 — THE SIGN-OFF.
           Not a heading with two buttons beside it. The page's last words are
           a two-tone display lockup that fills the frame, and under it a
           full-width rail of the two places the reader goes next — each a

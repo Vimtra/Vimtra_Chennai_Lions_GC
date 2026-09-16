@@ -143,8 +143,6 @@ export default async function ProductPage({
               {inr(product.price)}
             </div>
 
-            <div className="w-full h-px bg-black/[0.08] my-6" />
-
             <p className="m-0 font-manrope text-[15.5px] leading-[1.68] text-muted">
               {product.desc}
             </p>
@@ -184,7 +182,7 @@ export default async function ProductPage({
 
         {/* Related */}
         {related.length > 0 && (
-          <div className="mt-[84px] pt-10 border-t border-black/[0.08]">
+          <div className="mt-[84px] pt-10">
             <div className="font-manrope font-bold text-[11px] tracking-[0.2em] text-crimson-600 uppercase mb-2">
               More from the store
             </div>
