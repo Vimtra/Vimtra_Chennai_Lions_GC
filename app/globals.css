@@ -13193,28 +13193,28 @@ a:hover .hp-arrow {
   .gdm-set > li:nth-child(5) .gdm-d { max-width: 46ch; }
 }
 /* ============================================================
-   INVEST · THE THREE PILLARS
+   INVEST · THE THREE PILLARS — a measured index
    ------------------------------------------------------------
    Content audit, Sept 2026. Vimtra x PGA brochure pp. 05, 06, 08.
    Rendered by components/invest/ThreePillars.tsx. Scoped to
    `.ivp-*`; the heading wrappers keep the `.iv-pillars*` names
    they share with the section's grid.
 
-   WHAT THIS REPLACED. A ruled ledger — every pillar a full-width
-   row divided by a horizontal rule, a 2px rule capping the set,
-   another closing it, and one more per destination circuit.
-   Seven horizontals in one section. The two-column mechanism
-   that justified it was dead as well: all three pillars carry
-   `figures: []`, so every row fell through to the full-width
-   `is-solo` case and the right column never rendered.
+   Each pillar is one row of the page's 12-column track: the name
+   on columns 1-5, the statement on 7-12, the destination
+   circuits across the full measure beneath both. Three vertical
+   lines held by every entry, and nothing else — no rail, no
+   spine, no rule between entries, no box.
 
-   THE COMPOSITION. A pillar is a vertical thing, so each entry is
-   built on one — a rail carrying the numeral above a gold spine
-   that runs the entry's full height, content set against it.
-   That supplies the structure with NO horizontal rule between
-   pillars; the separation is the rail, the numeral's scale and
-   space. It is deliberately not the players roster's hairline or
-   the partners register's drawn rule, so the three stay distinct.
+   Every pillar name in the source is two words, set one word per
+   masked line, so all three titles carry identical structure and
+   identical height. That is what lets each statement sit on a
+   shared first baseline with the name beside it.
+
+   Space is the structure here: a full rhythm step between
+   entries, a statement held to ~46ch so it never runs the page
+   width, and the circuits given the whole measure rather than
+   squeezed into the statement column.
 ============================================================ */
 .iv-pillars { row-gap: var(--sp-6); align-items: start; }
 .iv-pillars > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
@@ -13233,89 +13233,61 @@ a:hover .hp-arrow {
 .ivp-set {
   grid-column: 1 / -1;
   list-style: none;
-  margin: var(--sp-6) 0 0;
+  margin: var(--sp-7) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: var(--sp-8);
 }
-@media (min-width: 900px) {
-  .ivp-set { gap: var(--sp-9); margin-top: var(--sp-7); }
+@media (min-width: 1024px) {
+  .ivp-set { margin-top: var(--sp-8); gap: var(--sp-9); }
 }
 
 .ivp-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-4);
+  gap: var(--sp-5);
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .ivp-item {
-    grid-template-columns: clamp(88px, 9vw, 132px) minmax(0, 1fr);
-    column-gap: var(--sp-7);
-    /* Stretch so the rail — and therefore the spine — matches the height of
-       the content beside it. */
-    align-items: stretch;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    row-gap: 0;
+    align-items: start;
   }
+  .ivp-lead { grid-column: 1 / span 5; }
+  .ivp-say { grid-column: 7 / span 6; }
 }
 
-/* ---- The rail ---------------------------------------------------- */
-.ivp-rail {
+/* ---- The label line -----------------------------------------------
+   Numeral, a short gold rule, then the source's own framing. The
+   position is stated once, not stamped twice. */
+.ivp-lead { min-width: 0; }
+.ivp-k {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--sp-4);
+  margin: 0 0 var(--sp-5);
 }
-@media (min-width: 900px) {
-  .ivp-rail {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--sp-4);
-  }
-}
-
-/* Outlined where the browser can stroke text, a low crimson tint where it
-   cannot, so the numeral never disappears. */
 .ivp-n {
+  flex: none;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(44px, 5.4vw, 88px);
-  line-height: 0.8;
-  letter-spacing: -0.05em;
+  font-size: clamp(26px, 2.6vw, 36px);
+  line-height: 1;
+  letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
-  color: rgba(189, 34, 39, 0.26);
+  color: var(--v-red);
 }
-@supports (-webkit-text-stroke: 1px red) {
-  .ivp-n {
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(189, 34, 39, 0.62);
-  }
-}
-
-/* The spine. A real element so GSAP can draw it down; it only earns its
-   keep once the rail is a column, so below 900px it lies flat and short
-   rather than trying to be a vertical rule in a stacked layout. */
-.ivp-spine {
-  display: block;
+.ivp-rule {
   flex: none;
-  width: 44px;
-  height: 2px;
+  width: clamp(28px, 4vw, 56px);
+  height: 1px;
   background: var(--v-gold);
   transform-origin: left center;
 }
-@media (min-width: 900px) {
-  .ivp-spine {
-    width: 2px;
-    height: auto;
-    flex: 1 1 auto;
-    min-height: 40px;
-    transform-origin: top center;
-  }
-}
-
-/* ---- The content ------------------------------------------------- */
-.ivp-body { min-width: 0; }
-
-.ivp-k {
-  margin: 0;
+.ivp-k-t {
+  min-width: 0;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: var(--t-micro);
@@ -13323,28 +13295,42 @@ a:hover .hp-arrow {
   text-transform: uppercase;
   color: var(--v-on-ivory);
 }
+
+/* One word per masked line — see the block note above. */
 .ivp-t {
-  margin: var(--sp-3) 0 0;
+  margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(26px, 3.2vw, 44px);
-  line-height: 1.06;
-  letter-spacing: -0.036em;
+  font-size: clamp(32px, 4.2vw, 60px);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
   color: var(--v-ink);
 }
+
+/* ---- The statement ------------------------------------------------ */
+.ivp-say { min-width: 0; }
 .ivp-d {
-  margin: var(--sp-4) 0 0;
-  max-width: 58ch;
+  margin: 0;
+  max-width: 46ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
-  line-height: 1.74;
+  line-height: 1.8;
   color: var(--v-on-ivory);
 }
+@media (min-width: 1024px) {
+  /* Drops the statement to the title's own top edge, so the two columns
+     start on one line instead of the statement floating up beside the
+     label. The offset is derived from the label line rather than guessed:
+     it is the numeral's line box (line-height 1, so its height IS its
+     font-size) plus the label's margin — the same clamp `.ivp-n` uses, so
+     the two stay locked together at every width. */
+  .ivp-d { margin-top: calc(clamp(26px, 2.6vw, 36px) + var(--sp-5)); }
+}
 
-/* ---- The destination circuits ------------------------------------
-   Three parallel destinations, so a three-up register rather than a
-   stacked ruled list. Each is opened by a short gold tick — three marks
-   in place of three rules. */
+/* ---- The destination circuits -------------------------------------
+   Full measure, three-up: three destinations reading as three
+   destinations. A hairline opens each, the only horizontal in the
+   section and never between entries. */
 .ivp-circuit {
   list-style: none;
   margin: var(--sp-6) 0 0;
@@ -13356,13 +13342,17 @@ a:hover .hp-arrow {
 @media (min-width: 700px) {
   .ivp-circuit { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-6); }
 }
-.ivp-circuit > li { min-width: 0; }
-.ivp-c-tick {
-  display: block;
-  width: 26px;
-  height: 2px;
-  margin-bottom: var(--sp-3);
-  background: var(--v-gold);
+@media (min-width: 1024px) {
+  .ivp-circuit {
+    grid-column: 1 / -1;
+    margin-top: var(--sp-8);
+    column-gap: var(--sp-6);
+  }
+}
+.ivp-circuit > li {
+  min-width: 0;
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--v-hair-ivory);
 }
 .ivp-c-k {
   display: block;
@@ -13371,31 +13361,32 @@ a:hover .hp-arrow {
   font-size: 10.5px;
   letter-spacing: var(--tr-caps);
   text-transform: uppercase;
-  color: var(--v-on-ivory);
+  color: var(--v-gold);
 }
 .ivp-c-v {
   display: block;
-  margin-top: 6px;
+  margin-top: var(--sp-3);
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(17px, 1.7vw, 21px);
-  letter-spacing: -0.024em;
+  font-size: clamp(19px, 2vw, 26px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   color: var(--v-ink);
 }
 .ivp-c-d {
   display: block;
-  margin-top: 8px;
+  margin-top: var(--sp-3);
+  max-width: 34ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: 13.5px;
-  line-height: 1.6;
+  line-height: 1.66;
   color: var(--v-on-ivory);
 }
 
-/* ---- Figures -----------------------------------------------------
+/* ---- Figures ------------------------------------------------------
    Rendered only where the source supplies them — today every pillar
    carries an empty array, but the data keeps the field and so does this.
-   Each figure states the metric it measures, per the data-integrity rule:
-   none is a projection, a target or a return. */
+   Each states the metric it measures, per the data-integrity rule. */
 .ivp-f {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
@@ -13407,8 +13398,7 @@ a:hover .hp-arrow {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  /* Capped below `.ivp-t` (max 44px): the statement leads and the figures
-     are its evidence, so the numeral must not outsize the pillar name. */
+  /* Capped below `.ivp-t`: the name leads and the figures are evidence. */
   font-size: clamp(24px, 2.6vw, 34px);
   line-height: 1;
   letter-spacing: -0.038em;

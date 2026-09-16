@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap, reduced, registerGsap, riseOnScroll } from "@/components/motion/gsap";
+import {
+  gsap,
+  reduced,
+  registerGsap,
+  revealLinesOnScroll,
+  riseOnScroll,
+} from "@/components/motion/gsap";
 
 export interface Pillar {
   n: string;
@@ -12,46 +18,42 @@ export interface Pillar {
 }
 
 /**
- * The three pillars.
+ * The three pillars — a measured index.
  *
- * WHAT CHANGED AND WHY. The previous pass was a ruled ledger: every pillar a
- * full-width row divided by a horizontal rule, a 2px rule capping the set and
- * another closing it, with the destination circuits adding one more rule per
- * entry. Seven horizontal lines in one section, and the reading was a stack
- * of rows rather than a composition.
+ * THE COMPOSITION. Each pillar is one row of the page's own 12-column
+ * track: the name on columns 1-5, the statement on 7-12, and — where a
+ * pillar has them — the destination circuits as a full-measure register
+ * beneath both. Three vertical lines, held by every entry, and nothing
+ * else. No rail, no spine, no rule, no box.
  *
- * Worse, the mechanism that justified the ledger was dead. The layout split
- * each row into statement-left / figures-right, but all three pillars carry
- * `figures: []`, so every row fell through to the `is-solo` full-width case
- * and the right column never rendered at all. What remained was a plain list
- * wearing the clothes of a two-column ledger.
+ * THE TITLES. Every pillar name in the source is exactly two words, so
+ * each is set one word per masked line. That is not a flourish: it gives
+ * all three titles identical structure and identical height, which is what
+ * lets the statements beside them sit on a shared first baseline. A name
+ * of three words would simply take three lines and still align.
  *
- * THE COMPOSITION. A pillar is a vertical thing, so each one is now built on
- * one: a rail carrying its numeral above a gold spine that runs the full
- * height of the entry, with the content set against it. That gives the
- * section its structure without a single horizontal rule between pillars —
- * the separation is the rail, the numeral's scale, and space. It is also
- * deliberately not the device used by the players roster or the partners
- * register, so the three sections stay distinct.
+ * THE NUMERAL is part of the label line rather than a graphic of its own —
+ * a large tabular figure, a short gold rule, then the source's own "Pillar
+ * 01 of 03" framing. It states the position once instead of stamping it
+ * twice.
  *
- * The destination circuits under pillar 01 were a stacked ruled list; they
- * are now a three-up register, which is what three parallel destinations
- * actually are, and which costs three rules rather than three rows.
- *
- * The figure group is kept and still renders when a pillar has figures — the
- * data carries the field, so the component honours it rather than assuming
- * today's empty arrays are permanent.
+ * SPACE is the section's structure. A full rhythm step between entries, a
+ * measured statement (~46ch) that never runs the full page width, and the
+ * circuits given the whole measure so three destinations read as three
+ * destinations rather than three cramped slivers.
  *
  * MOTION. Per pillar, not per section: `<Section>` fires one `[data-rise]`
  * pass for everything inside it, which made all three arrive together. Each
- * pillar now owns its trigger — the spine draws down, then the label, title,
- * copy and circuits lift in behind it — so they arrive as you reach them.
- * This component uses its own `data-ivp-*` hooks so `<Section>`'s global
- * `[data-rise]` pass does not also animate these elements.
+ * entry now owns its trigger — the name rises in masked lines, the label,
+ * statement and circuits lift in behind it. This component uses its own
+ * `data-ivp-*` hooks so `<Section>`'s global `[data-rise]` pass does not
+ * also animate these elements. Every primitive is a no-op under
+ * prefers-reduced-motion and nothing is hidden by CSS, so with JS off the
+ * section still renders in full.
  *
- * CONTENT. Every pillar number, title, statement, circuit and figure is
- * passed in from the page's own PILLARS constant — Vimtra x PGA of America
- * brochure pp. 05, 06, 08, verbatim. Nothing is added, reworded or dropped.
+ * CONTENT. Every number, title, statement, circuit and figure is passed in
+ * from the page's own PILLARS constant — Vimtra x PGA of America brochure
+ * pp. 05, 06, 08, verbatim. Nothing added, reworded or dropped.
  */
 export default function ThreePillars({ pillars }: { pillars: Pillar[] }) {
   const root = useRef<HTMLOListElement | null>(null);
@@ -62,21 +64,26 @@ export default function ThreePillars({ pillars }: { pillars: Pillar[] }) {
     if (!el) return;
     const ctx = gsap.context(() => {
       el.querySelectorAll<HTMLElement>("[data-ivp-item]").forEach((item) => {
-        const spine = item.querySelector("[data-ivp-spine]");
-        if (spine && !reduced()) {
+        const words = item.querySelectorAll("[data-ivp-word] > span");
+        if (words.length) revealLinesOnScroll(words, item, { stagger: 0.08 });
+
+        const rise = item.querySelectorAll("[data-ivp-rise]");
+        if (rise.length) riseOnScroll(rise, item, { y: 20, stagger: 0.06 });
+
+        // The label's gold rule draws out from the numeral it follows.
+        const rule = item.querySelector("[data-ivp-rule]");
+        if (rule && !reduced()) {
           gsap.fromTo(
-            spine,
-            { scaleY: 0 },
+            rule,
+            { scaleX: 0 },
             {
-              scaleY: 1,
-              duration: 1.1,
+              scaleX: 1,
+              duration: 0.8,
               ease: "power3.out",
-              scrollTrigger: { trigger: item, start: "top 82%", once: true },
+              scrollTrigger: { trigger: item, start: "top 84%", once: true },
             }
           );
         }
-        const rise = item.querySelectorAll("[data-ivp-rise]");
-        if (rise.length) riseOnScroll(rise, item, { y: 20, stagger: 0.07 });
       });
     }, el);
     return () => ctx.revert();
@@ -86,40 +93,37 @@ export default function ThreePillars({ pillars }: { pillars: Pillar[] }) {
     <ol className="ivp-set" ref={root}>
       {pillars.map((p) => (
         <li className="ivp-item" key={p.n} data-ivp-item>
-          {/* The rail is the pillar. Its numeral repeats what the label
-              states in words, so it is decorative and hidden from AT. */}
-          <div className="ivp-rail" aria-hidden>
-            <span className="ivp-n">{p.n}</span>
-            <span className="ivp-spine" data-ivp-spine />
+          <div className="ivp-lead">
+            {/* The numeral is decorative here — "Pillar 01 of 03" beside it
+                states the same position in words. */}
+            <p className="ivp-k" data-ivp-rise>
+              <span className="ivp-n" aria-hidden>
+                {p.n}
+              </span>
+              <span className="ivp-rule" data-ivp-rule aria-hidden />
+              <span className="ivp-k-t">Pillar {p.n} of 03</span>
+            </p>
+
+            {/* One word per masked line. The accessible name is stated once
+                on the heading, since the spans are decorative geometry and
+                would otherwise concatenate without spaces. */}
+            <h3 className="ivp-t" aria-label={p.t}>
+              {p.t.split(" ").map((w) => (
+                <span className="mq-line" data-ivp-word key={w}>
+                  <span>{w}</span>
+                </span>
+              ))}
+            </h3>
           </div>
 
-          <div className="ivp-body">
-            <p className="ivp-k" data-ivp-rise>
-              Pillar {p.n} of 03
-            </p>
-            <h3 className="ivp-t" data-ivp-rise>
-              {p.t}
-            </h3>
+          <div className="ivp-say">
             <p className="ivp-d" data-ivp-rise>
               {p.d}
             </p>
 
-            {p.set && p.set.length > 0 && (
-              <ul className="ivp-circuit">
-                {p.set.map((c) => (
-                  <li key={c.v} data-ivp-rise>
-                    <span className="ivp-c-tick" aria-hidden />
-                    <span className="ivp-c-k">{c.k}</span>
-                    <span className="ivp-c-v">{c.v}</span>
-                    <span className="ivp-c-d">{c.d}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-
             {/* Only where the source actually supplies figures. Each carries
-                the label of the metric it measures, per the data-integrity
-                rule — none is a projection, a target or a return. */}
+                the metric it measures, per the data-integrity rule — none is
+                a projection, a target or a return. */}
             {p.figures.length > 0 && (
               <dl className="ivp-f" data-ivp-rise>
                 {p.figures.map((f) => (
@@ -131,6 +135,20 @@ export default function ThreePillars({ pillars }: { pillars: Pillar[] }) {
               </dl>
             )}
           </div>
+
+          {/* Given the full measure rather than squeezed into the statement
+              column: three destinations should read as three destinations. */}
+          {p.set && p.set.length > 0 && (
+            <ul className="ivp-circuit">
+              {p.set.map((c) => (
+                <li key={c.v} data-ivp-rise>
+                  <span className="ivp-c-k">{c.k}</span>
+                  <span className="ivp-c-v">{c.v}</span>
+                  <span className="ivp-c-d">{c.d}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
       ))}
     </ol>
