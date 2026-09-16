@@ -126,8 +126,17 @@ export default function ShopHero({
                           }`}
                         />
                       </span>
-                      <span className="sp-hero-tile-name">{p.name}</span>
-                      <span className="sp-hero-tile-price">{inr(p.price)}</span>
+                      {/* The name and price are wrapped so the rule that
+                          separates them from the well can live on a plain
+                          block. `.sp-hero-tile-name` is a -webkit-box for
+                          line clamping, and a pseudo-element on that box
+                          would be treated as one of its clamped children. */}
+                      <span className="sp-hero-tile-meta">
+                        <span className="sp-hero-tile-name">{p.name}</span>
+                        <span className="sp-hero-tile-price">
+                          {inr(p.price)}
+                        </span>
+                      </span>
                     </Link>
                   </li>
                 );

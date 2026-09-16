@@ -9797,21 +9797,23 @@ a:hover .hp-arrow {
 
 /* Counted facts only — product rows, distinct categories, lowest
    listed price. See the note in ShopHero.tsx. */
+/* The rail is columns with a real gutter, not cells padded apart by a
+   trailing margin: an `auto` track sized to its own figure keeps the
+   three counts reading as a set rather than as thirds of a band. */
 .sp-hero-rail {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0;
-  margin: var(--sp-6) 0 0;
+  grid-template-columns: repeat(3, minmax(0, auto));
+  justify-content: start;
+  column-gap: clamp(var(--sp-6), 6vw, var(--sp-9));
+  margin: var(--sp-7) 0 0;
+  padding-top: var(--sp-5);
   border-top: 1px solid var(--v-hair-ink);
 }
 .sp-hero-cell {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
-  padding: var(--sp-4) var(--sp-4) 0 0;
-}
-@media (min-width: 768px) {
-  .sp-hero-cell { padding: var(--sp-5) var(--sp-5) 0 0; }
+  gap: var(--sp-3);
+  min-width: 0;
 }
 .sp-hero-cell dt {
   margin: 0;
@@ -9825,10 +9827,10 @@ a:hover .hp-arrow {
 .sp-hero-cell dd {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(17px, 1.7vw, 23px);
-  line-height: 1.2;
-  letter-spacing: -0.025em;
+  font-weight: 800;
+  font-size: clamp(22px, 2.2vw, 32px);
+  line-height: 1;
+  letter-spacing: -0.035em;
   color: var(--v-ivory);
   font-variant-numeric: tabular-nums;
 }
@@ -9859,20 +9861,22 @@ a:hover .hp-arrow {
 .sp-hero-tiles {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--sp-3);
+  gap: var(--sp-4);
   margin: 0;
   padding: 0;
   list-style: none;
 }
-/* A cascade rather than three tiles in a straight rank — the second and
-   third step down, so the case reads as a composition. Only from 768px:
-   at phone width the offset would eat the frame's foot. */
 @media (min-width: 768px) {
-  .sp-hero-tiles { gap: var(--sp-4); }
-  .sp-hero-tiles > li:nth-child(2) { transform: translateY(18px); }
-  .sp-hero-tiles > li:nth-child(3) { transform: translateY(36px); }
-  .sp-hero-case { padding-bottom: 36px; }
+  .sp-hero-tiles { gap: var(--sp-5); }
 }
+/* An earlier pass stepped tiles 2 and 3 down by 18px and 36px to make the
+   case read as a cascade. It never rendered: GSAP's rise() animates these
+   same <li>s and writes `transform: translate(0px, 0px)` inline on each
+   one, which beat the stylesheet's translateY. All three always sat level.
+   Rather than move the offset onto an inner element to resurrect it, the
+   tiles are a true rank — a deliberate mis-alignment is the opposite of
+   what the rest of this page is doing. Nothing here may set `transform` on
+   a `[data-sp-tile]`, or it will be silently overwritten the same way. */
 /* While the case sits UNDER the type rather than beside it, the tiles are
    capped: at tablet width three full-bleed squares pushed the opener past
    880px, which is the tall empty band this hero exists to avoid. */
@@ -9888,28 +9892,50 @@ a:hover .hp-arrow {
   text-decoration: none;
   color: inherit;
 }
+/* The well matches `.sp-card-frame` in the catalogue below: borderless,
+   square-cornered, image contain-fitted on a warm mat. The hero's tiles
+   and the grid's cards are the same object seen twice on one page, so
+   they are built from the same parts. */
 .sp-hero-tile-frame {
   position: relative;
   display: block;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border: 1px solid rgba(245, 239, 228, 0.18);
-  background: linear-gradient(168deg, var(--v-ivory-2), #ece5d8);
-  transition: border-color var(--mo-fast) var(--hp-e),
-    box-shadow var(--mo-mid) var(--hp-e);
+  background: linear-gradient(180deg, #fbf7ef 0%, var(--v-ivory-2) 62%, #ebe4d6 100%);
 }
 .sp-hero-tile-img {
   object-fit: contain;
-  padding: 6%;
+  padding: 8%;
   transition: transform var(--mo-mid) var(--hp-e);
 }
-.sp-hero-tile-img.is-mark { padding: 22%; }
-.sp-hero-tile:hover .sp-hero-tile-frame,
-.sp-hero-tile:focus-visible .sp-hero-tile-frame {
-  border-color: var(--v-gold);
-  box-shadow: var(--v-lift-sm);
-}
+.sp-hero-tile-img.is-mark { padding: 24%; }
 .sp-hero-tile:hover .sp-hero-tile-img { transform: scale(1.04); }
+
+/* One rule per tile, carrying the hover — a hairline on ink at rest,
+   gold wiping in from the left. The card below does exactly this. */
+.sp-hero-tile-meta {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid rgba(245, 239, 228, 0.18);
+}
+.sp-hero-tile-meta::before {
+  content: "";
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, var(--v-gold-lit), var(--v-gold));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--mo-mid) var(--hp-e);
+}
+.sp-hero-tile:hover .sp-hero-tile-meta::before,
+.sp-hero-tile:focus-visible .sp-hero-tile-meta::before { transform: scaleX(1); }
+
 .sp-hero-tile-name {
   /* Two lines maximum: a long name must not push one tile's price out of
      line with the other two. */
@@ -9917,30 +9943,46 @@ a:hover .hp-arrow {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin: var(--sp-3) 0 0;
+  margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 700;
-  font-size: clamp(11px, 0.9vw, 13px);
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  font-size: clamp(12.5px, 1.02vw, 15px);
+  line-height: 1.32;
+  letter-spacing: -0.015em;
   color: var(--v-ivory);
+  transition: color var(--mo-fast) var(--hp-e);
 }
+.sp-hero-tile:hover .sp-hero-tile-name { color: var(--v-gold-lit); }
 .sp-hero-tile-price {
   display: block;
   /* Sits on the foot of the tile so the three prices share a baseline
      however the names above them wrap. */
   margin-top: auto;
-  padding-top: 3px;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 11.5px;
-  letter-spacing: 0.02em;
+  padding-top: var(--sp-2);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(13px, 1.05vw, 15px);
+  letter-spacing: -0.015em;
   color: var(--v-gold-lit);
   font-variant-numeric: tabular-nums;
 }
 @media (prefers-reduced-motion: reduce) {
-  .sp-hero-tile-img { transition: none; }
+  .sp-hero-tile-img,
+  .sp-hero-tile-meta::before,
+  .sp-hero-tile-name { transition: none; }
   .sp-hero-tile:hover .sp-hero-tile-img { transform: none; }
+}
+
+/* This opener is compact by design — it states the page and hands over to
+   the catalogue. The larger figures and tile type above are worth their
+   height on a wide frame, but on a phone they pushed the hero to fill the
+   viewport, which is the tall empty band this hero exists to avoid. The
+   type scale is kept; only the spacing around it is pulled back. */
+@media (max-width: 767px) {
+  .sp-hero-rail { margin-top: var(--sp-6); padding-top: var(--sp-4); }
+  .sp-hero-cell { gap: var(--sp-2); }
+  .sp-hero-cell dd { font-size: 20px; }
+  .sp-hero-tile-meta { margin-top: var(--sp-3); padding-top: var(--sp-2); }
 }
 
 /* ---- 2 · Catalogue section ------------------------------- */
