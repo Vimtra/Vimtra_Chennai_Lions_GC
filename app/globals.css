@@ -13735,6 +13735,23 @@ a:hover .hp-arrow {
 @media (min-width: 768px) {
   .den-head { padding-top: var(--sp-9); padding-bottom: var(--sp-8); }
 }
+/* DESKTOP: the head ran 473px for three short lines, most of it empty ink
+   above a chapter whose subject is two photographs. The title keeps its
+   full 128px; the date moves onto the rail's own line, where there is
+   already room to its right, instead of taking a stacked block of its
+   own. */
+@media (min-width: 1024px) {
+  .den-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: var(--sp-6);
+    padding-bottom: var(--sp-7);
+  }
+  .den-head .den-rail { grid-column: 1 / -1; margin-bottom: var(--sp-7); }
+  .den-head .den-title { grid-column: 1; }
+  .den-head .den-date { grid-column: 2; margin-top: 0; text-align: right; }
+}
 .den-rail {
   display: flex;
   align-items: center;
@@ -13973,10 +13990,37 @@ a:hover .hp-arrow {
   .den-still-caption { margin-top: var(--sp-7); }
   .den-card-still { grid-column: 3 / -1; }
 }
+/* DESKTOP: the caption spans the measure instead of hiding in the right
+   half. At 1024px+ this card used to sit on columns 7-12, which left the
+   664px under the left of the photograph empty — a band of dead ink under
+   a full-width frame. It is now a caption band on the same 12-column
+   track as everything else: the mark and headline take the left half, the
+   description and stamp the right, sharing one top line. Type still never
+   touches this photograph, so the faces across its middle band stay
+   clear. */
 @media (min-width: 1024px) {
-  .den-card-still { grid-column: 7 / -1; }
-  .den-card-still .den-h { font-size: clamp(30px, 3.1vw, 48px); }
-  .den-card-still .den-d { max-width: 40ch; }
+  .den-card-still {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+  .den-card-still .den-mark { grid-column: 1 / span 6; grid-row: 1; }
+  .den-card-still .den-h {
+    grid-column: 1 / span 6;
+    grid-row: 2;
+    font-size: clamp(30px, 3.1vw, 48px);
+  }
+  /* Row 2 with the headline, so the copy starts on the headline's own top
+     line rather than below it; the base top margin would push it off. */
+  .den-card-still .den-d {
+    grid-column: 8 / span 5;
+    grid-row: 2;
+    margin-top: 0;
+    max-width: 42ch;
+  }
+  .den-card-still .den-foot { grid-column: 8 / span 5; grid-row: 3; }
 }
 
 /* ---- Reduced motion ---------------------------------------------- */
