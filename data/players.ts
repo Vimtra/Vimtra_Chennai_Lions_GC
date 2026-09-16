@@ -41,6 +41,33 @@
  * The four names and the roster size are confirmed by BOTH sources — all
  * four appear in the official IGPL player list, and the Chennai franchise is
  * `che` / "Vimtra Ventures" in the official franchise list.
+ *
+ * SEASON 2026 CHECK — 17 September 2026, against theigpl.com/standings-2026
+ * and the same `bknd.theigpl.com/api/players` record.
+ *
+ * Career figures were re-verified and are unchanged: Bhullar 28 wins /
+ * Chandigarh / turned pro 2006, Sethie Delhi / 23 / 2020, Dwivedi Gurugram /
+ * 32 / 2016, Yashas Mysore / 30 / 2018.
+ *
+ * Each player now also carries their live Season 2026 Order of Merit
+ * position. Both seasons are stated because both are true and they measure
+ * different things; every figure is labelled with the season it belongs to,
+ * per the data-integrity rule. Official Order of Merit, both seasons:
+ *
+ *            2025 rank / prize / events / wins   2026 rank / prize / events / wins
+ *   Bhullar   #3  ₹81,30,000  5 ev  3 w          #2  ₹43,85,706  4 ev  1 w
+ *   Yashas    #20 ₹27,24,450  11 ev 0 w          #12 ₹13,84,306  6 ev  0 w
+ *   Sethie    #28 ₹20,39,718  11 ev 0 w          #18 ₹10,65,775  6 ev  0 w
+ *   Dwivedi   #22 ₹26,11,832  10 ev 0 w          #40 ₹5,53,448   5 ev  0 w
+ *
+ * Sethie's Order of Merit stat previously read "28" with no season. That is
+ * his 2025 position, correct but unlabelled on a Season 2026 site; it is now
+ * dated, and his 2026 position stands beside it.
+ *
+ * Prize money and event counts are recorded here but not rendered: the
+ * roster shows one competition figure per player, and adding four money
+ * columns would turn a squad page into a money list. /leaderboards owns the
+ * Order of Merit in full.
  */
 
 export interface RosterPlayer {
@@ -143,6 +170,8 @@ export const FEATURES: PlayerFeature[] = [
       { v: "12", l: "Asian Tour Titles" },
       { v: "85", l: "Career-Best World Rank" },
       { v: "3", l: "IGPL Wins, 2025" },
+      // Season 2026 Order of Merit, theigpl.com/standings-2026, 17 Sep 2026.
+      { v: "#2", l: "IGPL Order of Merit, 2026" },
     ],
     sideCards: [
       {
@@ -177,7 +206,9 @@ export const FEATURES: PlayerFeature[] = [
     stats: [
       { v: "6'7\"", l: "Height" },
       { v: "No. 1", l: "India Amateur, 2019" },
-      { v: "28", l: "IGPL Order of Merit" },
+      // Dated: this is the 2025 position. 2026 stands beside it below.
+      { v: "#28", l: "IGPL Order of Merit, 2025" },
+      { v: "#18", l: "IGPL Order of Merit, 2026" },
       { v: "2020", l: "Turned Professional" },
     ],
     sideCards: [
@@ -215,6 +246,8 @@ export const FEATURES: PlayerFeature[] = [
       { v: "7", l: "National IGU Wins" },
       { v: "3", l: "Course Records" },
       { v: "'14", l: "Asian Games" },
+      // Season 2026 Order of Merit, theigpl.com/standings-2026, 17 Sep 2026.
+      { v: "#40", l: "IGPL Order of Merit, 2026" },
     ],
     sideCards: [
       {
@@ -246,6 +279,8 @@ export const FEATURES: PlayerFeature[] = [
       { v: "'18", l: "Emerging Player" },
       { v: "4 yrs", l: "National Amateur Team" },
       { v: "2018", l: "Turned Professional" },
+      // Season 2026 Order of Merit, theigpl.com/standings-2026, 17 Sep 2026.
+      { v: "#12", l: "IGPL Order of Merit, 2026" },
     ],
     sideCards: [
       {

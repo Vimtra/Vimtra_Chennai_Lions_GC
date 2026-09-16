@@ -6,11 +6,26 @@ import path from "node:path";
 const prisma = new PrismaClient();
 
 // -----------------------------------------------------------------------
-// Season 2026 fixture seed — brochure p. 12 verbatim.
+// Season 2026 fixture seed — the four events named on brochure p. 12.
+//
+// DATES FOLLOW THE OFFICIAL IGPL SCHEDULE, not the brochure. Checked
+// against theigpl.com/schedule (season 2026) on 17 September 2026, where
+// the brochure's ranges ran one to two days long:
+//
+//   Mauritius     brochure 9–12 Apr   → official APR 9–11
+//   Johannesburg  brochure 15–18 Apr  → official APR 15–17
+//   Lubumbashi    brochure 21–24 Apr  → official APR 20–22
+//   Al Hamra      23–25 Sept — already official, unchanged
+//
+// That is the source hierarchy in CLAUDE.md: IGPL decides official
+// numbers, the brochure decides Lions-specific content.
 //
 // Only the four events the brochure names appear here. Any additional
 // event on the site must land through the admin surface (or the future
-// IGPL sync when IGPL_SYNC_ENABLED flips on) — never fabricated.
+// IGPL sync when IGPL_SYNC_ENABLED flips on) — never fabricated. The
+// Chandigarh event (10–15 Mar) is live in the database via that route and
+// is deliberately NOT seeded here: it is an official IGPL fixture, not a
+// brochure one.
 // -----------------------------------------------------------------------
 const SEASON_2026_FIXTURES: {
   slug: string;
@@ -32,7 +47,7 @@ const SEASON_2026_FIXTURES: {
     leg: "African Swing",
     presentedBy: null,
     dateStart: new Date("2026-04-09T00:00:00Z"),
-    dateEnd: new Date("2026-04-12T00:00:00Z"),
+    dateEnd: new Date("2026-04-11T00:00:00Z"),
     city: "Mauritius",
     country: "Mauritius",
     courseName: "Anahita Golf Course",
@@ -46,7 +61,7 @@ const SEASON_2026_FIXTURES: {
     leg: "African Swing · South Africa Leg",
     presentedBy: null,
     dateStart: new Date("2026-04-15T00:00:00Z"),
-    dateEnd: new Date("2026-04-18T00:00:00Z"),
+    dateEnd: new Date("2026-04-17T00:00:00Z"),
     city: "Johannesburg",
     country: "South Africa",
     courseName: "Royal Johannesburg · West Course",
@@ -59,8 +74,8 @@ const SEASON_2026_FIXTURES: {
     name: "Am Green IGPL Invitational 2026 · Lubumbashi",
     leg: "African Swing · Fourth Stop",
     presentedBy: null,
-    dateStart: new Date("2026-04-21T00:00:00Z"),
-    dateEnd: new Date("2026-04-24T00:00:00Z"),
+    dateStart: new Date("2026-04-20T00:00:00Z"),
+    dateEnd: new Date("2026-04-22T00:00:00Z"),
     city: "Lubumbashi",
     country: "Congo",
     courseName: "Golf Club de Lubumbashi",
