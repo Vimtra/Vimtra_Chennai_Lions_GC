@@ -25,10 +25,11 @@ export const metadata: Metadata = {
    that followed it are gone too: they repeated the same four portraits and
    the same four names immediately after the grid had already shown them.
 
-   In their place is one experience — an editorial selector across the top,
-   and a single featured player carrying a large portrait, verified
-   metadata, the approved biography, and statistics and signature moments
-   only where the brochure actually supplies them.
+   In their place is one continuous roster — all four players, in squad
+   order, each carrying a large portrait, verified metadata, the approved
+   biography, and statistics and signature moments only where the brochure
+   actually supplies them. Nothing is behind a click: the page is read by
+   scrolling it, not by selecting a player.
 
    NO HERO PHOTOGRAPH: this page's subject is four real, photographed
    players, and their portraits begin immediately below the hero. A stock

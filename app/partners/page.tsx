@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import PageMasthead from "@/components/site/PageMasthead";
+import CommercialTiers, { type Tier } from "@/components/partners/CommercialTiers";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/partners" },
@@ -91,14 +92,8 @@ const DIMENSIONS = [
 ];
 
 // Brochure p. 19 — four commercial tiers, verbatim structure. No tier,
-// benefit or inclusion here is invented.
-interface Tier {
-  code: string;
-  name: string;
-  headline: string;
-  bullets: string[];
-}
-
+// benefit or inclusion here is invented. The `Tier` shape now lives with the
+// component that renders it, so the two cannot drift apart.
 const TIERS: Tier[] = [
   {
     code: "01",
@@ -240,26 +235,18 @@ export default function PartnersPage() {
       </section>
 
       {/* ---- 03 · The tiers ----
-          REDESIGNED, third pass — a modern card layout, structurally
-          unlike either earlier version. Pass one was a filled ink block
-          with the photograph boxed inside it; pass two was a descending
-          list separated by an oversized outlined numeral standing in for
-          a rule. Both were still, at bottom, a single vertical column.
+          Rendered by components/partners/CommercialTiers.tsx, which owns
+          the layout, the motion and the `Tier` shape. See its own comment
+          for the composition and why the card deck before it went.
 
-          This is a bento grid: the photograph and the lead tier sit side
-          by side as one hero row (`.pt-tier-hero`), then the remaining
-          three tiers run as an even card row beneath it
-          (`.pt-tier-rest`, `repeat(auto-fit, minmax(...))` — it reflows
-          3 → 2 → 1 columns on its own as the viewport narrows, no
-          per-breakpoint span math to maintain). Every tier is a distinct
-          filled card (`.pt-card`) on its own soft dark surface, picked out
-          by background tint and shadow-based elevation rather than a
-          border — there is still no ruled line anywhere in this section.
-          The lead tier's card carries a filled gold "Lead tier" pill and a
-          warmer surface tint instead of a border to read as featured.
-          Inclusions render as small pill tags (`.pt-card-incl li`), the
-          contemporary equivalent of the diamond-bulleted list from pass
-          two, without its divider mark.
+          In short: the previous pass was a bento grid of rounded cards —
+          22px radii, tinted fills, drop shadows, circular number badges
+          and the inclusions chopped into pill tags. It read as a product
+          page rather than as this site, and the pills turned readable
+          inclusions into tag soup. Tier 01 now opens the section as a
+          hero — photograph on five columns, tier on seven — and tiers
+          02-04 run beneath as a register of three columns, each opened by
+          a single hairline instead of closed inside a box.
 
           Every tier name, headline and inclusion is TIERS above, verbatim
           from brochure p. 19. No tier, benefit, price, audience figure or
@@ -288,50 +275,7 @@ export default function PartnersPage() {
             </div>
           </div>
 
-          <div className="pt-tier-modern">
-            <div className="pt-tier-hero">
-              <figure className="pt-tier-photo">
-                <Image
-                  src="/assets/photo/pt-tiers-golden-fairway.jpg"
-                  alt=""
-                  fill
-                  sizes="(max-width: 899px) 100vw, 38vw"
-                  style={{ objectPosition: "54% 44%" }}
-                />
-              </figure>
-
-              <article className="pt-card pt-card-lead">
-                <div className="pt-card-top">
-                  <span className="pt-card-n">{TIERS[0].code}</span>
-                  <span className="pt-card-badge">Lead tier</span>
-                </div>
-                <h3 className="pt-card-name">{TIERS[0].name}</h3>
-                <p className="pt-card-head">{TIERS[0].headline}</p>
-                <ul className="pt-card-incl">
-                  {TIERS[0].bullets.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </ul>
-              </article>
-            </div>
-
-            <div className="pt-tier-rest">
-              {TIERS.slice(1).map((t) => (
-                <article className="pt-card" key={t.code}>
-                  <div className="pt-card-top">
-                    <span className="pt-card-n">{t.code}</span>
-                  </div>
-                  <h3 className="pt-card-name">{t.name}</h3>
-                  <p className="pt-card-head">{t.headline}</p>
-                  <ul className="pt-card-incl">
-                    {t.bullets.map((b) => (
-                      <li key={b}>{b}</li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-          </div>
+          <CommercialTiers tiers={TIERS} />
         </div>
       </section>
 

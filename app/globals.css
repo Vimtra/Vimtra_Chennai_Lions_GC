@@ -10580,7 +10580,7 @@ a:hover .hp-arrow {
 
      cl-id-*   The Club        · Identity        horizontal ink plate, bleeds right
      pr-city-* The Pride       · The City        full-height photographic column
-     plr-*     Players         · Roster          rank of four + dossier
+     plr-*     Players         · Roster          four stacked profiles
      gdf-*     Golf Dev        · The Framework   governing spine + tall frame
      vv-hero-* Vimtra Ventures · Hero            dissolved image plate on ink
      vv-principal-* …          · Leadership      crossing name plates
@@ -10755,13 +10755,24 @@ a:hover .hp-arrow {
 }
 
 /* ============================================================
-   3 · PLAYERS — THE RANK, THEN THE DOSSIER
-   All four portraits on the page at all times, in one frame
-   ratio, at one crop. Selecting a plate opens the dossier
-   beneath the rank; a crimson notch points into it.
+   3 · PLAYERS — THE ROSTER, READ END TO END
+   Four full profiles in squad order, not a selector. Each
+   player holds the full width on its own ground tone and
+   alternates the side its portrait sits on, so the eye resets
+   at every player without a decorative rule.
+
+   The copy column is one flush-left edge with a deliberate
+   scale rhythm — micro-caps label, display name, fine
+   metadata, then figures large enough to answer the name.
+   Rules appear once each and never as boxes: a gold gradient
+   closes the label line, one hairline opens the figures, and a
+   moment carries a gold spine instead of a bullet inside a
+   bordered row.
 ============================================================ */
-.plr-sec { padding: var(--sp-8) 0; }
-@media (min-width: 768px) { .plr-sec { padding: var(--sp-9) 0; } }
+.plr-sec-head { padding: var(--sp-8) 0 var(--sp-6); }
+@media (min-width: 768px) {
+  .plr-sec-head { padding: var(--sp-9) 0 var(--sp-7); }
+}
 
 .plr-head {
   display: flex;
@@ -10770,7 +10781,6 @@ a:hover .hp-arrow {
   flex-wrap: wrap;
   gap: var(--sp-3) var(--sp-5);
   padding-bottom: var(--sp-4);
-  margin-bottom: var(--sp-6);
   border-bottom: 1px solid var(--v-hair-ivory);
 }
 .plr-head-k {
@@ -10800,34 +10810,45 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 
-.plr-rank {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* ---- One profile ------------------------------------------------
+   `background` comes from the player's own `bg` token, set inline.
+   The alternating ground is what separates one player from the
+   next — there is deliberately no border, rule or divider here. */
+.plr-player { padding: var(--sp-8) 0; }
+@media (min-width: 768px) { .plr-player { padding: var(--sp-9) 0; } }
+
+.plr-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--sp-4);
+  grid-template-columns: minmax(0, 1fr);
   row-gap: var(--sp-6);
 }
-@media (min-width: 900px) {
-  .plr-rank { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--sp-5); }
+@media (min-width: 1024px) {
+  .plr-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    row-gap: 0;
+    align-items: start;
+  }
+  .plr-figure { grid-column: 1 / span 5; grid-row: 1; }
+  .plr-detail { grid-column: 7 / span 6; grid-row: 1; }
+  /* Portrait to the right on alternate players — `reverse`, from the data. */
+  .plr-player[data-flip="true"] .plr-figure { grid-column: 8 / span 5; }
+  .plr-player[data-flip="true"] .plr-detail { grid-column: 1 / span 6; }
 }
-.plr-rank > li { position: relative; padding-bottom: 20px; min-width: 0; }
 
-.plr-plate {
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
+.plr-figure { margin: 0; min-width: 0; }
+@media (min-width: 1024px) {
+  .plr-figure {
+    position: sticky;
+    /* Clears the sticky header at its scrolled height (74px) with a breath,
+       so a portrait riding up never tucks under the bar. */
+    top: 106px;
+  }
 }
+
 /* ONE ratio for every player, no exceptions — the four source files are
    themselves identical 1333×2000 originals, so with a shared
-   object-position the rank is a single photographed collection. */
+   object-position the roster is a single photographed collection. */
 .plr-frame {
   position: relative;
   display: block;
@@ -10835,88 +10856,40 @@ a:hover .hp-arrow {
   overflow: hidden;
   background: var(--v-ink);
   border: 1px solid var(--v-hair-ivory);
-  transition: border-color var(--mo-mid) var(--hp-e),
-    box-shadow var(--mo-mid) var(--hp-e);
 }
+/* Oversized so the parallax drift never exposes an edge: the wrapper is
+   114% of the frame, and the tween moves it ±5%. GSAP owns this element's
+   transform, so the hover scale below is applied to the image inside it
+   rather than here — two transforms on one element would fight. */
+.plr-media { position: absolute; inset: -7% 0; }
 .plr-frame img {
   object-fit: cover;
-  transition: transform var(--mo-slow) var(--hp-e), filter var(--mo-mid) var(--hp-e);
+  transition: transform var(--mo-slow) var(--hp-e);
 }
-.plr-plate:hover .plr-frame img { transform: scale(1.035); }
+.plr-frame:hover img { transform: scale(1.04); }
 .plr-n {
   position: absolute;
   left: 0;
   top: 0;
-  padding: 6px 11px 7px;
+  z-index: 1;
+  padding: 7px 13px 8px;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
   font-size: 11px;
   letter-spacing: 0.1em;
   background: var(--v-ink);
   color: var(--v-gold-lit);
-  transition: background var(--mo-fast) var(--hp-e), color var(--mo-fast) var(--hp-e);
-}
-.plr-plate.is-on .plr-frame {
-  border-color: var(--v-red);
-  box-shadow: var(--v-lift-sm);
-}
-.plr-plate.is-on .plr-n { background: var(--v-red); color: var(--v-ivory); }
-/* The notch is the tie between the selected plate and the panel it
-   opened — it points down into the dossier. */
-.plr-plate.is-on::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -20px;
-  transform: translateX(-50%);
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
-  border-top: 11px solid var(--v-red);
-}
-.plr-plate:focus-visible .plr-frame { border-color: var(--v-gold); }
-
-.plr-id { display: block; padding-top: var(--sp-3); }
-.plr-name {
-  display: block;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(13.5px, 1.15vw, 16.5px);
-  line-height: 1.28;
-  letter-spacing: -0.018em;
-  color: var(--v-ink);
-  transition: color var(--mo-fast) var(--hp-e);
-}
-.plr-plate:hover .plr-name,
-.plr-plate.is-on .plr-name { color: var(--v-red); }
-.plr-role {
-  display: block;
-  margin-top: 4px;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--v-on-ivory);
-}
-@media (prefers-reduced-motion: reduce) {
-  .plr-frame img { transition: none; }
-  .plr-plate:hover .plr-frame img { transform: none; }
 }
 
-.plr-dossier {
-  margin-top: var(--sp-7);
-  padding-top: var(--sp-6);
-  border-top: 2px solid var(--v-ink);
-  row-gap: var(--sp-6);
-}
-.plr-dossier-rail { grid-column: 1 / -1; }
-.plr-dossier-body { grid-column: 1 / -1; }
-@media (min-width: 1024px) {
-  .plr-dossier-rail { grid-column: 1 / span 5; }
-  .plr-dossier-body { grid-column: 7 / span 6; }
-}
-.plr-dossier-k {
-  margin: 0 0 var(--sp-3);
+.plr-detail { min-width: 0; }
+
+/* The label line closes with a gold rule that runs out to the column
+   edge — one horizontal in the whole cluster, tying the copy to the grid. */
+.plr-k {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0 0 var(--sp-5);
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: var(--t-micro);
@@ -10924,79 +10897,98 @@ a:hover .hp-arrow {
   text-transform: uppercase;
   color: var(--v-red);
 }
-.plr-dossier-name {
+.plr-k > span { flex: none; }
+.plr-k::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, var(--v-gold), transparent);
+}
+.plr-name {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(30px, 4.6vw, 64px);
-  line-height: 0.94;
-  letter-spacing: -0.042em;
+  font-size: clamp(34px, 5vw, 74px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
   color: var(--v-ink);
 }
-.plr-dossier-meta {
-  margin: var(--sp-4) 0 0;
+.plr-meta {
+  margin: var(--sp-5) 0 0;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 0.04em;
   color: var(--v-on-ivory);
 }
+
+/* Figures large enough to answer the name. No cell borders and no boxes —
+   one hairline opens the group and the gutters do the separating. */
 .plr-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
-  margin: var(--sp-6) 0 0;
+  column-gap: var(--sp-6);
+  row-gap: var(--sp-6);
+  margin: var(--sp-7) 0 0;
+  padding-top: var(--sp-5);
   border-top: 1px solid var(--v-hair-ivory);
 }
-.plr-stats > div {
-  padding: var(--sp-4) var(--sp-4) var(--sp-4) 0;
-  border-bottom: 1px solid var(--v-hair-ivory);
-}
+.plr-stats > div { padding: 0; border: 0; min-width: 0; }
 .plr-stats dt {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(20px, 2.2vw, 30px);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 1;
+  letter-spacing: -0.035em;
   color: var(--v-ink);
   font-variant-numeric: tabular-nums;
 }
 .plr-stats dd {
-  margin: 6px 0 0;
+  margin: 10px 0 0;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: var(--t-micro);
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  line-height: 1.5;
   color: var(--v-on-ivory);
 }
-.plr-dossier-body p {
+
+.plr-body { margin-top: var(--sp-7); }
+.plr-body p {
   margin: 0 0 var(--sp-5);
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
   line-height: 1.78;
   color: var(--v-on-ivory);
 }
-.plr-dossier-body p:last-child { margin-bottom: 0; }
-.plr-dossier-body strong { font-weight: 700; color: var(--v-ink); }
-.plr-moments { list-style: none; margin: var(--sp-6) 0 0; padding: 0; }
+.plr-body p:last-child { margin-bottom: 0; }
+.plr-body strong { font-weight: 700; color: var(--v-ink); }
+
+/* A moment is a spine and a type cluster — no diamond, no bordered row.
+   The hover shift is padding rather than transform: GSAP owns transform on
+   these elements and an inline transform would win over a CSS one. */
+.plr-moments { list-style: none; margin: var(--sp-7) 0 0; padding: 0; }
 .plr-moments li {
   position: relative;
-  padding: var(--sp-4) 0 var(--sp-4) var(--sp-5);
-  border-top: 1px solid var(--v-hair-ivory);
+  padding: 2px 0 2px var(--sp-5);
+  transition: padding-left var(--mo-mid) var(--hp-e);
 }
-.plr-moments li:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
-.plr-moments li::before {
-  content: "";
+.plr-moments li + li { margin-top: var(--sp-6); }
+.plr-moment-spine {
   position: absolute;
   left: 0;
-  top: calc(var(--sp-4) + 7px);
-  width: 9px;
-  height: 9px;
+  top: 3px;
+  bottom: 3px;
+  width: 2px;
   background: var(--v-gold);
-  transform: rotate(45deg);
+  transform-origin: top center;
+  transition: background var(--mo-mid) var(--hp-e);
 }
+.plr-moments li:hover { padding-left: calc(var(--sp-5) + 5px); }
+.plr-moments li:hover .plr-moment-spine { background: var(--v-red); }
+.plr-moments li:hover .plr-moment-t { color: var(--v-red); }
 .plr-moment-k {
   display: block;
   font-family: var(--font-manrope), sans-serif;
@@ -11008,20 +11000,30 @@ a:hover .hp-arrow {
 }
 .plr-moment-t {
   display: block;
-  margin-top: 6px;
+  margin-top: 7px;
   font-family: var(--font-sora), sans-serif;
   font-weight: 700;
-  font-size: clamp(15px, 1.4vw, 19px);
-  letter-spacing: -0.02em;
+  font-size: clamp(16px, 1.5vw, 21px);
+  letter-spacing: -0.022em;
+  line-height: 1.24;
   color: var(--v-ink);
+  transition: color var(--mo-mid) var(--hp-e);
 }
 .plr-moment-s {
   display: block;
-  margin-top: 4px;
+  margin-top: 6px;
   font-family: var(--font-manrope), sans-serif;
   font-size: 13.5px;
   line-height: 1.6;
   color: var(--v-on-ivory);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plr-frame img,
+  .plr-moments li,
+  .plr-moment-spine,
+  .plr-moment-t { transition: none; }
+  .plr-frame:hover img { transform: none; }
 }
 
 /* ============================================================
@@ -12621,176 +12623,310 @@ a:hover .hp-arrow {
 }
 
 /* ============================================================
-   PARTNERS · COMMERCIAL TIERS — the bento card grid
+   PARTNERS · 03 COMMERCIAL TIERS — the lead, then the register
    ------------------------------------------------------------
-   REDESIGNED, third pass — see the JSX comment above this section
-   in app/partners/page.tsx for the full reasoning. In short: both
-   earlier passes were a single vertical column (a filled block,
-   then a descending list). This is a grid: the photograph and the
-   lead tier form one hero row (`.pt-tier-hero`), the remaining
-   three tiers run beneath as a self-reflowing card row
-   (`.pt-tier-rest`). Every card is picked out by a filled dark
-   surface and a soft shadow — never a border — and there is still
-   no ruled line anywhere in this section.
+   Rendered by components/partners/CommercialTiers.tsx. Scoped to
+   `.ptc-lead*`, `.ptc-lane*`, `.ptc-incl*`, `.ptc-kicker` and
+   `.ptc-register`. `.pt-sec`, `.pt-partners` and `.pt-dims` are
+   untouched.
 
-   Scoped to `.pt-tier-*`, `.pt-card*`. `.pt-sec`, `.pt-partners`
-   and `.pt-dims` are untouched.
+   WHAT THIS REPLACED. A deck of rounded cards — 22px radii, tinted
+   fills, drop shadows, 40px circular number badges and the
+   inclusions chopped into pill tags. It read as a product page,
+   and the pills turned readable inclusions into tag soup.
+
+   THE COMPOSITION. Tier 01 opens as a hero: photograph on the
+   left five columns, the tier on the right seven, with a ghosted
+   display numeral anchoring the corner. Tiers 02-04 run beneath
+   as a register of three columns, each OPENED by one hairline
+   rather than closed inside a box. No radius, no shadow, no chip
+   anywhere in the section — space, scale and a single rule each.
+
+   THE BASELINE. The three register columns share one: numeral,
+   name and headline rows are the same height in each, so the
+   inclusion lists start on a single line across all three. That
+   is what `.ptc-lane-head`'s min-height buys.
 ============================================================ */
 .pt-tier-sec { overflow: hidden; }
+/* This section follows another ink section, so the global seam-collapse
+   rule (`.hp-sec-ink + .hp-sec-ink { padding-top: 0 }`, which makes two
+   same-surface sections read as one field) was zeroing its top padding and
+   standing the index label on the section's own top edge. The tiers are a
+   distinct composition rather than a continuation of the block above, so
+   they opt out and open on their own.
 
-.pt-tier-modern { display: flex; flex-direction: column; gap: var(--sp-6); }
+   The selector is `.hp-sec-ink + .pt-tier-sec` — 0,2,0, matching the rule
+   it overrides, and later in the file so it wins the tie. A plain
+   `.pt-tier-sec` at 0,1,0 would silently lose. The multiplier keeps the
+   page's own idiom (`.pt-sec-open` 0.62, `.pt-sec-close` 0.74) and stays
+   under a full rhythm step, because the section above still contributes its
+   own bottom padding to the same seam. */
+.hp-sec-ink + .pt-tier-sec { padding-top: calc(var(--pt-rhythm) * 0.85); }
 
-/* Hero row — photograph + lead tier, stacked on mobile, side by side from
-   900px. `minmax(0, ...)` on both tracks keeps a very long tier name or a
-   very wide viewport from stretching one side at the other's expense. */
-.pt-tier-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-5);
+.ptc-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
 }
 @media (min-width: 900px) {
-  .pt-tier-hero {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: var(--sp-6);
-    align-items: stretch;
-  }
+  .ptc-root { gap: var(--sp-9); }
 }
 
-.pt-tier-photo {
+/* ---- 01 · the lead tier ---------------------------------------- */
+.ptc-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-6);
+}
+@media (min-width: 900px) {
+  .ptc-lead {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    /* Stretch, not start: the lead tier's copy is the shorter of the two
+       columns, and a fixed portrait ratio here left ~275px of dead ink
+       beside it. The photograph takes its height from the row instead,
+       with a floor so it can never collapse to a strip. */
+    align-items: stretch;
+  }
+  .ptc-photo { grid-column: 1 / span 5; }
+  .ptc-body { grid-column: 7 / span 6; }
+}
+
+/* A sharp editorial frame, not a rounded tile. The hairline is the only
+   edge it gets. */
+.ptc-photo {
   position: relative;
   margin: 0;
+  /* Landscape on mobile — the frame is a fairway at golden hour, and a
+     portrait crop of it wastes both the scene and the scroll. */
   aspect-ratio: 16 / 10;
-  border-radius: 22px;
   overflow: hidden;
   background: var(--v-ink);
+  border: 1px solid var(--v-hair-ink);
 }
-.pt-tier-photo img { object-fit: cover; }
+/* Oversized so the parallax drift never exposes an edge: the wrapper is
+   114% of the frame and the tween moves it ±5%. GSAP owns this element's
+   transform, so the hover scale goes on the image inside it — two
+   transforms on one element would fight. */
+.ptc-media { position: absolute; inset: -7% 0; }
+.ptc-photo img {
+  object-fit: cover;
+  transition: transform var(--mo-slow) var(--hp-e);
+}
+.ptc-photo:hover img { transform: scale(1.04); }
 /* A soft wash, not an edge — keeps the frame from reading as a pasted
-   rectangle against the card surfaces beside it. */
-.pt-tier-photo::after {
+   rectangle against the ink ground. */
+.ptc-photo::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
+  pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(14, 11, 10, 0.35) 0%,
-    transparent 40%,
-    rgba(14, 11, 10, 0.4) 100%
+    rgba(14, 11, 10, 0.34) 0%,
+    transparent 42%,
+    rgba(14, 11, 10, 0.42) 100%
   );
 }
+/* MUST come after the base rule above: same specificity, so an earlier
+   `aspect-ratio: auto` would lose to the `16 / 10` and then drive the
+   figure's WIDTH from its height, overflowing the five-column track. */
 @media (min-width: 900px) {
-  .pt-tier-photo { aspect-ratio: auto; min-height: 100%; }
+  .ptc-photo {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 400px;
+  }
 }
 
-/* The card. A filled surface picked out by tint and shadow-based
-   elevation — the "modern" unit this whole redesign is built from. */
-.pt-card {
-  position: relative;
-  padding: var(--sp-6) var(--sp-5);
-  border-radius: 22px;
-  background: rgba(245, 239, 228, 0.05);
-  box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.6);
-}
-.pt-card-lead {
-  padding: var(--sp-7) var(--sp-6);
-  background:
-    radial-gradient(120% 140% at 0% 0%, rgba(227, 178, 105, 0.16) 0%, transparent 60%),
-    rgba(245, 239, 228, 0.06);
-}
+.ptc-body { position: relative; min-width: 0; }
 
-.pt-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-4);
-}
-.pt-card-n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
+/* The ghosted numeral. Outlined where the browser can stroke text, a low
+   gold tint everywhere else, so it never disappears. */
+.ptc-n {
+  display: block;
+  margin: 0 0 var(--sp-4);
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: 14px;
+  font-size: clamp(64px, 8vw, 128px);
+  line-height: 0.8;
+  letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
-  background: rgba(245, 239, 228, 0.08);
-  color: var(--v-gold-lit);
+  color: rgba(226, 194, 144, 0.22);
 }
-.pt-card-lead .pt-card-n { background: var(--v-gold); color: var(--v-ink); }
-.pt-card-badge {
-  padding: 0.4em 0.9em;
-  border-radius: 999px;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  background: var(--v-gold);
-  color: var(--v-ink);
+@supports (-webkit-text-stroke: 1px red) {
+  .ptc-n {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(226, 194, 144, 0.55);
+  }
 }
 
-.pt-card-name {
+/* The label line closes with a gold rule that runs out to the column
+   edge — the same device the players roster uses, so the two sections
+   read as one system. */
+.ptc-kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0 0 var(--sp-5);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+}
+.ptc-kicker > span { flex: none; }
+.ptc-kicker::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, var(--v-gold), transparent);
+}
+
+.ptc-name {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(21px, 1.9vw, 28px);
-  line-height: 1.05;
-  letter-spacing: -0.028em;
+  font-size: clamp(30px, 3.6vw, 54px);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
   color: var(--v-ivory);
 }
-.pt-card-lead .pt-card-name { font-size: clamp(26px, 2.6vw, 38px); }
+.ptc-head {
+  margin: var(--sp-5) 0 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(17px, 1.6vw, 21px);
+  line-height: 1.45;
+  color: var(--v-gold-lit);
+}
 
-.pt-card-head {
-  margin: var(--sp-2) 0 0;
+/* ---- 02-04 · the register -------------------------------------- */
+.ptc-register {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-7);
+}
+@media (min-width: 700px) {
+  .ptc-register { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-7) var(--sp-6); }
+}
+@media (min-width: 1024px) {
+  .ptc-register { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--sp-6); }
+}
+
+/* Opened by a rule, not closed in a box. The rule is a real element so
+   GSAP can draw it across; it is absolutely positioned so the hover
+   thickening costs no layout. */
+.ptc-lane {
+  position: relative;
+  padding-top: var(--sp-5);
+  min-width: 0;
+}
+.ptc-lane-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--v-hair-ink);
+  transform-origin: left center;
+  transition: background var(--mo-mid) var(--hp-e),
+    height var(--mo-mid) var(--hp-e);
+}
+.ptc-lane:hover .ptc-lane-rule { height: 2px; background: var(--v-gold); }
+
+.ptc-lane-n {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-gold-lit);
+}
+.ptc-lane-name {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(20px, 1.9vw, 27px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--v-ivory);
+  transition: color var(--mo-mid) var(--hp-e);
+}
+.ptc-lane:hover .ptc-lane-name { color: var(--v-gold-lit); }
+/* Two lines' worth whether the copy fills them or not — this is what puts
+   all three inclusion lists on one line across the register. */
+.ptc-lane-head {
+  margin: var(--sp-3) 0 0;
+  min-height: calc(2 * 1.55em);
   font-family: var(--font-manrope), sans-serif;
   font-weight: 500;
   font-size: 14.5px;
   line-height: 1.55;
   color: var(--v-on-ink);
 }
-.pt-card-lead .pt-card-head {
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(16px, 1.5vw, 19px);
-  color: var(--v-gold-lit);
+@media (max-width: 699px) {
+  .ptc-lane-head { min-height: 0; }
 }
 
-/* Inclusions as pill tags — the modern equivalent of the earlier
-   diamond-bulleted list, with no divider mark between items. */
-.pt-card-incl {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
+/* ---- Inclusions --------------------------------------------------
+   Sentences again, not pill tags: a small gold tick and the line of
+   copy it belongs to. */
+.ptc-incl {
   list-style: none;
-  margin: var(--sp-4) 0 0;
+  margin: var(--sp-5) 0 0;
   padding: 0;
 }
-.pt-card-incl li {
-  padding: 0.5em 0.85em;
-  border-radius: 999px;
+.ptc-incl li {
+  position: relative;
+  padding-left: var(--sp-5);
   font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 12.5px;
-  line-height: 1.3;
-  background: rgba(245, 239, 228, 0.07);
+  font-weight: 500;
+  font-size: 13.5px;
+  line-height: 1.6;
   color: var(--v-on-ink);
 }
-.pt-card-lead .pt-card-incl li {
-  background: rgba(245, 239, 228, 0.1);
-  color: rgba(245, 239, 228, 0.92);
+.ptc-incl li + li { margin-top: var(--sp-3); }
+.ptc-mark {
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 12px;
+  height: 1px;
+  background: var(--v-gold);
+  opacity: 0.8;
+}
+.ptc-incl-lead {
+  margin-top: var(--sp-6);
+}
+.ptc-incl-lead li {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(245, 239, 228, 0.9);
+}
+.ptc-incl-lead li + li { margin-top: var(--sp-4); }
+@media (min-width: 1024px) {
+  /* The lead tier carries four inclusions — two columns keeps them beside
+     the photograph instead of running the hero column long. */
+  .ptc-incl-lead {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-4) var(--sp-6);
+  }
+  .ptc-incl-lead li + li { margin-top: 0; }
 }
 
-/* Card row — reflows on its own; no per-breakpoint span math to keep in
-   sync as tiers are added or removed. */
-.pt-tier-rest {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--sp-5);
+@media (prefers-reduced-motion: reduce) {
+  .ptc-photo img,
+  .ptc-lane-rule,
+  .ptc-lane-name { transition: none; }
+  .ptc-photo:hover img { transform: none; }
 }
+
 
 /* ============================================================
    VIMTRA VENTURES · 03 LEADERSHIP — editorial portrait composition
@@ -13394,17 +13530,29 @@ a:hover .hp-arrow {
    INVEST · THE THREE PILLARS
    ------------------------------------------------------------
    Content audit, Sept 2026. Vimtra x PGA brochure pp. 05, 06, 08.
+   Rendered by components/invest/ThreePillars.tsx. Scoped to
+   `.ivp-*`; the heading wrappers keep the `.iv-pillars*` names
+   they share with the section's grid.
 
-   Must not repeat the devices already on this page: the
-   `.iv-chain` nested containment rings, the `.iv-market` figure
-   register, or the numbered reasons below. This is a LEDGER —
-   each pillar is one full-width ruled row with its statement on
-   the left and its own figures grouped hard right, so the
-   figures read as accompanying evidence rather than as a
-   headline rail. The destination circuits under pillar 01 are
-   an inline register, the only nested level in the section.
+   WHAT THIS REPLACED. A ruled ledger — every pillar a full-width
+   row divided by a horizontal rule, a 2px rule capping the set,
+   another closing it, and one more per destination circuit.
+   Seven horizontals in one section. The two-column mechanism
+   that justified it was dead as well: all three pillars carry
+   `figures: []`, so every row fell through to the full-width
+   `is-solo` case and the right column never rendered.
 
-   Scoped to `.iv-pillar*` / `.iv-circuit-*`.
+   THE COMPOSITION. A pillar is a vertical thing, so each entry is
+   built on one — a rail carrying the numeral above a gold spine
+   that runs the entry's full height, content set against it.
+   That supplies the structure with NO horizontal rule between
+   pillars; the separation is the rail, the numeral's scale and
+   space. It is deliberately not the players roster's hairline or
+   the partners register's drawn rule, so the three stay distinct.
+
+   Note: the old rules here used `var(--v-muted)`, which is not
+   defined anywhere in this file — it silently fell back to
+   inherited ink. These use `--v-on-ivory`, which is defined.
 ============================================================ */
 .iv-pillars { row-gap: var(--sp-6); align-items: start; }
 .iv-pillars > .hp-index { grid-column: 1 / -1; margin-bottom: 0; }
@@ -13420,54 +13568,110 @@ a:hover .hp-arrow {
   color: var(--v-red);
 }
 
-.iv-pillar-set {
+.ivp-set {
   grid-column: 1 / -1;
   list-style: none;
-  margin: var(--sp-2) 0 0;
+  margin: var(--sp-6) 0 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
 }
-.iv-pillar-set > li {
+@media (min-width: 900px) {
+  .ivp-set { gap: var(--sp-9); margin-top: var(--sp-7); }
+}
+
+.ivp-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-5);
-  padding: var(--sp-6) 0;
-  border-top: 1px solid var(--v-hair-ivory);
+  gap: var(--sp-4);
 }
-.iv-pillar-set > li:first-child { border-top: 2px solid var(--v-ink); }
-.iv-pillar-set > li:last-child { border-bottom: 1px solid var(--v-hair-ivory); }
-.iv-pillar-a { min-width: 0; }
+@media (min-width: 900px) {
+  .ivp-item {
+    grid-template-columns: clamp(88px, 9vw, 132px) minmax(0, 1fr);
+    column-gap: var(--sp-7);
+    /* Stretch so the rail — and therefore the spine — matches the height of
+       the content beside it. */
+    align-items: stretch;
+  }
+}
 
-.iv-pillar-k {
+/* ---- The rail ---------------------------------------------------- */
+.ivp-rail {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: var(--sp-4);
+}
+@media (min-width: 900px) {
+  .ivp-rail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-4);
+  }
+}
+
+/* Outlined where the browser can stroke text, a low crimson tint where it
+   cannot, so the numeral never disappears. */
+.ivp-n {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(44px, 5.4vw, 88px);
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(189, 34, 39, 0.26);
+}
+@supports (-webkit-text-stroke: 1px red) {
+  .ivp-n {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(189, 34, 39, 0.62);
+  }
+}
+
+/* The spine. A real element so GSAP can draw it down; it only earns its
+   keep once the rail is a column, so below 900px it lies flat and short
+   rather than trying to be a vertical rule in a stacked layout. */
+.ivp-spine {
+  display: block;
+  flex: none;
+  width: 44px;
+  height: 2px;
+  background: var(--v-gold);
+  transform-origin: left center;
+}
+@media (min-width: 900px) {
+  .ivp-spine {
+    width: 2px;
+    height: auto;
+    flex: 1 1 auto;
+    min-height: 40px;
+    transform-origin: top center;
+  }
+}
+
+/* ---- The content ------------------------------------------------- */
+.ivp-body { min-width: 0; }
+
+.ivp-k {
   margin: 0;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: var(--t-micro);
   letter-spacing: var(--tr-caps);
   text-transform: uppercase;
-  color: var(--v-muted);
+  color: var(--v-on-ivory);
 }
-.iv-pillar-n {
+.ivp-t {
+  margin: var(--sp-3) 0 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: 15px;
-  letter-spacing: -0.02em;
-  color: var(--v-red);
-  font-variant-numeric: tabular-nums;
-}
-.iv-pillar-t {
-  margin: var(--sp-2) 0 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(24px, 3vw, 40px);
-  line-height: 1.08;
-  letter-spacing: -0.034em;
+  font-size: clamp(26px, 3.2vw, 44px);
+  line-height: 1.06;
+  letter-spacing: -0.036em;
   color: var(--v-ink);
 }
-.iv-pillar-d {
-  margin: var(--sp-3) 0 0;
+.ivp-d {
+  margin: var(--sp-4) 0 0;
   max-width: 58ch;
   font-family: var(--font-manrope), sans-serif;
   font-size: var(--t-body);
@@ -13475,69 +13679,81 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 
-/* The destination circuits — the only nested register here. */
-.iv-pillar-circuit {
+/* ---- The destination circuits ------------------------------------
+   Three parallel destinations, so a three-up register rather than a
+   stacked ruled list. Each is opened by a short gold tick — three marks
+   in place of three rules. */
+.ivp-circuit {
   list-style: none;
-  margin: var(--sp-5) 0 0;
+  margin: var(--sp-6) 0 0;
   padding: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-  max-width: 720px;
+  gap: var(--sp-5);
 }
-.iv-pillar-circuit > li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 4px;
-  padding: var(--sp-3) 0;
-  border-top: 1px solid var(--v-hair-ivory);
+@media (min-width: 700px) {
+  .ivp-circuit { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-6); }
 }
-.iv-circuit-k {
+.ivp-circuit > li { min-width: 0; }
+.ivp-c-tick {
+  display: block;
+  width: 26px;
+  height: 2px;
+  margin-bottom: var(--sp-3);
+  background: var(--v-gold);
+}
+.ivp-c-k {
+  display: block;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 10.5px;
   letter-spacing: var(--tr-caps);
   text-transform: uppercase;
-  color: var(--v-gold);
+  color: var(--v-on-ivory);
 }
-.iv-circuit-v {
+.ivp-c-v {
+  display: block;
+  margin-top: 6px;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  font-size: clamp(16px, 1.6vw, 19px);
-  letter-spacing: -0.022em;
+  font-size: clamp(17px, 1.7vw, 21px);
+  letter-spacing: -0.024em;
   color: var(--v-ink);
 }
-.iv-circuit-d {
+.ivp-c-d {
+  display: block;
+  margin-top: 8px;
   font-family: var(--font-manrope), sans-serif;
   font-size: 13.5px;
   line-height: 1.6;
   color: var(--v-on-ivory);
 }
 
-/* Figures. Grouped, not spread — each carries the label of the
-   metric it measures, per the data-integrity rule. */
-.iv-pillar-f {
-  margin: 0;
+/* ---- Figures -----------------------------------------------------
+   Rendered only where the source supplies them — today every pillar
+   carries an empty array, but the data keeps the field and so does this.
+   Each figure states the metric it measures, per the data-integrity rule:
+   none is a projection, a target or a return. */
+.ivp-f {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
-  gap: var(--sp-4) var(--sp-5);
-  align-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: var(--sp-5) var(--sp-6);
+  margin: var(--sp-6) 0 0;
 }
-.iv-pillar-f > div { min-width: 0; }
-.iv-pillar-f dt {
+.ivp-f > div { min-width: 0; }
+.ivp-f dt {
   margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 800;
-  /* Deliberately capped below `.iv-pillar-t` (max 40px). The statement leads
-     this ledger and the figures are its evidence; at the previous 42px max
-     the numeral outsized the pillar name at >=1024 and inverted that order. */
+  /* Capped below `.ivp-t` (max 44px): the statement leads and the figures
+     are its evidence, so the numeral must not outsize the pillar name. */
   font-size: clamp(24px, 2.6vw, 34px);
   line-height: 1;
   letter-spacing: -0.038em;
   color: var(--v-red);
   font-variant-numeric: tabular-nums;
 }
-.iv-pillar-f dd {
+.ivp-f dd {
   margin: 8px 0 0;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 600;
@@ -13545,35 +13761,9 @@ a:hover .hp-arrow {
   line-height: 1.4;
   letter-spacing: var(--tr-caps);
   text-transform: uppercase;
-  color: var(--v-muted);
+  color: var(--v-on-ivory);
 }
 
-@media (min-width: 640px) {
-  .iv-pillar-circuit > li {
-    grid-template-columns: 130px minmax(0, 1fr);
-    column-gap: var(--sp-4);
-    align-items: baseline;
-  }
-  .iv-circuit-k { grid-row: 1; }
-  .iv-circuit-v { grid-row: 1; grid-column: 2; }
-  .iv-circuit-d { grid-column: 2; }
-}
-
-@media (min-width: 1024px) {
-  .iv-pillars { row-gap: var(--sp-7); }
-  .iv-pillars-h { grid-column: 1 / span 8; }
-  /* Statement left, evidence hard right — the ledger reading. */
-  .iv-pillar-set > li {
-    grid-template-columns: minmax(0, 1fr) clamp(220px, 24vw, 320px);
-    column-gap: var(--sp-7);
-    padding: var(--sp-7) 0;
-  }
-  /* A pillar whose figure is stated in the market rail above carries no
-     figure group of its own, so it takes the full measure rather than
-     leaving an empty right column. */
-  .iv-pillar-set > li.is-solo { grid-template-columns: minmax(0, 1fr); }
-  .iv-pillar-f { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
-}
 
 /* ============================================================
    VERIFICATION (M6) — account panel + /verify-email landing

@@ -3,6 +3,7 @@ import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import FullBleedStatement from "@/components/site/FullBleedStatement";
 import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
+import ThreePillars, { type Pillar } from "@/components/invest/ThreePillars";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/invest" },
@@ -48,15 +49,9 @@ const MARKET = [
    investor would receive — the sources make no such statement and neither
    does this page.
 --------------------------------------------------------------------------- */
-type PillarFigure = { v: string; l: string };
-
-const PILLARS: {
-  n: string;
-  t: string;
-  d: string;
-  figures: PillarFigure[];
-  set?: { k: string; v: string; d: string }[];
-}[] = [
+// The `Pillar` shape lives with the component that renders it, so the two
+// cannot drift apart.
+const PILLARS: Pillar[] = [
   {
     n: "01",
     t: "Sports Tourism",
@@ -297,49 +292,7 @@ export default function InvestPage() {
             </h2>
           </div>
 
-          <ol className="iv-pillar-set">
-            {PILLARS.map((p) => (
-              <li
-                key={p.n}
-                data-rise
-                className={p.figures.length ? undefined : "is-solo"}
-              >
-                <div className="iv-pillar-a">
-                  <p className="iv-pillar-k">
-                    <span className="iv-pillar-n" aria-hidden>
-                      {p.n}
-                    </span>
-                    Pillar {p.n} of 03
-                  </p>
-                  <h3 className="iv-pillar-t">{p.t}</h3>
-                  <p className="iv-pillar-d">{p.d}</p>
-
-                  {p.set && (
-                    <ul className="iv-pillar-circuit">
-                      {p.set.map((c) => (
-                        <li key={c.v}>
-                          <span className="iv-circuit-k">{c.k}</span>
-                          <span className="iv-circuit-v">{c.v}</span>
-                          <span className="iv-circuit-d">{c.d}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-
-                {p.figures.length > 0 && (
-                  <dl className="iv-pillar-f">
-                    {p.figures.map((f) => (
-                      <div key={f.l}>
-                        <dt>{f.v}</dt>
-                        <dd>{f.l}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-              </li>
-            ))}
-          </ol>
+          <ThreePillars pillars={PILLARS} />
         </div>
       </Section>
 
