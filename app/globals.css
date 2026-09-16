@@ -10202,10 +10202,10 @@ a:hover .hp-arrow {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: var(--sp-4);
-  row-gap: var(--sp-6);
+  row-gap: var(--sp-7);
 }
 @media (min-width: 560px) {
-  .sp-grid { column-gap: var(--sp-5); row-gap: var(--sp-7); }
+  .sp-grid { column-gap: var(--sp-5); row-gap: var(--sp-8); }
 }
 @media (min-width: 720px) {
   .sp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -10214,7 +10214,7 @@ a:hover .hp-arrow {
   .sp-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: var(--sp-6);
-    row-gap: var(--sp-8);
+    row-gap: var(--sp-9);
   }
 }
 
@@ -10240,48 +10240,98 @@ a:hover .hp-arrow {
 .sp-card-link:focus-visible { outline-offset: 4px; }
 
 /* One well, one ratio, contain-fitted — see the framing note in
-   ShopProductCard.tsx. The mat is warm paper so the light grounds most
-   of the photography is shot on sit inside it rather than against it. */
+   ShopProductCard.tsx. The catalogue mixes square packshots, one 16:9
+   lifestyle frame and one portrait cutout, so a shared ratio plus contain
+   is what keeps the grid even without cropping anything.
+
+   The well is now borderless and square-cornered. A 1px border with a 2px
+   radius drew a box around every photograph and made the grid read as a
+   sheet of tiles; the mat alone holds the image, and the separator below
+   does the work the border was doing. */
 .sp-card-frame {
   position: relative;
   display: block;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border: 1px solid var(--hp-hair);
-  border-radius: 2px;
-  background:
-    radial-gradient(120% 90% at 50% 8%, #ffffff 0%, var(--hp-ivory-2) 46%, #ece5d8 100%);
-  transition: border-color var(--mo-mid) var(--hp-e),
-    box-shadow var(--mo-mid) var(--hp-e);
-}
-/* A hairline gold rule wipes across the top of the well on hover — the
-   brand touch the old card applied as a permanent foil corner over
-   every photograph. */
-.sp-card-frame::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 2px;
-  background: linear-gradient(90deg, var(--hp-gold-lt), var(--hp-gold));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--mo-mid) var(--hp-e);
+  background: linear-gradient(180deg, #fbf7ef 0%, var(--hp-ivory-2) 62%, #ebe4d6 100%);
 }
 .sp-card-img {
   object-fit: contain;
-  padding: 7%;
+  padding: 8%;
   transition: transform var(--mo-slow) var(--hp-e);
 }
-.sp-card-img.is-mark { padding: 24%; opacity: 0.9; }
-.sp-card:hover .sp-card-frame,
-.sp-card-link:focus-visible .sp-card-frame {
-  border-color: rgba(189, 34, 39, 0.32);
-  box-shadow: var(--v-lift-sm);
+.sp-card-img.is-mark { padding: 25%; opacity: 0.9; }
+.sp-card:hover .sp-card-img { transform: scale(1.04); }
+
+/* The separator is the card's only rule, and it carries the hover state:
+   a hairline at rest, gold wiping across from the left on hover or
+   keyboard focus. That replaces both the frame border and the old gold
+   bar that sat on top of the photograph. */
+.sp-card-meta {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: var(--sp-5) 0 0;
+  min-width: 0;
+  border-top: 1px solid var(--hp-hair);
 }
-.sp-card:hover .sp-card-frame::after { transform: scaleX(1); }
-.sp-card:hover .sp-card-img { transform: scale(1.045); }
+.sp-card-meta::before {
+  content: "";
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, var(--hp-gold-lt), var(--hp-gold));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--mo-mid) var(--hp-e);
+}
+.sp-card:hover .sp-card-meta::before,
+.sp-card-link:focus-visible .sp-card-meta::before { transform: scaleX(1); }
+
+.sp-card-cat {
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--hp-gold);
+}
+.sp-card-name {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--hp-ink);
+  /* Two lines maximum, so every price in the row lands on the same
+     baseline whatever the name length. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color var(--mo-fast) var(--hp-e);
+}
+.sp-card:hover .sp-card-name { color: var(--hp-red); }
+.sp-card-price {
+  /* Pushed to the foot of the text block — the alignment device that
+     keeps a row of prices reading as one line. */
+  margin-top: auto;
+  padding-top: var(--sp-4);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(17px, 1.45vw, 21px);
+  letter-spacing: -0.025em;
+  color: var(--hp-ink);
+  font-variant-numeric: tabular-nums;
+}
+.sp-card-act { padding-top: var(--sp-4); }
+
 @media (prefers-reduced-motion: reduce) {
-  .sp-card-img { transition: none; }
+  .sp-card-img,
+  .sp-card-meta::before,
+  .sp-card-name { transition: none; }
   .sp-card:hover .sp-card-img { transform: none; }
 }
 
@@ -10304,63 +10354,20 @@ a:hover .hp-arrow {
 .sp-card-flag.is-out { background: var(--hp-ink); }
 .sp-card.is-out .sp-card-img { opacity: 0.5; filter: saturate(0.55); }
 
-.sp-card-meta {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding: var(--sp-4) 0 0;
-  min-width: 0;
-}
-.sp-card-cat {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 9.5px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--hp-muted);
-}
-.sp-card-name {
-  margin: 7px 0 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(13px, 1.05vw, 15.5px);
-  line-height: 1.32;
-  letter-spacing: -0.015em;
-  color: var(--hp-ink);
-  /* Two lines maximum, so every price in the row lands on the same
-     baseline whatever the name length. */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  transition: color var(--mo-fast) var(--hp-e);
-}
-.sp-card:hover .sp-card-name { color: var(--hp-red); }
-.sp-card-price {
-  /* Pushed to the foot of the text block — the alignment device that
-     keeps a row of prices reading as one line. */
-  margin-top: auto;
-  padding-top: var(--sp-3);
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(15px, 1.25vw, 18px);
-  letter-spacing: -0.02em;
-  color: var(--hp-ink);
-  font-variant-numeric: tabular-nums;
-}
-.sp-card-act { padding-top: var(--sp-3); }
-
-/* Squared, full-width, ink — the pill shape belonged to the old card.
-   Everything else about the control (state, labels, disabled logic) is
+/* Squared and full-width — the pill shape belonged to the old card. The
+   fill stays: this is the page's buy action, and quieting it is a
+   commerce decision rather than a design one. Everything about the
+   control's behaviour (state, labels, disabled logic) is
    AddToCartButton's, untouched. */
 .add-btn.sp-add {
   width: 100%;
-  border-radius: 2px;
-  padding: 13px 14px;
+  border-radius: 0;
+  padding: 14px 14px;
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
 
 /* ---- 5 · Empty state ------------------------------------- */
 /* Branded and honest: it says what was searched and offers the way
