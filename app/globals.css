@@ -3110,6 +3110,17 @@ a:hover .hp-arrow {
   --v-red-lit: #dd353b;
   --v-red-deep: #5e1114;
   --v-gold: #b8904b;
+  /* Gold is only legible on INK. On the ivory and paper grounds it measures
+     2.57:1 and 2.80:1 — under WCAG AA for normal AND large text — and that is
+     exactly where it is used for 10–11px tracked caps, the least forgiving
+     size. This is the same hue darkened until it clears AA on both light
+     surfaces: 5.42:1 on ivory, 5.90:1 on paper.
+
+     TEXT ON LIGHT SURFACES ONLY. `--v-gold` remains the brand gold and is
+     unchanged for ink grounds (6.66:1, already compliant), rules, borders,
+     fills, dots and decorative marks. Do not use this token on ink: at
+     3.16:1 it would fail there. */
+  --v-gold-on-light: #7a5c24;
   --v-gold-lit: #e2c290;
   --v-ink: #0e0b0a;
   --v-ink-2: #171210;
@@ -6928,7 +6939,7 @@ a:hover .hp-arrow {
   line-height: 0.86;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
-  color: var(--v-gold);
+  color: var(--v-gold-on-light);
 }
 .gd-index-k {
   display: block;
@@ -7195,7 +7206,7 @@ a:hover .hp-arrow {
   line-height: 1;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
-  color: var(--v-gold);
+  color: var(--v-gold-on-light);
   transition: color var(--mo-mid) var(--ease);
 }
 .vv-item:hover .vv-n { color: var(--v-red); }
@@ -7391,7 +7402,7 @@ a:hover .hp-arrow {
 @media (prefers-reduced-motion: reduce) {
   .ss-status.is-live .ss-dot { animation: none; }
 }
-.ss-status.is-upcoming { color: var(--v-gold); }
+.ss-status.is-upcoming { color: var(--v-gold-on-light); }
 .hp-sec-ink .ss-status.is-upcoming { color: var(--v-gold-lit); }
 
 /* ---- Featured event -----------------------------------------
@@ -7522,7 +7533,7 @@ a:hover .hp-arrow {
   line-height: 0.9;
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
-  color: var(--v-gold);
+  color: var(--v-gold-on-light);
 }
 .ss-row-mon {
   display: block;
@@ -9094,7 +9105,7 @@ a:hover .hp-arrow {
   font-size: var(--t-micro);
   letter-spacing: 0.18em;
   font-variant-numeric: tabular-nums;
-  color: var(--v-gold);
+  color: var(--v-gold-on-light);
 }
 
 /* Authorship line. The classification word is crimson and always
@@ -9137,7 +9148,8 @@ a:hover .hp-arrow {
 }
 .nwr-go i {
   font-style: normal;
-  color: var(--v-gold);
+  /* Same ground, same requirement — see `.onw-go i`. */
+  color: var(--v-gold-on-light);
   transition: transform var(--mo-mid) var(--ease);
 }
 
@@ -10337,7 +10349,9 @@ a:hover .hp-arrow {
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--hp-gold);
+  /* Catalogue cards sit on ivory. `--hp-gold` mirrors `--v-gold`, so this was
+     the same 2.57:1 failure reached through the other token name. */
+  color: var(--v-gold-on-light);
 }
 .sp-card-name {
   margin: var(--sp-3) 0 0;
@@ -10757,6 +10771,17 @@ a:hover .hp-arrow {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--v-gold);
+}
+
+/* The roster's two gold labels are the one case on the site that renders on
+   BOTH grounds: 01 sits on the ink marquee, where `--v-gold` is correct and
+   already compliant at 6.66:1, and 02–04 sit on the ivory roll, where the
+   same gold is 2.57:1. So the base rules above are left alone and only the
+   light half is redirected — the ink marquee is untouched, and the editorial
+   intent (a gold label opening every profile) is preserved on both. */
+.plr-roll .plr-eyebrow,
+.plr-roll .plr-moment-k {
+  color: var(--v-gold-on-light);
 }
 .plr-moment-t {
   display: block;
@@ -11934,7 +11959,7 @@ a:hover .hp-arrow {
   letter-spacing: 0.06em;
   color: var(--v-red);
 }
-.iv-ring-1 > li > .iv-ring-k .iv-ring-n { color: var(--v-gold); }
+.iv-ring-1 > li > .iv-ring-k .iv-ring-n { color: var(--v-gold-on-light); }
 .iv-ring-2 > li > .iv-ring-k { color: rgba(245, 239, 228, 0.78); }
 .iv-ring-2 > li > .iv-ring-k .iv-ring-n { color: var(--v-gold-lit); }
 .iv-ring-t {
@@ -13031,7 +13056,7 @@ a:hover .hp-arrow {
   line-height: 1.09;
   letter-spacing: 0.06em;
   font-variant-numeric: tabular-nums;
-  color: var(--v-gold);
+  color: var(--v-gold-on-light);
 }
 .vvl-mark::after {
   content: "";
@@ -13694,7 +13719,7 @@ a:hover .hp-arrow {
   font-size: 10.5px;
   letter-spacing: var(--tr-caps);
   text-transform: uppercase;
-  color: var(--v-gold);
+  color: var(--v-gold-on-light);
 }
 .ivp-c-v {
   display: block;
@@ -14378,7 +14403,7 @@ a:hover .hp-arrow {
   line-height: 0.9;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
-  color: var(--v-gold);
+  color: var(--v-gold-on-light);
 }
 /* Authorship line — the classification word is crimson and always
    first, so "Official" is read before the outlet's name. */
@@ -14424,7 +14449,9 @@ a:hover .hp-arrow {
 }
 .onw-go i {
   font-style: normal;
-  color: var(--v-gold);
+  /* The arrow is a text glyph on the ivory news desk, so it carries the same
+     AA requirement as the label beside it. */
+  color: var(--v-gold-on-light);
   transition: transform var(--mo-mid) var(--ease);
 }
 
