@@ -40,7 +40,14 @@ export const metadata: Metadata = {
 export default function PlayersPage() {
   return (
     <>
+      {/* `plr-hero` is a page-scoped class, defined in the Players block of
+          globals.css. The roster below opens on its own ink field, so the
+          hero's aurora is faded out before its lower edge and the two dark
+          surfaces meet as one continuous opening instead of banding against
+          each other. `StoryHero` itself is untouched — no other page's hero
+          changes. */}
       <StoryHero
+        className="plr-hero"
         eyebrow="AM Green IGPL · Season 2026"
         title={["PLAYERS"]}
         // Brochure p. 06, verbatim.

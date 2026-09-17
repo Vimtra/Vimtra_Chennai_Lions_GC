@@ -10652,275 +10652,541 @@ a:hover .hp-arrow {
 }
 
 /* ============================================================
-   3 · PLAYERS — THE ROSTER, READ END TO END
-   Four full profiles in squad order, not a selector. Each
-   player holds the full width on its own ground tone and
-   alternates the side its portrait sits on, so the eye resets
-   at every player without a decorative rule.
+   3 · PLAYERS — THE TEAM SHEET
+   ------------------------------------------------------------
+   One marquee, three supporting profiles, read end to end.
+   Scoped entirely to `.plr-*`; nothing here redefines a shared
+   token or a shared layout class. See the composition note at
+   the top of components/players/PlayerExperience.tsx.
 
-   The copy column is one flush-left edge with a deliberate
-   scale rhythm — micro-caps label, display name, fine
-   metadata, then figures large enough to answer the name.
-   Rules appear once each and never as boxes: a gold gradient
-   closes the label line, one hairline opens the figures, and a
-   moment carries a gold spine instead of a bullet inside a
-   bordered row.
+   THE SHAPE OF THE PAGE
+     01  ink    plate bled to the section top edge, display name
+                beside it, closing on a full-measure figure register.
+     02  ivory  plate left, full copy, five-up register rail.
+     03  ivory  full-measure name over three unlike columns, all
+                three closing on the plate baseline.
+     04  ivory  type-led, plate right, register as a three-up block.
+
+   ONE PLATE SIZE. All four portraits are the same width and the same
+   height at every breakpoint (4:5; five grid columns from 1024 up). They
+   come from one sitting and are presented as a set. The lead is
+   established by the ink ground, a 104px name and the full-measure
+   register, not by a larger photograph. Sides run R / L / L / R and no
+   two consecutive profiles share a composition, so the sequence never
+   reads as a mirror or as four cards.
+
+   SURFACES  Two. The marquee is the page's one dark field; the
+   three supporting profiles share a single continuous ivory ground.
+
+   RULES  Four on the page — one hairline opening each figure
+   register. Profiles are separated by scale, air and the single
+   ink-to-ivory transition, never by a divider.
+
+   TYPE  Sora names (marquee uppercase as a wordmark, the rest
+   sentence case). Manrope body, metadata and labels. Fraunces gets
+   two structural jobs and no decorative ones — every figure and
+   ranking numeral, and each signature-moment title — set roman
+   throughout, never as a repeated italic flourish.
 ============================================================ */
-.plr-sec-head { padding: var(--sp-8) 0 var(--sp-6); }
-@media (min-width: 768px) {
-  .plr-sec-head { padding: var(--sp-9) 0 var(--sp-7); }
+
+/* ---- The hand-off from the hero ---------------------------- */
+/* The marquee below is flat ink, while the shared story hero carries a
+   crimson aurora that is still glowing at its lower-left corner. Two dark
+   surfaces meeting at different tones read as a seam, not as a decision.
+   Fading the aurora out above the hero's lower edge lets the hero land on
+   exactly the marquee's ink, so the page opens as one continuous dark
+   field. Scoped to this page's hero instance only — `StoryHero` and every
+   other route that uses it are untouched. */
+.cm-hero.plr-hero .cm-hero-aurora {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 48%, transparent 93%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 48%, transparent 93%);
 }
 
-.plr-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--sp-3) var(--sp-5);
-  padding-bottom: var(--sp-4);
-  border-bottom: 1px solid var(--v-hair-ivory);
-}
-.plr-head-k {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
+/* ---- Shared across both halves ----------------------------- */
+
+/* One eyebrow per profile. It already carries the squad ordinal
+   ("Marquee Player · #01", "Pro · #02"), which is verified data, so
+   no second decorative numeral is drawn anywhere on the page and
+   nothing sits under it as a rule. Tracking is 0.14em, not the
+   site's 0.26em display tracking — at 11px that stays a label
+   rather than becoming a texture. */
+.plr-eyebrow {
   margin: 0;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-red);
-}
-.plr-head-k::before {
-  content: "";
-  width: 40px;
-  height: 1px;
-  background: var(--v-gold);
-}
-.plr-head-note {
-  margin: 0;
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--v-on-ivory);
-}
-
-/* ---- One profile ------------------------------------------------
-   `background` comes from the player's own `bg` token, set inline.
-   The alternating ground is what separates one player from the
-   next — there is deliberately no border, rule or divider here. */
-.plr-player { padding: var(--sp-8) 0; }
-@media (min-width: 768px) { .plr-player { padding: var(--sp-9) 0; } }
-
-.plr-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--sp-6);
-}
-@media (min-width: 1024px) {
-  .plr-grid {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--sp-6);
-    row-gap: 0;
-    align-items: start;
-  }
-  .plr-figure { grid-column: 1 / span 5; grid-row: 1; }
-  .plr-detail { grid-column: 7 / span 6; grid-row: 1; }
-  /* Portrait to the right on alternate players — `reverse`, from the data. */
-  .plr-player[data-flip="true"] .plr-figure { grid-column: 8 / span 5; }
-  .plr-player[data-flip="true"] .plr-detail { grid-column: 1 / span 6; }
-}
-
-.plr-figure { margin: 0; min-width: 0; }
-@media (min-width: 1024px) {
-  .plr-figure {
-    position: sticky;
-    /* Clears the sticky header at its scrolled height (74px) with a breath,
-       so a portrait riding up never tucks under the bar. */
-    top: 106px;
-  }
-}
-
-/* ONE ratio for every player, no exceptions — the four source files are
-   themselves identical 1333×2000 originals, so with a shared
-   object-position the roster is a single photographed collection. */
-.plr-frame {
-  position: relative;
-  display: block;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  background: var(--v-ink);
-  border: 1px solid var(--v-hair-ivory);
-}
-/* Oversized so the parallax drift never exposes an edge: the wrapper is
-   114% of the frame, and the tween moves it ±5%. GSAP owns this element's
-   transform, so the hover scale below is applied to the image inside it
-   rather than here — two transforms on one element would fight. */
-.plr-media { position: absolute; inset: -7% 0; }
-.plr-frame img {
-  object-fit: cover;
-  transition: transform var(--mo-slow) var(--hp-e);
-}
-.plr-frame:hover img { transform: scale(1.04); }
-.plr-n {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 1;
-  padding: 7px 13px 8px;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
   font-size: 11px;
-  letter-spacing: 0.1em;
-  background: var(--v-ink);
-  color: var(--v-gold-lit);
-}
-
-.plr-detail { min-width: 0; }
-
-/* The label line closes with a gold rule that runs out to the column
-   edge — one horizontal in the whole cluster, tying the copy to the grid. */
-.plr-k {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  margin: 0 0 var(--sp-5);
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--v-red);
+  color: var(--v-gold);
 }
-.plr-k > span { flex: none; }
-.plr-k::after {
-  content: "";
-  flex: 1 1 auto;
-  height: 1px;
-  background: linear-gradient(90deg, var(--v-gold), transparent);
-}
-.plr-name {
-  margin: 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(34px, 5vw, 74px);
-  line-height: 0.92;
-  letter-spacing: -0.045em;
-  color: var(--v-ink);
-}
+
+/* The names above this run at line-height 0.9–1.0, so the line box stops
+   well short of the descenders and 16px of margin left the metadata visually
+   touching the name. It sits on the name, not under it, at --sp-5; the
+   marquee needs a little more again because its name is 104px. */
 .plr-meta {
   margin: var(--sp-5) 0 0;
   font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  color: var(--v-on-ivory);
-}
-
-/* Figures large enough to answer the name. No cell borders and no boxes —
-   one hairline opens the group and the gutters do the separating. */
-.plr-stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--sp-6);
-  row-gap: var(--sp-6);
-  margin: var(--sp-7) 0 0;
-  padding-top: var(--sp-5);
-  border-top: 1px solid var(--v-hair-ivory);
-}
-.plr-stats > div { padding: 0; border: 0; min-width: 0; }
-.plr-stats dt {
-  margin: 0;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(30px, 3.4vw, 46px);
-  line-height: 1;
-  letter-spacing: -0.035em;
-  color: var(--v-ink);
-  font-variant-numeric: tabular-nums;
-}
-.plr-stats dd {
-  margin: 10px 0 0;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
   line-height: 1.5;
-  color: var(--v-on-ivory);
 }
+.plr-marquee .plr-meta { margin-top: var(--sp-6); }
 
-.plr-body { margin-top: var(--sp-7); }
-.plr-body p {
-  margin: 0 0 var(--sp-5);
-  font-family: var(--font-manrope), sans-serif;
-  font-size: var(--t-body);
-  line-height: 1.78;
-  color: var(--v-on-ivory);
-}
-.plr-body p:last-child { margin-bottom: 0; }
-.plr-body strong { font-weight: 700; color: var(--v-ink); }
-
-/* A moment is a spine and a type cluster — no diamond, no bordered row.
-   The hover shift is padding rather than transform: GSAP owns transform on
-   these elements and an inline transform would win over a CSS one. */
-.plr-moments { list-style: none; margin: var(--sp-7) 0 0; padding: 0; }
-.plr-moments li {
+/* The portrait itself. A plate, not a card: no border, no radius,
+   no shadow. `revealImageOnScroll` wipes this element open, and
+   clears its own clip-path afterwards. */
+.plr-plate {
   position: relative;
-  padding: 2px 0 2px var(--sp-5);
-  transition: padding-left var(--mo-mid) var(--hp-e);
+  overflow: hidden;
+  background: var(--v-ink-2);
 }
-.plr-moments li + li { margin-top: var(--sp-6); }
-.plr-moment-spine {
-  position: absolute;
-  left: 0;
-  top: 3px;
-  bottom: 3px;
-  width: 2px;
-  background: var(--v-gold);
-  transform-origin: top center;
-  transition: background var(--mo-mid) var(--hp-e);
+.plr-plate img {
+  object-fit: cover;
 }
-.plr-moments li:hover { padding-left: calc(var(--sp-5) + 5px); }
-.plr-moments li:hover .plr-moment-spine { background: var(--v-red); }
-.plr-moments li:hover .plr-moment-t { color: var(--v-red); }
+
+/* Signature moments. Two tone variants — on ink in the marquee, on
+   ivory in the roster. No spine, no bullet, no border: the gold
+   label and the serif title do the separating. */
 .plr-moment-k {
   display: block;
   font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
+  font-size: 11px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--v-red);
+  color: var(--v-gold);
 }
 .plr-moment-t {
   display: block;
-  margin-top: 7px;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(16px, 1.5vw, 21px);
-  letter-spacing: -0.022em;
-  line-height: 1.24;
-  color: var(--v-ink);
-  transition: color var(--mo-mid) var(--hp-e);
+  margin-top: var(--sp-2);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(19px, 1.5vw, 24px);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
 }
 .plr-moment-s {
   display: block;
-  margin-top: 6px;
+  margin-top: var(--sp-3);
   font-family: var(--font-manrope), sans-serif;
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.6;
-  color: var(--v-on-ivory);
+  max-width: 44ch;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .plr-frame img,
-  .plr-moments li,
-  .plr-moment-spine,
-  .plr-moment-t { transition: none; }
-  .plr-frame:hover img { transform: none; }
+/* Figure registers. The numerals are the graphic element, so they
+   are set in Fraunces at a size that competes with the name; the
+   labels stay small and quiet underneath. One hairline opens the
+   register — the only rule in each profile. */
+.plr-mq-figures,
+.plr-p-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-6) var(--sp-5);
+  margin: var(--sp-7) 0 0;
+  padding: var(--sp-5) 0 0;
+}
+.plr-mq-figures > div,
+.plr-p-figures > div {
+  min-width: 0;
+}
+.plr-mq-figures dt,
+.plr-p-figures dt {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 400;
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.plr-mq-figures dd,
+.plr-p-figures dd {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.45;
+}
+@media (min-width: 560px) {
+  .plr-mq-figures,
+  .plr-p-figures {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Body copy. One measure rule for the whole page: never wider than
+   54 characters, whatever column it lands in. */
+.plr-mq-body p,
+.plr-p-body p {
+  margin: 0 0 var(--sp-5);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(15.5px, 1.05vw, 17px);
+  line-height: 1.66;
+  max-width: 54ch;
+}
+.plr-mq-body p:last-child,
+.plr-p-body p:last-child {
+  margin-bottom: 0;
+}
+.plr-mq-body strong,
+.plr-p-body strong {
+  font-weight: 700;
+}
+
+/* ============================================================
+   01 · THE MARQUEE — the page's single dark field
+   ============================================================ */
+
+/* `overflow: hidden` is load-bearing: at desktop the plate is pulled
+   up by exactly the section's top padding so it bleeds to the top
+   edge, and this is what crops it there. */
+.plr-marquee {
+  position: relative;
+  overflow: hidden;
+  background: var(--v-ink);
+  color: var(--v-on-ink);
+  padding: var(--sp-7) 0 var(--sp-8);
+}
+@media (min-width: 768px) {
+  .plr-marquee { padding: var(--sp-8) 0 var(--sp-9); }
+}
+@media (min-width: 1024px) {
+  .plr-marquee { padding: var(--sp-9) 0 var(--sp-9); }
+}
+
+.plr-mq-season {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--v-on-ink-faint);
+}
+.plr-mq-note {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--v-on-ink-faint);
+}
+
+.plr-mq-id { margin-top: var(--sp-7); }
+
+.plr-mq-name {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(42px, 10.4vw, 104px);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  color: var(--v-ivory);
+}
+.plr-marquee .plr-meta { color: var(--v-on-ink-faint); }
+
+/* ONE PLATE SIZE FOR THE WHOLE ROSTER.
+   All four portraits are the same width and the same height at every
+   breakpoint — 4:5, the full measure on a phone, 56% at tablet, five grid
+   columns from 1024 up. They are official squad plates from one sitting, so
+   they are presented as a set; the lead is established by ground, type and
+   position instead of by being bigger. The marquee no longer runs edge to
+   edge on mobile for the same reason. */
+.plr-mq-fig {
+  margin: var(--sp-7) 0 0;
+}
+.plr-mq-fig .plr-plate { aspect-ratio: 4 / 5; }
+@media (min-width: 768px) {
+  .plr-mq-fig { margin: var(--sp-8) 0 0; width: 56%; }
+}
+
+.plr-mq-body { margin-top: var(--sp-7); }
+.plr-mq-body p { color: var(--v-on-ink); }
+.plr-mq-body strong { color: var(--v-ivory); }
+
+.plr-mq-figures {
+  border-top: 1px solid var(--v-hair-ink);
+}
+.plr-mq-figures dt {
+  font-size: clamp(32px, 7vw, 52px);
+  color: var(--v-ivory);
+}
+.plr-mq-figures dd { color: var(--v-on-ink-faint); }
+
+.plr-mq-moments {
+  list-style: none;
+  margin: var(--sp-8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-6);
+}
+@media (min-width: 640px) {
+  .plr-mq-moments {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-7);
+  }
+}
+.plr-mq-moments .plr-moment-t { color: var(--v-ivory); }
+.plr-mq-moments .plr-moment-s { color: var(--v-on-ink-faint); }
+
+/* ---- Desktop: the lead spread ------------------------------ */
+@media (min-width: 1024px) {
+  .plr-mq {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+  .plr-mq-head    { grid-column: 1 / span 7; grid-row: 1; }
+  .plr-mq-id      { grid-column: 1 / span 7; grid-row: 2; margin-top: var(--sp-8); }
+  .plr-mq-body    { grid-column: 1 / span 5; grid-row: 3; }
+
+  /* `.mq-line > span` is `white-space: nowrap`, so a name wider than its
+     column is silently shaved rather than wrapped — "Gaganjeet" at the
+     104px cap needs 637px and the six-column measure gave it 632. The
+     display size is tied to the column here, not to the viewport: 8vw
+     keeps the longest name inside the seven-column measure at every width
+     from 1024 up, and still reaches the 104px cap on a wide screen. */
+  .plr-mq-name { font-size: clamp(56px, 8vw, 104px); }
+  .plr-mq-figures { grid-column: 1 / -1;     grid-row: 4; margin-top: var(--sp-7); }
+  .plr-mq-moments { grid-column: 1 / span 9; grid-row: 5; }
+
+  /* Five columns at 4:5, identical to the other three. It used to stretch
+     to meet the figure register, which made it the tallest plate on the
+     page; now that every portrait is one size, it is pulled up by the
+     section's own top padding so it still bleeds to the top edge of the
+     dark field, and sits at its natural height below that. The lead is
+     carried by the ink ground, the 104px name and the full-measure
+     register — not by the plate being larger than the rest. */
+  .plr-mq-fig {
+    grid-column: 8 / -1;
+    grid-row: 1 / span 3;
+    align-self: start;
+    width: auto;
+    margin: calc(var(--sp-9) * -1) 0 0;
+  }
+
+  .plr-mq-figures {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+}
+
+/* The lead's copy runs to seven columns between 1024 and 1279 rather than
+   five, so the paragraphs do not run tall and narrow in the reduced
+   measure at that width. Still capped at 54 characters. From 1280 up the
+   five-column measure has the room to behave, so it goes back. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .plr-mq-body { grid-column: 1 / span 7; }
+}
+
+/* ============================================================
+   02–04 · THE ROSTER — one continuous ivory field
+   ============================================================ */
+
+.plr-roll {
+  background: var(--v-ivory);
+  color: var(--v-ink);
+}
+
+/* Vertical rhythm steps up with the width rather than staying at desktop
+   scale on a phone. Nothing rules between profiles, so this space is the
+   separator — but at 96px top and bottom it read as a gap on a 360px
+   screen, not as structure. */
+/* 64px top and bottom at every width, so one profile hands over to the next
+   across ~128px. This was --sp-9 at tablet and --sp-10 at desktop, which put
+   96 + 96 and 128 + 128 between profiles: a quarter of a 900px viewport of
+   unexplained ivory, and the reason 03's masthead appeared stranded at the
+   foot of an empty screen. The separation between profiles is carried by
+   scale and by the change of composition, not by the size of the gap — so
+   the gap only has to be unambiguous, not large. 04 closes a little wider
+   because it hands over to the ink sign-off rather than to another player. */
+.plr-p { padding: var(--sp-8) 0; }
+@media (min-width: 1024px) {
+  .plr-p-c { padding-bottom: var(--sp-9); }
+}
+
+.plr-p-name {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--v-ink);
+}
+.plr-p-name span { display: block; }
+.plr-p .plr-meta { color: var(--v-on-ivory); }
+
+/* Scale decrescendo. 02 is the second lead, 04 closes the page. */
+.plr-p-a .plr-p-name { font-size: clamp(33px, 6.4vw, 60px); }
+.plr-p-b .plr-p-name { font-size: clamp(31px, 5.6vw, 54px); }
+.plr-p-c .plr-p-name { font-size: clamp(29px, 5vw, 48px); }
+
+/* Portrait scale carries the same decrescendo on every width. */
+/* Same plate, same size, all three — see the note on `.plr-mq-fig`. 04 keeps
+   its right-hand position; only the size is shared, not the placement. */
+.plr-p-fig { margin: var(--sp-7) 0 0; width: 100%; }
+.plr-p-fig .plr-plate { aspect-ratio: 4 / 5; }
+@media (min-width: 768px) {
+  .plr-p-fig { width: 56%; }
+  .plr-p-c .plr-p-fig { margin-left: auto; }
+}
+
+.plr-p-body { margin-top: var(--sp-7); }
+.plr-p-body p { color: var(--v-on-ivory); }
+.plr-p-body strong { color: var(--v-ink); }
+
+.plr-p-figures { border-top: 1px solid var(--v-hair-ivory); }
+.plr-p-figures dt {
+  font-size: clamp(28px, 6vw, 40px);
+  color: var(--v-ink);
+}
+.plr-p-figures dd { color: var(--v-on-ivory); }
+
+.plr-p-moments {
+  list-style: none;
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-6);
+}
+.plr-p-moments .plr-moment-t { color: var(--v-ink); }
+.plr-p-moments .plr-moment-s { color: var(--v-on-ivory); }
+@media (min-width: 640px) {
+  .plr-p-a .plr-p-moments {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-7);
+  }
+}
+
+/* ---- Desktop: three unlike compositions -------------------- */
+@media (min-width: 1024px) {
+  .plr-p {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    align-items: start;
+    /* Four content rows and a trailing spacer. The plate spans all five, so
+       whenever it is taller than the type beside it the slack collects in
+       the spacer instead of being shared out between the rows — which is
+       what pushed 03's prose, register and moment 112px apart while 02 sat
+       at 48px. All three profiles now keep the same internal rhythm
+       whatever the height of the photograph. */
+    grid-template-rows:
+      min-content min-content min-content min-content auto;
+  }
+  /* The tablet tier sizes each plate through its variant class, so the
+     reset has to match that specificity or the desktop grid columns are
+     overridden by a percentage width and every supporting portrait
+     collapses to tablet scale. */
+  .plr-p-a .plr-p-fig,
+  .plr-p-b .plr-p-fig,
+  .plr-p-c .plr-p-fig {
+    width: auto;
+    margin: 0;
+  }
+
+  /* 02 — the second lead. Plate left on five columns, the copy and
+     both moments running the full right half. */
+  .plr-p-a .plr-p-fig      { grid-column: 1 / span 5;  grid-row: 1 / span 5; }
+  .plr-p-a .plr-p-id       { grid-column: 7 / -1;      grid-row: 1; }
+  .plr-p-a .plr-p-body     { grid-column: 7 / span 5;  grid-row: 2; margin-top: var(--sp-7); }
+  .plr-p-a .plr-p-figures  { grid-column: 7 / -1;      grid-row: 3; }
+  .plr-p-a .plr-p-moments  { grid-column: 7 / -1;      grid-row: 4; }
+
+  /* 03 — the name runs the full measure as a masthead, and the profile
+     below it reads down the right-hand column in the same order and on the
+     same spacing as 02 and 04: prose, figure register, moment. The masthead
+     is the difference; the rhythm is shared.
+
+     It previously split that column in two and pinned the moment and the
+     register to the plate's baseline. That only held together while the
+     plate was short. Once every portrait became one (larger) size, the
+     anchoring opened a ~370px hole between the prose and the moment on a
+     wide screen, and left the register floating low against nothing. Content
+     order beats a clever alignment here. */
+  .plr-p-b .plr-p-id       { grid-column: 1 / -1;      grid-row: 1; }
+  .plr-p-b .plr-p-fig      { grid-column: 1 / span 5;  grid-row: 2 / span 4; margin-top: var(--sp-8); }
+  .plr-p-b .plr-p-body     { grid-column: 7 / -1;      grid-row: 2; margin-top: var(--sp-8); }
+  .plr-p-b .plr-p-figures  { grid-column: 7 / -1;      grid-row: 3; }
+  .plr-p-b .plr-p-moments  { grid-column: 7 / -1;      grid-row: 4; }
+
+  /* 04 — the closing entry. Type-led: the portrait is reduced to a
+     narrow vertical band on the right and the figures close on a
+     single line. */
+  .plr-p-c .plr-p-id       { grid-column: 1 / span 6;  grid-row: 1; }
+  .plr-p-c .plr-p-body     { grid-column: 1 / span 6;  grid-row: 2; margin-top: var(--sp-7); }
+  .plr-p-c .plr-p-figures  { grid-column: 1 / span 6;  grid-row: 3; }
+  .plr-p-c .plr-p-moments  { grid-column: 1 / span 6;  grid-row: 4; }
+  .plr-p-c .plr-p-fig      { grid-column: 8 / -1;      grid-row: 1 / span 5; }
+
+  /* 04 keeps six columns for its type, so its register turns over three-up
+     rather than running five across. */
+  .plr-p-c .plr-p-figures {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--sp-5);
+  }
+}
+
+/* ---- 02 · when the five-up rail earns its width -------------
+   02's register runs its five figures across one line, but that line lives
+   in six of twelve columns, so the cell width falls with the viewport while
+   the labels do not: they are a fixed 11px, and the longest single word in
+   the set — PROFESSIONAL, in "Turned Professional" — measures 93px.
+
+   Five-up gives 72px per cell at 1024 and 93px at 1280, so from 1024 to
+   about 1290 that word ran past its cell and out over the register's right
+   edge into the page gutter. Below 1024 the rail was never the problem: the
+   profile is a single column there and the shared three-up already applies.
+
+   So the five-up rail is held back until it actually fits. Measured in the
+   browser the label renders at 99px, and a five-up cell only reaches that
+   from about 1360 — where it is 99px exactly, i.e. no margin at all, which
+   a different font-rendering pass could tip straight back into overflow.
+   The rail therefore returns at 1440, where the cell is 109px and carries
+   ten clear pixels. Below that 02 falls to the same three-up the rest of
+   the page uses, whose narrowest cell is 136px. The label is never shrunk,
+   nothing is clipped and no width is hard-coded: the breakpoint is derived
+   from the measure the type actually needs.
+
+   Scoped to `.plr-p-a` only. 01, 03 and 04 are untouched, including 03's
+   two-line record register. */
+@media (min-width: 1440px) {
+  .plr-p-a .plr-p-figures {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--sp-5);
+  }
+}
+
+/* ---- 03 · the record register ------------------------------
+   02 runs its five figures as one rail. 03 sets the same five as a
+   two-line record — three across, then two — the way a printed annual
+   lists a player's career line rather than a row of tiles. The split
+   falls out of the data order in data/players.ts ('23 · 7 · 3 / '14 ·
+   #40); nothing is reordered and nothing is restated.
+
+   It is three columns rather than five, on a much wider column gap, with
+   the numerals set larger than anywhere else on the page — there are
+   three per line instead of five, so they have the room. That is what
+   separates it from 04, which is also three-up but tighter and smaller.
+
+   Deliberately NOT dependent on the portrait: this is a flow rule on the
+   register itself, so it cannot reintroduce baseline anchoring, row
+   stretching or any portrait-height coupling. The only rule in the block
+   is the single hairline the register already opens with; the two lines
+   are separated by the page's own 48px rhythm, not by a divider. */
+@media (min-width: 768px) {
+  .plr-p-b .plr-p-figures {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--sp-8);
+    row-gap: var(--sp-7);
+  }
+  .plr-p-b .plr-p-figures dt {
+    font-size: clamp(34px, 3.4vw, 52px);
+  }
 }
 
 /* ============================================================
