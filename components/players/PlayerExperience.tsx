@@ -81,9 +81,12 @@ import type { PlayerFeature } from "@/data/players";
 /** The three supporting compositions, in order. */
 const SUPPORTING_VARIANTS = ["a", "b", "c"] as const;
 
-/** Given name on the first line, everything else on the second — splitting
- *  on the last word instead would orphan the trailing initial of
- *  "Yashas Chandra M S" onto a line of its own. */
+/** The MARQUEE name, hand-broken: given name on the first line, everything
+ *  else on the second. Only 01 breaks — at the marquee's display size the
+ *  full name cannot run on one line inside its column, and `.mq-line` masks
+ *  with `white-space: nowrap`, so an over-long line is shaved rather than
+ *  wrapped. The three supporting profiles set their names on a single line
+ *  across the full measure and are not routed through here. */
 function nameLines(name: string): string[] {
   const [given, ...rest] = name.split(" ");
   return rest.length ? [given, rest.join(" ")] : [given];
@@ -257,7 +260,6 @@ export default function PlayerExperience({
         <div className="hp-wrap">
           {supporting.map((p, i) => {
             const variant = SUPPORTING_VARIANTS[i % SUPPORTING_VARIANTS.length];
-            const lines = nameLines(p.name);
             return (
               <article
                 key={p.anchor}
@@ -268,17 +270,13 @@ export default function PlayerExperience({
               >
                 <div className="plr-p-id">
                   <p className="plr-eyebrow">{p.eyebrow}</p>
-                  {/* Same reason as the marquee: the hand-broken lines are
-                      block spans, so the name is stated once on the heading
-                      rather than left to concatenate. */}
-                  <h2
-                    className="plr-p-name"
-                    id={`plr-h-${p.anchor}`}
-                    aria-label={p.name}
-                  >
-                    {lines.map((l) => (
-                      <span key={l}>{l}</span>
-                    ))}
+                  {/* One line. The name is a single text node now, so it
+                      needs no aria-label to stop block spans concatenating,
+                      and on a narrow phone — where the longest name cannot
+                      fit the measure — it wraps of its own accord instead of
+                      breaking at a fixed word. */}
+                  <h2 className="plr-p-name" id={`plr-h-${p.anchor}`}>
+                    {p.name}
                   </h2>
                   {p.meta && <p className="plr-meta">{p.meta}</p>}
                 </div>

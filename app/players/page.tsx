@@ -59,8 +59,24 @@ export default function PlayersPage() {
       <Section surface="ink" size="tight" className="hp-sec-atmos">
         <div className="cm-track cm-close">
           <div className="cm-close-title">
-            {/* Brochure p. 06 — "balanced by design". */}
-            <SectionTitle lines={["BALANCED", "BY DESIGN."]} />
+            {/* The franchise's four core pillars, attributed on the record to
+                Thimmaji Rao Yammada, Founder & Managing Director, Vimtra
+                Ventures — AM Green IGPL, 14 August 2026: "Vimtra Chennai Lions
+                GC is built on four core pillars — Pride, Excellence, Heritage
+                and Legacy." The four words are quoted; only their arrangement
+                is editorial. The same four are set as the numbered register on
+                /the-pride. */}
+            {/* One pillar per line. `.mq-line` masks each line with
+                `overflow:hidden` + `white-space:nowrap`, so a line wider than
+                its column is silently shaved rather than wrapped — and this
+                title sits in 7 of 12 columns. Set as two lines
+                ("PRIDE. EXCELLENCE." / "HERITAGE. LEGACY.") the first line
+                needed 996px in a 797px column at 1920 and lost the word
+                EXCELLENCE entirely, at every width from 1024 up. Four lines
+                also read better for what this is: a list of four values. */}
+            <SectionTitle
+              lines={["PRIDE.", "EXCELLENCE.", "HERITAGE.", "LEGACY."]}
+            />
           </div>
           <div className="cm-close-actions" data-rise>
             <Link href="/fixtures" className="hp-btn hp-btn-primary">
