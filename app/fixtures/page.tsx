@@ -92,7 +92,14 @@ function venueOf(f: Fixture): string {
 }
 
 export default async function FixturesPage() {
-  const fixtures = await listFixtures();
+  // The calendar is not worth a 500. A transient database failure (Neon
+  // suspends an idle compute and drops its connections, so a query can land
+  // mid-suspension) degrades to the same no-rows path an empty table already
+  // takes: the "No Season 2026 events are published yet" state below. Same
+  // fallback the home page uses for this exact reader. Nothing is invented —
+  // an unreachable database and an empty one both mean "we cannot show a
+  // verified calendar", which is what the empty state says.
+  const fixtures = await listFixtures().catch(() => []);
   const featured =
     fixtures.find((f) => f.status === "LIVE") ??
     fixtures.find((f) => f.status === "UPCOMING") ??

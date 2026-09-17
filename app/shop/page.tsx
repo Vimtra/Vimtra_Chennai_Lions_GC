@@ -18,7 +18,14 @@ export default async function ShopPage() {
   // Unchanged data path: the same public listing (active rows only, in
   // catalogue order) the previous page rendered. Everything below is
   // derived from these rows — nothing is fetched, estimated or invented.
-  const products = await listProducts();
+  // A transient database failure falls back to no rows, which routes into the
+  // catalogue's existing "between drops" empty state below rather than a 500.
+  // Critically this cannot fabricate a catalogue: the fallback is an empty
+  // list, so no product, price or stock figure is ever shown that did not come
+  // from the database. `lowestPrice` becomes null and the hero drops its
+  // "From" cell, exactly as it does for a genuinely empty catalogue. No
+  // product, order or stock logic is touched.
+  const products = await listProducts().catch(() => []);
   const hasAnything = products.length > 0;
 
   const categoryCount = new Set(

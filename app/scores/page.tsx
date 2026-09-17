@@ -68,12 +68,26 @@ function positionRank(position: string | null): number {
 }
 
 export default async function ScoresPage() {
-  const fixtures = await listFixtures();
+  // No card list rather than a 500 if the database is briefly unreachable.
+  // With no events `ScoreExperience` renders nothing and the masthead above
+  // reports "Scoring offline" with Events 0 / Live 0 — the same honest
+  // position an empty Fixture table produces.
+  const fixtures = await listFixtures().catch(() => []);
 
   // One read per fixture. Four rows today; the page is force-dynamic and
   // these are indexed lookups on fixtureId.
+  //
+  // Caught PER FIXTURE, deliberately: a bare Promise.all rejects the whole
+  // page if a single score read fails, which would lose the event cards that
+  // did load. Falling back to no rows for just that fixture draws that one
+  // board unlit — "No verified rows" — while its neighbours still light. That
+  // is the state the board was designed to hold, and it never invents a
+  // score: an unreadable card and an unpublished card say the same thing.
   const withScores = await Promise.all(
-    fixtures.map(async (f) => ({ f, scores: await listScoresForFixture(f.id) }))
+    fixtures.map(async (f) => ({
+      f,
+      scores: await listScoresForFixture(f.id).catch(() => []),
+    }))
   );
 
   const events: BoardEvent[] = withScores.map(({ f, scores }) => {
