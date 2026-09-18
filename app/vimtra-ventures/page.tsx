@@ -210,7 +210,7 @@ export default function VimtraVenturesPage() {
             </h2>
           </div>
 
-          <div className="vv-firm-b" data-rise>
+          <div className="vv-firm-b">
             <p>
               Vimtra Ventures is a US-based venture capital and investment
               firm operating as principal, not intermediary, across six
@@ -239,7 +239,7 @@ export default function VimtraVenturesPage() {
               September 2026 dedup pass rather than said twice on the same
               screen. Nothing here is a new figure; every value was already
               verbatim-sourced before this edit. */}
-          <dl className="vv-creds" data-rise>
+          <dl className="vv-creds">
             {CREDENTIALS.map((c) => (
               <div key={c.l}>
                 <dt>{c.v}</dt>
@@ -254,11 +254,11 @@ export default function VimtraVenturesPage() {
       <Section surface="paper">
         <div className="cm-track vv-verticals">
           <div className="vv-rail">
-            <p className="hp-index hp-index-bare" data-rise>
+            <p className="hp-index hp-index-bare">
               <span>Six Verticals</span>
             </p>
             <SectionTitle lines={["ONE FIRM,", "SIX", "VERTICALS."]} />
-            <p className="cm-lede" data-rise>
+            <p className="cm-lede">
               Every area the firm operates in, on a single canvas — as
               principal, not intermediary.
             </p>
@@ -266,7 +266,7 @@ export default function VimtraVenturesPage() {
 
           <ol className="vv-list">
             {VERTICALS.map((v, i) => (
-              <li className="vv-item" key={v.name} data-rise>
+              <li className="vv-item" key={v.name}>
                 <span className="vv-n">{String(i + 1).padStart(2, "0")}</span>
                 <span>
                   <span className="vv-t">{v.name}</span>
@@ -320,7 +320,7 @@ export default function VimtraVenturesPage() {
           typeset — nothing has been added to it. */}
       <Section surface="paper" className="vv-gov-sec">
         <div className="cm-track vv-gov2">
-          <p className="hp-index hp-index-bare" data-rise>
+          <p className="hp-index hp-index-bare">
             <span>Governance</span>
           </p>
 
@@ -331,22 +331,22 @@ export default function VimtraVenturesPage() {
           {/* The Vision statement — brochure p. 17 pairs it with Board &
               Advisory on the same page, so it sits here rather than in
               "The Firm" above. Verbatim, identical in both DOC2 and DOC3. */}
-          <article className="vv-minute" data-rise>
+          <article className="vv-minute">
             <p className="vv-minute-k">Vision</p>
             <p className="vv-minute-body">{VISION_STATEMENT}</p>
           </article>
 
-          <article className="vv-minute" data-rise>
+          <article className="vv-minute">
             <p className="vv-minute-k">{BOARD_MEMBER.role}</p>
             <h3 className="vv-minute-name">{BOARD_MEMBER.name}</h3>
             <p className="vv-minute-body">{BOARD_MEMBER.body}</p>
           </article>
 
           <div className="vv-wall">
-            <p className="vv-wall-k" data-rise>
+            <p className="vv-wall-k">
               Advisory Board · being assembled across
             </p>
-            <p className="vv-wall-set" data-rise>
+            <p className="vv-wall-set">
               {ADVISORY_DISCIPLINES.map((d) => (
                 <span className="vv-wall-w" key={d}>
                   {d}
@@ -360,12 +360,12 @@ export default function VimtraVenturesPage() {
       {/* 05 — SPORTS FRANCHISES */}
       <Section surface="ink">
         <div className="cm-track vv-firm">
-          <p className="hp-index hp-index-dark hp-index-bare" data-rise>
+          <p className="hp-index hp-index-dark hp-index-bare">
             <span>Sports Franchises</span>
           </p>
 
           <div className="vv-firm-h">
-            <h2 className="cm-display" data-rise>
+            <h2 className="cm-display">
               OWNERSHIP IN <em>sport</em>.
             </h2>
           </div>
@@ -388,7 +388,6 @@ export default function VimtraVenturesPage() {
                 <li
                   key={f.name}
                   className={f.href ? "is-link" : undefined}
-                  data-rise
                 >
                   {f.href ? (
                     <Link href={f.href} className="vv-franchise-link">
@@ -419,13 +418,13 @@ export default function VimtraVenturesPage() {
           than that. */}
       <Section surface="paper" className="vv-road-sec">
         <div className="cm-track vv-road">
-          <p className="hp-index hp-index-bare" data-rise>
+          <p className="hp-index hp-index-bare">
             <span>The Roadmap</span>
           </p>
 
           <div className="vv-road-h">
             <SectionTitle lines={["BRINGING IT", "ALL TOGETHER."]} />
-            <p className="cm-lede" data-rise>
+            <p className="cm-lede">
               The first step was the partnership with the PGA. The second,
               ownership of a franchise in India&rsquo;s first professional golf
               league. What follows is the bridge itself — academies, resorts,
@@ -439,7 +438,6 @@ export default function VimtraVenturesPage() {
               <li
                 key={r.n}
                 className={r.state === "Done" ? "is-done" : "is-open"}
-                data-rise
               >
                 <span className="vv-road-n" aria-hidden>
                   {r.n}
@@ -458,7 +456,7 @@ export default function VimtraVenturesPage() {
           <div className="cm-close-title">
             <SectionTitle lines={["BUILT FOR", "THE LONG GAME."]} />
           </div>
-          <div className="cm-close-actions" data-rise>
+          <div className="cm-close-actions">
             <Link href="/the-club" className="hp-btn hp-btn-primary">
               MEET THE FRANCHISE
               <span className="hp-arrow" aria-hidden>

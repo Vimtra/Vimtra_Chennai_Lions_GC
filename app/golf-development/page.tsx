@@ -260,7 +260,6 @@ export default function GolfDevelopmentPage() {
                   key={f.name}
                   className="gdf-stratum"
                   style={{ ["--depth" as string]: i }}
-                  data-rise
                 >
                   <span className="gdf-stratum-n" aria-hidden>
                     {String(i + 1).padStart(2, "0")}
@@ -299,17 +298,17 @@ export default function GolfDevelopmentPage() {
           above. */}
       <Section surface="paper" className="gdp-sec">
         <div className="cm-track gdp">
-          <p className="hp-index hp-index-bare" data-rise>
+          <p className="hp-index hp-index-bare">
             <span>The Partnership · PGA of America</span>
           </p>
 
           <div className="gdp-head">
-            <h2 className="cm-display gdp-h" data-rise>
+            <h2 className="cm-display gdp-h">
               AN AMERICAN LICENSE. AN INDIAN <em>ambition</em>.
             </h2>
           </div>
 
-          <div className="gdp-body" data-rise>
+          <div className="gdp-body">
             <p>
               Vimtra Ventures LLC, with its registered office in{" "}
               <strong>Fremont, California</strong>, has signed a license
@@ -325,7 +324,7 @@ export default function GolfDevelopmentPage() {
             </p>
           </div>
 
-          <dl className="gdp-plate" data-rise>
+          <dl className="gdp-plate">
             {PGA_OFFICES.map((o) => (
               <div key={o.k}>
                 <dt>{o.k}</dt>
@@ -380,7 +379,7 @@ export default function GolfDevelopmentPage() {
 
           <ol className="gdm-set">
             {MOVES.map((m) => (
-              <li key={m.n} data-rise>
+              <li key={m.n}>
                 <span className="gdm-mark" aria-hidden>
                   <span className="gdm-n">{m.n}</span>
                 </span>
@@ -407,7 +406,7 @@ export default function GolfDevelopmentPage() {
           brochure anchors as a ruled index — not three cards. */}
       <Section surface="ink">
         <div className="cm-track gd-thesis">
-          <div className="gd-thesis-lede" data-rise>
+          <div className="gd-thesis-lede">
             <p>
               Premium golf facilities integrated with luxury residential
               communities, lifestyle amenities, and investment opportunities —
@@ -417,7 +416,7 @@ export default function GolfDevelopmentPage() {
 
           <ol className="gd-index">
             {ANCHORS.map((a, i) => (
-              <li key={a.name} data-rise>
+              <li key={a.name}>
                 <span className="gd-index-n">
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -435,7 +434,7 @@ export default function GolfDevelopmentPage() {
       {/* 03 — HIGH PERFORMANCE */}
       <Section surface="paper">
         <div className="cm-track gd-perf">
-          <div className="gd-perf-f" data-rise>
+          <div className="gd-perf-f">
             <div className="gd-fig">
               <Image
                 src="/assets/photo/gd-perf-putt-hole.jpg"
@@ -448,13 +447,13 @@ export default function GolfDevelopmentPage() {
           </div>
 
           <div className="gd-perf-t">
-            <p className="hp-index hp-index-bare" data-rise>
+            <p className="hp-index hp-index-bare">
               <span>High Performance</span>
             </p>
             <SectionTitle lines={["TALENT,", "PATHWAYS,", "ECOSYSTEM."]} />
             <ul className="gd-pillars">
               {HIGH_PERFORMANCE.map((h) => (
-                <li key={h.label} data-rise>
+                <li key={h.label}>
                   <span className="gd-pillar-t">{h.label}</span>
                   <span className="gd-pillar-d">{h.body}</span>
                 </li>
@@ -467,12 +466,12 @@ export default function GolfDevelopmentPage() {
       {/* 04 — INITIATIVES. See the note at the top of this file. */}
       <Section surface="ivory">
         <div className="cm-track gd-framework">
-          <p className="hp-index hp-index-bare" data-rise>
+          <p className="hp-index hp-index-bare">
             <span>Initiatives</span>
           </p>
 
           <div className="gd-framework-h">
-            <h2 className="cm-display" data-rise>
+            <h2 className="cm-display">
               CURRENT, AND <em>under way</em>.
             </h2>
             {/* The awareness gap, stated as the source states it — Vimtra x PGA
@@ -481,7 +480,7 @@ export default function GolfDevelopmentPage() {
                 The four named metro academies on that page are deliberately
                 not reproduced: the source names them as where certified
                 academies concentrate, not as Vimtra partners. */}
-            <p className="gd-lede" data-rise>
+            <p className="gd-lede">
               Golf remains a niche pursuit in India, and certified academies
               concentrate in the metros — beyond them, awareness in Tier 2 and
               Tier 3 cities is low. The platform is built for that reality, not
@@ -491,7 +490,7 @@ export default function GolfDevelopmentPage() {
 
           <ol className="gd-index">
             {INITIATIVES.map((n, i) => (
-              <li key={n.name} data-rise>
+              <li key={n.name}>
                 <span className="gd-index-n">
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -512,7 +511,7 @@ export default function GolfDevelopmentPage() {
           <div className="cm-close-title">
             <SectionTitle lines={["BUILD IT", "WITH US."]} />
           </div>
-          <div className="cm-close-actions" data-rise>
+          <div className="cm-close-actions">
             <Link href="/invest" className="hp-btn hp-btn-primary">
               PARTNER WITH THE LIONS
               <span className="hp-arrow" aria-hidden>

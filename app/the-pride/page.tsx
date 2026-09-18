@@ -59,7 +59,7 @@ export default function ThePridePage() {
           alt text describes the scene and does not assert a location. */}
       <Section surface="ivory" className="pr-city-sec">
         <div className="cm-track pr-city">
-          <p className="hp-index hp-index-bare" data-rise>
+          <p className="hp-index hp-index-bare">
             <span>The City</span>
           </p>
 
@@ -80,14 +80,14 @@ export default function ThePridePage() {
           </div>
 
           <div className="pr-city-body">
-            <p data-rise>
+            <p>
               The Bay of Bengal at our back, a deep amateur golf base at our
               feet, and one of the country&apos;s most consistent pipelines of
               touring professionals in front of us. The Lions are the sporting
               expression of that city — carried into a fifteen-event season
               that stretches from Chennai to a global calendar.
             </p>
-            <Link href="/the-club" className="hp-btn hp-btn-text" data-rise>
+            <Link href="/the-club" className="hp-btn hp-btn-text">
               The story of the club
               <span className="hp-arrow" aria-hidden>
                 →
@@ -96,7 +96,7 @@ export default function ThePridePage() {
           </div>
 
           {/* Brochure p. 06 — "A team built for the long game." */}
-          <p className="cm-pull pr-city-pull" data-rise>
+          <p className="cm-pull pr-city-pull">
             A team built for the long game.
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function ThePridePage() {
           as an attributed statement rather than a fifth headline. */}
       <Section surface="ink" className="hp-sec-atmos">
         <div className="cm-track pr-values">
-          <p className="hp-index hp-index-dark hp-index-bare" data-rise>
+          <p className="hp-index hp-index-dark hp-index-bare">
             <span>Values</span>
           </p>
 
@@ -153,7 +153,7 @@ export default function ThePridePage() {
 
           <ol className="pr-pillars">
             {["Pride", "Excellence", "Heritage", "Legacy"].map((w, i) => (
-              <li className="pr-pillar" key={w} data-rise>
+              <li className="pr-pillar" key={w}>
                 <span className="pr-pillar-n" aria-hidden>
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -169,7 +169,7 @@ export default function ThePridePage() {
               Pride, Excellence, Heritage and Legacy. We want the Lions to
               embody the spirit of Chennai.&rdquo;
             </blockquote>
-            <p className="cm-pull-by" data-rise>
+            <p className="cm-pull-by">
               Thimmaji Rao Yammada, Founder &amp; Managing Director, Vimtra
               Ventures — AM Green IGPL, 14 August 2026
             </p>
@@ -183,7 +183,7 @@ export default function ThePridePage() {
           <div className="cm-close-title">
             <SectionTitle lines={["ONE CITY.", "ONE PRIDE."]} />
           </div>
-          <div className="cm-close-actions" data-rise>
+          <div className="cm-close-actions">
             <Link href="/players" className="hp-btn hp-btn-primary">
               MEET THE PLAYERS
               <span className="hp-arrow" aria-hidden>

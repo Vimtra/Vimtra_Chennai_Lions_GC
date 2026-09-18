@@ -82,7 +82,7 @@ export function Statement() {
           <h2 id="st-h" className="cm-display hm-statement-h" data-rise>
             CHENNAI&rsquo;S <em>roar</em>.
           </h2>
-          <div className="hm-statement-s" data-rise>
+          <div className="hm-statement-s">
             <p>
               Chennai&rsquo;s franchise in the AM Green Indian Golf Premier
               League — owned by Vimtra Ventures, a San Francisco
@@ -126,10 +126,10 @@ export function Club() {
       <div className="hp-wrap">
         <div className="cm-track hm-split">
           <div className="hm-split-t">
-            <p className="hp-index hp-index-dark" data-rise>
+            <p className="hp-index hp-index-dark">
               02 <span>The Club</span>
             </p>
-            <p className="hm-year" data-rise>
+            <p className="hm-year">
               <span data-count="2026">2026</span>
             </p>
             <h2 id="cl-h" className="cm-ch-t" style={{ marginTop: 0 }}>
@@ -140,12 +140,12 @@ export function Club() {
                 <span>SEASON.</span>
               </span>
             </h2>
-            <p className="hm-body" data-rise>
+            <p className="hm-body">
               The IGPL launched in 2025. Its 2026 season carries ten franchises
               across fifteen events — ten in India, five international — and
               the Lions play their inaugural franchise season in 2026.
             </p>
-            <Link href="/the-pride" className="hp-btn hp-btn-text" data-rise>
+            <Link href="/the-pride" className="hp-btn hp-btn-text">
               The mark &amp; the city
               <span className="hp-arrow" aria-hidden>
                 →
@@ -193,7 +193,7 @@ export function Season({ rows }: { rows: SeasonRow[] }) {
       <div className="hp-wrap">
         <div className="cm-track hm-head">
           <div className="hm-head-t">
-            <p className="hp-index" data-rise>
+            <p className="hp-index">
               03 <span>The Season</span>
             </p>
             <h2 id="se-h" className="hp-section-title">
@@ -205,7 +205,7 @@ export function Season({ rows }: { rows: SeasonRow[] }) {
               </span>
             </h2>
           </div>
-          <Link href="/fixtures" className="hp-btn hp-btn-text hm-head-a" data-rise>
+          <Link href="/fixtures" className="hp-btn hp-btn-text hm-head-a">
             All fixtures
             <span className="hp-arrow" aria-hidden>
               →
@@ -215,7 +215,7 @@ export function Season({ rows }: { rows: SeasonRow[] }) {
 
         <ol className="cal">
           {rows.map((f, i) => (
-            <li key={f.slug} data-rise>
+            <li key={f.slug}>
               <Link href="/fixtures" className="cal-row">
                 <span className="cal-n">{String(i + 1).padStart(2, "0")}</span>
                 <span className="cal-body">
@@ -274,7 +274,7 @@ export function Development() {
 
       <div className="hp-wrap cm-track hm-dev-inner">
         <div className="hm-dev-head">
-          <p className="hp-index hp-index-dark" data-rise>
+          <p className="hp-index hp-index-dark">
             04 <span>Golf Development</span>
           </p>
           <h2 id="dv-h" className="hm-dev-h">
@@ -288,13 +288,13 @@ export function Development() {
           {/* One clause on the PGA licence and no more: Home is a gateway,
               and the partnership itself belongs on /golf-development.
               Source: Vimtra x PGA of America brochure, p. 01. */}
-          <p className="hm-body" data-rise>
+          <p className="hm-body">
             Coaching, academies, event standards and course operations to
             international championship level — under a licensed partnership
             with the PGA of America, and built as an institution, not a
             single season.
           </p>
-          <Link href="/golf-development" className="hp-btn hp-btn-text" data-rise>
+          <Link href="/golf-development" className="hp-btn hp-btn-text">
             Explore the platform
             <span className="hp-arrow" aria-hidden>
               →
@@ -305,7 +305,7 @@ export function Development() {
         <div className="hm-dev-list">
           <ol>
             {PILLARS.map((p, i) => (
-              <li key={p.t} data-rise>
+              <li key={p.t}>
                 <span className="hm-dev-n">{String(i + 1).padStart(2, "0")}</span>
                 <span>
                   <span className="hm-dev-k">{p.k}</span>
@@ -357,7 +357,7 @@ export function Media({ stories }: { stories: StoryRow[] }) {
             this row was empty in the previous layout. */}
         <div className="hm-press-head">
           <div>
-            <p className="hp-index" data-rise>
+            <p className="hp-index">
               05 <span>News</span>
             </p>
             <h2 id="md-h" className="hp-section-title">
@@ -369,7 +369,7 @@ export function Media({ stories }: { stories: StoryRow[] }) {
               </span>
             </h2>
           </div>
-          <Link href="/news" className="hp-btn hp-btn-text" data-rise>
+          <Link href="/news" className="hp-btn hp-btn-text">
             Visit the news desk
             <span className="hp-arrow" aria-hidden>
               →
@@ -384,7 +384,6 @@ export function Media({ stories }: { stories: StoryRow[] }) {
               href={lead.href}
               target="_blank"
               rel="noreferrer noopener"
-              data-rise
             >
               {lead.cover && (
                 <span className="hm-press-fig">
@@ -408,7 +407,7 @@ export function Media({ stories }: { stories: StoryRow[] }) {
 
           </div>
         ) : (
-          <p className="hm-body hp-mt-lg" data-rise>
+          <p className="hm-body hp-mt-lg">
             No official news has been featured here yet.
           </p>
         )}
@@ -477,30 +476,30 @@ export function Shop({ facts }: { facts: StoreFacts }) {
           </figure>
 
           <div className="hm-store-body">
-            <p className="hp-index hp-index-dark" data-rise>
+            <p className="hp-index hp-index-dark">
               06 <span>The Store</span>
             </p>
             <h2 id="sh-h" className="hm-store-t">
-              <span className="mq-line" data-line>
+              <span className="mq-line">
                 <span>WEAR THE PRIDE.</span>
               </span>
             </h2>
-            <p className="hm-store-note" data-rise>
+            <p className="hm-store-note">
               Match-day kit, performance apparel and tour-tested accessories
               — fan-priced, shipped across India.
             </p>
 
             {/* Counted from the catalogue in app/page.tsx — never typed in. */}
             <dl className="hm-store-rail">
-              <div data-rise>
+              <div>
                 <dt>Items</dt>
                 <dd>{facts.items}</dd>
               </div>
-              <div data-rise>
+              <div>
                 <dt>Categories</dt>
                 <dd>{facts.categories}</dd>
               </div>
-              <div data-rise>
+              <div>
                 <dt>Delivery</dt>
                 <dd className="is-text">Across India</dd>
               </div>
@@ -509,7 +508,6 @@ export function Shop({ facts }: { facts: StoreFacts }) {
             <Link
               href="/shop"
               className="hp-btn hp-btn-primary hm-store-cta"
-              data-rise
             >
               EXPLORE THE SHOP
               <span className="hp-arrow" aria-hidden>
@@ -572,11 +570,11 @@ export function Closing() {
                 <span>ONE PRIDE.</span>
               </span>
             </h2>
-            <p className="cm-pull hp-mt-sm" data-rise>
+            <p className="cm-pull hp-mt-sm">
               Chennai&rsquo;s roar — on the world&rsquo;s newest stage.
             </p>
           </div>
-          <div className="cm-close-actions" data-rise>
+          <div className="cm-close-actions">
             <Link href="/contact" className="hp-btn hp-btn-primary">
               TALK TO THE FRANCHISE
               <span className="hp-arrow" aria-hidden>

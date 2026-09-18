@@ -73,7 +73,11 @@ export default function OfficialNews({
 
       <ol className="onw-rows">
         {stories.map((story, i) => (
-          <li key={story.id}>
+          // THE ROW IS THE UNIT. Every part of a story used to carry its own
+          // [data-rise] — figure, numeral, meta, title, summary, arrow — so a
+          // two-story list assembled itself in twelve pieces. One marker on
+          // the row reveals the story as one thing, which is what it is.
+          <li key={story.id} data-rise>
             <a
               className={`cm-track onw-row ${story.image ? "has-fig" : ""}`.trim()}
               href={story.href}
@@ -82,7 +86,7 @@ export default function OfficialNews({
                 : {})}
             >
               {story.image && (
-                <span className="onw-fig" data-rise>
+                <span className="onw-fig">
                   <Image
                     src={story.image}
                     alt={story.imageAlt}
@@ -94,21 +98,17 @@ export default function OfficialNews({
               )}
 
               <span className="onw-body">
-                <span className="onw-n" aria-hidden data-rise>
+                <span className="onw-n" aria-hidden>
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span data-rise>
+                <span>
                   <Meta story={story} />
                 </span>
-                <span className="onw-t" data-rise>
-                  {story.title}
-                </span>
+                <span className="onw-t">{story.title}</span>
                 {story.summary && (
-                  <span className="onw-s" data-rise>
-                    {story.summary}
-                  </span>
+                  <span className="onw-s">{story.summary}</span>
                 )}
-                <span className="onw-go" aria-hidden data-rise>
+                <span className="onw-go" aria-hidden>
                   {story.external ? `Read at ${story.source}` : "Read the story"}
                   <i>→</i>
                 </span>

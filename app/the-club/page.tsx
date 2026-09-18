@@ -148,7 +148,7 @@ export default function TheClubPage() {
           </span>
 
           <div className="cl-mf-head">
-            <p className="hp-index hp-index-dark hp-index-bare" data-rise>
+            <p className="hp-index hp-index-dark hp-index-bare">
               <span>Identity</span>
             </p>
             <h2 className="cl-mf-h">
@@ -185,7 +185,7 @@ export default function TheClubPage() {
       {/* 03 — THE BUILD. See components/club/ClubBuild.tsx. */}
       <Section surface="paper" className="cl-build-sec">
         <div className="cm-track cl-build-head">
-          <p className="hp-index hp-index-bare" data-rise>
+          <p className="hp-index hp-index-bare">
             <span>How the team was built</span>
           </p>
           <h2 className="cl-build-h">
@@ -223,7 +223,7 @@ export default function TheClubPage() {
             </span>
           </h2>
 
-          <ul className="cl-end-next" data-rise>
+          <ul className="cl-end-next">
             <li>
               <Link href="/players">
                 <span className="cl-end-k">Season 2026 · the roster</span>

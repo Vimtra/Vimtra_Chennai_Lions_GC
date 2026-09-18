@@ -7,7 +7,6 @@ import {
   registerGsap,
   reduced,
   EASE,
-  parallax,
   revealImageOnScroll,
 } from "@/components/motion/gsap";
 
@@ -35,7 +34,7 @@ import {
  * moment is a film frame — but not the same frame twice:
  *
  *   01 MORNING   THE WIDE SHOT. An edge-to-edge photograph at near full
- *                viewport height, the site's own `.cm-full` idiom: parallax
+ *                viewport height, the site's own `.cm-full` idiom: generous
  *                headroom, a bottom-weighted veil, grain, and the title card
  *                set INSIDE the frame on the lower-left over the grass —
  *                never over the player or the guests, who sit in the upper
@@ -52,10 +51,13 @@ import {
  *
  * MOTION. Through the shared primitives, all of which are no-ops under
  * prefers-reduced-motion. The wide shot opens as a slow settle
- * (scale 1.06 → 1) and carries a 4% parallax; the still wipes open with the
- * site's clip-path reveal. Each moment has its own trigger — they sit a
- * screen apart, and one shared timeline would have played the evening while
- * it was still below the fold.
+ * (scale 1.06 → 1); the still wipes open with the site's clip-path reveal.
+ * Each moment has its own trigger — they sit a screen apart, and one shared
+ * timeline would have played the evening while it was still below the fold.
+ *
+ * TWO REVEALS, NOT FIVE. The chapter head used to rise ahead of them and the
+ * wide shot used to drift on a scrub for as long as it was on screen. Both
+ * are gone: the photographs arriving IS the section arriving.
  */
 
 export interface DenMoment {
@@ -87,19 +89,10 @@ export default function DayInTheDen({
     if (!el) return;
 
     const ctx = gsap.context(() => {
-      // Chapter head.
-      gsap.fromTo(
-        el.querySelectorAll("[data-den='head']"),
-        { opacity: 0, y: 22 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: EASE,
-          stagger: 0.08,
-          scrollTrigger: { trigger: el, start: "top 76%", once: true },
-        }
-      );
+      // NO CHAPTER-HEAD REVEAL. The essay's two photographs already announce
+      // this section as they open, and the rail, title and date sat above
+      // them doing the same thing a beat earlier — three reveals to arrive at
+      // one section. The head is simply there; the pictures are the entrance.
 
       // 01 — the wide shot: a slow settle, then the title card.
       const wide = el.querySelector("[data-den='wide']");
@@ -122,8 +115,10 @@ export default function DayInTheDen({
           { opacity: 1, y: 0, duration: 0.7, ease: EASE, stagger: 0.09 },
           0.25
         );
-        const media = wide.querySelector("[data-den='media']");
-        if (media) parallax(media, wide, 4);
+        // The wide shot no longer parallaxes. A scrub-linked drift is not a
+        // reveal — it runs the whole time the picture is on screen, which is
+        // the continuous motion this pass is trimming. The 1.06 settle above
+        // gives the photograph its arrival and then lets it be still.
       }
 
       // 02 — the still: wipes open, then its caption.

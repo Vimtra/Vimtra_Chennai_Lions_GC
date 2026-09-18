@@ -180,27 +180,27 @@ export default async function FixturesPage() {
             </div>
 
             <div className="ss-next-body">
-              <p className={`ss-status ${statusOf(featured).cls}`} data-rise>
+              <p className={`ss-status ${statusOf(featured).cls}`}>
                 <span className="ss-dot" aria-hidden />
                 {featured.leg ?? statusOf(featured).label}
               </p>
               <h2 className="ss-next-name" data-rise>
                 {featured.name}
               </h2>
-              <p className="ss-venue" data-rise>
+              <p className="ss-venue">
                 {venueOf(featured)}
               </p>
               {featured.presentedBy && (
-                <span className="ss-presented" data-rise>
+                <span className="ss-presented">
                   Presented by {featured.presentedBy}
                 </span>
               )}
               {featured.note && (
-                <p className="ss-venue" data-rise>
+                <p className="ss-venue">
                   {featured.note}
                 </p>
               )}
-              <p className="hp-mt-md" data-rise>
+              <p className="hp-mt-md">
                 <Link href="/scores" className="hp-btn hp-btn-text">
                   Live scoring
                   <span className="hp-arrow" aria-hidden>
@@ -216,7 +216,7 @@ export default async function FixturesPage() {
       {/* The calendar as a timeline, grouped by month. */}
       <Section surface="paper">
         <div>
-          <p className="hp-index hp-index-bare" data-rise>
+          <p className="hp-index hp-index-bare">
             <span>The calendar</span>
           </p>
           <SectionTitle lines={["THE SEASON", "IN ORDER."]} />
@@ -231,7 +231,7 @@ export default async function FixturesPage() {
           ) : (
             groups.map((g) => (
               <div className="cm-track ss-group" key={g.key}>
-                <div className="ss-group-label" data-rise>
+                <div className="ss-group-label">
                   <span className="ss-month">{g.month}</span>
                   <span className="ss-month-year">{g.year}</span>
                 </div>
@@ -240,7 +240,7 @@ export default async function FixturesPage() {
                     {g.rows.map((f) => {
                       const s = statusOf(f);
                       return (
-                        <li className="ss-row" key={f.id} data-rise>
+                        <li className="ss-row" key={f.id}>
                           <span>
                             <span className="ss-row-day">{fixtureDay(f)}</span>
                             <span className="ss-row-mon">{fixtureMon(f)}</span>
@@ -299,7 +299,7 @@ export default async function FixturesPage() {
             TEN <em>franchises</em>.
           </h2>
 
-          <div className="ss-scale-track" data-rise>
+          <div className="ss-scale-track">
             <p className="ss-scale-k">
               The season card
               <span>
@@ -334,7 +334,7 @@ export default async function FixturesPage() {
             </dl>
           </div>
 
-          <div className="ss-scale-field" data-rise>
+          <div className="ss-scale-field">
             <p className="ss-scale-k">
               The league
               <span>Chennai is one of ten</span>

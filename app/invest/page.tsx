@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import FullBleedStatement from "@/components/site/FullBleedStatement";
-import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
+import { Section, SectionTitle } from "@/components/site/Section";
 import ThreePillars, { type Pillar } from "@/components/invest/ThreePillars";
 
 export const metadata: Metadata = {
@@ -176,18 +176,20 @@ export default function InvestPage() {
           the three documented figures as a ruled field — not a card row. */}
       <Section surface="ivory">
         <div className="cm-track iv-thesis">
-          <IndexLabel n="01">The Thesis</IndexLabel>
+          <p className="hp-index" data-rise>
+            01 <span>The Thesis</span>
+          </p>
           <h2 className="cm-display iv-thesis-h" data-rise>
             A FIRST-MOVER <em>window</em>.
           </h2>
-          <div className="iv-thesis-b" data-rise>
+          <div className="iv-thesis-b">
             <p>
               The IGPL launched in 2025. The Vimtra Chennai Lions begin their
               inaugural franchise season in 2026, with ten franchises and a
               fifteen-event calendar across India and international venues.
             </p>
           </div>
-          <dl className="iv-market" data-rise>
+          <dl className="iv-market">
             {MARKET.map((m) => (
               <div key={m.l}>
                 <dt>{m.v}</dt>
@@ -229,18 +231,20 @@ export default function InvestPage() {
           document, not just drawn. */}
       <Section surface="paper" className="iv-chain-sec">
         <div className="cm-track iv-chain">
-          <IndexLabel n="02">The Franchise</IndexLabel>
+          <p className="hp-index">
+            02 <span>The Franchise</span>
+          </p>
 
           <div className="iv-chain-h">
-            <h2 className="cm-display" data-rise>
+            <h2 className="cm-display">
               PARENT. PLATFORM. <em>franchise</em>.
             </h2>
-            <p className="iv-chain-lede" data-rise>
+            <p className="iv-chain-lede">
               Each holds the next. Read it from the outside in.
             </p>
           </div>
 
-          <div className="iv-chain-d" data-rise>
+          <div className="iv-chain-d">
             {(function nest(level: number): React.ReactNode {
               const s = STRUCTURE[level];
               if (!s) return null;
@@ -284,10 +288,12 @@ export default function InvestPage() {
           it. */}
       <Section surface="ivory" className="iv-pillar-sec">
         <div className="cm-track iv-pillars">
-          <IndexLabel n="03">The Three Pillars</IndexLabel>
+          <p className="hp-index">
+            03 <span>The Three Pillars</span>
+          </p>
 
           <div className="iv-pillars-h">
-            <h2 className="cm-display" data-rise>
+            <h2 className="cm-display">
               WHERE THE VALUE IS <em>said to sit</em>.
             </h2>
           </div>
@@ -302,15 +308,15 @@ export default function InvestPage() {
       <Section surface="ink">
         <div className="cm-track iv-why">
           <div className="iv-why-rail">
-            <IndexLabel n="04" tone="dark">
-              Why This Opportunity
-            </IndexLabel>
+            <p className="hp-index hp-index-dark">
+              04 <span>Why This Opportunity</span>
+            </p>
             <SectionTitle lines={["THE CASE,", "AS WRITTEN."]} />
           </div>
 
           <ol className="iv-reasons">
             {REASONS.map((r) => (
-              <li key={r.k} data-rise>
+              <li key={r.k}>
                 <span className="iv-reason-n">{r.k}</span>
                 <h3 className="iv-reason-t">{r.t}</h3>
                 <p className="iv-reason-d">{r.d}</p>
@@ -318,12 +324,12 @@ export default function InvestPage() {
             ))}
           </ol>
 
-          <p className="iv-welcome-k" data-rise>
+          <p className="iv-welcome-k">
             Who we welcome
           </p>
           <ul className="iv-welcome">
             {WELCOME.map((w) => (
-              <li key={w.label} data-rise>
+              <li key={w.label}>
                 <h3>{w.label}</h3>
                 <p>{w.body}</p>
               </li>
@@ -337,11 +343,13 @@ export default function InvestPage() {
           the firm page. No founder bios, no six-vertical index. */}
       <Section surface="ivory">
         <div className="cm-track iv-owner">
-          <IndexLabel n="05">Vimtra Ventures</IndexLabel>
+          <p className="hp-index" data-rise>
+            05 <span>Vimtra Ventures</span>
+          </p>
           <h2 className="cm-display iv-owner-h" data-rise>
             THE FIRM BEHIND THE <em>franchise</em>.
           </h2>
-          <div className="iv-owner-b" data-rise>
+          <div className="iv-owner-b">
             <p>
               Alongside the Chennai Lions, Vimtra holds an ownership position
               in the <strong>Dallas Sidekicks</strong> — the second franchise
@@ -363,13 +371,13 @@ export default function InvestPage() {
           published on /contact. No embedded lead form. */}
       <Section surface="ink" size="tight" className="hp-sec-atmos">
         <div className="cm-track iv-enquire">
-          <IndexLabel n="06" tone="dark">
-            Enquiries
-          </IndexLabel>
+          <p className="hp-index hp-index-dark">
+            06 <span>Enquiries</span>
+          </p>
           <div className="iv-enquire-h">
             <SectionTitle lines={["OPEN THE", "CONVERSATION."]} />
           </div>
-          <div className="iv-enquire-b" data-rise>
+          <div className="iv-enquire-b">
             <p>
               Partnerships, sponsorship, and golf-development enquiries go
               through the franchise desk.
