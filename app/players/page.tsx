@@ -31,10 +31,9 @@ export const metadata: Metadata = {
    actually supplies them. Nothing is behind a click: the page is read by
    scrolling it, not by selecting a player.
 
-   NO HERO PHOTOGRAPH: this page's subject is four real, photographed
-   players, and their portraits begin immediately below the hero. A stock
-   golfer above them would be a stand-in for the very thing the page is
-   about. The hero keeps the brand ground and runs compact instead.
+  HERO PHOTOGRAPH: the shared story treatment uses the approved
+  below-the-head golfer frame from public/assets/photo/ as an atmospheric
+  lead, while the named player portraits remain the source of truth below.
 --------------------------------------------------------------------------- */
 
 export default function PlayersPage() {
@@ -52,6 +51,9 @@ export default function PlayersPage() {
         title={["PLAYERS"]}
         // Brochure p. 06, verbatim.
         line="Four names. One team sheet."
+        image="/assets/photo/club-01-marquee-swing.jpg"
+        imageAlt="Golfer mid-swing, cropped below the head"
+        imagePosition="50% 42%"
       />
 
       <PlayerExperience players={FEATURES} />
