@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
+import { Section, SectionTitle } from "@/components/site/Section";
 import type { NewsEntry } from "@/lib/news-desk";
 
 /**
@@ -65,7 +65,9 @@ export default function OfficialNews({
   return (
     <Section surface="ivory" className="onw-sec" aria-labelledby="onw-title">
       <div className="onw-head">
-        <IndexLabel n="01">Official</IndexLabel>
+        <p className="hp-index hp-index-bare" data-rise>
+          <span>Official</span>
+        </p>
         <SectionTitle id="onw-title" lines={["OFFICIAL", "NEWS."]} />
       </div>
 

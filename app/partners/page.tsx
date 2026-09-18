@@ -162,8 +162,8 @@ export default function PartnersPage() {
         <div className="hp-wrap">
           <div className="nw-head">
             <div>
-              <p className="hp-index">
-                01 <span>On the record</span>
+              <p className="hp-index hp-index-bare">
+                <span>On the record</span>
               </p>
               <h2 id="pt-a" className="nw-h">
                 Who&rsquo;s already in.
@@ -210,8 +210,8 @@ export default function PartnersPage() {
         <div className="hp-wrap">
           <div className="nw-head">
             <div>
-              <p className="hp-index hp-index-dark">
-                02 <span>What it carries</span>
+              <p className="hp-index hp-index-dark hp-index-bare">
+                <span>What it carries</span>
               </p>
               <h2 id="pt-b" className="nw-h">
                 Four surfaces.
@@ -267,8 +267,8 @@ export default function PartnersPage() {
         <div className="hp-wrap">
           <div className="nw-head">
             <div>
-              <p className="hp-index hp-index-dark">
-                03 <span>Commercial tiers</span>
+              <p className="hp-index hp-index-dark hp-index-bare">
+                <span>Commercial tiers</span>
               </p>
               <h2 id="pt-c" className="nw-h">
                 Four ways to partner.

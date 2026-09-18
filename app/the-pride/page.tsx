@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import FullBleedStatement from "@/components/site/FullBleedStatement";
-import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
+import { Section, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/the-pride" },
@@ -59,7 +59,9 @@ export default function ThePridePage() {
           alt text describes the scene and does not assert a location. */}
       <Section surface="ivory" className="pr-city-sec">
         <div className="cm-track pr-city">
-          <IndexLabel n="01">The City</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>The City</span>
+          </p>
 
           <figure className="pr-city-col">
             <Image
@@ -141,7 +143,9 @@ export default function ThePridePage() {
           as an attributed statement rather than a fifth headline. */}
       <Section surface="ink" className="hp-sec-atmos">
         <div className="cm-track pr-values">
-          <IndexLabel n="02" tone="dark">Values</IndexLabel>
+          <p className="hp-index hp-index-dark hp-index-bare" data-rise>
+            <span>Values</span>
+          </p>
 
           <div className="pr-values-head">
             <SectionTitle lines={["THE FOUR", "PILLARS."]} className="pr-values-h" />

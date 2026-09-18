@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import ClubBuild, { type Take } from "@/components/club/ClubBuild";
-import { Section, IndexLabel } from "@/components/site/Section";
+import { Section } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/the-club" },
@@ -148,9 +148,9 @@ export default function TheClubPage() {
           </span>
 
           <div className="cl-mf-head">
-            <IndexLabel n="02" tone="dark">
-              Identity
-            </IndexLabel>
+            <p className="hp-index hp-index-dark hp-index-bare" data-rise>
+              <span>Identity</span>
+            </p>
             <h2 className="cl-mf-h">
               <span className="mq-line" data-line>
                 <span>A FRANCHISE</span>
@@ -185,7 +185,9 @@ export default function TheClubPage() {
       {/* 03 — THE BUILD. See components/club/ClubBuild.tsx. */}
       <Section surface="paper" className="cl-build-sec">
         <div className="cm-track cl-build-head">
-          <IndexLabel n="03">How the team was built</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>How the team was built</span>
+          </p>
           <h2 className="cl-build-h">
             <span className="mq-line" data-line>
               <span>FOUR NAMES.</span>

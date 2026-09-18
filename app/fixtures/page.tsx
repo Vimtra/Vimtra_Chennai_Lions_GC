@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
-import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
+import { Section, SectionTitle } from "@/components/site/Section";
 import { listFixtures } from "@/lib/fixtures";
 import { formatFixtureDate, fixtureDay, fixtureMon } from "@/lib/fixtures-format";
 import type { Fixture } from "@prisma/client";
@@ -164,9 +164,11 @@ export default async function FixturesPage() {
       {featured && (
         <Section surface="ivory">
           <div className="cm-track ss-next">
-            <IndexLabel n="01">
-              {featured.status === "LIVE" ? "In play" : "Next tournament"}
-            </IndexLabel>
+            <p className="hp-index hp-index-bare" data-rise>
+              <span>
+                {featured.status === "LIVE" ? "In play" : "Next tournament"}
+              </span>
+            </p>
 
             <div className="ss-next-date">
               <span className="ss-date">
@@ -214,7 +216,9 @@ export default async function FixturesPage() {
       {/* The calendar as a timeline, grouped by month. */}
       <Section surface="paper">
         <div>
-          <IndexLabel n={featured ? "02" : "01"}>The calendar</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>The calendar</span>
+          </p>
           <SectionTitle lines={["THE SEASON", "IN ORDER."]} />
         </div>
 
@@ -285,9 +289,9 @@ export default async function FixturesPage() {
           picture. */}
       <Section surface="ink" className="hp-sec-atmos ss-scale-sec">
         <div className="cm-track ss-scale">
-          <IndexLabel n={featured ? "03" : "02"} tone="dark">
-            Season scale
-          </IndexLabel>
+          <p className="hp-index hp-index-dark hp-index-bare" data-rise>
+            <span>Season scale</span>
+          </p>
 
           <h2 className="cm-display ss-scale-h" data-rise>
             FIFTEEN EVENTS.

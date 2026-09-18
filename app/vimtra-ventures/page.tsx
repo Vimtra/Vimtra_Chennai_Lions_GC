@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import VimtraHero from "@/components/site/VimtraHero";
 import LeadershipComposition from "@/components/vv/LeadershipComposition";
-import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
+import { Section, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/vimtra-ventures" },
@@ -200,7 +200,9 @@ export default function VimtraVenturesPage() {
       {/* 01 — THE FIRM, with the credentials folded in. */}
       <Section surface="ivory">
         <div className="cm-track vv-firm">
-          <IndexLabel n="01">The Firm</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>The Firm</span>
+          </p>
 
           <div className="vv-firm-h">
             <h2 className="cm-display" data-rise>
@@ -252,7 +254,9 @@ export default function VimtraVenturesPage() {
       <Section surface="paper">
         <div className="cm-track vv-verticals">
           <div className="vv-rail">
-            <IndexLabel n="02">Six Verticals</IndexLabel>
+            <p className="hp-index hp-index-bare" data-rise>
+              <span>Six Verticals</span>
+            </p>
             <SectionTitle lines={["ONE FIRM,", "SIX", "VERTICALS."]} />
             <p className="cm-lede" data-rise>
               Every area the firm operates in, on a single canvas — as
@@ -316,7 +320,9 @@ export default function VimtraVenturesPage() {
           typeset — nothing has been added to it. */}
       <Section surface="paper" className="vv-gov-sec">
         <div className="cm-track vv-gov2">
-          <IndexLabel n="04">Governance</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>Governance</span>
+          </p>
 
           <div className="vv-gov2-h">
             <SectionTitle lines={["BOARD &", "ADVISORY."]} />
@@ -354,9 +360,9 @@ export default function VimtraVenturesPage() {
       {/* 05 — SPORTS FRANCHISES */}
       <Section surface="ink">
         <div className="cm-track vv-firm">
-          <IndexLabel n="05" tone="dark">
-            Sports Franchises
-          </IndexLabel>
+          <p className="hp-index hp-index-dark hp-index-bare" data-rise>
+            <span>Sports Franchises</span>
+          </p>
 
           <div className="vv-firm-h">
             <h2 className="cm-display" data-rise>
@@ -413,7 +419,9 @@ export default function VimtraVenturesPage() {
           than that. */}
       <Section surface="paper" className="vv-road-sec">
         <div className="cm-track vv-road">
-          <IndexLabel n="06">The Roadmap</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>The Roadmap</span>
+          </p>
 
           <div className="vv-road-h">
             <SectionTitle lines={["BRINGING IT", "ALL TOGETHER."]} />

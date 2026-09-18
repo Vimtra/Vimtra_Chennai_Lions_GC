@@ -116,8 +116,8 @@ export default async function NewsPage() {
   const closing = (
     <section className="hp-sec hp-sec-ink hp-sec-tight nwr-close">
       <div className="hp-wrap">
-        <p className="hp-index hp-index-dark">
-          — <span>The record continues</span>
+        <p className="hp-index hp-index-dark hp-index-bare">
+          <span>The record continues</span>
         </p>
         <h2 className="nwr-close-t">The story continues.</h2>
         <div className="cm-track ss-links nwr-close-links">
@@ -219,8 +219,8 @@ export default async function NewsPage() {
           <div className="hp-wrap">
             <div className="nw-head">
               <div>
-                <p className="hp-index">
-                  02 <span>Media coverage</span>
+                <p className="hp-index hp-index-bare">
+                  <span>Media coverage</span>
                 </p>
                 <h2 id="nwr-coverage" className="nw-h">
                   What the press is writing.

@@ -126,8 +126,8 @@ export default function LeadershipComposition({
       <div className="hp-wrap">
         <div className="vvl-grid">
           <header className="vvl-head">
-            <p className="hp-index vvl-label" data-vvl="label">
-              03 <span>Leadership</span>
+            <p className="hp-index hp-index-bare vvl-label" data-vvl="label">
+              <span>Leadership</span>
             </p>
             <h2 className="vvl-title" id="vvl-title" data-vvl="heading">
               <span>THE PEOPLE</span>

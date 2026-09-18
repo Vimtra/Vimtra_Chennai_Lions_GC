@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import FullBleedStatement from "@/components/site/FullBleedStatement";
-import { Section, IndexLabel, SectionTitle } from "@/components/site/Section";
+import { Section, SectionTitle } from "@/components/site/Section";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/golf-development" },
@@ -233,7 +233,9 @@ export default function GolfDevelopmentPage() {
           aerial that /invest was also using. */}
       <Section surface="ivory" className="gdf-sec">
         <div className="cm-track gdf">
-          <IndexLabel n="01">The Framework</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>The Framework</span>
+          </p>
 
           <figure className="gdf-plate">
             <span className="gdf-plate-frame">
@@ -297,7 +299,9 @@ export default function GolfDevelopmentPage() {
           above. */}
       <Section surface="paper" className="gdp-sec">
         <div className="cm-track gdp">
-          <IndexLabel n="02">The Partnership · PGA of America</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>The Partnership · PGA of America</span>
+          </p>
 
           <div className="gdp-head">
             <h2 className="cm-display gdp-h" data-rise>
@@ -366,9 +370,9 @@ export default function GolfDevelopmentPage() {
       <Section surface="ink" className="gdm-sec hp-sec-atmos">
         <div className="gdm-layout">
           <header className="gdm-intro">
-            <IndexLabel n="03" tone="dark">
-              The Plan
-            </IndexLabel>
+            <p className="hp-index hp-index-dark hp-index-bare" data-rise>
+              <span>The Plan</span>
+            </p>
             <h2 className="cm-display gdm-h" data-rise>
               FIVE MOVES TO GROW THE <em>game</em>.
             </h2>
@@ -444,7 +448,9 @@ export default function GolfDevelopmentPage() {
           </div>
 
           <div className="gd-perf-t">
-            <IndexLabel n="05">High Performance</IndexLabel>
+            <p className="hp-index hp-index-bare" data-rise>
+              <span>High Performance</span>
+            </p>
             <SectionTitle lines={["TALENT,", "PATHWAYS,", "ECOSYSTEM."]} />
             <ul className="gd-pillars">
               {HIGH_PERFORMANCE.map((h) => (
@@ -461,7 +467,9 @@ export default function GolfDevelopmentPage() {
       {/* 04 — INITIATIVES. See the note at the top of this file. */}
       <Section surface="ivory">
         <div className="cm-track gd-framework">
-          <IndexLabel n="06">Initiatives</IndexLabel>
+          <p className="hp-index hp-index-bare" data-rise>
+            <span>Initiatives</span>
+          </p>
 
           <div className="gd-framework-h">
             <h2 className="cm-display" data-rise>

@@ -2196,6 +2196,22 @@ a:hover .hp-arrow {
 .hp-index-light span {
   color: var(--hp-muted-dark);
 }
+/* CHAPTER DEVICE WITHOUT THE CHAPTER NUMBER.
+   The stack -- number, gold rule, tracked caps label, display heading --
+   opened almost every section on almost every editorial page, and it was
+   decorative rather than structural: /golf-development ran 01 02 03 05 06
+   with no 04 anywhere on the page, and /the-club opened at 02 with no 01, so
+   the numbers did not even count. Pages that keep a real reading order keep
+   their numbers -- /invest runs a complete 01-06 case and the home page
+   keeps its own signature devices. Everywhere else the head is the label
+   and the heading, and the lead rule goes with the number: the label is
+   already set in tracked caps against a display line, which is contrast
+   enough without a mark in front of it.
+
+   This is a MODIFIER, not a replacement. The element keeps `hp-index`, so
+   the ~20 page-scoped grid placements written as `.xx > .hp-index` still
+   match, and `hp-index-dark` still carries the ink-ground colour. */
+.hp-index-bare span::before { display: none; }
 
 /* Type ------------------------------------------------------- */
 .hp-section-title {
@@ -5136,6 +5152,15 @@ a:hover .hp-arrow {
 .ft-top {
   grid-template-columns: minmax(0, 1fr);
   gap: var(--sp-5);
+  /* ONE LEFT EDGE FOR THE WHOLE FOOTER. .ft already carries the page inset,
+     and .ft-grid and .ft-bottom both zero their side padding through their
+     "padding: N 0 N" shorthands. .ft-top was the only row that also kept
+     .hp-wrap's own 20/40/64/80px gutter on top of that, so the kicker and
+     the brand lockup stood a full gutter to the right of "The Club" and the
+     copyright line beneath them. Zeroed here, so all three rows and the
+     dividing rules start on the same line. */
+  padding-left: 0;
+  padding-right: 0;
   padding-bottom: clamp(24px, 3.5vw, 44px);
   border-bottom-color: rgba(245, 239, 228, 0.14);
 }
