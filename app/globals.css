@@ -13847,9 +13847,13 @@ a:hover .hp-arrow {
 }
 .ivp-content { min-width: 0; }
 .ivp-t {
-  font-size: clamp(28px, 3.2vw, 48px);
+  font-size: clamp(20px, 3.2vw, 48px);
   line-height: 0.98;
+  white-space: nowrap;
 }
+.ivp-t .mq-line { display: inline; overflow: visible; padding: 0; margin: 0; }
+.ivp-t .mq-line + .mq-line { margin-left: 0.22em; }
+.ivp-t .mq-line > span { display: inline; white-space: nowrap; }
 .ivp-d {
   max-width: 64ch;
   margin-top: var(--sp-3);
