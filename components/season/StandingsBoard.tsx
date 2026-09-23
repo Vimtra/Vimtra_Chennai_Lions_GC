@@ -8,7 +8,7 @@ import type { StandingRow } from "@/lib/standings";
  * so they read as one championship system, but each is presented on its own
  * terms:
  *
- *   team   franchise name, POINTS as the figure, form as meta
+ *   team   franchise name, round scores and total score in a compact table
  *   player player name over their franchise, POINTS as the figure
  *   order  player name, EARNINGS as the figure, set in rupees
  *
@@ -40,10 +40,10 @@ export const BOARD_DEFS: Record<BoardKey, BoardDef> = {
   team: {
     n: "01",
     name: "Franchise Table",
-    ranks: "Every franchise in the league, by season points.",
+    ranks: "Every franchise in the league, by round score.",
     missing: "No franchise has been ranked yet.",
-    cols: ["Position", "Franchise", "Events", "Points", "Best finish", "Average score"],
-    figureLabel: "Points",
+    cols: ["Rank", "Franchise", "R1", "R2", "R3", "R4"],
+    figureLabel: "Score",
   },
   player: {
     n: "02",
@@ -103,22 +103,48 @@ function Meta({ items }: { items: { k: string; v: string | null }[] }) {
   );
 }
 
+function TeamTable({ rows }: { rows: StandingRow[] }) {
+  return (
+    <div className="tb-team-table-scroll">
+      <table className="tb-team-table">
+        <thead>
+          <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">Franchise</th>
+            <th scope="col">R1</th>
+            <th scope="col">R2</th>
+            <th scope="col">R3</th>
+            <th scope="col">R4</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.id} className={`${r.rank === 1 ? "is-lead " : ""}${isLions(r) ? "is-lions" : ""}`}>
+              <th scope="row">{r.rank}</th>
+              <td className="tb-team-table-name">{r.name}</td>
+              <td>{text(r.extra.r1) ?? "—"}</td>
+              <td>{text(r.extra.r2) ?? "—"}</td>
+              <td>{text(r.extra.r3) ?? "—"}</td>
+              <td>{text(r.extra.r4) ?? "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function Rows({ board, rows }: { board: BoardKey; rows: StandingRow[] }) {
+  if (board === "team") return <TeamTable rows={rows} />;
+
   return (
     <ol className="tb-ranks">
       {rows.map((r) => {
         const lead = r.rank === 1;
-        const figure =
-          board === "order" ? money(r.extra.earnings) : text(r.points);
+        const figure = board === "order" ? money(r.extra.earnings) : text(r.points);
 
         const meta =
-          board === "team"
-            ? [
-                { k: "Events", v: text(r.extra.events) },
-                { k: "Best finish", v: text(r.extra.bestFinish) },
-                { k: "Avg score", v: text(r.extra.avgScore) },
-              ]
-            : board === "player"
+          board === "player"
             ? [
                 { k: "Wins", v: text(r.extra.wins) },
                 { k: "Top 10s", v: text(r.extra.top10) },

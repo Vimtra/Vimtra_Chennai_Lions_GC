@@ -67,44 +67,71 @@ export default function StandingRowForm({
       <input type="hidden" name="seasonYear" value={seasonYear} />
       <input type="hidden" name="board" value={board} />
       <fieldset className="adm-fieldset" disabled={pending} style={{ gap: 10 }}>
-        <div className="adm-row adm-row-4">
-          <div className="adm-field">
-            <label className="adm-label" htmlFor={`${uid}-rank`}>
-              Rank
-            </label>
-            <input id={`${uid}-rank`} name="rank" type="number" min={1} required defaultValue={row?.rank ?? ""} placeholder="1" inputMode="numeric" aria-invalid={invalid("rank")} />
+        {board === "TEAM" ? (
+          <div className="adm-standing-team-scroll">
+            <div className="adm-row adm-row-team">
+              <div className="adm-field">
+                <label className="adm-label" htmlFor={`${uid}-rank`}>
+                  Rank
+                </label>
+                <input id={`${uid}-rank`} name="rank" type="number" min={1} required defaultValue={row?.rank ?? ""} placeholder="1" inputMode="numeric" aria-invalid={invalid("rank")} />
+              </div>
+              <div className="adm-field">
+                <label className="adm-label" htmlFor={`${uid}-name`}>
+                  Franchise
+                </label>
+                <input id={`${uid}-name`} name="name" required maxLength={80} defaultValue={row?.name ?? ""} placeholder="Vimtra Chennai Lions GC" aria-invalid={invalid("name")} />
+              </div>
+              {extraFields.map((f) => (
+                <div key={f.key} className="adm-field">
+                  <label className="adm-label" htmlFor={`${uid}-${f.key}`}>
+                    {f.label}
+                  </label>
+                  <input id={`${uid}-${f.key}`} name={f.key} maxLength={40} defaultValue={(row?.extra[f.key] as string | undefined) ?? ""} placeholder={f.placeholder} />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="adm-field" style={{ gridColumn: "span 2" }}>
-            <label className="adm-label" htmlFor={`${uid}-name`}>
-              {board === "TEAM" ? "Franchise" : "Player"}
-            </label>
-            <input id={`${uid}-name`} name="name" required maxLength={80} defaultValue={row?.name ?? ""} placeholder={board === "TEAM" ? "Vimtra Chennai Lions GC" : "Player name"} aria-invalid={invalid("name")} />
+        ) : (
+          <div className="adm-row adm-row-4">
+            <div className="adm-field">
+              <label className="adm-label" htmlFor={`${uid}-rank`}>
+                Rank
+              </label>
+              <input id={`${uid}-rank`} name="rank" type="number" min={1} required defaultValue={row?.rank ?? ""} placeholder="1" inputMode="numeric" aria-invalid={invalid("rank")} />
+            </div>
+            <div className="adm-field" style={{ gridColumn: "span 2" }}>
+              <label className="adm-label" htmlFor={`${uid}-name`}>
+                Player
+              </label>
+              <input id={`${uid}-name`} name="name" required maxLength={80} defaultValue={row?.name ?? ""} placeholder="Player name" aria-invalid={invalid("name")} />
+            </div>
+            <div className="adm-field">
+              <label className="adm-label" htmlFor={`${uid}-points`}>
+                Points <span className="adm-opt">optional</span>
+              </label>
+              <input id={`${uid}-points`} name="points" type="number" defaultValue={row?.points ?? ""} placeholder="—" inputMode="numeric" />
+            </div>
           </div>
-          <div className="adm-field">
-            <label className="adm-label" htmlFor={`${uid}-points`}>
-              Points <span className="adm-opt">optional</span>
-            </label>
-            <input id={`${uid}-points`} name="points" type="number" defaultValue={row?.points ?? ""} placeholder="—" inputMode="numeric" />
-          </div>
-        </div>
-        <div className="adm-row adm-row-4">
-          {board !== "TEAM" && (
+        )}
+        {board !== "TEAM" && (
+          <div className="adm-row adm-row-4">
             <div className="adm-field" style={{ gridColumn: "span 2" }}>
               <label className="adm-label" htmlFor={`${uid}-team`}>
                 Franchise <span className="adm-opt">optional</span>
               </label>
               <input id={`${uid}-team`} name="teamName" maxLength={80} defaultValue={row?.teamName ?? ""} placeholder="Vimtra Chennai Lions" />
             </div>
-          )}
-          {extraFields.map((f) => (
-            <div key={f.key} className="adm-field">
-              <label className="adm-label" htmlFor={`${uid}-${f.key}`}>
-                {f.label}
-              </label>
-              <input id={`${uid}-${f.key}`} name={f.key} maxLength={40} defaultValue={(row?.extra[f.key] as string | undefined) ?? ""} placeholder={f.placeholder} />
-            </div>
-          ))}
-        </div>
+            {extraFields.map((f) => (
+              <div key={f.key} className="adm-field">
+                <label className="adm-label" htmlFor={`${uid}-${f.key}`}>
+                  {f.label}
+                </label>
+                <input id={`${uid}-${f.key}`} name={f.key} maxLength={40} defaultValue={(row?.extra[f.key] as string | undefined) ?? ""} placeholder={f.placeholder} />
+              </div>
+            ))}
+          </div>
+        )}
         {error && (
           <div className="adm-alert" data-tone="danger" role="alert">
             <span>{error.message}</span>

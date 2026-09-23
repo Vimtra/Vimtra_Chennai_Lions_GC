@@ -8027,10 +8027,18 @@ a:hover .hp-arrow {
 }
 
 /* ---- Leaderboard -------------------------------------------- */
-.tb-lb-wrap { margin: 0 0 var(--sp-9); }
+.tb-lb-wrap {
+  margin: 0 0 var(--sp-9);
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
 .tb-lb {
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
+  table-layout: fixed;
   font-variant-numeric: tabular-nums;
 }
 .tb-lb-cap {
@@ -8045,7 +8053,7 @@ a:hover .hp-arrow {
   color: var(--v-gold);
 }
 .tb-lb thead th {
-  padding: 0 var(--sp-4) var(--sp-3) 0;
+  padding: 0 var(--sp-3) var(--sp-3) 0;
   text-align: right;
   border-bottom: 1px solid var(--v-gold);
   font-family: var(--font-manrope), sans-serif;
@@ -8061,7 +8069,7 @@ a:hover .hp-arrow {
 .tb-lb thead th:last-child { padding-right: 0; }
 .tb-lb tbody td,
 .tb-lb tbody th {
-  padding: var(--sp-5) var(--sp-4) var(--sp-5) 0;
+  padding: 13px var(--sp-3) 13px 0;
   border-bottom: 1px solid var(--v-hair-ink);
   text-align: right;
   font-family: var(--font-manrope), sans-serif;
@@ -8073,7 +8081,7 @@ a:hover .hp-arrow {
 .tb-lb tbody td:last-child { padding-right: 0; }
 .tb-lb-pos {
   text-align: left !important;
-  width: 1%;
+  width: 9%;
   white-space: nowrap;
   font-family: var(--font-sora), sans-serif !important;
   font-weight: 800 !important;
@@ -8082,6 +8090,7 @@ a:hover .hp-arrow {
   color: var(--v-gold) !important;
 }
 .tb-lb-who {
+  width: 34%;
   text-align: left !important;
   font-family: var(--font-sora), sans-serif !important;
   font-weight: 700 !important;
@@ -8107,75 +8116,11 @@ a:hover .hp-arrow {
 .tb-lb tbody tr.is-lions .tb-lb-pos { color: var(--v-gold-lit) !important; }
 
 @media (max-width: 767px) {
-  /* Not a stacked desktop table: each player becomes a broadcast
-     block — identity on one line, the figure that matters opening
-     the second, the round strip closing it. Roles are declared in
-     the markup so overriding `display` cannot cost the semantics. */
-  .tb-lb thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  .tb-lb,
-  .tb-lb tbody { display: block; }
-  /* A `table-caption` with no table to size against collapses to the width
-     of the first column — 67px here, wrapping the line to seven rows. */
-  .tb-lb-cap { display: block; }
-  .tb-lb tbody tr {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: var(--sp-4);
-    row-gap: var(--sp-5);
-    padding: var(--sp-5) 0;
-    border-bottom: 1px solid var(--v-hair-ink);
-  }
+  .tb-lb-wrap { margin-right: calc(var(--sp-4) * -1); }
+  .tb-lb thead th { padding-bottom: 10px; }
   .tb-lb tbody td,
-  .tb-lb tbody th {
-    display: block;
-    padding: 0;
-    border: 0;
-    text-align: left;
-  }
-  .tb-lb tbody td::before {
-    content: attr(data-l);
-    display: block;
-    margin-bottom: 3px;
-    font-family: var(--font-manrope), sans-serif;
-    font-weight: 700;
-    font-size: 9.5px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--v-gold);
-  }
-  .tb-lb-pos,
-  .tb-lb-who { grid-row: 1; }
-  /* `width: 1%` is a table-layout instruction; as a grid item it collapses
-     the cell to a pixel and the position only still shows because it is
-     `nowrap` and overflows. */
-  .tb-lb-pos { grid-column: 1; align-self: center; width: auto; }
-  .tb-lb-who { grid-column: 2 / 5; align-self: center; }
-  /* Matched to `.tb-lb tbody td::before` so it actually wins: the identity
-     line carries no field labels, only the two stat rows below it do. */
-  .tb-lb tbody td.tb-lb-pos::before,
-  .tb-lb tbody th.tb-lb-who::before { content: none; }
-  .tb-lb-total { grid-row: 2; grid-column: 1; }
-  .tb-lb-today { grid-row: 2; grid-column: 2; }
-  .tb-lb tbody td[data-l="Thru"] { grid-row: 2; grid-column: 3; }
-  .tb-lb tbody td[data-l="R1"] { grid-row: 3; grid-column: 1; }
-  .tb-lb tbody td[data-l="R2"] { grid-row: 3; grid-column: 2; }
-  .tb-lb tbody td[data-l="R3"] { grid-row: 3; grid-column: 3; }
-  .tb-lb tbody td[data-l="R4"] { grid-row: 3; grid-column: 4; }
-  .tb-lb tbody tr.is-lions td,
-  .tb-lb tbody tr.is-lions th { background: none; }
-  .tb-lb tbody tr.is-lions {
-    padding-left: var(--sp-4);
-    border-left: 2px solid var(--v-red-lit);
-    background: rgba(189, 34, 39, 0.12);
-  }
+  .tb-lb tbody th { padding-top: 11px; padding-bottom: 11px; }
+  .tb-lb-who { font-size: 16px !important; }
 }
 
 /* ---- The board, unlit --------------------------------------
@@ -8498,6 +8443,67 @@ a:hover .hp-arrow {
   padding-left: var(--sp-4);
   border-left: 2px solid var(--v-red);
 }
+
+.tb-team-table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.tb-team-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--font-manrope), sans-serif;
+}
+.tb-team-table th,
+.tb-team-table td {
+  padding: var(--sp-4) var(--sp-3);
+  border-bottom: 1px solid var(--v-hair-ivory);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tb-team-table thead th {
+  color: var(--v-on-ivory);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+}
+.tb-team-table th:first-child,
+.tb-team-table td:first-child { width: 76px; text-align: left; }
+.tb-team-table th:nth-child(2),
+.tb-team-table td:nth-child(2) { width: auto; text-align: left; }
+.tb-team-table th:nth-child(n + 3),
+.tb-team-table td:nth-child(n + 3) { width: 82px; }
+.tb-team-table tbody th,
+.tb-team-table tbody td {
+  color: var(--v-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+.tb-team-table tbody th {
+  color: var(--v-red);
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+}
+.tb-team-table-name {
+  font-family: var(--font-sora), sans-serif;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+}
+.tb-team-table tbody tr.is-lead th,
+.tb-team-table tbody tr.is-lead td { border-bottom-color: var(--v-gold); }
+.tb-team-table tbody tr.is-lead .tb-team-table-name { font-size: 18px !important; }
+.tb-team-table tbody tr.is-lions { border-left: 2px solid var(--v-red); }
+.hp-sec-ink .tb-team-table,
+.hp-sec-ink .tb-team-table th,
+.hp-sec-ink .tb-team-table td { border-color: var(--v-hair-ink); }
+.hp-sec-ink .tb-team-table thead th,
+.hp-sec-ink .tb-team-table tbody td { color: var(--v-on-ink); }
+.hp-sec-ink .tb-team-table tbody th { color: var(--v-gold-lit); }
+.hp-sec-ink .tb-team-table tbody tr.is-lions { border-left-color: var(--v-red-lit); }
 
 /* ---- Awaiting verified data --------------------------------- */
 .tb-await { border-top: 1px solid var(--v-hair-ivory); padding-top: var(--sp-6); }

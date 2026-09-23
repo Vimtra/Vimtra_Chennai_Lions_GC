@@ -21,9 +21,11 @@ const BOARD_META: Record<StandingBoard, { label: string; short: string; extraFie
     label: "Franchise standings",
     short: "Team",
     extraFields: [
-      { key: "events", label: "Events", placeholder: "5" },
-      { key: "bestFinish", label: "Best finish", placeholder: "1st ×2" },
-      { key: "avgScore", label: "Avg score", placeholder: "70.1" },
+      { key: "r1", label: "R1", placeholder: "-" },
+      { key: "r2", label: "R2", placeholder: "-" },
+      { key: "r3", label: "R3", placeholder: "-" },
+      { key: "r4", label: "R4", placeholder: "-" },
+      { key: "score", label: "Score", placeholder: "-" },
     ],
   },
   PLAYER: {

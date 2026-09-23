@@ -39,9 +39,11 @@ function extractExtras(formData: FormData, board: StandingBoard): StandingExtra 
     if (v !== null) extras[k] = v;
   };
   if (board === "TEAM") {
-    push("events");
-    push("bestFinish");
-    push("avgScore");
+    push("r1");
+    push("r2");
+    push("r3");
+    push("r4");
+    push("score");
   } else if (board === "PLAYER") {
     push("top10");
     push("wins");

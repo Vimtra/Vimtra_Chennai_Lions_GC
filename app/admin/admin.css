@@ -731,10 +731,12 @@ a.adm-fact:hover { background: var(--adm-panel-2); }
   width: 100%;
 }
 .adm-row { display: grid; gap: 14px; grid-template-columns: 1fr; }
+.adm-standing-team-scroll { min-width: 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
 @media (min-width: 640px) {
   .adm-row-2 { grid-template-columns: 1fr 1fr; }
   .adm-row-3 { grid-template-columns: 1fr 1fr 1fr; }
   .adm-row-4 { grid-template-columns: repeat(4, 1fr); }
+  .adm-row-team { min-width: 760px; grid-template-columns: 64px minmax(220px, 1fr) repeat(5, 76px); }
   .adm-row-main-side { grid-template-columns: minmax(0, 1fr) 220px; }
 }
 .adm-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
