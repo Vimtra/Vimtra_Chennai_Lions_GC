@@ -293,9 +293,10 @@ export default function InvestPage() {
           </p>
 
           <div className="iv-pillars-h">
-            <h2 className="cm-display">
+            <h2 className="cm-display">THE THREE PILLARS</h2>
+            <p className="iv-pillars-lede">
               WHERE THE VALUE IS <em>said to sit</em>.
-            </h2>
+            </p>
           </div>
 
           <ThreePillars pillars={PILLARS} />

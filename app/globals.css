@@ -13805,6 +13805,75 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 
+/* ---- Compact editorial matrix -------------------------------------
+   The pillar rows are one connected field: a structural number anchors
+   the left edge and all source copy lives in the content column. */
+.iv-pillars { row-gap: var(--sp-4); }
+@media (min-width: 1024px) {
+  .iv-pillar-sec > .hp-wrap { max-width: none; }
+}
+.iv-pillars-h .cm-display {
+  max-width: none;
+  font-size: clamp(30px, 4vw, 58px) !important;
+}
+.iv-pillars-lede {
+  max-width: 34ch;
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-lead);
+  line-height: 1.35;
+  color: var(--v-on-ivory);
+}
+.iv-pillars-lede em {
+  color: var(--v-red);
+  font-style: italic;
+}
+.ivp-set {
+  margin-top: var(--sp-6);
+  gap: 0;
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.ivp-item {
+  grid-template-columns: 52px minmax(0, 1fr);
+  column-gap: var(--sp-5);
+  padding: var(--sp-5) 0;
+  border-bottom: 1px solid var(--v-hair-ivory);
+}
+.ivp-n {
+  align-self: start;
+  margin: 2px 0 0;
+  font-size: clamp(24px, 2.5vw, 34px);
+  line-height: 1;
+}
+.ivp-content { min-width: 0; }
+.ivp-t {
+  font-size: clamp(28px, 3.2vw, 48px);
+  line-height: 0.98;
+}
+.ivp-d {
+  max-width: 64ch;
+  margin-top: var(--sp-3);
+  line-height: 1.55;
+}
+.ivp-circuit {
+  margin-top: var(--sp-5);
+  gap: var(--sp-4);
+}
+.ivp-circuit > li { padding-top: var(--sp-3); }
+.ivp-c-v { margin-top: var(--sp-2); font-size: clamp(18px, 1.8vw, 24px); }
+.ivp-c-d { margin-top: var(--sp-2); line-height: 1.5; }
+@media (min-width: 700px) {
+  .ivp-item { grid-template-columns: 72px minmax(0, 1fr); column-gap: var(--sp-6); }
+  .ivp-circuit { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .ivp-item { padding: var(--sp-6) 0; }
+}
+@media (max-width: 699px) {
+  .ivp-circuit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ivp-circuit > li:nth-child(3) { grid-column: 1 / -1; }
+}
+
 
 /* ============================================================
    VERIFICATION (M6) — account panel + /verify-email landing
