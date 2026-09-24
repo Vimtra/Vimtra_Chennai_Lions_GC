@@ -7782,7 +7782,7 @@ a:hover .hp-arrow {
   padding-bottom: 0;
 }
 @media (min-width: 768px) {
-  .tb-mast.has-media { min-height: clamp(440px, 58svh, 620px); }
+  .tb-mast.has-media { min-height: 100vh; }
 }
 .tb-mast-media {
   position: absolute;
@@ -8053,7 +8053,7 @@ a:hover .hp-arrow {
   color: var(--v-gold);
 }
 .tb-lb thead th {
-  padding: 0 var(--sp-3) var(--sp-3) 0;
+  padding: 0 var(--sp-3) var(--sp-3) var(--sp-3);
   text-align: right;
   border-bottom: 1px solid var(--v-gold);
   font-family: var(--font-manrope), sans-serif;
@@ -8066,10 +8066,9 @@ a:hover .hp-arrow {
 }
 .tb-lb thead th:first-child,
 .tb-lb thead th:nth-child(2) { text-align: left; }
-.tb-lb thead th:last-child { padding-right: 0; }
 .tb-lb tbody td,
 .tb-lb tbody th {
-  padding: 13px var(--sp-3) 13px 0;
+  padding: 13px var(--sp-3) 13px var(--sp-3);
   border-bottom: 1px solid var(--v-hair-ink);
   text-align: right;
   font-family: var(--font-manrope), sans-serif;
@@ -8078,7 +8077,6 @@ a:hover .hp-arrow {
   color: var(--v-on-ink);
   vertical-align: baseline;
 }
-.tb-lb tbody td:last-child { padding-right: 0; }
 .tb-lb-pos {
   text-align: left !important;
   width: 9%;

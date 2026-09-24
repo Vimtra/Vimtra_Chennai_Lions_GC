@@ -25,6 +25,10 @@ function revalidateFor(fixtureId: string) {
 }
 
 function fields(formData: FormData) {
+  const score = opt(formData.get("score"));
+  const explicitTotal = opt(formData.get("total"));
+  const legacyToday = opt(formData.get("today"));
+
   return {
     round: round(formData.get("round")),
     position: opt(formData.get("position")),
@@ -33,8 +37,8 @@ function fields(formData: FormData) {
     r3: opt(formData.get("r3")),
     r4: opt(formData.get("r4")),
     thru: opt(formData.get("thru")),
-    today: opt(formData.get("today")),
-    total: opt(formData.get("total")),
+    today: null,
+    total: score ?? explicitTotal ?? legacyToday ?? null,
   };
 }
 

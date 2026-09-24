@@ -81,8 +81,18 @@ export default function ScoreRowForm({
           {cell("r3", "R3")}
           {cell("r4", "R4")}
           {cell("thru", "Thru")}
-          {cell("today", "Today")}
-          {cell("total", "Total")}
+          <div className="adm-field">
+            <label className="adm-label" htmlFor={`${uid}-score`}>
+              Score
+            </label>
+            <input
+              id={`${uid}-score`}
+              name="score"
+              defaultValue={score?.total ?? score?.today ?? ""}
+              maxLength={12}
+              placeholder="-"
+            />
+          </div>
         </div>
         {error && (
           <div className="adm-alert" data-tone="danger" role="alert">

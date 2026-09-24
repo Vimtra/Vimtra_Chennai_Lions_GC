@@ -109,6 +109,7 @@ export default async function ScoresPage() {
         r3: s.r3,
         r4: s.r4,
         thru: s.thru,
+        score: s.total ?? s.today ?? null,
         today: s.today,
         total: s.total,
         lions: ROSTER_NAMES.has(s.playerName.trim().toLowerCase()),

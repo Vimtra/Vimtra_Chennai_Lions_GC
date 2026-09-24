@@ -30,6 +30,7 @@ export interface ScoreRow {
   r3: string | null;
   r4: string | null;
   thru: string | null;
+  score: string | null;
   today: string | null;
   total: string | null;
   /** True when the name matches the franchise's own Season 2026 roster. */
@@ -171,8 +172,7 @@ export default function ScoreExperience({ events }: { events: BoardEvent[] }) {
                   </th>
                 ))}
                 <th scope="col" role="columnheader">Thru</th>
-                <th scope="col" role="columnheader">Today</th>
-                <th scope="col" role="columnheader">Total</th>
+                <th scope="col" role="columnheader">Score</th>
               </tr>
             </thead>
             <tbody role="rowgroup">
@@ -194,11 +194,8 @@ export default function ScoreExperience({ events }: { events: BoardEvent[] }) {
                   <td role="cell" data-l="R3">{r.r3 ?? "—"}</td>
                   <td role="cell" data-l="R4">{r.r4 ?? "—"}</td>
                   <td role="cell" data-l="Thru">{r.thru ?? "—"}</td>
-                  <td className="tb-lb-today" role="cell" data-l="Today">
-                    {r.today ?? "—"}
-                  </td>
-                  <td className="tb-lb-total" role="cell" data-l="Total">
-                    {r.total ?? "—"}
+                  <td className="tb-lb-total" role="cell" data-l="Score">
+                    {r.score ?? "—"}
                   </td>
                 </tr>
               ))}
@@ -227,7 +224,7 @@ export default function ScoreExperience({ events }: { events: BoardEvent[] }) {
               is the same device /leaderboards uses for its empty boards, so
               the two pages state absence the same way. */}
           <ul className="tb-await-cols" data-tb-row>
-            {["Pos", "Player", "R1", "R2", "R3", "R4", "Thru", "Today", "Total"].map(
+            {["Pos", "Player", "R1", "R2", "R3", "R4", "Thru", "Score"].map(
               (c) => (
                 <li key={c}>{c}</li>
               )

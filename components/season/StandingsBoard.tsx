@@ -42,7 +42,7 @@ export const BOARD_DEFS: Record<BoardKey, BoardDef> = {
     name: "Franchise Table",
     ranks: "Every franchise in the league, by round score.",
     missing: "No franchise has been ranked yet.",
-    cols: ["Rank", "Franchise", "R1", "R2", "R3", "R4"],
+    cols: ["Rank", "Franchise", "R1", "R2", "R3", "R4", "Score"],
     figureLabel: "Score",
   },
   player: {
@@ -115,6 +115,7 @@ function TeamTable({ rows }: { rows: StandingRow[] }) {
             <th scope="col">R2</th>
             <th scope="col">R3</th>
             <th scope="col">R4</th>
+            <th scope="col">Score</th>
           </tr>
         </thead>
         <tbody>
@@ -126,6 +127,7 @@ function TeamTable({ rows }: { rows: StandingRow[] }) {
               <td>{text(r.extra.r2) ?? "—"}</td>
               <td>{text(r.extra.r3) ?? "—"}</td>
               <td>{text(r.extra.r4) ?? "—"}</td>
+              <td>{text(r.extra.score) ?? "—"}</td>
             </tr>
           ))}
         </tbody>
