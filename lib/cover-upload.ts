@@ -112,7 +112,8 @@ export function detectImageType(bytes: Uint8Array): SupportedImageType | null {
 }
 
 export function requiresBlobStorage(): boolean {
-  return process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
+  const vercelEnv = process.env.VERCEL_ENV ?? process.env.NODE_ENV ?? "development";
+  return vercelEnv === "production" || vercelEnv === "preview";
 }
 
 /**
