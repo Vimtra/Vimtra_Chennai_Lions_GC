@@ -24,7 +24,6 @@ const BOARD_META: Record<StandingBoard, { label: string; short: string; extraFie
       { key: "r1", label: "R1", placeholder: "-" },
       { key: "r2", label: "R2", placeholder: "-" },
       { key: "r3", label: "R3", placeholder: "-" },
-      { key: "r4", label: "R4", placeholder: "-" },
       { key: "score", label: "Score", placeholder: "-" },
     ],
   },

@@ -42,7 +42,6 @@ function extractExtras(formData: FormData, board: StandingBoard): StandingExtra 
     push("r1");
     push("r2");
     push("r3");
-    push("r4");
     push("score");
   } else if (board === "PLAYER") {
     push("top10");

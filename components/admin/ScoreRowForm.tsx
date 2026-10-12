@@ -79,7 +79,6 @@ export default function ScoreRowForm({
           {cell("r1", "R1")}
           {cell("r2", "R2")}
           {cell("r3", "R3")}
-          {cell("r4", "R4")}
           {cell("thru", "Thru")}
           <div className="adm-field">
             <label className="adm-label" htmlFor={`${uid}-score`}>

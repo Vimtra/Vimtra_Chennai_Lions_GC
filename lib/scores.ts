@@ -26,7 +26,6 @@ export interface ScoreInput {
   r1?: string | null;
   r2?: string | null;
   r3?: string | null;
-  r4?: string | null;
   thru?: string | null;
   today?: string | null;
   total?: string | null;
@@ -42,7 +41,6 @@ export async function createScore(input: ScoreInput): Promise<Score> {
       r1: input.r1 ?? null,
       r2: input.r2 ?? null,
       r3: input.r3 ?? null,
-      r4: input.r4 ?? null,
       thru: input.thru ?? null,
       today: input.today ?? null,
       total: input.total ?? null,

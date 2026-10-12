@@ -35,7 +35,6 @@ function fields(formData: FormData) {
     r1: opt(formData.get("r1")),
     r2: opt(formData.get("r2")),
     r3: opt(formData.get("r3")),
-    r4: opt(formData.get("r4")),
     thru: opt(formData.get("thru")),
     today: null,
     total: score ?? explicitTotal ?? legacyToday ?? null,

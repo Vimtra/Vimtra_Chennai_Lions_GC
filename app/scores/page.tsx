@@ -107,7 +107,6 @@ export default async function ScoresPage() {
         r1: s.r1,
         r2: s.r2,
         r3: s.r3,
-        r4: s.r4,
         thru: s.thru,
         score: s.total ?? s.today ?? null,
         today: s.today,
@@ -131,16 +130,14 @@ export default async function ScoresPage() {
     };
   });
 
-  // The board opens on whatever is most current: a live round, else the most
-  // recent event that actually has a published card, else the next one up,
-  // else the first fixture on the calendar.
+  // Only the live board should be shown on the public /scores page. When no
+  // fixture is in play, the board stays unlit rather than jumping to a future
+  // or completed event.
   const live = events.find((e) => e.status === "LIVE");
-  const lastCard = [...events].reverse().find((e) => e.rows.length > 0);
-  const nextUp = events.find((e) => e.status === "UPCOMING");
-  const opening = live ?? lastCard ?? nextUp ?? events[0];
+  const opening = live ?? null;
   const ordered = opening
     ? [opening, ...events.filter((e) => e.id !== opening.id)]
-    : events;
+    : [];
 
   const cardsPublished = events.filter((e) => e.rows.length > 0).length;
   const anyLive = Boolean(live);

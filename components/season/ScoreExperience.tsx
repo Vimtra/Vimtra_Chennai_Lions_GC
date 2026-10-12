@@ -28,7 +28,6 @@ export interface ScoreRow {
   r1: string | null;
   r2: string | null;
   r3: string | null;
-  r4: string | null;
   thru: string | null;
   score: string | null;
   today: string | null;
@@ -70,7 +69,7 @@ function boardState(e: BoardEvent): { live: boolean; label: string } {
   return { live: false, label: "Board unlit" };
 }
 
-const COLS = ["R1", "R2", "R3", "R4"] as const;
+const COLS = ["R1", "R2", "R3"] as const;
 
 export default function ScoreExperience({ events }: { events: BoardEvent[] }) {
   const root = useRef<HTMLDivElement | null>(null);
@@ -192,7 +191,6 @@ export default function ScoreExperience({ events }: { events: BoardEvent[] }) {
                   <td role="cell" data-l="R1">{r.r1 ?? "—"}</td>
                   <td role="cell" data-l="R2">{r.r2 ?? "—"}</td>
                   <td role="cell" data-l="R3">{r.r3 ?? "—"}</td>
-                  <td role="cell" data-l="R4">{r.r4 ?? "—"}</td>
                   <td role="cell" data-l="Thru">{r.thru ?? "—"}</td>
                   <td className="tb-lb-total" role="cell" data-l="Score">
                     {r.score ?? "—"}
@@ -224,7 +222,7 @@ export default function ScoreExperience({ events }: { events: BoardEvent[] }) {
               is the same device /leaderboards uses for its empty boards, so
               the two pages state absence the same way. */}
           <ul className="tb-await-cols" data-tb-row>
-            {["Pos", "Player", "R1", "R2", "R3", "R4", "Thru", "Score"].map(
+            {["Pos", "Player", "R1", "R2", "R3", "Thru", "Score"].map(
               (c) => (
                 <li key={c}>{c}</li>
               )
