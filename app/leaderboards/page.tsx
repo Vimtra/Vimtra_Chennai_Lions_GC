@@ -3,14 +3,15 @@ import Link from "next/link";
 import PageMasthead from "@/components/site/PageMasthead";
 import { Section } from "@/components/site/Section";
 import StandingsBoard from "@/components/season/StandingsBoard";
+import franchiseStyles from "@/components/season/FranchiseTable.module.css";
 import { listStandings } from "@/lib/standings";
 import { listFixtures } from "@/lib/fixtures";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/leaderboards" },
-  title: "Leaderboards",
+  title: "Standings",
   description:
-    "AM Green IGPL Season 2026 standings — the Franchise Table, the Player of the Season race and the Order of Merit, published from verified season data.",
+    "Verified AM Green IGPL Season 2026 Chennai Lions event results, Player of the Season and Order of Merit standings.",
 };
 
 // Standings live in the database. Boards render their real rows the moment
@@ -47,34 +48,35 @@ export default async function LeaderboardsPage() {
   // boilerplate, and the count only belongs where it is first stated.
   const noteTeam =
     played > 0
-      ? `${played} of ${fixtures.length} Season ${SEASON} events have been played. Ranked rows publish here as the league confirms them.`
-      : `Season ${SEASON} has ${fixtures.length} events on the card. Ranked rows publish here as the league confirms them.`;
-  const notePlayer =
-    "Nothing provisional and no projected points are published on this board.";
-  const noteOrder =
-    "Prize money is published here only once the league has confirmed it.";
+      ? `${played} of ${fixtures.length} events are complete.`
+      : fixtures.length > 0
+        ? "No events are complete yet."
+        : "The season schedule has not been published yet.";
+  const notePlayer = "Projections are not included.";
+  const noteOrder = "Figures follow league confirmation.";
 
   return (
     <>
       <PageMasthead
         eyebrow={`AM Green IGPL · Season ${SEASON}`}
-        title={["LEADER", "BOARDS"]}
+        title={["STANDINGS"]}
         image="/assets/photo/ss-standings-hero-green-marsh.jpg"
         imagePosition="52% 58%"
-        line="Three boards. One season."
+        className={franchiseStyles.mast}
+        line="Verified results from across the season."
         status={{
           live: false,
           label: ranked > 0 ? "Standings published" : "Standings pending",
         }}
         stats={[
-          { k: "Boards", v: "3" },
+          { k: "Tables", v: "3" },
           { k: "Events", v: String(fixtures.length) },
           { k: "Ranked", v: String(ranked) },
         ]}
       />
 
-      {/* 01 — the franchise race, on the championship ground. */}
-      <Section surface="ink" className="hp-sec-atmos tb-sec">
+      {/* 01 — the Lions' own event results, on the championship ground. */}
+      <Section surface="ink" className={`hp-sec-atmos tb-sec ${franchiseStyles.section}`}>
         <StandingsBoard board="team" rows={boards.team} note={noteTeam} />
       </Section>
 
@@ -91,16 +93,16 @@ export default async function LeaderboardsPage() {
       <section className="hp-sec hp-sec-paper hp-sec-tight">
         <div className="hp-wrap cm-track ss-links">
           <Link href="/fixtures" className="ss-link">
-            <span className="ss-link-k">Season 2026</span>
+            <span className="ss-link-k">Tour schedule</span>
             <span className="ss-link-t">Fixtures</span>
           </Link>
           <Link href="/scores" className="ss-link">
-            <span className="ss-link-k">Round scoring</span>
+            <span className="ss-link-k">Live scoring</span>
             <span className="ss-link-t">Scores</span>
           </Link>
           <Link href="/players" className="ss-link">
             <span className="ss-link-k">The roster</span>
-            <span className="ss-link-t">The Players</span>
+            <span className="ss-link-t">Players</span>
           </Link>
         </div>
       </section>

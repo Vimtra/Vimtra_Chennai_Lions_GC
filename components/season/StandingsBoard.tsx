@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { StandingRow } from "@/lib/standings";
+import FranchiseTable, { isLionsName } from "@/components/season/FranchiseTable";
 
 /**
  * One standings board, rendered as an editorial ranking rather than a table.
@@ -8,7 +9,8 @@ import type { StandingRow } from "@/lib/standings";
  * so they read as one championship system, but each is presented on its own
  * terms:
  *
- *   team   franchise name, round scores and total score in a compact table
+ *   team   Chennai Lions event results: rank, event, R1–R4 and score —
+ *          see FranchiseTable
  *   player player name over their franchise, POINTS as the figure
  *   order  player name, EARNINGS as the figure, set in rupees
  *
@@ -39,39 +41,34 @@ interface BoardDef {
 export const BOARD_DEFS: Record<BoardKey, BoardDef> = {
   team: {
     n: "01",
-    name: "Franchise Table",
-    ranks: "Every franchise in the league, by round score.",
-    missing: "No franchise has been ranked yet.",
-    cols: ["Rank", "Franchise", "R1", "R2", "R3", "Score"],
+    // The stored TEAM rows are the Lions' own results at individual events,
+    // not a league-wide franchise table — labelled accordingly.
+    name: "Chennai Lions — Event Results",
+    ranks: "Results and round scores across published events.",
+    missing: "No event results have been published yet.",
+    cols: ["Rank", "Event", "R1", "R2", "R3", "R4", "Score"],
     figureLabel: "Score",
   },
   player: {
     n: "02",
     name: "Player of the Season",
-    ranks: "Every player in the league, by season points.",
-    missing: "No player has been ranked yet.",
-    cols: ["Position", "Player", "Franchise", "Top tens", "Wins", "Points"],
+    ranks: "Season points across the field.",
+    missing: "Season points are not available yet.",
+    cols: ["Position", "Player", "Franchise", "Top 10s", "Wins", "Points"],
     figureLabel: "Points",
   },
   order: {
     n: "03",
     name: "Order of Merit",
-    ranks: "Every player in the league, by prize money earned.",
-    missing: "No earnings have been published yet.",
+    ranks: "Season earnings across the field.",
+    missing: "Earnings are not available yet.",
     cols: ["Position", "Player", "Events", "Earnings", "Average per event"],
     figureLabel: "Earnings",
   },
 };
 
-const LIONS = new Set([
-  "vimtra chennai lions gc",
-  "vimtra chennai lions",
-  "chennai lions gc",
-  "chennai lions",
-]);
-
 function isLions(r: StandingRow): boolean {
-  return LIONS.has((r.teamName ?? r.name).trim().toLowerCase());
+  return isLionsName(r.teamName ?? r.name);
 }
 
 function text(v: unknown): string | null {
@@ -103,39 +100,8 @@ function Meta({ items }: { items: { k: string; v: string | null }[] }) {
   );
 }
 
-function TeamTable({ rows }: { rows: StandingRow[] }) {
-  return (
-    <div className="tb-team-table-scroll">
-      <table className="tb-team-table">
-        <thead>
-          <tr>
-            <th scope="col">Rank</th>
-            <th scope="col">Franchise</th>
-            <th scope="col">R1</th>
-            <th scope="col">R2</th>
-            <th scope="col">R3</th>
-            <th scope="col">Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id} className={`${r.rank === 1 ? "is-lead " : ""}${isLions(r) ? "is-lions" : ""}`}>
-              <th scope="row">{r.rank}</th>
-              <td className="tb-team-table-name">{r.name}</td>
-              <td>{text(r.extra.r1) ?? "—"}</td>
-              <td>{text(r.extra.r2) ?? "—"}</td>
-              <td>{text(r.extra.r3) ?? "—"}</td>
-              <td>{text(r.extra.score) ?? "—"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 function Rows({ board, rows }: { board: BoardKey; rows: StandingRow[] }) {
-  if (board === "team") return <TeamTable rows={rows} />;
+  if (board === "team") return <FranchiseTable rows={rows} />;
 
   return (
     <ol className="tb-ranks">
@@ -191,7 +157,6 @@ function Awaiting({ board, note }: { board: BoardKey; note: ReactNode }) {
   const def = BOARD_DEFS[board];
   return (
     <div className="tb-await" data-rise>
-      <p className="tb-await-k">Awaiting verified data</p>
       <p className="tb-await-t">{def.missing}</p>
       <ul className="tb-await-cols">
         {def.cols.map((c) => (

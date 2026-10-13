@@ -7894,6 +7894,7 @@ a:hover .hp-arrow {
      left the third alone on a row of its own and cost ~130px of nothing.
      The keys are short enough at this size to hold one line each. */
   .tb-rail { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tb-rail.tb-rail-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .tb-rail-cell { padding-right: var(--sp-3); }
   .tb-rail-cell dt { letter-spacing: 0.14em; }
 }
@@ -7977,6 +7978,42 @@ a:hover .hp-arrow {
     radial-gradient(52% 46% at 78% 4%, rgba(184, 144, 75, 0.13), transparent 66%),
     radial-gradient(60% 50% at 6% 96%, rgba(94, 17, 20, 0.4), transparent 68%);
 }
+.tb-status-tabs {
+  display: flex;
+  gap: var(--sp-5);
+  margin: 0 0 var(--sp-7);
+  border-bottom: 1px solid var(--v-hair-ink);
+  overflow-x: auto;
+}
+.tb-status-tabs button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 48px;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  color: var(--v-on-ink);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tb-status-tabs button[aria-pressed="true"] {
+  border-bottom-color: var(--v-gold);
+  color: var(--v-ivory);
+}
+.tb-status-tabs button:focus-visible {
+  outline: 2px solid var(--v-gold-lit);
+  outline-offset: 3px;
+}
+.tb-status-count {
+  color: var(--v-gold);
+  font-variant-numeric: tabular-nums;
+}
 
 /* ---- Tournament card ---------------------------------------- */
 .tb-card { margin: 0 0 var(--sp-7); }
@@ -8016,6 +8053,7 @@ a:hover .hp-arrow {
   letter-spacing: var(--tr-h1);
   color: var(--v-ivory);
 }
+.tb-card-lead + .tb-card-tail { margin-top: var(--sp-2); }
 .tb-card-by {
   margin: var(--sp-4) 0 0;
   font-family: var(--font-manrope), sans-serif;
@@ -8151,7 +8189,7 @@ a:hover .hp-arrow {
   color: var(--v-gold);
 }
 .tb-unlit-t {
-  margin: 0 0 var(--sp-4);
+  margin: 0;
   font-family: var(--font-sora), sans-serif;
   font-weight: 700;
   font-size: clamp(21px, 2.9vw, 38px);

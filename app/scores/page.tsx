@@ -5,6 +5,7 @@ import ScoreExperience, {
   type BoardEvent,
   type ScoreRow,
 } from "@/components/season/ScoreExperience";
+import scoreStyles from "@/components/season/ScoreExperience.module.css";
 import { listFixtures } from "@/lib/fixtures";
 import { listScoresForFixture } from "@/lib/scores";
 import { formatFixtureDate, fixtureDay, fixtureMon } from "@/lib/fixtures-format";
@@ -39,10 +40,10 @@ export const dynamic = "force-dynamic";
 /** The roster, lowercased, so a scored row can be marked as one of ours. */
 const ROSTER_NAMES = new Set(ROSTER.map((p) => p.fullName.trim().toLowerCase()));
 
-/** "Am Green IGPL Invitational 2026 · Al Hamra" → lead + tail. */
+/** Split a compound fixture name when it includes a venue separator. */
 function splitName(name: string): { lead: string; tail: string } {
   const i = name.lastIndexOf(" · ");
-  if (i === -1) return { lead: "Season 2026", tail: name };
+  if (i === -1) return { lead: "", tail: name };
   return { lead: name.slice(0, i), tail: name.slice(i + 3) };
 }
 
@@ -69,10 +70,14 @@ function positionRank(position: string | null): number {
 
 export default async function ScoresPage() {
   // No card list rather than a 500 if the database is briefly unreachable.
-  // With no events `ScoreExperience` renders nothing and the masthead above
-  // reports "Scoring offline" with Events 0 / Live 0 — the same honest
-  // position an empty Fixture table produces.
-  const fixtures = await listFixtures().catch(() => []);
+  // The failure is remembered so the page says "unavailable" rather than
+  // "not published" — the two are different facts, and the masthead rail
+  // prints "—" instead of a count of zero it cannot vouch for.
+  let fixturesFailed = false;
+  const fixtures = await listFixtures().catch(() => {
+    fixturesFailed = true;
+    return [] as Fixture[];
+  });
 
   // One read per fixture. Four rows today; the page is force-dynamic and
   // these are indexed lookups on fixtureId.
@@ -82,15 +87,20 @@ export default async function ScoresPage() {
   // did load. Falling back to no rows for just that fixture draws that one
   // board unlit — "No verified rows" — while its neighbours still light. That
   // is the state the board was designed to hold, and it never invents a
-  // score: an unreadable card and an unpublished card say the same thing.
+  // score. The failed read is flagged so that board says "unavailable"
+  // rather than claiming nothing has been published.
   const withScores = await Promise.all(
-    fixtures.map(async (f) => ({
-      f,
-      scores: await listScoresForFixture(f.id).catch(() => []),
-    }))
+    fixtures.map(async (f) => {
+      let failed = false;
+      const scores = await listScoresForFixture(f.id).catch(() => {
+        failed = true;
+        return [];
+      });
+      return { f, scores, failed };
+    })
   );
 
-  const events: BoardEvent[] = withScores.map(({ f, scores }) => {
+  const events: BoardEvent[] = withScores.map(({ f, scores, failed }) => {
     const { lead, tail } = splitName(f.name);
     const rows: ScoreRow[] = scores
       .map((s, i) => ({ s, i }))
@@ -107,6 +117,8 @@ export default async function ScoresPage() {
         r1: s.r1,
         r2: s.r2,
         r3: s.r3,
+        // Stored column; the board only draws R4 when a row carries it.
+        r4: s.r4,
         thru: s.thru,
         score: s.total ?? s.today ?? null,
         today: s.today,
@@ -125,19 +137,15 @@ export default async function ScoresPage() {
       dates: formatFixtureDate(f),
       day: fixtureDay(f),
       mon: fixtureMon(f),
+      startsAt: new Date(f.dateStart).toISOString(),
       status: f.status,
       rows,
+      unavailable: failed,
     };
   });
 
-  // Only the live board should be shown on the public /scores page. When no
-  // fixture is in play, the board stays unlit rather than jumping to a future
-  // or completed event.
+  // The score experience groups the complete verified schedule by status.
   const live = events.find((e) => e.status === "LIVE");
-  const opening = live ?? null;
-  const ordered = opening
-    ? [opening, ...events.filter((e) => e.id !== opening.id)]
-    : [];
 
   const cardsPublished = events.filter((e) => e.rows.length > 0).length;
   const anyLive = Boolean(live);
@@ -149,51 +157,41 @@ export default async function ScoresPage() {
         title={["SCORES"]}
         image="/assets/photo/ss-scores-hero-twilight-course.jpg"
         imagePosition="50% 68%"
+        className={scoreStyles.mast}
         line={
           anyLive
             ? "A round is in play."
-            : "Round by round, as each card is verified."
+            : "Live rounds, upcoming events and published scorecards."
         }
         status={{
           live: anyLive,
-          label: anyLive ? "Round in progress" : "Scoring offline",
+          label: anyLive
+            ? "Round in progress"
+            : fixturesFailed
+              ? "Scoring unavailable"
+              : "No round in play",
         }}
         stats={[
-          { k: "Events", v: String(events.length) },
-          { k: "Cards", v: String(cardsPublished) },
-          { k: "Live", v: anyLive ? "1" : "0" },
+          { k: "Events", v: fixturesFailed ? "—" : String(events.length) },
+          { k: "Scorecards", v: fixturesFailed ? "—" : String(cardsPublished) },
         ]}
       />
 
-      <section className="tb-stage" aria-label="Tournament scoring">
-        <div className="tb-stage-atmos" aria-hidden />
-        <div className="hp-wrap">
-          {ordered.length > 0 ? (
-            <ScoreExperience events={ordered} />
-          ) : (
-            <div className="tb-await">
-              <p className="tb-await-k">No events on the card</p>
-              <p className="tb-await-t">
-                The Season 2026 calendar has not been published yet.
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
+      <ScoreExperience events={events} unavailable={fixturesFailed} />
 
       <section className="hp-sec hp-sec-paper hp-sec-tight">
         <div className="hp-wrap cm-track ss-links">
           <Link href="/fixtures" className="ss-link">
-            <span className="ss-link-k">Season 2026</span>
+            <span className="ss-link-k">Season schedule</span>
             <span className="ss-link-t">Fixtures</span>
           </Link>
           <Link href="/leaderboards" className="ss-link">
-            <span className="ss-link-k">Season standings</span>
-            <span className="ss-link-t">Leaderboards</span>
+            <span className="ss-link-k">League table</span>
+            <span className="ss-link-t">Standings</span>
           </Link>
           <Link href="/players" className="ss-link">
             <span className="ss-link-k">The roster</span>
-            <span className="ss-link-t">The Players</span>
+            <span className="ss-link-t">Players</span>
           </Link>
         </div>
       </section>

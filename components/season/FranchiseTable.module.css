@@ -1,0 +1,353 @@
+/* ============================================================
+   /leaderboards — the franchise table.
+   ------------------------------------------------------------
+   Page-scoped (CSS Module): the shared season layer in
+   app/globals.css is left alone. Tokens come from :root.
+
+   Same system as the /scores leaderboard (ink ground, gold micro
+   caps, crimson franchise edge, to-par tones) but its own shape:
+   a ledger — big rank numerals in their own column, a gold double
+   rule over the header, and the SCORE column carried on a faint
+   gold panel so the figure that decides the table reads first.
+
+   CONTRAST on ink (#0e0b0a):
+     ivory 17.1:1 · --v-on-ink ~9.0:1 · --v-gold-lit ~11.5:1
+     --v-gold ~6.6:1 · --ft-under (#e46d6e) ~6.2:1 · --ft-dim ~6.6:1
+   --v-red-lit (4.2:1) is only ever a non-text indicator.
+============================================================ */
+
+/* ---- Page masthead, compacted (applied via PageMasthead's
+   className prop; the shared component is not edited). ---------- */
+.mast:global(.tb-mast.has-media) {
+  min-height: clamp(320px, 46svh, 440px);
+}
+@media (min-width: 768px) {
+  .mast:global(.tb-mast.has-media) {
+    min-height: clamp(380px, 50svh, 500px);
+  }
+}
+.mast :global(.tb-mast-inner) { gap: var(--sp-4); }
+.mast :global(.tb-mast-title) { font-size: clamp(48px, 8.6vw, 132px); }
+.mast :global(.tb-rail) { margin-top: var(--sp-4); }
+.mast :global(.tb-rail-cell) {
+  padding-top: var(--sp-4);
+  padding-bottom: var(--sp-4);
+}
+
+/* ---- The franchise board's section + head, compacted ----------
+   Applied to the team board only; the player and order boards keep
+   their existing chapter heads. */
+.section:global(.hp-sec) {
+  padding-top: var(--sp-7);
+  padding-bottom: var(--sp-8);
+}
+@media (min-width: 1024px) {
+  .section:global(.hp-sec) {
+    padding-top: var(--sp-8);
+    padding-bottom: var(--sp-9);
+  }
+}
+.section :global(.tb-board-head) { margin-bottom: var(--sp-5); }
+.section :global(.tb-board-name) { font-size: clamp(30px, 4.4vw, 56px); }
+.section :global(.tb-board-ranks) {
+  margin-top: var(--sp-3);
+  font-size: 15px;
+}
+/* Wide screens: chapter head beside the table rather than above it,
+   so the franchise column is not a 800px gap between name and figures. */
+@media (min-width: 1100px) {
+  .section :global(.tb-board-team) {
+    display: grid;
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+    column-gap: var(--sp-8);
+    align-items: start;
+  }
+  .section :global(.tb-board-team > .tb-board-head) { margin-bottom: 0; }
+  .section :global(.tb-board-team .tb-board-name) {
+    font-size: clamp(32px, 2.7vw, 40px);
+    text-wrap: balance;
+  }
+}
+
+/* ---- Table ---------------------------------------------------- */
+.wrap {
+  --ft-under: #e46d6e;
+  --ft-dim: rgba(245, 239, 228, 0.62);
+  --ft-lions: rgba(189, 34, 39, 0.13);
+  --ft-panel: rgba(184, 144, 75, 0.08);
+  min-width: 0;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-5);
+  margin: 0 0 var(--sp-3);
+}
+.barLabel {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold);
+}
+.barMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ft-dim);
+}
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.legend::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  background: var(--v-red-lit);
+}
+
+.scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--v-hair-ink) transparent;
+}
+.scroll:focus-visible {
+  outline: 2px solid var(--v-gold-lit);
+  outline-offset: 2px;
+}
+
+.table {
+  /* Rank column width — also the pinned Franchise column's left
+     offset on narrow screens, so the two never drift apart.
+     Franchise is the only auto column; each min-width is the fixed
+     columns' sum plus a floor for the name. */
+  --ft-rank-w: 84px;
+  width: 100%;
+  min-width: 660px; /* 84 + 4×68 + 104 + 200 */
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--v-gold);
+}
+.colRank { width: var(--ft-rank-w); }
+.colNum { width: 68px; }
+.colScore { width: 104px; }
+@media (max-width: 767px) {
+  .table { --ft-rank-w: 60px; min-width: 528px; } /* 60 + 4×56 + 84 + 160 */
+  .colNum { width: 56px; }
+  .colScore { width: 84px; }
+}
+@media (max-width: 479px) {
+  .table { --ft-rank-w: 52px; min-width: 484px; } /* 52 + 4×50 + 72 + 160 */
+  .colNum { width: 50px; }
+  .colScore { width: 72px; }
+}
+
+.table thead th {
+  padding: 14px var(--sp-3) 12px;
+  border-top: 3px double rgba(184, 144, 75, 0.45);
+  border-bottom: 1px solid var(--v-hair-ink);
+  text-align: right;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+  white-space: nowrap;
+}
+.table thead th:nth-child(-n + 2) { text-align: left; }
+.table abbr { text-decoration: none; }
+
+.table tbody td,
+.table tbody th {
+  padding: 16px var(--sp-3);
+  border-bottom: 1px solid var(--v-hair-ink);
+  text-align: right;
+  vertical-align: middle;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.25;
+  color: var(--v-on-ink);
+}
+.table tbody tr:hover > * { background-color: rgba(245, 239, 228, 0.035); }
+
+/* SCORE column: a faint gold panel running header to foot. */
+.table thead th.thScore,
+.score {
+  background-color: var(--ft-panel);
+}
+.table thead th.thScore { color: var(--v-ivory); }
+
+.rank {
+  text-align: left !important;
+  white-space: nowrap;
+  font-family: var(--font-sora), sans-serif !important;
+  font-weight: 800 !important;
+  font-size: clamp(20px, 2vw, 26px) !important;
+  line-height: 1 !important;
+  letter-spacing: -0.04em;
+  color: var(--v-on-ink) !important;
+}
+.lead .rank { color: var(--v-gold-lit) !important; }
+
+.franchise {
+  text-align: left !important;
+  font-weight: 400;
+}
+.name {
+  display: block;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--v-ivory);
+}
+.qualifier {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 500;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ft-dim);
+}
+.tag {
+  display: inline-block;
+  margin-left: var(--sp-2);
+  padding: 2px 6px;
+  border: 1px solid rgba(226, 194, 144, 0.4);
+  border-radius: 2px;
+  vertical-align: 2px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+  white-space: nowrap;
+}
+
+.score {
+  padding-right: var(--sp-4) !important;
+  font-family: var(--font-sora), sans-serif !important;
+  font-weight: 800 !important;
+  font-size: clamp(18px, 1.7vw, 22px) !important;
+  letter-spacing: -0.025em;
+  color: var(--v-ivory) !important;
+}
+
+/* To-par tone: only for values that read unambiguously as relative
+   to par (see parTone in FranchiseTable.tsx). Strings are printed
+   unchanged. */
+.under { color: var(--ft-under) !important; }
+.even { color: var(--v-ivory) !important; }
+.over { color: var(--v-on-ink) !important; }
+.missing {
+  color: var(--ft-dim) !important;
+  font-family: var(--font-manrope), sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+}
+
+/* Franchise marker: crimson edge, faint wash, gold tag. The rank
+   is never altered and other franchises stay unmarked. */
+.lions > * { background-color: var(--ft-lions); }
+.lions > .score { background-image: linear-gradient(var(--ft-panel), var(--ft-panel)); }
+.lions > .rank { box-shadow: inset 3px 0 0 var(--v-red-lit); }
+.lions:hover > * { background-color: rgba(189, 34, 39, 0.18); }
+
+/* Narrow screens: the table scrolls inside its own frame with Rank
+   and Franchise pinned. Sticky cells need an opaque ground. */
+@media (max-width: 899px) {
+  .table tbody td,
+  .table tbody th { padding-top: 13px; padding-bottom: 13px; }
+  .rank,
+  .franchise,
+  .table thead th:nth-child(-n + 2) {
+    position: sticky;
+    z-index: 1;
+    background-color: var(--v-ink);
+  }
+  .rank,
+  .table thead th:nth-child(1) { left: 0; }
+  .franchise,
+  .table thead th:nth-child(2) {
+    left: var(--ft-rank-w);
+    box-shadow: 1px 0 0 var(--v-hair-ink);
+  }
+  .table tbody tr:hover > * { background-color: transparent; }
+  .table tbody tr:hover > .rank,
+  .table tbody tr:hover > .franchise { background-color: var(--v-ink); }
+  .table tbody tr:hover > .score { background-color: var(--ft-panel); }
+  .lions > .rank,
+  .lions > .franchise {
+    background-color: var(--v-ink);
+    background-image: linear-gradient(var(--ft-lions), var(--ft-lions));
+  }
+  .lions:hover > * { background-color: var(--ft-lions); }
+  .lions:hover > .rank,
+  .lions:hover > .franchise { background-color: var(--v-ink); }
+  .tag { margin-left: 0; margin-top: 5px; display: table; }
+}
+@media (max-width: 479px) {
+  .table thead th,
+  .table tbody td,
+  .table tbody th { padding-left: 8px; padding-right: 8px; }
+  .score { padding-right: 10px !important; }
+  .name { font-size: 14px; }
+  .qualifier { font-size: 11.5px; line-height: 1.35; }
+  /* The tag would add a third line to an already narrow cell; the
+     crimson edge and its legend carry the marker here, and the tag's
+     text stays available to screen readers. */
+  .tag {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+.note {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ft-dim);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

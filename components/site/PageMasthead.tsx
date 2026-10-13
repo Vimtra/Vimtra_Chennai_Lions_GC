@@ -144,7 +144,7 @@ export default function PageMasthead({
         )}
 
         {stats && stats.length > 0 && (
-          <dl className="tb-rail">
+          <dl className={`tb-rail ${stats.length === 2 ? "tb-rail-two" : ""}`}>
             {stats.map((s) => (
               <div className="tb-rail-cell" key={s.k} data-tb-stat>
                 <dt>{s.k}</dt>

@@ -1,0 +1,671 @@
+/* ============================================================
+   /scores — the scoring desk.
+   ------------------------------------------------------------
+   Page-scoped (CSS Module) so the redesign leaves the shared
+   season layer in app/globals.css alone. Tokens (--v-*, --sp-*,
+   --t-*, --tr-*) still come from :root, so nothing here is a new
+   colour system.
+
+   Composition: tournament selection is a narrow programme on the
+   left (a horizontal rail below 1100px); the selected event's
+   masthead and leaderboard own the rest of the width.
+
+   CONTRAST on ink (#0e0b0a):
+     ivory              17.1 : 1
+     --v-on-ink          ~9.0 : 1
+     --v-gold-lit       ~11.5 : 1
+     --v-gold            ~6.6 : 1
+     --sx-under          ~6.2 : 1   (#e46d6e: --v-red-lit 70% into ivory)
+     --sx-dim            ~6.6 : 1
+   --v-red-lit itself (4.2:1) is only ever a non-text indicator.
+============================================================ */
+
+/* ---- Page masthead, compacted for /scores --------------------
+   PageMasthead is shared with /leaderboards and /news, so this is
+   applied through its `className` prop rather than by editing it.
+   The shared rule grows a photographed masthead to 100vh at 768px+;
+   on a scores page that put a full screen of sky before any score. */
+.mast:global(.tb-mast.has-media) {
+  min-height: clamp(320px, 46svh, 440px);
+}
+@media (min-width: 768px) {
+  .mast:global(.tb-mast.has-media) {
+    min-height: clamp(380px, 50svh, 500px);
+  }
+}
+.mast :global(.tb-mast-inner) { gap: var(--sp-4); }
+.mast :global(.tb-mast-title) { font-size: clamp(48px, 8.6vw, 132px); }
+.mast :global(.tb-rail) { margin-top: var(--sp-4); }
+.mast :global(.tb-rail-cell) {
+  padding-top: var(--sp-4);
+  padding-bottom: var(--sp-4);
+}
+
+/* ---- Stage --------------------------------------------------- */
+.stage {
+  --sx-under: #e46d6e;
+  --sx-dim: rgba(245, 239, 228, 0.62);
+  --sx-row-lions: rgba(189, 34, 39, 0.13);
+
+  position: relative;
+  isolation: isolate;
+  /* clip, not hidden: hidden would make this a scroll container and
+     defeat the sticky programme column. */
+  overflow: clip;
+  background: var(--v-ink);
+  color: var(--v-ivory);
+  padding: var(--sp-6) 0 var(--sp-7);
+}
+@media (min-width: 768px) {
+  .stage { padding: var(--sp-7) 0 var(--sp-8); }
+}
+@media (min-width: 1100px) {
+  .stage { padding: var(--sp-8) 0 var(--sp-9); }
+}
+.atmos {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(48% 40% at 82% 0%, rgba(184, 144, 75, 0.1), transparent 66%),
+    radial-gradient(56% 46% at 0% 100%, rgba(94, 17, 20, 0.34), transparent 68%);
+}
+
+.desk {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+}
+@media (min-width: 1100px) {
+  .desk {
+    grid-template-columns: minmax(250px, 290px) minmax(0, 1fr);
+    gap: var(--sp-8);
+    align-items: start;
+  }
+}
+
+/* ---- Controls: status filter + programme --------------------- */
+.controls { min-width: 0; }
+@media (min-width: 1100px) {
+  .controls {
+    position: sticky;
+    top: calc(92px + var(--sp-5));
+  }
+}
+.controlsLabel {
+  margin: 0 0 var(--sp-3);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold);
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--v-hair-ink);
+  border-radius: 2px;
+}
+@media (min-width: 640px) and (max-width: 1099px) {
+  .tabs { display: inline-grid; grid-template-columns: repeat(3, auto); }
+}
+.tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 40px;
+  padding: 0 var(--sp-4);
+  border: 0;
+  background: transparent;
+  color: var(--sx-dim);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--mo-mid) var(--ease), color var(--mo-mid) var(--ease);
+}
+.tab + .tab { border-left: 1px solid var(--v-hair-ink); }
+.tab:hover { color: var(--v-ivory); }
+.tab[aria-pressed="true"] {
+  background: rgba(245, 239, 228, 0.07);
+  color: var(--v-ivory);
+  box-shadow: inset 0 -2px 0 var(--v-gold);
+}
+.tab:focus-visible {
+  outline: 2px solid var(--v-gold-lit);
+  outline-offset: -2px;
+}
+.tabCount {
+  color: var(--v-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The programme. A vertical list in the side column; below 1100px a
+   horizontal, snap-scrolling rail so it never pushes the board a
+   screen down on a phone. */
+.events {
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  display: flex;
+  gap: var(--sp-2);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--v-hair-ink) transparent;
+  padding-bottom: var(--sp-2);
+}
+@media (min-width: 1100px) {
+  .events {
+    flex-direction: column;
+    gap: 0;
+    overflow: visible;
+    padding-bottom: 0;
+    border-top: 1px solid var(--v-hair-ink);
+  }
+}
+.events li {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+.event {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--sp-3);
+  width: 232px;
+  height: 100%;
+  padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-3);
+  border: 1px solid var(--v-hair-ink);
+  border-top: 2px solid transparent;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--mo-mid) var(--ease), border-color var(--mo-mid) var(--ease);
+}
+@media (min-width: 1100px) {
+  .event {
+    width: 100%;
+    padding: var(--sp-4) 0 var(--sp-4) var(--sp-3);
+    border: 0;
+    border-left: 2px solid transparent;
+    border-bottom: 1px solid var(--v-hair-ink);
+  }
+}
+.event:hover { background: rgba(245, 239, 228, 0.04); }
+.event:focus-visible {
+  outline: 2px solid var(--v-gold-lit);
+  outline-offset: -2px;
+}
+.event[aria-pressed="true"] {
+  border-top-color: var(--v-gold);
+  background: rgba(245, 239, 228, 0.05);
+}
+@media (min-width: 1100px) {
+  .event[aria-pressed="true"] {
+    border-top-color: transparent;
+    border-left-color: var(--v-gold);
+  }
+}
+.eventDate {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 1px;
+}
+.eventDay {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--v-on-ink);
+  font-variant-numeric: tabular-nums;
+}
+.eventMon {
+  margin-top: 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--v-gold);
+}
+.eventBody { min-width: 0; }
+.eventName {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--v-on-ink);
+}
+/* In the horizontal rail the selected event's venue is already in the
+   header beside it; the rail only needs enough to choose by. */
+.eventVenue {
+  display: none;
+  margin-top: 3px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--sx-dim);
+}
+@media (min-width: 1100px) {
+  .eventVenue { display: block; }
+}
+.eventState {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sx-dim);
+}
+.eventState::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--v-hair-ink);
+}
+.eventState[data-state="card"] { color: var(--v-gold-lit); }
+.eventState[data-state="card"]::before { background: var(--v-gold); }
+.eventState[data-state="live"] { color: var(--v-ivory); }
+.eventState[data-state="live"]::before { background: var(--v-red-lit); }
+.event[aria-pressed="true"] .eventName,
+.event[aria-pressed="true"] .eventDay,
+.event:hover .eventName { color: var(--v-ivory); }
+
+/* ---- Board column -------------------------------------------- */
+.board { min-width: 0; }
+
+/* Tournament masthead: identity, then a single ruled fact line. */
+.head {
+  padding-bottom: var(--sp-5);
+  border-bottom: 1px solid var(--v-hair-ink);
+}
+.headTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-5);
+  margin: 0 0 var(--sp-3);
+}
+.kicker {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 5px 10px;
+  border: 1px solid var(--v-hair-ink);
+  border-radius: 999px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--v-ivory);
+}
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--v-gold);
+}
+.status[data-live="true"] { border-color: rgba(221, 53, 59, 0.55); }
+.status[data-live="true"] .statusDot {
+  background: var(--v-red-lit);
+  animation: sx-pulse 2.2s ease-in-out infinite;
+}
+@keyframes sx-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .status[data-live="true"] .statusDot { animation: none; }
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 5.2vw, 56px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: var(--v-ivory);
+  overflow-wrap: anywhere;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3) var(--sp-4);
+  margin: var(--sp-4) 0 0;
+}
+@media (min-width: 768px) {
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3) 0;
+  }
+  .fact {
+    padding: 0 var(--sp-5);
+    border-left: 1px solid var(--v-hair-ink);
+  }
+  .fact:first-child { padding-left: 0; border-left: 0; }
+}
+.fact { min-width: 0; }
+.fact dt {
+  margin: 0 0 4px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--v-gold);
+}
+.fact dd {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--v-ivory);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Leaderboard --------------------------------------------- */
+.boardBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-5);
+  margin: var(--sp-5) 0 var(--sp-3);
+}
+.boardLabel {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--v-ivory);
+}
+.boardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sx-dim);
+}
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.legend::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  background: var(--v-red-lit);
+}
+
+.scroll {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--v-hair-ink) transparent;
+}
+.scroll:focus-visible {
+  outline: 2px solid var(--v-gold-lit);
+  outline-offset: 2px;
+}
+
+.table {
+  /* Pos column width — also the left offset of the pinned Player
+     column on narrow screens, so the two can never drift apart. */
+  --sx-pos-w: 64px;
+  width: 100%;
+  /* Player is the only auto column, so it alone absorbs spare width
+     and every fixed column keeps its exact size. Each min-width is the
+     fixed columns' sum plus a floor for the name. */
+  min-width: 608px;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  font-variant-numeric: tabular-nums;
+}
+.table.hasR4 { min-width: 672px; }
+.colPos { width: var(--sx-pos-w); }
+.colNum { width: 64px; }
+.colTotal { width: 88px; }
+@media (max-width: 767px) {
+  .table { --sx-pos-w: 50px; min-width: 514px; }
+  .table.hasR4 { min-width: 570px; }
+  .colNum { width: 56px; }
+  .colTotal { width: 72px; }
+}
+@media (max-width: 479px) {
+  .table { --sx-pos-w: 46px; min-width: 462px; }
+  .table.hasR4 { min-width: 512px; }
+  .colNum { width: 50px; }
+  .colTotal { width: 64px; }
+}
+
+.table thead th {
+  padding: 0 var(--sp-3) var(--sp-3);
+  border-bottom: 1px solid var(--v-gold);
+  text-align: right;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+  white-space: nowrap;
+}
+.table thead th:nth-child(-n + 2) { text-align: left; }
+.table thead th.thTotal { color: var(--v-ivory); }
+.table abbr { text-decoration: none; }
+
+.table tbody td,
+.table tbody th {
+  padding: 14px var(--sp-3);
+  border-bottom: 1px solid var(--v-hair-ink);
+  text-align: right;
+  vertical-align: middle;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.25;
+  color: var(--v-on-ink);
+}
+.table tbody tr:hover > * { background-color: rgba(245, 239, 228, 0.035); }
+
+.pos {
+  text-align: left !important;
+  white-space: nowrap;
+  font-family: var(--font-sora), sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.02em;
+  color: var(--v-gold-lit) !important;
+}
+.player {
+  text-align: left !important;
+  font-weight: 400;
+}
+.name {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(15px, 1.25vw, 17px);
+  letter-spacing: -0.02em;
+  color: var(--v-ivory);
+}
+.tag {
+  display: inline-block;
+  margin-left: var(--sp-2);
+  padding: 2px 6px;
+  border: 1px solid rgba(226, 194, 144, 0.4);
+  border-radius: 2px;
+  vertical-align: 2px;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v-gold-lit);
+  white-space: nowrap;
+}
+.thru { color: var(--sx-dim) !important; }
+.total {
+  padding-right: var(--sp-4) !important;
+  font-family: var(--font-sora), sans-serif !important;
+  font-weight: 800 !important;
+  font-size: clamp(17px, 1.6vw, 20px) !important;
+  letter-spacing: -0.02em;
+  color: var(--v-ivory) !important;
+}
+
+/* To-par tone. Only applied to values that read unambiguously as a
+   score relative to par (see parTone in ScoreExperience.tsx); the
+   stored string itself is printed unchanged. */
+.under { color: var(--sx-under) !important; }
+.even { color: var(--v-ivory) !important; }
+.over { color: var(--v-on-ink) !important; }
+.missing { color: var(--sx-dim) !important; }
+.total.missing { font-weight: 600 !important; font-size: 15px !important; }
+
+/* Franchise marker — a crimson edge, a faint wash and a gold tag.
+   Every other player in the field stays on the board unmarked. */
+.lions > * { background-color: var(--sx-row-lions); }
+.lions > .pos { box-shadow: inset 3px 0 0 var(--v-red-lit); }
+.lions:hover > * { background-color: rgba(189, 34, 39, 0.18); }
+
+/* Phone/tablet: the table scrolls inside its own frame and the
+   position + player columns stay pinned so a name is always beside
+   its numbers. Sticky cells need an opaque ground. */
+@media (max-width: 899px) {
+  .table tbody td,
+  .table tbody th { padding-top: 12px; padding-bottom: 12px; }
+  .pos,
+  .player,
+  .table thead th:nth-child(-n + 2) {
+    position: sticky;
+    z-index: 1;
+    background-color: var(--v-ink);
+  }
+  .pos,
+  .table thead th:nth-child(1) { left: 0; }
+  .player,
+  .table thead th:nth-child(2) {
+    left: var(--sx-pos-w);
+    box-shadow: 1px 0 0 var(--v-hair-ink);
+  }
+  .table tbody tr:hover > * { background-color: var(--v-ink); }
+  .lions > .pos,
+  .lions > .player {
+    background-image: linear-gradient(var(--sx-row-lions), var(--sx-row-lions));
+  }
+  .lions > .player { box-shadow: 1px 0 0 var(--v-hair-ink); }
+  .lions:hover > * { background-color: var(--sx-row-lions); }
+  .lions:hover > .pos,
+  .lions:hover > .player { background-color: var(--v-ink); }
+  .tag { margin-left: 0; margin-top: 4px; display: table; }
+}
+@media (max-width: 479px) {
+  .table thead th,
+  .table tbody td,
+  .table tbody th { padding-left: 8px; padding-right: 8px; }
+  .total { padding-right: 10px !important; }
+}
+
+.note {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--sx-dim);
+}
+
+/* ---- States: empty, unpublished, unavailable ------------------ */
+.state {
+  margin-top: var(--sp-5);
+  padding: var(--sp-5) 0 var(--sp-2);
+  border-top: 1px solid var(--v-gold);
+  max-width: 60ch;
+}
+.stateWide { margin-top: 0; }
+.stateK {
+  margin: 0 0 var(--sp-2);
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-gold);
+}
+.stateT {
+  margin: 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.2vw, 28px);
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  color: var(--v-ivory);
+}
+.stateD {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--v-on-ink);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
