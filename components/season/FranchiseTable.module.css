@@ -16,16 +16,6 @@
    --v-red-lit (4.2:1) is only ever a non-text indicator.
 ============================================================ */
 
-/* ---- Page masthead, compacted (applied via PageMasthead's
-   className prop; the shared component is not edited). ---------- */
-.mast:global(.tb-mast.has-media) {
-  min-height: clamp(320px, 46svh, 440px);
-}
-@media (min-width: 768px) {
-  .mast:global(.tb-mast.has-media) {
-    min-height: clamp(380px, 50svh, 500px);
-  }
-}
 .mast :global(.tb-mast-inner) { gap: var(--sp-4); }
 .mast :global(.tb-mast-title) { font-size: clamp(48px, 8.6vw, 132px); }
 .mast :global(.tb-rail) { margin-top: var(--sp-4); }

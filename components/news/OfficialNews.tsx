@@ -68,7 +68,7 @@ export default function OfficialNews({
         <p className="hp-index hp-index-bare" data-rise>
           <span>Official</span>
         </p>
-        <SectionTitle id="onw-title" lines={["OFFICIAL", "NEWS."]} />
+        <SectionTitle id="onw-title" lines={["OFFICIAL NEWS."]} />
       </div>
 
       <ol className="onw-rows">

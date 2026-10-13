@@ -7775,14 +7775,18 @@ a:hover .hp-arrow {
   .tb-mast { padding-top: calc(92px + var(--sp-8)); }
 }
 
-/* With a photograph the masthead grows — but only to a title card, not to
-   the 84svh the club module's hero uses. The type still sits on the rail. */
+/* With a photograph the masthead grows — only on desktop, to a full-screen
+   chapter opening. Tablets and phones stay compact so the content remains
+   readable without forcing a tall hero before the actual section. */
 .tb-mast.has-media {
   min-height: clamp(400px, 54svh, 520px);
   padding-bottom: 0;
 }
-@media (min-width: 768px) {
-  .tb-mast.has-media { min-height: 100vh; }
+@media (min-width: 1024px) {
+  .tb-mast.has-media {
+    min-height: 100vh;
+    height: 100vh;
+  }
 }
 .tb-mast-media {
   position: absolute;
@@ -14477,8 +14481,11 @@ a:hover .hp-arrow {
    radius. Hairlines are the section's only drawn structure.
 ============================================================ */
 
-.onw-head { margin-bottom: var(--sp-7); }
-.onw-head .hp-section-title { font-size: clamp(34px, 5.2vw, 72px); }
+.onw-head { width: 100%; margin-bottom: var(--sp-7); }
+.onw-head .hp-section-title {
+  width: 100%;
+  font-size: clamp(24px, 7.2vw, 112px);
+}
 @media (min-width: 1024px) {
   .onw-head { margin-bottom: var(--sp-8); }
 }

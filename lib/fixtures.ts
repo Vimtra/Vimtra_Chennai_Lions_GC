@@ -28,6 +28,24 @@ export async function listFixtures(): Promise<Fixture[]> {
   });
 }
 
+/** Public schedule ordering: from the current date onward first, then the rest. */
+export function sortFixturesCurrentFirst(fixtures: Fixture[]): Fixture[] {
+  const now = Date.now();
+
+  return [...fixtures].sort((a, b) => {
+    const aTime = new Date(a.dateStart).getTime();
+    const bTime = new Date(b.dateStart).getTime();
+    const aAfterNow = aTime >= now;
+    const bAfterNow = bTime >= now;
+
+    if (aAfterNow !== bAfterNow) {
+      return aAfterNow ? -1 : 1;
+    }
+
+    return Math.abs(aTime - now) - Math.abs(bTime - now);
+  });
+}
+
 /** Convenience buckets for the public page's category tabs. */
 export function bucketFixtures(fixtures: Fixture[]): {
   live: Fixture[];

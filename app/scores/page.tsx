@@ -144,8 +144,22 @@ export default async function ScoresPage() {
     };
   });
 
+  const orderedEvents = [...events].sort((a, b) => {
+    const now = Date.now();
+    const aTime = new Date(a.startsAt).getTime();
+    const bTime = new Date(b.startsAt).getTime();
+    const aAfterNow = aTime >= now;
+    const bAfterNow = bTime >= now;
+
+    if (aAfterNow !== bAfterNow) {
+      return aAfterNow ? -1 : 1;
+    }
+
+    return Math.abs(aTime - now) - Math.abs(bTime - now);
+  });
+
   // The score experience groups the complete verified schedule by status.
-  const live = events.find((e) => e.status === "LIVE");
+  const live = orderedEvents.find((e) => e.status === "LIVE");
 
   const cardsPublished = events.filter((e) => e.rows.length > 0).length;
   const anyLive = Boolean(live);
@@ -177,7 +191,7 @@ export default async function ScoresPage() {
         ]}
       />
 
-      <ScoreExperience events={events} unavailable={fixturesFailed} />
+      <ScoreExperience events={orderedEvents} unavailable={fixturesFailed} />
 
       <section className="hp-sec hp-sec-paper hp-sec-tight">
         <div className="hp-wrap cm-track ss-links">

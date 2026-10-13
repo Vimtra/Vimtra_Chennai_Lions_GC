@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import StoryHero from "@/components/site/StoryHero";
 import { Section, SectionTitle } from "@/components/site/Section";
-import { listFixtures } from "@/lib/fixtures";
+import { listFixtures, sortFixturesCurrentFirst } from "@/lib/fixtures";
 import { formatFixtureDate, fixtureDay, fixtureMon } from "@/lib/fixtures-format";
 import type { Fixture } from "@prisma/client";
 
@@ -99,7 +99,7 @@ export default async function FixturesPage() {
   // fallback the home page uses for this exact reader. Nothing is invented —
   // an unreachable database and an empty one both mean "we cannot show a
   // verified calendar", which is what the empty state says.
-  const fixtures = await listFixtures().catch(() => []);
+  const fixtures = sortFixturesCurrentFirst(await listFixtures().catch(() => []));
   const featured =
     fixtures.find((f) => f.status === "LIVE") ??
     fixtures.find((f) => f.status === "UPCOMING") ??
