@@ -6343,7 +6343,11 @@ a:hover .hp-arrow {
   .hm-head-t { grid-column: 1 / span 8; }
   .hm-head-a { grid-column: 10 / span 3; justify-self: end; }
 }
-.hm-head-t .hp-section-title { font-size: clamp(34px, 5.4vw, 78px); }
+.hm-head-t { min-width: 0; }
+.hm-head-t .hp-section-title {
+  width: 100%;
+  font-size: clamp(24px, 6.4vw, 92px);
+}
 
 /* ---- Split: a column of type beside a figure that fills ------
    `align-items: stretch` plus `height: 100%` on the frame is the
@@ -8643,7 +8647,11 @@ a:hover .hp-arrow {
     gap: var(--sp-7);
   }
 }
-.hm-press-head .hp-section-title { font-size: clamp(34px, 5.4vw, 78px); }
+.hm-press-head > div { width: 100%; flex: 1; min-width: 0; }
+.hm-press-head .hp-section-title {
+  width: 100%;
+  font-size: clamp(24px, 6.4vw, 92px);
+}
 
 .hm-press {
   margin-top: var(--sp-7);

@@ -198,10 +198,7 @@ export function Season({ rows }: { rows: SeasonRow[] }) {
             </p>
             <h2 id="se-h" className="hp-section-title">
               <span className="mq-line" data-line>
-                <span>THE 2026</span>
-              </span>
-              <span className="mq-line" data-line>
-                <span>CALENDAR.</span>
+                <span>THE 2026 CALENDAR.</span>
               </span>
             </h2>
           </div>
@@ -362,10 +359,7 @@ export function Media({ stories }: { stories: StoryRow[] }) {
             </p>
             <h2 id="md-h" className="hp-section-title">
               <span className="mq-line" data-line>
-                <span>FROM</span>
-              </span>
-              <span className="mq-line" data-line>
-                <span>THE DEN.</span>
+                <span>FROM THE DEN.</span>
               </span>
             </h2>
           </div>
