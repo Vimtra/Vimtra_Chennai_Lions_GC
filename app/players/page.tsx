@@ -53,7 +53,10 @@ export default function PlayersPage() {
         line="Four names. One team sheet."
         image="/assets/photo/club-01-marquee-swing.jpg"
         imageAlt="Golfer mid-swing, cropped below the head"
-        imagePosition="50% 42%"
+        // Anchored high: the shorter hero frame crops more of the height on
+        // wide screens, and the swing (hands, club, ball) sits in the top
+        // third of this photograph.
+        imagePosition="50% 26%"
       />
 
       <PlayerExperience players={FEATURES} />

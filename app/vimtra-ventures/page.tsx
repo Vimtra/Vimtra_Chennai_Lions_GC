@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import VimtraHero from "@/components/site/VimtraHero";
 import LeadershipComposition from "@/components/vv/LeadershipComposition";
@@ -32,9 +33,10 @@ export const metadata: Metadata = {
    opening section as a ruled credential field instead of standing alone as
    a band of figures.
 
-   PHOTOGRAPHY: one licensed frame in the hero, plus the two real
-   franchise-supplied founder portraits. Nothing else — a firm cannot be
-   honestly photographed, and stock offices would cheapen the page.
+   PHOTOGRAPHY: one licensed frame in the hero, plus the real
+   franchise-supplied portraits of the two founders and the director.
+   Nothing else — a firm cannot be honestly photographed, and stock
+   offices would cheapen the page.
 
    DEDUP PASS (targeted, September 2026). "The Firm" prose used to restate
    every figure in CREDENTIALS in full sentences immediately above the
@@ -140,12 +142,19 @@ const FOUNDERS = [
 const VISION_STATEMENT =
   "To identify opportunities where capital, strategic vision, and operational expertise can transform underperforming assets into high-value enterprises — while creating world-class destinations that bring together investment, lifestyle, sport, real estate, and community — generating enduring value for investors, partners, athletes, and future generations.";
 
-// Brochure p. 16 — verbatim.
-const BOARD_MEMBER = {
-  name: "Ravi Babu Mannam",
-  role: "Board of Directors",
+// Director profile — name, designation and biography supplied by the
+// franchise (October 2026), verbatim and complete; do not shorten or add to
+// it. It replaces the brochure p. 16 board sentence that used to stand in
+// for this seat, so the person appears once on the page, not twice. The
+// photograph is the franchise-supplied portrait in public/assets (already
+// 4:5, so the frame does not crop it).
+const DIRECTOR = {
+  name: "Mr. M. Ravi Babu Mannam",
+  role: "Director, Vimtra Ventures",
+  image: "/assets/Ravi Babu.jpeg",
+  imageAlt: "Mr. M. Ravi Babu Mannam — Director, Vimtra Ventures",
   body:
-    "Since joining the Vimtra Ventures Board of Directors, Mr. Ravi Babu Mannam has strengthened the firm's leadership and advisory ecosystem and the expansion of its golf and community-development initiatives — an important part of Vimtra's journey toward a globally connected investment and golf-development platform.",
+    "Mr. M. Ravi Babu brings over two decades of experience across legal affairs, educational consultancy, HR value-added services, and real estate portfolio management. He specializes in providing strategic solutions for legal disputes and arbitration matters. At Vimtra, he leads legal and regulatory compliance and advises the India operations on contracts, NDAs, and other critical legal documentation. He also provides guidance on managing legal disputes. Mr. Ravi Babu has served on the Board of the M.S. Swaminathan Research Foundation and has been associated with the Tirumala Tirupati Devasthanams (TTD) Local Advisory Committees, Chennai, the Rail Safety Council, and the Lions Club.",
 };
 
 // Brochure p. 16 — Advisory Board disciplines.
@@ -307,9 +316,11 @@ export default function VimtraVenturesPage() {
           Two objects, deliberately unlike each other and unlike every ruled
           index on this site.
 
-          The board seat is a MINUTE: a single bordered statement panel with
-          a gold rule down its leading edge, the seat named above the person
-          and the brochure's sentence set as the statement itself.
+          The Vision is a MINUTE: a single bordered statement panel with a
+          gold rule down its leading edge. The board seat is the director
+          himself — portrait and complete biography side by side on its own
+          row (stacked on phones), with the same portrait treatment as the
+          Leadership section above.
 
           The advisory board is a TYPE FIELD, not a list. The eight
           disciplines are set as large display words that wrap as one
@@ -336,10 +347,20 @@ export default function VimtraVenturesPage() {
             <p className="vv-minute-body">{VISION_STATEMENT}</p>
           </article>
 
-          <article className="vv-minute">
-            <p className="vv-minute-k">{BOARD_MEMBER.role}</p>
-            <h3 className="vv-minute-name">{BOARD_MEMBER.name}</h3>
-            <p className="vv-minute-body">{BOARD_MEMBER.body}</p>
+          <article className="vv-director">
+            <figure className="vv-director-figure">
+              <Image
+                src={DIRECTOR.image}
+                alt={DIRECTOR.imageAlt}
+                fill
+                sizes="(min-width: 1024px) 34vw, (min-width: 768px) 36vw, 320px"
+              />
+            </figure>
+            <div className="vv-director-text">
+              <p className="vv-director-role">{DIRECTOR.role}</p>
+              <h3 className="vv-director-name">{DIRECTOR.name}</h3>
+              <p className="vv-director-bio">{DIRECTOR.body}</p>
+            </div>
           </article>
 
           <div className="vv-wall">

@@ -23,14 +23,15 @@
 /* ---- Page masthead, compacted for /scores --------------------
    PageMasthead is shared with /leaderboards and /news, so this is
    applied through its `className` prop rather than by editing it.
-   The shared rule grows a photographed masthead to 100vh at 768px+;
-   on a scores page that put a full screen of sky before any score. */
+   The shared rule used to grow a photographed masthead to 100vh on
+   desktop, which put a full screen of sky before any score; it is now
+   a capped title card too, and this keeps /scores a step tighter. */
 .mast:global(.tb-mast.has-media) {
-  min-height: clamp(320px, 46svh, 440px);
+  min-height: clamp(300px, 42svh, 400px);
 }
 @media (min-width: 768px) {
   .mast:global(.tb-mast.has-media) {
-    min-height: clamp(380px, 50svh, 500px);
+    min-height: clamp(360px, 44svh, 460px);
   }
 }
 .mast :global(.tb-mast-inner) { gap: var(--sp-4); }

@@ -2344,13 +2344,13 @@ a:hover .hp-arrow {
   background: var(--hp-ink);
   color: var(--hp-ivory);
   /* Default = editorial. Variants below. */
-  padding: 72px 0 64px;
+  padding: 56px 0 48px;
 }
 @media (min-width: 768px) {
-  .hp-pagehero { padding: 96px 0 80px; }
+  .hp-pagehero { padding: 72px 0 60px; }
 }
 @media (min-width: 1280px) {
-  .hp-pagehero { padding: 104px 0 88px; }
+  .hp-pagehero { padding: 80px 0 64px; }
 }
 
 /* LEVEL 1 — IMMERSIVE. Story pages. The extra presence comes from the
@@ -2370,12 +2370,12 @@ a:hover .hp-arrow {
 
 /* LEVEL 3 — COMPACT. Data and utility pages: the table is the subject,
    so the header introduces it and gets out of the way. */
-.hp-pagehero.is-compact { padding: 60px 0 52px; }
+.hp-pagehero.is-compact { padding: 48px 0 40px; }
 @media (min-width: 768px) {
-  .hp-pagehero.is-compact { padding: 76px 0 60px; }
+  .hp-pagehero.is-compact { padding: 60px 0 48px; }
 }
 @media (min-width: 1280px) {
-  .hp-pagehero.is-compact { padding: 84px 0 64px; }
+  .hp-pagehero.is-compact { padding: 64px 0 52px; }
 }
 .hp-pagehero.is-compact .hp-pagehero-title {
   font-size: clamp(32px, 4.6vw, 62px);
@@ -5490,24 +5490,30 @@ a:hover .hp-arrow {
   align-items: flex-end;
   background: var(--v-ink);
   color: var(--v-ivory);
-  min-height: clamp(520px, 84svh, 720px);
+  /* A chapter opener, not a full screen: the page's own content should
+     start inside the first viewport. `min-height` only — a hero whose
+     type needs more room still grows to fit it. */
+  min-height: clamp(440px, 64svh, 560px);
   /* Clears the floating header without reserving a dead band. */
-  padding-top: calc(76px + var(--sp-8));
-  padding-bottom: var(--sp-8);
+  padding-top: calc(76px + var(--sp-7));
+  padding-bottom: var(--sp-7);
 }
-.cm-hero.pride-hero-full {
-  min-height: 100vh;
-  min-height: 100svh;
-}
+/* The Pride and Golf Development keep a taller frame than the standard
+   opener — their photographs carry the page — but no longer a full
+   viewport. Same tier as `.cl-hero-full` on The Club. */
+.cm-hero.pride-hero-full,
 .cm-hero.golf-development-hero-full {
-  min-height: 100vh;
-  min-height: 100svh;
+  min-height: clamp(480px, 72svh, 640px);
 }
 @media (min-width: 768px) {
   .cm-hero {
-    min-height: clamp(600px, 86svh, 880px);
-    padding-top: calc(92px + var(--sp-9));
-    padding-bottom: var(--sp-9);
+    min-height: clamp(480px, 58svh, 640px);
+    padding-top: calc(92px + var(--sp-8));
+    padding-bottom: var(--sp-8);
+  }
+  .cm-hero.pride-hero-full,
+  .cm-hero.golf-development-hero-full {
+    min-height: clamp(540px, 72svh, 760px);
   }
 }
 
@@ -6661,15 +6667,16 @@ a:hover .hp-arrow {
    means dropping the height — an image-less hero at full height
    would just be an empty ink band. */
 .cm-hero.is-plain {
-  min-height: clamp(300px, 42svh, 420px);
-  padding-top: calc(76px + var(--sp-7));
-  padding-bottom: var(--sp-7);
+  min-height: clamp(240px, 32svh, 300px);
+  padding-top: calc(76px + var(--sp-6));
+  padding-bottom: var(--sp-6);
 }
+.cm-hero.is-plain .cm-hero-inner { row-gap: var(--sp-5); }
 @media (min-width: 768px) {
   .cm-hero.is-plain {
-    min-height: clamp(340px, 46svh, 480px);
-    padding-top: calc(92px + var(--sp-8));
-    padding-bottom: var(--sp-8);
+    min-height: clamp(280px, 34svh, 360px);
+    padding-top: calc(92px + var(--sp-6));
+    padding-bottom: var(--sp-6);
   }
 }
 /* Without a photograph the veil has nothing to hold down, and its
@@ -7772,25 +7779,27 @@ a:hover .hp-arrow {
   justify-content: flex-end;
   background: var(--v-ink);
   color: var(--v-ivory);
-  padding-top: calc(76px + var(--sp-7));
+  padding-top: calc(76px + var(--sp-6));
   padding-bottom: 0;
 }
 @media (min-width: 768px) {
   .tb-mast { padding-top: calc(92px + var(--sp-8)); }
 }
 
-/* With a photograph the masthead grows — only on desktop, to a full-screen
-   chapter opening. Tablets and phones stay compact so the content remains
-   readable without forcing a tall hero before the actual section. */
+/* With a photograph the masthead grows a little so the image reads — but
+   it stays a title card at every width, never a full screen: a 100vh
+   frame here put a whole viewport of sky before the board. `min-height`
+   only, so the rail and title can always grow the frame rather than be
+   clipped by it. */
 .tb-mast.has-media {
-  min-height: clamp(400px, 54svh, 520px);
+  min-height: clamp(340px, 46svh, 440px);
   padding-bottom: 0;
 }
+@media (min-width: 768px) {
+  .tb-mast.has-media { min-height: clamp(400px, 48svh, 500px); }
+}
 @media (min-width: 1024px) {
-  .tb-mast.has-media {
-    min-height: 100vh;
-    height: 100vh;
-  }
+  .tb-mast.has-media { min-height: clamp(440px, 56svh, 580px); }
 }
 .tb-mast-media {
   position: absolute;
@@ -9816,7 +9825,7 @@ a:hover .hp-arrow {
 ============================================================ */
 
 /* ---- 1 · Hero -------------------------------------------- */
-/* Compact by design. `.cm-hero` reserves 84svh for one word; the
+/* Compact by design. `.cm-hero` reserves a tall frame for one word; the
    store has a catalogue to show, so the opener states the page and
    hands over. Header height is reserved here because /shop is in
    FLOATING_HEADER_ROUTES. */
@@ -9826,10 +9835,10 @@ a:hover .hp-arrow {
   overflow: hidden;
   background: var(--v-ink);
   color: var(--v-ivory);
-  padding: calc(76px + var(--sp-7)) 0 var(--sp-7);
+  padding: calc(76px + var(--sp-6)) 0 var(--sp-6);
 }
 @media (min-width: 768px) {
-  .sp-hero { padding: calc(92px + var(--sp-8)) 0 var(--sp-8); }
+  .sp-hero { padding: calc(92px + var(--sp-7)) 0 var(--sp-7); }
 }
 
 /* Brand-only aurora, low alpha, slow — the same device the club
@@ -9855,7 +9864,7 @@ a:hover .hp-arrow {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--sp-7);
+  row-gap: var(--sp-6);
   align-items: end;
 }
 @media (min-width: 1024px) {
@@ -9896,7 +9905,7 @@ a:hover .hp-arrow {
   grid-template-columns: repeat(3, minmax(0, auto));
   justify-content: start;
   column-gap: clamp(var(--sp-6), 6vw, var(--sp-9));
-  margin: var(--sp-7) 0 0;
+  margin: var(--sp-6) 0 0;
   padding-top: var(--sp-5);
   border-top: 1px solid var(--v-hair-ink);
 }
@@ -10070,7 +10079,7 @@ a:hover .hp-arrow {
    viewport, which is the tall empty band this hero exists to avoid. The
    type scale is kept; only the spacing around it is pulled back. */
 @media (max-width: 767px) {
-  .sp-hero-rail { margin-top: var(--sp-6); padding-top: var(--sp-4); }
+  .sp-hero-rail { margin-top: var(--sp-5); padding-top: var(--sp-4); }
   .sp-hero-cell { gap: var(--sp-2); }
   .sp-hero-cell dd { font-size: 20px; }
   .sp-hero-tile-meta { margin-top: var(--sp-3); padding-top: var(--sp-2); }
@@ -11504,14 +11513,14 @@ a:hover .hp-arrow {
   align-items: flex-end;
   background: var(--v-ink);
   color: var(--v-ivory);
-  min-height: clamp(470px, 66svh, 620px);
+  min-height: clamp(400px, 54svh, 500px);
   /* Clears the floating header (see FLOATING_HEADER_ROUTES). */
   padding-top: calc(76px + var(--sp-7));
   padding-bottom: var(--sp-7);
 }
 @media (min-width: 768px) {
   .vv-hero {
-    min-height: clamp(540px, 74svh, 760px);
+    min-height: clamp(440px, 56svh, 600px);
     padding-top: calc(92px + var(--sp-8));
     padding-bottom: var(--sp-8);
   }
@@ -11813,12 +11822,97 @@ a:hover .hp-arrow {
 .vv-wall-w:last-child { padding-right: 0; }
 .vv-wall-w:last-child::after { display: none; }
 .vv-wall-w:nth-child(3n) { color: var(--v-red); }
+
+/* ---- Director profile -----------------------------------------
+   The board seat as a person: portrait and complete biography read
+   together on their own row. The portrait uses the Leadership
+   section's treatment (`.vvl-figure`) — 4/5 frame, no radius or
+   shadow, a short gold rule under its left edge — and the role sits
+   above the name in the same crimson micro caps as `.vvl-role`.
+   Stacked on phones; side by side from 768px, on the section's own
+   8 / 12 column track so the text starts on the same line as the
+   Vision panel above it. */
+.vv-director {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-5);
+  margin: 0;
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--v-hair-ivory);
+}
+.vv-director-figure {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 320px;
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  background: var(--v-ink-2);
+}
+.vv-director-figure img { object-fit: cover; }
+.vv-director-figure::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 34%;
+  height: 3px;
+  background: var(--v-gold);
+}
+.vv-director-text { min-width: 0; }
+.vv-director-role {
+  margin: 0;
+  font-family: var(--font-manrope), sans-serif;
+  font-weight: 700;
+  font-size: var(--t-micro);
+  line-height: 1.45;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--v-red);
+}
+.vv-director-name {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3.2vw, 42px);
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  color: var(--v-ink);
+}
+.vv-director-bio {
+  margin: var(--sp-5) 0 0;
+  max-width: 62ch;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.76;
+  color: var(--v-on-ivory);
+}
+@media (min-width: 768px) {
+  .vv-director {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+    align-items: start;
+  }
+  .vv-director-figure { grid-column: 1 / span 3; max-width: none; }
+  .vv-director-text { grid-column: 4 / span 5; }
+}
+
 @media (min-width: 1024px) {
   .vv-gov2 { align-items: start; }
   .vv-gov2 > .hp-index { grid-row: 1; }
   .vv-gov2-h { grid-row: 2; grid-column: 1 / span 5; }
   .vv-minute { grid-row: 2; grid-column: 7 / span 6; }
-  .vv-wall { grid-row: 3; grid-column: 1 / -1; margin-top: var(--sp-5); }
+  .vv-director {
+    grid-row: 3;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    margin-top: var(--sp-5);
+    padding-top: var(--sp-7);
+  }
+  .vv-director-figure { grid-column: 1 / span 4; }
+  .vv-director-text { grid-column: 7 / span 6; }
+  .vv-wall { grid-row: 4; grid-column: 1 / -1; margin-top: var(--sp-5); }
 }
 
 /* ============================================================
@@ -12088,13 +12182,19 @@ a:hover .hp-arrow {
    other chapter page shares (see app/the-club/page.tsx's own comment
    for the full reasoning), so the only rule this page still owns is
    the one thing it needs that the shared component doesn't provide by
-   default: exactly 100vh. Scoped to `.cl-hero-full` — a wrapper only
-   this page renders — so `.cm-hero` itself, and every other route that
-   uses it, is completely untouched.
+   default: a taller frame than the standard opener (no longer a full
+   100vh — the manifesto should start inside the first viewport). Scoped
+   to `.cl-hero-full` — a wrapper only this page renders — so `.cm-hero`
+   itself, and every other route that uses it, is completely untouched.
+   `svh` so mobile browser chrome doesn't resize the frame mid-scroll.
 ============================================================ */
 .cl-hero-full .cm-hero {
-  min-height: 100vh;
-  min-height: 100svh; /* mobile browser chrome doesn't shrink the frame mid-scroll */
+  min-height: clamp(480px, 72svh, 640px);
+}
+@media (min-width: 768px) {
+  .cl-hero-full .cm-hero {
+    min-height: clamp(540px, 72svh, 760px);
+  }
 }
 
 /* ============================================================
