@@ -1,24 +1,23 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import type { Standing, StandingBoard } from "@prisma/client";
+import type { Standing } from "@prisma/client";
 
 /**
- * Standings data layer. Three boards per season — TEAM (franchise table),
- * PLAYER (Player of the Season race), ORDER (Order of Merit money list).
+ * Public/admin standings data layer for the franchise table.
  *
- * The `extra` column holds a JSON string of board-specific columns (avg
- * score, best finish, top-tens, etc.) so we can render each board with
- * its own headers without adding columns to the base schema.
+ * Legacy PLAYER and ORDER rows may remain in the database, but are
+ * intentionally excluded from this data layer.
  */
 
-export type { Standing, StandingBoard };
+export type StandingBoard = "TEAM";
+export type { Standing };
 
 export type StandingExtra = Record<string, string | number | null | undefined>;
 
 export interface StandingRow {
   id: string;
   seasonYear: number;
-  board: StandingBoard;
+  board: "TEAM";
   rank: number;
   name: string;
   teamName: string | null;
@@ -45,7 +44,7 @@ function toRow(s: Standing): StandingRow {
   return {
     id: s.id,
     seasonYear: s.seasonYear,
-    board: s.board,
+    board: "TEAM",
     rank: s.rank,
     name: s.name,
     teamName: s.teamName,
@@ -54,26 +53,17 @@ function toRow(s: Standing): StandingRow {
   };
 }
 
-export async function listStandings(seasonYear: number): Promise<{
-  team: StandingRow[];
-  player: StandingRow[];
-  order: StandingRow[];
-}> {
+export async function listStandings(seasonYear: number): Promise<{ team: StandingRow[] }> {
   const rows = await prisma.standing.findMany({
-    where: { seasonYear },
-    orderBy: [{ board: "asc" }, { rank: "asc" }],
+    where: { seasonYear, board: "TEAM" },
+    orderBy: { rank: "asc" },
   });
-  const converted = rows.map(toRow);
-  return {
-    team: converted.filter((r) => r.board === "TEAM"),
-    player: converted.filter((r) => r.board === "PLAYER"),
-    order: converted.filter((r) => r.board === "ORDER"),
-  };
+  return { team: rows.map(toRow) };
 }
 
 export interface StandingInput {
   seasonYear: number;
-  board: StandingBoard;
+  board: "TEAM";
   rank: number;
   name: string;
   teamName?: string | null;
@@ -113,9 +103,10 @@ export async function upsertStanding(input: StandingInput): Promise<Standing> {
 export async function updateStandingById(
   id: string,
   input: Omit<StandingInput, "seasonYear" | "board">
-): Promise<{ ok: true; row: Standing } | { ok: false; reason: "missing" | "conflict" }> {
+): Promise<{ ok: true; row: Standing } | { ok: false; reason: "missing" | "conflict" | "unsupported" }> {
   const existing = await prisma.standing.findUnique({ where: { id } });
   if (!existing) return { ok: false, reason: "missing" };
+  if (existing.board !== "TEAM") return { ok: false, reason: "unsupported" };
   if (input.rank !== existing.rank) {
     const clash = await prisma.standing.findUnique({
       where: {
@@ -146,10 +137,8 @@ export async function getStanding(id: string): Promise<Standing | null> {
 }
 
 export async function deleteStanding(id: string): Promise<boolean> {
-  try {
-    await prisma.standing.delete({ where: { id } });
-    return true;
-  } catch {
-    return false;
-  }
+  const existing = await prisma.standing.findUnique({ where: { id } });
+  if (!existing || existing.board !== "TEAM") return false;
+  await prisma.standing.delete({ where: { id } });
+  return true;
 }

@@ -2248,7 +2248,7 @@ centred in a red-to-dark gradient card with `object-fit: contain`.
 |---|---|
 | `FixturesList` | The fixture timeline, grouped by month by the page |
 | `ScoreExperience` | Per-fixture score boards. Exports the `BoardEvent` and `ScoreRow` types the page builds. **Renders an unlit board when a fixture has no scores** |
-| `StandingsBoard` | One of the three leaderboards, with its own "awaiting verified data" state |
+| `StandingsBoard` | Chennai Lions event results, with an "awaiting verified data" state |
 
 `app/scores/page.tsx` marks rows belonging to the franchise by checking against the
 roster:

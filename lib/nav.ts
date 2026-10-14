@@ -146,7 +146,7 @@ export const SITE_SECTIONS: SiteSection[] = [
     items: [
       { href: "/fixtures", label: "Fixtures", desc: "AM Green IGPL · 2026 calendar" },
       { href: "/scores", label: "Scores", desc: "Round-by-round scorecards" },
-      { href: "/leaderboards", label: "Standings", desc: "Franchise table · Order of Merit" },
+      { href: "/leaderboards", label: "Standings", desc: "Chennai franchise table" },
       { href: "/news", label: "News", desc: "Franchise news & press coverage" },
     ],
     image: "/assets/photo/nav-season-bunker-ocean.jpg",

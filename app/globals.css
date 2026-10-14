@@ -8387,116 +8387,6 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 
-.tb-ranks {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--v-hair-ivory);
-}
-.tb-ranks li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: var(--sp-5);
-  row-gap: var(--sp-4);
-  padding: var(--sp-6) 0;
-  border-bottom: 1px solid var(--v-hair-ivory);
-}
-@media (min-width: 768px) {
-  .tb-ranks li {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    column-gap: var(--sp-7);
-    align-items: center;
-  }
-}
-.tb-rank-n {
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(30px, 4.4vw, 58px);
-  line-height: 0.86;
-  letter-spacing: -0.05em;
-  font-variant-numeric: tabular-nums;
-  color: var(--v-gold);
-}
-.tb-rank-id { min-width: 0; }
-.tb-rank-name {
-  display: block;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 700;
-  font-size: clamp(19px, 2.2vw, 30px);
-  line-height: 1.12;
-  letter-spacing: var(--tr-h3);
-  color: var(--v-ink);
-}
-.tb-rank-sub {
-  display: block;
-  margin-top: 5px;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: var(--t-micro);
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  color: var(--v-red);
-}
-.tb-rank-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-3) var(--sp-6);
-  margin: var(--sp-4) 0 0;
-}
-.tb-rank-meta dt {
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 9.5px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--v-on-ivory);
-}
-.tb-rank-meta dd {
-  margin: 3px 0 0;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--v-ink);
-  font-variant-numeric: tabular-nums;
-}
-.tb-rank-fig { grid-column: 1 / -1; }
-@media (min-width: 768px) {
-  .tb-rank-fig { grid-column: auto; text-align: right; }
-}
-.tb-rank-fig-v {
-  display: block;
-  font-family: var(--font-sora), sans-serif;
-  font-weight: 800;
-  font-size: clamp(26px, 3.4vw, 46px);
-  line-height: 0.94;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-  color: var(--v-ink);
-}
-.tb-rank-fig-k {
-  display: block;
-  margin-top: 5px;
-  font-family: var(--font-manrope), sans-serif;
-  font-weight: 700;
-  font-size: 9.5px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--v-on-ivory);
-}
-/* The leader, and the franchise's own row. Both marked by rule and
-   weight rather than by a coloured block of type. */
-/* The rank numeral is gold, which clears AA on the two ink boards but
-   measures 2.57:1 on the ivory one. Light surfaces take crimson. */
-.hp-sec-ivory .tb-rank-n,
-.hp-sec-paper .tb-rank-n { color: var(--v-red); }
-.tb-ranks li.is-lead { border-bottom-color: var(--v-gold); }
-.tb-ranks li.is-lead .tb-rank-n { color: var(--v-red); }
-.tb-ranks li.is-lead .tb-rank-name { font-size: clamp(22px, 2.7vw, 38px); }
-.tb-ranks li.is-lions {
-  padding-left: var(--sp-4);
-  border-left: 2px solid var(--v-red);
-}
-
 .tb-team-table-scroll {
   overflow-x: auto;
   max-width: 100%;
@@ -8606,29 +8496,17 @@ a:hover .hp-arrow {
   color: var(--v-on-ivory);
 }
 
-/* ---- The same boards, on ink -------------------------------
+/* ---- The franchise table, on ink ---------------------------
    Every colour above is restated here. Nothing is left to
    inherit a light-surface value onto a dark ground. */
 .hp-sec-ink .tb-board-name,
-.hp-sec-ink .tb-rank-name,
-.hp-sec-ink .tb-rank-fig-v,
 .hp-sec-ink .tb-await-t { color: var(--v-ivory); }
 .hp-sec-ink .tb-board-ranks,
-.hp-sec-ink .tb-await-d,
-.hp-sec-ink .tb-rank-meta dd { color: var(--v-on-ink); }
-.hp-sec-ink .tb-rank-meta dt,
-.hp-sec-ink .tb-rank-fig-k,
-.hp-sec-ink .tb-await-cols li { color: var(--v-on-ink); }
-.hp-sec-ink .tb-board-n,
-.hp-sec-ink .tb-await-k,
-.hp-sec-ink .tb-rank-sub { color: var(--v-gold-lit); }
-.hp-sec-ink .tb-ranks,
-.hp-sec-ink .tb-ranks li,
+.hp-sec-ink .tb-await-d { color: var(--v-on-ink); }
+.hp-sec-ink .tb-board-n { color: var(--v-gold-lit); }
 .hp-sec-ink .tb-await,
 .hp-sec-ink .tb-await-cols li { border-color: var(--v-hair-ink); }
-.hp-sec-ink .tb-ranks li.is-lead { border-bottom-color: var(--v-gold); }
-.hp-sec-ink .tb-ranks li.is-lead .tb-rank-n { color: var(--v-gold-lit); }
-.hp-sec-ink .tb-ranks li.is-lions { border-left-color: var(--v-red-lit); }
+.hp-sec-ink .tb-await-cols li { color: var(--v-on-ink); }
 
 
 /* ============================================================
@@ -10836,16 +10714,66 @@ a:hover .hp-arrow {
 }
 .plr-marquee .plr-meta { margin-top: var(--sp-6); }
 
-/* The portrait itself. A plate, not a card: no border, no radius,
-   no shadow. `revealImageOnScroll` wipes this element open, and
-   clears its own clip-path afterwards. */
+/* Editorial portrait treatment: no enclosing card, just offset corner marks.
+   The image plate remains the reveal target so scroll animation does not
+   clip or distort the accents. */
+.plr-mq-fig,
+.plr-p-fig {
+  position: relative;
+  z-index: 0;
+}
+.plr-mq-fig:hover,
+.plr-p-fig:hover {
+  z-index: 1;
+}
+.plr-mq-fig::before,
+.plr-mq-fig::after,
+.plr-p-fig::before,
+.plr-p-fig::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+  transition: transform 180ms ease;
+}
+.plr-mq-fig::before,
+.plr-p-fig::before {
+  top: 10px;
+  left: 10px;
+  border-top: 2px solid var(--v-red);
+  border-left: 2px solid var(--v-red);
+}
+.plr-mq-fig::after,
+.plr-p-fig::after {
+  right: 10px;
+  bottom: 10px;
+  border-right: 2px solid var(--v-gold-lit);
+  border-bottom: 2px solid var(--v-gold-lit);
+}
+.plr-mq-fig:hover::before,
+.plr-p-fig:hover::before { transform: translate(-2px, -2px); }
+.plr-mq-fig:hover::after,
+.plr-p-fig:hover::after { transform: translate(2px, 2px); }
 .plr-plate {
   position: relative;
   overflow: hidden;
+  border-radius: 2px;
   background: var(--v-ink-2);
 }
 .plr-plate img {
   object-fit: cover;
+  transition: filter 180ms ease;
+}
+.plr-mq-fig:hover .plr-plate img,
+.plr-p-fig:hover .plr-plate img { filter: saturate(1.06); }
+@media (prefers-reduced-motion: reduce) {
+  .plr-mq-fig::before,
+  .plr-mq-fig::after,
+  .plr-p-fig::before,
+  .plr-p-fig::after,
+  .plr-plate img { transition: none; }
 }
 
 /* Signature moments. Two tone variants — on ink in the marquee, on
@@ -11109,17 +11037,11 @@ a:hover .hp-arrow {
    scale on a phone. Nothing rules between profiles, so this space is the
    separator — but at 96px top and bottom it read as a gap on a 360px
    screen, not as structure. */
-/* 64px top and bottom at every width, so one profile hands over to the next
-   across ~128px. This was --sp-9 at tablet and --sp-10 at desktop, which put
-   96 + 96 and 128 + 128 between profiles: a quarter of a 900px viewport of
-   unexplained ivory, and the reason 03's masthead appeared stranded at the
-   foot of an empty screen. The separation between profiles is carried by
-   scale and by the change of composition, not by the size of the gap — so
-   the gap only has to be unambiguous, not large. 04 closes a little wider
-   because it hands over to the ink sign-off rather than to another player. */
-.plr-p { padding: var(--sp-8) 0; }
+/* Keep the profile hand-offs compact; the change in composition separates
+   the players, so large padding is unnecessary. */
+.plr-p { padding: var(--sp-7) 0; }
 @media (min-width: 1024px) {
-  .plr-p-c { padding-bottom: var(--sp-9); }
+  .plr-p-c { padding-bottom: var(--sp-8); }
 }
 
 .plr-p-name {

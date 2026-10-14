@@ -1,17 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { StandingBoard } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth";
-import { deleteStanding, getStanding, updateStandingById, upsertStanding, type StandingExtra } from "@/lib/standings";
+import { deleteStanding, getStanding, updateStandingById, upsertStanding, type StandingBoard, type StandingExtra } from "@/lib/standings";
 import { prisma } from "@/lib/prisma";
 import type { ActionResult } from "@/lib/admin-action-result";
 
-const BOARDS: StandingBoard[] = ["TEAM", "PLAYER", "ORDER"];
-
-function toBoard(raw: FormDataEntryValue | null): StandingBoard {
-  const s = String(raw ?? "TEAM").toUpperCase();
-  return (BOARDS as string[]).includes(s) ? (s as StandingBoard) : "TEAM";
+function isTeamBoard(raw: FormDataEntryValue | null): boolean {
+  return String(raw ?? "").toUpperCase() === "TEAM";
 }
 
 function toInt(raw: FormDataEntryValue | null, fallback = 0): number {
@@ -31,26 +27,17 @@ function optInt(raw: FormDataEntryValue | null): number | null {
   return Number.isFinite(n) ? Math.round(n) : null;
 }
 
-/** Board-specific extra columns. Only what the public LeaderboardTabs reads. */
-function extractExtras(formData: FormData, board: StandingBoard): StandingExtra {
+/** Extra columns used by the public franchise standings table. */
+function extractExtras(formData: FormData): StandingExtra {
   const extras: StandingExtra = {};
   const push = (k: string) => {
     const v = optStr(formData.get(k));
     if (v !== null) extras[k] = v;
   };
-  if (board === "TEAM") {
-    push("r1");
-    push("r2");
-    push("r3");
-    push("score");
-  } else if (board === "PLAYER") {
-    push("top10");
-    push("wins");
-  } else {
-    push("events");
-    push("earnings");
-    push("avgPerEvent");
-  }
+  push("r1");
+  push("r2");
+  push("r3");
+  push("score");
   return extras;
 }
 
@@ -68,18 +55,21 @@ export async function saveStandingAction(formData: FormData): Promise<ActionResu
   await requireAdmin();
   const id = String(formData.get("id") ?? "").trim();
   const seasonYear = toInt(formData.get("seasonYear"), new Date().getUTCFullYear());
-  const board = toBoard(formData.get("board"));
+  if (!isTeamBoard(formData.get("board"))) {
+    return { ok: false, error: "Only franchise standings can be managed here.", field: "board" };
+  }
+  const board: StandingBoard = "TEAM";
   const rank = toInt(formData.get("rank"));
   const name = optStr(formData.get("name"));
   if (!rank || rank < 1) return { ok: false, error: "Rank must be 1 or higher.", field: "rank" };
-  if (!name) return { ok: false, error: "A team or player name is required.", field: "name" };
+  if (!name) return { ok: false, error: "A franchise name is required.", field: "name" };
 
   const payload = {
     rank,
     name,
     teamName: optStr(formData.get("teamName")),
     points: optInt(formData.get("points")),
-    extra: extractExtras(formData, board),
+    extra: extractExtras(formData),
   };
 
   if (id) {
@@ -87,7 +77,9 @@ export async function saveStandingAction(formData: FormData): Promise<ActionResu
     if (!result.ok) {
       return result.reason === "conflict"
         ? { ok: false, error: `Rank ${rank} is already taken on this board. Change or delete that row first.`, field: "rank" }
-        : { ok: false, error: "That row no longer exists." };
+        : result.reason === "unsupported"
+          ? { ok: false, error: "Only franchise standings can be managed here." }
+          : { ok: false, error: "That row no longer exists." };
     }
     revalidateStandings();
     return { ok: true, message: `Saved rank ${rank} · ${name}.` };
@@ -109,6 +101,7 @@ export async function deleteStandingAction(formData: FormData): Promise<ActionRe
   const id = String(formData.get("id") ?? "");
   const existing = await getStanding(id);
   if (!existing) return { ok: false, error: "That row no longer exists." };
+  if (existing.board !== "TEAM") return { ok: false, error: "Only franchise standings can be managed here." };
   const removed = await deleteStanding(id);
   if (!removed) return { ok: false, error: "The row could not be deleted. Reload and try again." };
   revalidateStandings();
