@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import type { NewsEntry } from "@/lib/news-desk";
+import s from "./News.module.css";
 
 /**
  * /news · Media coverage — the press index.
@@ -44,7 +45,27 @@ function Meta({ entry }: { entry: NewsEntry }) {
   );
 }
 
-function EntryLink({
+export function StoryMeta({ entry }: { entry: NewsEntry }) {
+  return (
+    <span className={s.meta}>
+      <span className={s.kind}>{entry.kicker}</span>
+      <i className={s.sep} aria-hidden>
+        ·
+      </i>
+      <span>{entry.source}</span>
+      {entry.date && (
+        <>
+          <i className={s.sep} aria-hidden>
+            ·
+          </i>
+          <time className={s.date}>{entry.date}</time>
+        </>
+      )}
+    </span>
+  );
+}
+
+export function StoryLink({
   entry,
   className,
   children,
@@ -72,6 +93,24 @@ function EntryLink({
   );
 }
 
+export function StoryGo({ entry }: { entry: NewsEntry }) {
+  return (
+    <span className={s.go}>
+      {entry.external ? `Read at ${entry.source}` : "Read the story"}
+      <i aria-hidden>→</i>
+    </span>
+  );
+}
+
+export function distinctSummary(entry: NewsEntry): string | null {
+  const summary = entry.summary;
+  if (!summary?.trim()) return null;
+  return summary.trim().toLocaleLowerCase() ===
+    entry.title.trim().toLocaleLowerCase()
+    ? null
+    : summary;
+}
+
 export default function Newsroom({ entries }: { entries: NewsEntry[] }) {
   if (entries.length === 0) return null;
 
@@ -85,7 +124,7 @@ export default function Newsroom({ entries }: { entries: NewsEntry[] }) {
           as="li"
           className="nwr-mid-w"
         >
-          <EntryLink entry={entry} className="nwr-mid">
+          <StoryLink entry={entry} className="nwr-mid">
             <span className="nwr-mid-fig">
               {entry.image ? (
                 <Image
@@ -114,7 +153,7 @@ export default function Newsroom({ entries }: { entries: NewsEntry[] }) {
                 <i>→</i>
               </span>
             </span>
-          </EntryLink>
+          </StoryLink>
         </Reveal>
       ))}
     </ul>

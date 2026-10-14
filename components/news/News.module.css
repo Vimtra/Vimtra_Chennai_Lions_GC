@@ -124,6 +124,7 @@
 .onInk .date { color: var(--v-gold-lit); }
 .onInk .go { color: var(--v-ivory); }
 .onInk .go i { color: var(--v-red-lit); }
+.onInk .link:hover .go i { transform: translate(2px, -2px); }
 .onInk.story:hover .title,
 .onInk .link:focus-visible .title { color: var(--v-gold-lit); }
 .onInk .link:focus-visible { outline-color: var(--v-gold-lit); }
