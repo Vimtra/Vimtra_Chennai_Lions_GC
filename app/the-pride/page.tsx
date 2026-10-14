@@ -148,7 +148,7 @@ export default function ThePridePage() {
           </p>
 
           <div className="pr-values-head">
-            <SectionTitle lines={["THE FOUR", "PILLARS."]} className="pr-values-h" />
+            <SectionTitle lines={["THE FOUR PILLARS."]} className="pr-values-h" />
           </div>
 
           <ol className="pr-pillars">

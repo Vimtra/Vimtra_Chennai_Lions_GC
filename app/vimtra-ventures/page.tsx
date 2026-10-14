@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/vimtra-ventures" },
   title: "Vimtra Ventures",
   description:
-    "The San Francisco & Chennai-based PE, VC, and investment firm behind the Chennai Lions — founded 1995 under the same principals, 60+ technology acquisitions, six core verticals, a licensed PGA of America partnership, and ownership of the Chennai Lions GC and Dallas Sidekicks.",
+    "The San Francisco & Chennai-based PE, VC, and investment firm behind the Chennai Lions — founded 2014 under the same principals, 60+ technology acquisitions, six core verticals, a licensed PGA of America partnership, and ownership of the Chennai Lions GC and Dallas Sidekicks.",
 };
 
 /* ---------------------------------------------------------------------------
@@ -34,13 +34,14 @@ export const metadata: Metadata = {
    a band of figures.
 
    PHOTOGRAPHY: one licensed frame in the hero, plus the real
-   franchise-supplied portraits of the two founders and the director.
+   franchise-supplied portraits of the two founders, the director and
+   the nine advisors.
    Nothing else — a firm cannot be honestly photographed, and stock
    offices would cheapen the page.
 
    DEDUP PASS (targeted, September 2026). "The Firm" prose used to restate
    every figure in CREDENTIALS in full sentences immediately above the
-   credential rail itself — founded 1995, 60+ technology acquisitions, 55+
+   credential rail itself — founded 2014, 60+ technology acquisitions, 55+
    real-estate assets, and the $1.1B+ Frisco/PGA District cluster all
    appeared twice on one screen. The rail is the stronger presentation for
    a number (this file's own comment above already argues that), so the
@@ -72,7 +73,7 @@ export const metadata: Metadata = {
    brochure's own statement, attributed to it, without implying a
    second or larger total. Do not merge the two into one number. */
 const CREDENTIALS = [
-  { v: "1995", l: "Founded" },
+  { v: "2014", l: "Founded" },
   { v: "60+", l: "Technology Acquisitions" },
   { v: "6", l: "Core Verticals" },
 ];
@@ -146,16 +147,99 @@ const VISION_STATEMENT =
 // franchise (October 2026), verbatim and complete; do not shorten or add to
 // it. It replaces the brochure p. 16 board sentence that used to stand in
 // for this seat, so the person appears once on the page, not twice. The
-// photograph is the franchise-supplied portrait in public/assets (already
-// 4:5, so the frame does not crop it).
+// photograph is the franchise-supplied portrait in public/assets, shown in
+// the same circular advisor panel as the advisors below him.
 const DIRECTOR = {
   name: "Mr. M. Ravi Babu Mannam",
   role: "Director, Vimtra Ventures",
   image: "/assets/Ravi Babu.jpeg",
+  // Keeps the face centred in the circular crop of this 4:5 portrait.
+  imagePosition: "50% 20%",
   imageAlt: "Mr. M. Ravi Babu Mannam — Director, Vimtra Ventures",
   body:
     "Mr. M. Ravi Babu brings over two decades of experience across legal affairs, educational consultancy, HR value-added services, and real estate portfolio management. He specializes in providing strategic solutions for legal disputes and arbitration matters. At Vimtra, he leads legal and regulatory compliance and advises the India operations on contracts, NDAs, and other critical legal documentation. He also provides guidance on managing legal disputes. Mr. Ravi Babu has served on the Board of the M.S. Swaminathan Research Foundation and has been associated with the Tirumala Tirupati Devasthanams (TTD) Local Advisory Committees, Chennai, the Rail Safety Council, and the Lions Club.",
 };
+
+// Advisors — names, designations, biographies and image paths supplied by
+// the franchise (October 2026) as the source of truth, verbatim and in the
+// supplied order; do not shorten, reword or add to them. `imagePosition`
+// only steers the circular crop onto each face (the files are not all
+// square), and `imageZoom` enlarges a frame whose face is small in the
+// source (Surya Kotha's approved photo is a full-length seated shot).
+// Every photograph is the franchise-supplied file for that person.
+const ADVISORS: {
+  name: string;
+  designation: string;
+  bio: string;
+  image: string;
+  imagePosition: string;
+  imageZoom?: number;
+}[] = [
+  {
+    name: "Mr. Ram Bobba",
+    designation: "Technology, Real Estate & Healthcare",
+    bio: "A serial entrepreneur with investments across technology, real estate and healthcare in the United States and India. Based in Dallas, he has built several companies from the ground up alongside numerous acquisitions in technology and product businesses, and holds real-estate positions across the Dallas, Houston and Austin markets. He went on to found a chain of emergency-care centres in Dallas and to invest in healthcare services in India. Active in leadership development and social responsibility.",
+    image: "/assets/team-ram.jpg.jpeg",
+    imagePosition: "50% 30%",
+  },
+  {
+    name: "Mr. Sridhar Patibandla",
+    designation: "Technology & Real Estate",
+    bio: "Owns and operates several technology and real-estate businesses. With his partner he grew an IT company from nothing to USD 100 million in turnover within ten years — across staffing, system integration, managed services and products — now over a thousand people serving customers in fourteen countries across North America, APAC, LATAM and MENA. His real-estate portfolio runs from single-family homes in Houston Heights to a 75-unit multi-family development, alongside substantial landholdings across Texas.",
+    image: "/assets/team-sridhar.jpg.jpeg",
+    imagePosition: "50% 30%",
+  },
+  {
+    name: "Mr. Suresh Katamreddy",
+    designation: "Technology & Operations",
+    bio: "A founding member and partner of Kastech Software Solutions Group in Houston, Texas, where as Chief Technology Officer he oversees operations and strategic planning. He brings more than a decade as an entrepreneur across IT and real estate, and has invested with Mr. Patibandla in several real-estate ventures and land-development projects, working at asset level to keep strategy and execution on track. He holds a master's degree in Electrical and Computer Engineering from UT San Antonio.",
+    image: "/assets/team-suresh.jpg.jpeg",
+    imagePosition: "50% 30%",
+  },
+  {
+    name: "Mr. Surya Kotha",
+    designation: "Technology & Innovation Advisor",
+    bio: "Heads technology advisory at Vimtra with over 24 years of IT industry experience across executive leadership roles in the US and India. A recognized authority in B2B ERP enterprise architecture, cloud infrastructure, and e-commerce integration, Surya actively advises high-growth ventures and guides Vimtra’s technology consulting, go-to-market strategies, and smart-city digital infrastructure.",
+    image: "/assets/surya-kotha.jpg",
+    imagePosition: "43% 24%",
+    imageZoom: 1.8,
+  },
+  {
+    name: "Mr. Venkat Annapareddy",
+    designation: "Technology & Workforce Solutions",
+    bio: "A Frisco, Texas–based technology entrepreneur who has worked in the IT industry since 2010. He leads businesses in IT Industry, strategic consulting and managed-service workforce solutions, building teams of recruitment and delivery professionals that serve organisations across the United States — bringing workforce planning and talent-sourcing depth to the team.",
+    image: "/assets/team-venkat.jpg.jpeg",
+    imagePosition: "50% 30%",
+  },
+  {
+    name: "Mr. Appireddy Annapareddy",
+    designation: "Technology Services & Operations",
+    bio: "A technology-services entrepreneur with businesses across the United States and India, spanning IT Industry and technology services. He has operated a Hyderabad-based business since 2018, bringing established roots in Telangana and first-hand experience of doing business within the State to the team.",
+    image: "/assets/team-appireddy.jpg.jpeg",
+    imagePosition: "50% 40%",
+  },
+  {
+    name: "Mr. K. Shivashankar",
+    designation: "Chief Architect & Master Planner",
+    bio: "Founded his architectural practice in 1988, establishing over three decades an extraordinary portfolio of projects significant in scale, materiality, and intricate execution. Living by the principle that construction personifies design, his hands-on experience began at age 15, progressing from bespoke private residences to landmark commercial headquarters and grand five-star luxury hotels, all mirroring his mastery of sound planning and flawless execution.",
+    image: "/assets/Shiva Shankar.jpg.jpeg",
+    imagePosition: "40% 50%",
+  },
+  {
+    name: "Mr. Brandon Cecil de Souza",
+    designation: "Golf Operations & Tournament Advisor",
+    bio: "A 17-time India International with 26 professional titles, four World Cup appearances and the Indian captaincy at the Alfred Dunhill Cup, he has spent forty-two years in the game as player, coach, administrator and consultant, with course operations and management mandates across India and South Asia. He is President of the Golf Industry Association of India and serves on the Board of the Professional Golfers Association (PGA) of India / PGTI.",
+    image: "/assets/advisor-brandon.jpeg",
+    imagePosition: "50% 28%",
+  },
+  {
+    name: "Mr. Aashish Vaishnava",
+    designation: "Golf Course Architect & Strategic Advisor",
+    bio: "Honored as the Best Golf Course Designer in India, Mr. Vaishnava brings over 20 years of professional experience, having designed and overseen more than 45 exceptional golf facilities across the country after designing his first course at age 16. Educated at IIM Kozhikode (MBA) and certified in Golf Course Design & Turf Management from GMIC Canada, his mastery spans championship course routing, luxury golf townships, driving ranges, and landscape architecture.",
+    image: "/assets/AASHISH VAISHNAVA.jpg.jpeg",
+    imagePosition: "50% 35%",
+  },
+];
 
 // Brochure p. 16 — Advisory Board disciplines.
 const ADVISORY_DISCIPLINES = [
@@ -242,7 +326,7 @@ export default function VimtraVenturesPage() {
           </div>
 
           {/* The numbers this prose used to restate in full sentences
-              (founded 1995, 60+ technology acquisitions, 55+ real-estate
+              (founded 2014, 60+ technology acquisitions, 55+ real-estate
               assets, the $1.1B+ Frisco/PGA District cluster) now live here
               exactly once — removed from the paragraphs above in the
               September 2026 dedup pass rather than said twice on the same
@@ -318,9 +402,8 @@ export default function VimtraVenturesPage() {
 
           The Vision is a MINUTE: a single bordered statement panel with a
           gold rule down its leading edge. The board seat is the director
-          himself — portrait and complete biography side by side on its own
-          row (stacked on phones), with the same portrait treatment as the
-          Leadership section above.
+          himself, in the same horizontal panel as the nine advisors that
+          follow — complete biography with a circular portrait.
 
           The advisory board is a TYPE FIELD, not a list. The eight
           disciplines are set as large display words that wrap as one
@@ -347,21 +430,61 @@ export default function VimtraVenturesPage() {
             <p className="vv-minute-body">{VISION_STATEMENT}</p>
           </article>
 
-          <article className="vv-director">
-            <figure className="vv-director-figure">
-              <Image
-                src={DIRECTOR.image}
-                alt={DIRECTOR.imageAlt}
-                fill
-                sizes="(min-width: 1024px) 34vw, (min-width: 768px) 36vw, 320px"
-              />
-            </figure>
-            <div className="vv-director-text">
-              <p className="vv-director-role">{DIRECTOR.role}</p>
-              <h3 className="vv-director-name">{DIRECTOR.name}</h3>
-              <p className="vv-director-bio">{DIRECTOR.body}</p>
-            </div>
-          </article>
+          {/* The director and the advisors — one horizontal ivory panel
+              each, text on the left and a circular portrait on the right
+              (portrait first on phones). The director's panel takes the
+              gold edge so the advisors' crimson / gold alternation carries
+              straight on beneath it. */}
+          <div className="vv-advisors">
+            <p className="vv-advisors-k">Board of Directors</p>
+            <article className="vv-advisor is-gold">
+              <div className="vv-advisor-text">
+                <h3 className="vv-advisor-name">{DIRECTOR.name}</h3>
+                <p className="vv-advisor-role">{DIRECTOR.role}</p>
+                <p className="vv-advisor-bio">{DIRECTOR.body}</p>
+              </div>
+              <figure className="vv-advisor-figure">
+                <span className="vv-advisor-frame">
+                  <Image
+                    src={DIRECTOR.image}
+                    alt={DIRECTOR.imageAlt}
+                    fill
+                    sizes="160px"
+                    style={{ objectPosition: DIRECTOR.imagePosition }}
+                  />
+                </span>
+              </figure>
+            </article>
+
+            <ul className="vv-advisors-list">
+              {ADVISORS.map((a) => (
+                <li className="vv-advisor" key={a.name}>
+                  <div className="vv-advisor-text">
+                    <h3 className="vv-advisor-name">{a.name}</h3>
+                    <p className="vv-advisor-role">{a.designation}</p>
+                    <p className="vv-advisor-bio">{a.bio}</p>
+                  </div>
+                  <figure className="vv-advisor-figure">
+                    <span className="vv-advisor-frame">
+                      <Image
+                        src={a.image}
+                        alt={`Portrait of ${a.name}, ${a.designation}`}
+                        fill
+                        sizes="160px"
+                        style={{
+                          objectPosition: a.imagePosition,
+                          ...(a.imageZoom && {
+                            transform: `scale(${a.imageZoom})`,
+                            transformOrigin: a.imagePosition,
+                          }),
+                        }}
+                      />
+                    </span>
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <div className="vv-wall">
             <p className="vv-wall-k">
