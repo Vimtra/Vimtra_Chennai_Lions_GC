@@ -459,7 +459,7 @@ export function Shop({ facts }: { facts: StoreFacts }) {
       aria-labelledby="sh-h"
     >
       <div className="hp-wrap">
-        <div className="hm-store">
+        <div className="hm-store hm-store-panel">
           <figure className="hm-store-fig" data-fig>
             <Image
               src="/assets/Golf_polo_shirt_and_cap_202608220321-web.jpg"

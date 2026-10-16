@@ -8680,7 +8680,7 @@ a:hover .hp-arrow {
    components/home/Sections.tsx.
 ============================================================ */
 
-.hm-store {
+.hm-store-panel {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -8695,7 +8695,7 @@ a:hover .hp-arrow {
    matches `.hp-wrap`'s padding exactly, so it reaches the edge
    without ever overflowing it. */
 @media (max-width: 767px) {
-  .hm-store { margin-inline: -20px; }
+  .hm-store-panel { margin-inline: -20px; }
 }
 
 /* Tablet: side by side from 768 up, not from 1024. Left to stack,
@@ -8705,7 +8705,7 @@ a:hover .hp-arrow {
    what fits here: the headline needs ~250px to hold one line and a
    5fr track at this width cannot give it that. */
 @media (min-width: 768px) {
-  .hm-store {
+  .hm-store-panel {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: stretch;
     min-height: 400px;
@@ -8716,7 +8716,7 @@ a:hover .hp-arrow {
    the photograph takes the surplus. 7/5 also stops the split reading
    as two panels meeting in the middle. */
 @media (min-width: 1024px) {
-  .hm-store {
+  .hm-store-panel {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     min-height: clamp(430px, 40vw, 560px);
   }
@@ -8725,7 +8725,7 @@ a:hover .hp-arrow {
 /* Atmosphere: one gold wash behind the type, no larger than the
    column it lights. Sits under the content (z-index) and is
    decorative only. */
-.hm-store::before {
+.hm-store-panel::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -8767,9 +8767,9 @@ a:hover .hp-arrow {
   object-position: 50% 50%;
   transition: transform var(--mo-cine) var(--ease);
 }
-.hm-store:hover .hm-store-fig img { transform: scale(1.03); }
+.hm-store-panel:hover .hm-store-fig img { transform: scale(1.03); }
 @media (prefers-reduced-motion: reduce) {
-  .hm-store:hover .hm-store-fig img { transform: none; }
+  .hm-store-panel:hover .hm-store-fig img { transform: none; }
 }
 
 /* A hairline down the seam so the two halves read as one mounted
