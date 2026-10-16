@@ -186,7 +186,7 @@ export default function InvestPage() {
             <p>
               The IGPL launched in 2025. The Vimtra Chennai Lions begin their
               inaugural franchise season in 2026, with ten franchises and a
-              fifteen-event calendar across India and international venues.
+              calendar across India and international venues.
             </p>
           </div>
           <dl className="iv-market">

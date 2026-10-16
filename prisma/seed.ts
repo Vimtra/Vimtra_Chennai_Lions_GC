@@ -20,6 +20,20 @@ const prisma = new PrismaClient();
 // That is the source hierarchy in CLAUDE.md: IGPL decides official
 // numbers, the brochure decides Lions-specific content.
 //
+// RE-CHECKED 16 October 2026 against theigpl.com/schedule. Because this
+// seed upserts (`update: f`), any row here overwrites an admin correction
+// the next time `db:seed` runs, so it must match the official record:
+//
+//   Johannesburg  course: brochure "West Course" → official "EAST COURSE"
+//                 (listed as "ROYAL JAHANNESBURG GC- EAST COURSE"; the
+//                 city's spelling there is IGPL's typo, not a second venue)
+//   Al Hamra      name: official "AM Green IGPL Invitational 2026 presented
+//                 by Vimtra Chennai Lions GC"; status COMPLETED (it was
+//                 listed UPCOMING here); leg "Season Opener" removed — it was
+//                 the brochure's phrase for the Lions' own opener, but on the
+//                 league calendar it was the seventh event (IGPL's 22 Sep
+//                 preview: "After six events…").
+//
 // Only the four events the brochure names appear here. Any additional
 // event on the site must land through the admin surface (or the future
 // IGPL sync when IGPL_SYNC_ENABLED flips on) — never fabricated. The
@@ -64,7 +78,7 @@ const SEASON_2026_FIXTURES: {
     dateEnd: new Date("2026-04-17T00:00:00Z"),
     city: "Johannesburg",
     country: "South Africa",
-    courseName: "Royal Johannesburg · West Course",
+    courseName: "Royal Johannesburg GC · East Course",
     status: "COMPLETED",
     note: null,
     sortOrder: 20,
@@ -85,15 +99,15 @@ const SEASON_2026_FIXTURES: {
   },
   {
     slug: "am-green-igpl-al-hamra-2026",
-    name: "Am Green IGPL Invitational 2026 · Al Hamra",
-    leg: "Season Opener",
+    name: "AM Green IGPL Invitational 2026 presented by Vimtra Chennai Lions GC",
+    leg: null,
     presentedBy: "Vimtra Chennai Lions GC",
     dateStart: new Date("2026-09-23T00:00:00Z"),
     dateEnd: new Date("2026-09-25T00:00:00Z"),
     city: "Ras Al Khaimah",
     country: "UAE",
     courseName: "Al Hamra Golf Club",
-    status: "UPCOMING",
+    status: "COMPLETED",
     note: null,
     sortOrder: 40,
   },
@@ -157,14 +171,21 @@ async function main() {
   // Cover image choices are constrained to on-disk assets that are
   // *genuinely relevant* to the subject of each article. Four of the
   // five entries are Bhullar-centred and reuse the franchise-owned
-  // Bhullar player photo. The fifth is a franchise-wide squad story
-  // and uses a tournament-golf photograph. hero-golfer.png is a
-  // transparent cutout and renders as an empty tile under object-cover.
-  // No stock,
-  // no AI, no scraped publisher images.
+  // Bhullar player photo. hero-golfer.png is a transparent cutout and
+  // renders as an empty tile under object-cover. No stock, no AI, no
+  // scraped publisher images.
+  //
+  // `null` = text-led card (the news components render the source mark
+  // instead of an image). Used, from 16 Oct 2026, where no approved image
+  // fits:
+  //   · Breathe Golf squad story — it used `/assets/car-2-web.jpg`, one of
+  //     the AI-generated placeholders public/assets/photo/CREDITS.md says
+  //     were retired.
+  //   · Al Hamra announcement — a stock frame beside a named venue reads as
+  //     a picture of that venue (CREDITS.md, "Location claims").
   const BHULLAR = "/players/gaganjeet-bhullar-web.jpg";
-  const SQUAD = "/assets/car-2-web.jpg";
-  const AL_HAMRA = "/assets/photo/club-01-marquee-swing.jpg";
+  const SQUAD: string | null = null;
+  const AL_HAMRA: string | null = null;
   const CHENNAI = "/assets/photo/club-01-marquee-swing.jpg";
   const MEDIA: {
     // OFFICIAL = the league's / franchise's own reporting (Admin → News);
@@ -195,8 +216,11 @@ async function main() {
       sourceUrl:
         "https://www.thehindu.com/sport/other-sports/important-to-perform-well-in-multi-sport-events-gaganjeet-bhullar/article71347158.ece",
       title: "Important to perform well in multi-sport events: Bhullar",
+      // No Asian Tour count in our own words: the article says "11-time
+      // Asian Tour winner", the official IGPL player record says 12, and
+      // /players follows IGPL. Checked 16 Oct 2026.
       summary:
-        "The Hindu covers Bhullar — Chennai Lions marquee and 11-time Asian Tour winner — on the importance of rising to the occasion at multi-sport showpieces like the Asian Games.",
+        "The Hindu covers Bhullar, the Chennai Lions marquee, on the importance of rising to the occasion at multi-sport showpieces like the Asian Games.",
       coverImage: BHULLAR,
       sortOrder: 40,
     },

@@ -169,7 +169,7 @@ export default function TheClubPage() {
           <p className="cl-mf-lede" data-rise>
             The Chennai Lions are Chennai&apos;s roar in a global league — a
             team built to compete on day one and grow through the
-            international leg of a fifteen-event season. Every roster decision
+            international leg of the season. Every roster decision
             was made against the same test: can this team compete week to
             week, and can it grow through the season?
           </p>

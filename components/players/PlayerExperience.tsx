@@ -107,7 +107,13 @@ function Figures({
       {stats.map((s, i) => (
         <div key={`${s.v}-${s.l}-${i}`}>
           <dt>{s.v}</dt>
-          <dd>{s.l}</dd>
+          {/* A live figure (the 2026 Order of Merit) carries the date it was
+              checked against the official record, so a reader can tell how
+              current it is. */}
+          <dd>
+            {s.l}
+            {s.asOf && <> · as of {s.asOf}</>}
+          </dd>
         </div>
       ))}
     </dl>

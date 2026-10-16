@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/the-pride" },
   title: "The Pride",
   description:
-    "Chennai's roar on the world's newest stage — the emotional charter of the Vimtra Chennai Lions and the fifteen-event AM Green IGPL Season 2026.",
+    "Chennai's roar on the world's newest stage — the emotional charter of the Vimtra Chennai Lions and the AM Green IGPL Season 2026.",
 };
 
 /* ---------------------------------------------------------------------------
@@ -84,8 +84,8 @@ export default function ThePridePage() {
               The Bay of Bengal at our back, a deep amateur golf base at our
               feet, and one of the country&apos;s most consistent pipelines of
               touring professionals in front of us. The Lions are the sporting
-              expression of that city — carried into a fifteen-event season
-              that stretches from Chennai to a global calendar.
+              expression of that city — carried into a season that stretches
+              from Chennai to a global calendar.
             </p>
             <Link href="/the-club" className="hp-btn hp-btn-text">
               The story of the club

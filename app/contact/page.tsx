@@ -12,8 +12,15 @@ export const metadata: Metadata = {
     "Talk to the franchise — partnerships, sponsorship, media, golf-development, and merchandise support for the Vimtra Chennai Lions.",
 };
 
-// Every channel below is verified from the Chennai Lions IGPL brochure
-// (p. 19 "To Discuss" and p. 20 "Contact") and the Vimtra Ventures profile.
+// PENDING OWNER CONFIRMATION (flagged 16 Oct 2026). These channels are NOT
+// the ones in the Chennai Lions IGPL brochure, which lists info@vimtra.com,
+// +1 650 483 6185, +91 89394 14030 and Instagram @vimtra.chennai.gc
+// (p. 19 "To Discuss", p. 20 "Contact"). Neither the brochure nor the
+// Vimtra Ventures profile contains the values below. Do not change them
+// until the owner confirms the live email, phone numbers and Instagram
+// account; then update every copy together — this file, components/Footer.tsx,
+// app/privacy, app/terms, app/invest and lib/email-templates.ts.
+//
 // No street address is stated in either source — the site therefore does
 // not invent one.
 

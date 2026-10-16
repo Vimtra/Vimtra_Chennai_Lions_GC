@@ -64,6 +64,27 @@
  * his 2025 position, correct but unlabelled on a Season 2026 site; it is now
  * dated, and his 2026 position stands beside it.
  *
+ * SEASON 2026 RE-CHECK — 16 October 2026, theigpl.com/standings-2026, after
+ * the Krishna Invitational Hyderabad (9 of 14 official events played). The
+ * 17 September positions above had gone stale:
+ *
+ *            2026 rank / prize / events / wins
+ *   Bhullar   #1  ₹80,87,706  7 ev  2 w
+ *   Yashas    #16 ₹20,89,201  9 ev  0 w
+ *   Sethie    #17 ₹20,30,200  9 ev  0 w
+ *   Dwivedi   #26 ₹13,38,215  8 ev  0 w
+ *
+ * Bhullar's two 2026 wins are the two official leaderboards he tops:
+ * IGPL Invitational 2026 - Chandigarh (tournament 248, 1st at -11) and
+ * Krishna Invitational 2026 Hyderabad (tournament 284, 1st at -14). IGPL's
+ * own reporting counts the Krishna win as his "fifth AM Green IGPL title"
+ * (3 in 2025 + 2 in 2026), which agrees. No other Lions player has a 2026
+ * win on the official record.
+ *
+ * The Order of Merit moves after every event, so each 2026 rank carries
+ * `asOf` and the page prints that date beside it. Re-check and update
+ * ORDER_OF_MERIT_AS_OF after each event.
+ *
  * Prize money and event counts are recorded here but not rendered: the
  * roster shows one competition figure per player, and adding four money
  * columns would turn a squad page into a money list. /leaderboards owns the
@@ -120,9 +141,16 @@ export const ROSTER: RosterPlayer[] = [
   },
 ];
 
+/** Date of the last check of the 2026 Order of Merit against
+ *  theigpl.com/standings-2026. Printed beside every 2026 rank. */
+export const ORDER_OF_MERIT_AS_OF = "16 Oct 2026";
+
 export interface Stat {
   v: string;
   l: string;
+  /** For figures that change during the season: the date they were checked
+   *  against the official record. Rendered after the label. */
+  asOf?: string;
 }
 export interface SideCard {
   label: string;
@@ -163,15 +191,18 @@ export const FEATURES: PlayerFeature[] = [
       "India's most prolific international winner, with <strong>28 professional wins</strong> and <strong>twelve Asian Tour victories</strong>. He won the Asian Tour Order of Merit in 2009 and finished as high as fourth in 2018.",
       "The first Indian to win on the <strong>PGA Tour of Australasia</strong>, at the 2018 Fiji International, and the holder of a career-best world ranking of <strong>85</strong>. He received the <strong>Arjuna Award</strong> in 2013.",
       // Official IGPL player record; the Olympic appearance is brochure p. 07.
-      "He represented India at the <strong>2006 Asian Games</strong>, taking silver, and at the 2018 World Cup of Golf, and won <strong>three IGPL events in 2025</strong>. The brochure that announced this roster also records his appearance at the Paris 2024 Olympic Games.",
+      // 2026 wins: official leaderboards for tournaments 248 (Chandigarh,
+      // 1st) and 284 (Krishna Invitational Hyderabad, 1st) — see the
+      // 16 Oct 2026 re-check in the header.
+      "He represented India at the <strong>2006 Asian Games</strong>, taking silver, and at the 2018 World Cup of Golf. He won <strong>three IGPL events in 2025</strong> and <strong>two in 2026</strong>, at the IGPL Invitational in Chandigarh and the Krishna Invitational in Hyderabad. The brochure that announced this roster also records his appearance at the Paris 2024 Olympic Games.",
     ],
     stats: [
       { v: "28", l: "Pro Wins" },
       { v: "12", l: "Asian Tour Titles" },
       { v: "85", l: "Career-Best World Rank" },
       { v: "3", l: "IGPL Wins, 2025" },
-      // Season 2026 Order of Merit, theigpl.com/standings-2026, 17 Sep 2026.
-      { v: "#2", l: "IGPL Order of Merit, 2026" },
+      // Season 2026 Order of Merit, theigpl.com/standings-2026.
+      { v: "#1", l: "IGPL Order of Merit, 2026", asOf: ORDER_OF_MERIT_AS_OF },
     ],
     sideCards: [
       {
@@ -208,7 +239,7 @@ export const FEATURES: PlayerFeature[] = [
       { v: "No. 1", l: "India Amateur, 2019" },
       // Dated: this is the 2025 position. 2026 stands beside it below.
       { v: "#28", l: "IGPL Order of Merit, 2025" },
-      { v: "#18", l: "IGPL Order of Merit, 2026" },
+      { v: "#17", l: "IGPL Order of Merit, 2026", asOf: ORDER_OF_MERIT_AS_OF },
       { v: "2020", l: "Turned Professional" },
     ],
     sideCards: [
@@ -246,8 +277,8 @@ export const FEATURES: PlayerFeature[] = [
       { v: "7", l: "National IGU Wins" },
       { v: "3", l: "Course Records" },
       { v: "'14", l: "Asian Games" },
-      // Season 2026 Order of Merit, theigpl.com/standings-2026, 17 Sep 2026.
-      { v: "#40", l: "IGPL Order of Merit, 2026" },
+      // Season 2026 Order of Merit, theigpl.com/standings-2026.
+      { v: "#26", l: "IGPL Order of Merit, 2026", asOf: ORDER_OF_MERIT_AS_OF },
     ],
     sideCards: [
       {
@@ -279,8 +310,8 @@ export const FEATURES: PlayerFeature[] = [
       { v: "'18", l: "Emerging Player" },
       { v: "4 yrs", l: "National Amateur Team" },
       { v: "2018", l: "Turned Professional" },
-      // Season 2026 Order of Merit, theigpl.com/standings-2026, 17 Sep 2026.
-      { v: "#12", l: "IGPL Order of Merit, 2026" },
+      // Season 2026 Order of Merit, theigpl.com/standings-2026.
+      { v: "#16", l: "IGPL Order of Merit, 2026", asOf: ORDER_OF_MERIT_AS_OF },
     ],
     sideCards: [
       {

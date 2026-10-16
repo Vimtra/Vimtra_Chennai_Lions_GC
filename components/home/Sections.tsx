@@ -141,9 +141,14 @@ export function Club() {
               </span>
             </h2>
             <p className="hm-body">
-              The IGPL launched in 2025. Its 2026 season carries ten franchises
-              across fifteen events — ten in India, five international — and
-              the Lions play their inaugural franchise season in 2026.
+              {/* No event count here: the brochure's "fifteen events — ten in
+                  India, five international" is contradicted by the official
+                  schedule (14 events, at least six of them abroad, checked
+                  16 Oct 2026), and a count in prose goes stale whenever IGPL
+                  adds an event. /fixtures carries the official total. */}
+              The IGPL launched in 2025. Its 2026 season brings ten franchises
+              to a calendar that runs across India and international venues,
+              and the Lions play their inaugural franchise season in 2026.
             </p>
             <Link href="/the-pride" className="hp-btn hp-btn-text">
               The mark &amp; the city

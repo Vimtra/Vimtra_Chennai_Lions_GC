@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/fixtures" },
   title: "Fixtures",
   description:
-    "The Season 2026 calendar — Am Green IGPL Invitationals, the completed African swing, and the Chennai Lions season opener at Al Hamra.",
+    "The Season 2026 calendar — AM Green IGPL events across India and international venues, including the AM Green IGPL Invitational 2026 presented by Vimtra Chennai Lions GC at Al Hamra.",
 };
 
 // Always resolve against the current DB row set so admin edits are reflected
@@ -24,9 +24,10 @@ export const dynamic = "force-dynamic";
    and forbids random stock and misleading imagery. Those two rules together
    rule photography out here:
 
-     · The real venues are Anahita, Royal Johannesburg West, Golf Club de
-       Lubumbashi and Al Hamra. Their own photographs are copyrighted and
-       cannot be self-hosted on a commercial site.
+     · The real venues are Anahita, Royal Johannesburg (East Course per the
+       official schedule), Golf Club de Lubumbashi and Al Hamra. Their own
+       photographs are copyrighted and cannot be self-hosted on a commercial
+       site.
      · Wikimedia Commons carries nothing for any of them. A search for
        Al Hamra Golf Club returns Al Jazirah Al Hamra — an unrelated
        abandoned heritage village in the same emirate. Using that would be
@@ -39,14 +40,26 @@ export const dynamic = "force-dynamic";
    featured event are the two places it belongs.
 
    CONTENT: every event, date, venue, leg and presenter below is a database
-   row. Nothing is hard-coded and nothing is invented. The season-scale
-   figures are the brochure's (p. 05).
+   row. Nothing is hard-coded and nothing is invented. The two season-scale
+   figures come from the official AM Green IGPL record (see below).
 --------------------------------------------------------------------------- */
 
-// Brochure p. 05 — "15 EVENTS / SEASON · 10 FRANCHISES", verbatim. These
-// two are the ONLY hard-coded numbers on this page; everything else is a
-// count of database rows.
-const SEASON_EVENTS = 15;
+// The two season-scale figures — the ONLY hard-coded numbers on this page;
+// everything else is a count of database rows.
+//
+// SEASON_EVENTS: the official count, not the brochure's. Brochure p. 05 said
+// "15 EVENTS / SEASON" ("ten in India, five international"). The official
+// record contradicts both halves: theigpl.com/standings-2026 states
+// "14 TOUR EVENTS", and theigpl.com/schedule lists 9 completed + 5 upcoming
+// = 14, with at least six of the completed events held outside India
+// (Mauritius, Johannesburg, Congo, two at Mazagan, Ras Al Khaimah). Checked
+// 16 Oct 2026 (SEASON_COUNT_AS_OF). If IGPL adds or drops an event, update
+// both constants; if more rows are ever published, the track grows to match.
+//
+// SEASON_FRANCHISES: bknd.theigpl.com/api/franchises returns 10 franchises,
+// and the standings page states "10 FRANCHISE TEAMS".
+const SEASON_EVENTS = 14;
+const SEASON_COUNT_AS_OF = "16 October 2026";
 const SEASON_FRANCHISES = 10;
 
 const MONTHS = [
@@ -107,9 +120,10 @@ export default async function FixturesPage() {
   const groups = byMonth(fixtures);
 
   /* ---- Season scale, computed from the rows above --------------------
-     SEASON_EVENTS / SEASON_FRANCHISES are the brochure's (p. 05). Every
-     other number here is a count of Fixture rows — nothing is estimated,
-     and the track never claims more than the database holds. */
+     SEASON_EVENTS / SEASON_FRANCHISES are the official counts (see their
+     comment at the top of the file). Every other number here is a count of
+     Fixture rows — nothing is estimated, and the track never claims more
+     than the database holds. */
   const published = fixtures.length;
   const eventCells = Math.max(SEASON_EVENTS, published);
   const countBy = (s: Fixture["status"]) =>
@@ -137,9 +151,11 @@ export default async function FixturesPage() {
       v: String(countBy("CANCELLED")),
       cls: "is-void",
     });
+  // Official events with no row here yet. Not "to be announced": an event
+  // can be missing from this site after it has already been played.
   if (eventCells - published > 0)
     SCALE_LEGEND.push({
-      k: "To be announced",
+      k: "Not yet on this site",
       v: String(eventCells - published),
       cls: "is-open",
     });
@@ -155,8 +171,8 @@ export default async function FixturesPage() {
       <StoryHero
         eyebrow="AM Green IGPL · Season 2026"
         title={["FIXTURES"]}
-        // Brochure p. 05 — "15 EVENTS / SEASON · 10 FRANCHISES".
-        line="Fifteen events. Ten franchises. One season."
+        // Official counts — see SEASON_EVENTS / SEASON_FRANCHISES above.
+        line="Fourteen events. Ten franchises. One season."
       />
 
       {/* The next tournament, given the weight of a cover. Rendered only
@@ -270,19 +286,19 @@ export default async function FixturesPage() {
       </Section>
 
       {/* SEASON SCALE.
-          The brochure's two season figures (p. 05 — 15 events, 10
-          franchises) drawn to scale against what the database actually
-          holds, instead of asserted in a sentence.
+          The official season size (14 events, 10 franchises — see
+          SEASON_EVENTS / SEASON_FRANCHISES) drawn to scale against what the
+          database actually holds, instead of asserted in a sentence.
 
           Every mark below is computed at the top of this component from the
           Fixture rows this page already renders: how many events are
           published, how many are complete, in play or upcoming, and how many
-          countries the published card touches. The fifteen cells are the
-          brochure's season size; the filled ones are the rows that exist.
-          When the AM Green IGPL announces more events and they are entered,
-          more cells fill — with no code change and nothing invented in the
-          meantime. If more than fifteen are ever published the track grows
-          to match, so the graphic can never contradict the data.
+          countries the published card touches. The fourteen cells are the
+          official season size; the filled ones are the rows that exist.
+          When official events are entered, more cells fill — with no code
+          change and nothing invented in the meantime. If more rows than
+          SEASON_EVENTS are ever published the track grows to match, so the
+          graphic can never contradict the data.
 
           The graphic itself is aria-hidden and the same facts are stated in
           the ruled legend underneath, so nothing is available only as a
@@ -294,7 +310,7 @@ export default async function FixturesPage() {
           </p>
 
           <h2 className="cm-display ss-scale-h" data-rise>
-            FIFTEEN EVENTS.
+            FOURTEEN EVENTS.
             <br />
             TEN <em>franchises</em>.
           </h2>
@@ -345,10 +361,11 @@ export default async function FixturesPage() {
               ))}
             </ol>
             <p className="ss-scale-note">
-              Season 2026 spans fifteen events across ten franchises — ten in
-              India and five international. The calendar above is the subset
-              the Chennai Lions IGPL brochure publishes today; further events
-              appear here as the AM Green IGPL announces them.
+              The official AM Green IGPL schedule lists {SEASON_EVENTS} Season
+              2026 events across India and international venues, contested by
+              ten franchises (as of {SEASON_COUNT_AS_OF}). The calendar above
+              shows the events published on this site; more appear as they are
+              confirmed against the official schedule.
             </p>
           </div>
         </div>
